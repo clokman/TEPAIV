@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <title>Radio buttons</title>
+
+    <style>
+
+        input[type=radio] {
+            margin-left: 10px;
+        }
+
+    </style>
+
+
+    <script type="text/javascript" src="d3.js"></script>
+
+
+</head>
+
+<body>
+
+<p>
+    <input type="radio" class='threshold-preset' name="filter-preset" value="0" checked="true">0
+    <input type="radio" class='threshold-preset' name="filter-preset" value="200">200
+    <input type="radio" class='threshold-preset' name="filter-preset" value="500">500
+    <input type="radio" class='threshold-preset' name="filter-preset" value="800">800
+</p>
+
+<!--<p>-->
+    <!--<input type="radio" class='advanced-preset' name="filter-preset"  value="none"  checked="true">None-->
+    <!--<input type="radio" class='advanced-preset' name="filter-preset"  value="center">Center-->
+    <!--<input type="radio" class='advanced-preset' name="filter-preset"  value="edges">Edges-->
+    <!--<input type="radio" class='advanced-preset' name="filter-preset"  value="quadrants">Quadrants-->
+<!--</p>-->
+
+
+<script type="text/javascript">
+
+    // PARAMS ////////////////////////////////////////////////
+
+    let canvasHeight = 250,
+        canvasWidth = 600,
+        padding = 25
+
+    let dataset, numDataPoints, xRange, yRange, yMax, xMax, xScale, yScale, xAxis, yAxis,
+        scatterPlotSymbolSize, svg, circles, threshold, view, midPointX, midPointY, radius
+
+    // Dynamic, random dataset
+    dataset = []
+    numDataPoints = 50
+    // var xRange = Math.random() * 1000;
+    // var yRange = Math.random() * 1000;
+    xRange = 1000
+    yRange = 300
+    for (var i = 0; i < numDataPoints; i++) {
+        var newNumber1 = Math.floor(Math.random() * xRange)
+        var newNumber2 = Math.floor(Math.random() * yRange)
+        dataset.push([newNumber1, newNumber2])
+    }
+
+
+    // var dataset = [
+    //     [5,     20],
+    //     [480,   90],
+    //     [250,   50],
+    //     [100,   33],
+    //     [330,   95],
+    //     [410,   12],
+    //     [475,   44],
+    //     [25,    67],
+    //     [85,    21],
+    //     [220,   88],
+    //     [600,   150]
+    // ];
+
+
+
+    // SCALES ////////////////////////////////////////////////
+    xMax = d3.max( dataset, d => d[0] )
+    yMax = d3.max( dataset, d => d[1] )
+
+    xScale = d3.scaleLinear()
+                  .domain([0, xMax])
+                  .rangeRound([padding * 1.1, canvasWidth-padding])
+
+    yScale = d3.scaleLinear()
+                 .domain([0, yMax])
+                 .rangeRound([canvasHeight - (padding * 1.2), padding])
+
+
+
+    // CANVAS //////////////////////////////////////////////
+
+    svg = d3.select('body')
+                .append('svg')
+                  .attr('width', canvasWidth)
+                  .attr('height', canvasHeight)
+
+
+
+    // CLIP PATH //////////////////////////////////////////
+
+    svg.append('clipPath')
+        .attr('id', 'chart-area')
+        .append('rect')
+            .attr('x', padding)
+            .attr('y', padding)
+            .attr('width', canvasWidth-padding * 2)
+            .attr('height', canvasHeight-padding * 2)
+
+    // CIRCLES //////////////////////////////////////////////
+
+    scatterPlotSymbolSize = 2;
+    circles = svg.append('g')
+                   .attr('id', 'circles')
+                   .attr('clip-path', 'url(#chart-area)')  // apply clipPath
+                   .selectAll('circle')
+                     .data(dataset)
+                   .enter()
+                   .append('circle')
+                     .attr('cx', d => xScale(d[0]) )
+                     .attr('cy', d => yScale(d[1]) )
+                     .attr('r', scatterPlotSymbolSize)
+                     .attr('fill', 'gray')
+
+
+    // AXES //////////////////////////////////////////////
+
+    // Define X axis
+    xAxis = d3.axisBottom()
+                .scale(xScale)
+                .ticks(5)
+
+
+    // Create X axis
+    svg.append('g')
+         .call(xAxis)
+         .attr('class', 'x axis')
+         .attr('transform', 'translate(0,' + (canvasHeight - padding) + ')')
+
+
+
+    // Define Y axis
+    yAxis = d3.axisLeft()
+                .scale(yScale)
+                .ticks(5)
+
+    // Create Y axis
+    svg.append('g')
+         .call(yAxis)
+         .attr('class', 'y axis')
+         .attr('transform', 'translate(' + padding + ',0)')
+
+
+    // Threshold radio buttons
+    d3.selectAll('.threshold-preset')
+      .on('click', function () {
+
+          // Get the value of the currently clicked radio button
+          threshold = d3.select(this).node().value
+
+          // Select circles that are lower than the selected radio button's value
+          targetCircles =  d3.selectAll('circle')
+                             .filter( d => d[0] < threshold)
+
+          // Make the selected circles red
+          targetCircles.attr('fill', 'red')
+      })
+
+    // Advanced selection radio buttons
+    d3.selectAll('.advanced-preset')
+        .on('click', function () {
+
+            view =  d3.select(this).node().value
+            console.log('button clicked = ' + view)
+
+
+
+            switch (view) {
+
+                case 'center':
+
+                    midPointX = 500
+                    midPointY = 150
+
+                    radius = 100
+
+                    allCircles = d3.selectAll('circle')
+
+                    centerCircles = allCircles.filter( function (d) {
+
+                        return d[0] < midPointX+radius && d[0] > midPointX-radius
+
+                    } )
+
+                    centerCircles.attr('fill', 'red')
+
+                    break
+
+                case 'edges':
+                    // ...
+                    break
+
+                default:
+                    // ...
+            }
+
+        })
+
+
+
+</script>
+
+</body>
+
+</html>

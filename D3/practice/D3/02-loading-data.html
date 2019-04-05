@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>D3 Page Template</title>
+    <script type="text/javascript" src="./d3.js"></script>
+</head>
+
+<body>
+
+
+<script type="text/javascript">
+
+
+    function convertToNumber(input){
+        var result = input = +input;
+        return result
+    }
+
+
+    d3.csv("food.csv").then(function(dataset) {
+
+        dataset.forEach(function(row) {
+            row.Food = row.Food;
+            row.Deliciousness = convertToNumber(row.Deliciousness);
+        });
+        console.log(dataset)
+
+    });
+
+
+    d3.select("body").append("p").text("New paragraph!");
+
+
+</script>
+
+
+</body>
+</html>
+
+
+

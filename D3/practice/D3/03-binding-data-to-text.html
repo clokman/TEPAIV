@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>D3 Page Template</title>
+    <script type="text/javascript" src="./d3.js"></script>
+
+</head>
+
+<body>
+
+
+<script type="text/javascript">
+
+
+    var  dataset = [ 5, 10, 15, 20, 25];
+
+
+    // Uncomment blocks to run them (they would interfere otherwise)
+
+    // // Print hello five times
+    // d3.select('body')    // select and pass the reference to the DOM 'body'
+    //     .selectAll('p')  // select all (future) paragraphs in DOM and pass them
+    //                      // these are empty placeholders.
+    //     .data(dataset)   // parse and count data. Everything past this point
+    //                      // will be executed as many times as there are rows
+    //                      // in the data
+    //     .enter()         // Create new, data-bound elements (still empty placeholders)
+    //     .append("p")     // Take empty placeholders and enter a <p><p/> in them.
+    //     .text('Hello!')  // Enter the string 'Hello!' in the paragraphs.
+
+
+
+
+    // // Print values in data
+    // d3.select('body')    // select and pass the reference to the DOM 'body'
+    //     .selectAll('p')  // select all (future) paragraphs in DOM and pass them
+    //     // these are empty placeholders.
+    //     .data(dataset)   // parse and count data. Everything past this point
+    //     // will be executed as many times as there are rows
+    //     // in the data
+    //     .enter()         // Create new, data-bound elements (still empty placeholders)
+    //     .append("p")     // Take empty placeholders and enter a <p><p/> in them.
+    //     .text(function(currentElement) {return currentElement;});  // Print the values of each row
+
+
+    // // Print values in data and color them
+    // d3.select('body')    // select and pass the reference to the DOM 'body'
+    //     .selectAll('p')  // select all (future) paragraphs in DOM and pass them
+    //     // these are empty placeholders.
+    //     .data(dataset)   // parse and count data. Everything past this point
+    //     // will be executed as many times as there are rows
+    //     // in the data
+    //     .enter()         // Create new, data-bound elements (still empty placeholders)
+    //     .append("p")     // Take empty placeholders and enter a <p><p/> in them.
+    //     .text(function(currentElement) {return currentElement;})  // Print the values of each row
+    //     .style('color', 'red');
+
+
+    //
+    // // Print values and color them
+    // d3.select('body')    // select and pass the reference to the DOM 'body'
+    //     .selectAll('p')  // select all (future) paragraphs in DOM and pass them
+    //     // these are empty placeholders.
+    //     .data(dataset)   // parse and count data. Everything past this point
+    //     // will be executed as many times as there are rows
+    //     // in the data
+    //     .enter()         // Create new, data-bound elements (still empty placeholders)
+    //     .append("p")     // Take empty placeholders and enter a <p><p/> in them.
+    //     .text(function(currentElement) {return currentElement;})  // Print the values of each row
+    //     .style('color', 'red');
+    //
+
+
+    // Conditional coloring
+    d3.select('body')    // select and pass the reference to the DOM 'body'
+        .selectAll('p')  // select all (future) paragraphs in DOM and pass them
+        // these are empty placeholders.
+        .data(dataset)   // parse and loop data. Everything past this point
+        // will be executed as many times as there are rows in the data
+        // in the data
+        .enter()         // Create new, data-bound elements (still empty placeholders)
+        .append("p")     // Take empty placeholders and enter a <p><p/> in them.
+        .text(function(currentElement) {return currentElement;})  // Print the values of each row
+        .style('color', function(eachItem){
+            if (eachItem < 15) {
+                return 'red';
+            }
+            else {
+                return 'green';
+            }
+        });
+
+
+</script>
+
+
+</body>
+</html>
+
+
+
+

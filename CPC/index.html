@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CPC</title>
+    <style>
+    </style>
+    <script type="text/javascript" src="./libs/d3.js"></script>
+
+    <!-- Qunit JS and CSS sheet -->
+<!--    <link rel="stylesheet" href="./libs/qunit/qunit.css">-->
+<!--    <script defer src="./libs/qunit/qunit.js"></script>-->
+
+
+</head>
+<body>
+<!--    &lt;!&ndash; Place QUnit frame and run tests &ndash;&gt;-->
+<!--    <div id="qunit"></div>-->
+<!--    <div id="qunit-fixture"></div>-->
+<!--    <script defer src="../test/run-all-tepaiv-tests.js" type="module"></script>-->
+
+
+    <script type="module">
+
+        import DictionariesArray from "../common/DictionariesArray.js"
+        import MiniTreeMap from "./MiniTreeMap.js"
+        import clog from "../common/consoleTools.js"
+
+
+        // import {should} from "./node_modules/chai/chai.js"
+
+        let frontData = [
+             { firstClass: 10, secondClass: 8,  thirdClass: 25 }
+            ,{ firstClass: 4,  secondClass: 12, thirdClass: 28 }
+            ,{ firstClass: 2,  secondClass: 19, thirdClass: 32 }
+            ,{ firstClass: 7,  secondClass: 23, thirdClass: 35 }
+            ,{ firstClass: 23, secondClass: 17, thirdClass: 43 }
+        ]
+
+        frontData = new DictionariesArray(frontData)
+        clog(frontData)
+
+
+        let baseData = [
+             { firstClass: 110, secondClass: 8,  thirdClass: 25 }
+            ,{ firstClass: 6,  secondClass: 122, thirdClass: 28 }
+            ,{ firstClass: 50,  secondClass: 60, thirdClass: 20 }
+            ,{ firstClass: 50,  secondClass: 60, thirdClass: 70 }
+            ,{ firstClass: 30, secondClass: 40, thirdClass: 50 }
+        ]
+
+        baseData = new DictionariesArray(baseData)
+        clog(baseData)
+
+        let miniTreeMap1 = new MiniTreeMap()
+        miniTreeMap1.setData(frontData, baseData)
+        miniTreeMap1.draw([150, 400])
+
+        let miniTreeMap2 = new MiniTreeMap()
+        miniTreeMap2.setData(frontData, baseData)
+        miniTreeMap2.draw([150, 400])
+
+        let miniTreeMap3 = new MiniTreeMap()
+        miniTreeMap3.setData(frontData, baseData)
+        miniTreeMap3.draw([150, 400])
+
+
+    </script>
+
+</body>
+</html>

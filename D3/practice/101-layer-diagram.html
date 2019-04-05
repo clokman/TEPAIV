@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Layer diagram</title>
+
+    <!--D3-->
+    <script type="text/javascript" src="./d3.js"></script>
+
+    <!--Tensorflow-->
+    <script src="./tf.min.js"></script>
+
+    <style type="text/css">
+        /* No style rules here yet */
+    </style>
+
+</head>
+<body>
+
+<button type="button" id="casualties-vs-survivors-color-button">Color: Casualties vs. survivors</button>
+<button type="button" id="casualties-vs-survivors-move-button">Move: Casualties vs. survivors</button>
+<button type="button" id="males-vs-females-move-button">Move: Males vs. females</button>
+<button type="button" id="color-by-class-button">Color by class</button>
+
+<script type="text/javascript">
+
+    "use strict";
+
+    // PARAMETERS =====================================================
+
+    // Dataset parameters
+    let noOfSurvivors = 500, // 500 (titanic)
+            noOfMaleSurvivors = 161, // 161 (titanic)
+            noOfFemaleSurvivors = 339, // 339 (titanic)
+        noOfCasualties = 809, // 809 (titanic)
+            noOfMaleCasualties = 682, // 682 (titanic)
+            noOfFemaleCasualties = 127; // 127 (titanic)
+
+
+    // Visualization parameters
+    let iconSize = 4,
+        defaultIconColor = 'gray',
+        canvasWidth = 600,
+        canvasHeight = 600,
+        padding = 50;
+
+
+    // GENERATE DATA =====================================================
+
+    let datasetSummary = {
+        'survived': {
+            'male': {
+                'firstClass':61,
+                'secondClass':25,
+                'thirdClass':75
+            },
+            'female':{
+                'firstClass':139,
+                'secondClass':94,
+                'thirdClass':106
+            }
+        },
+        'dead':{
+            'male':{
+                'firstClass':118,
+                'secondClass':146,
+                'thirdClass':418
+            },
+            'female':{
+                'firstClass':5,
+                'secondClass':12,
+                'thirdClass':110
+            }
+        }
+    };
+
+
+
+    // Get the number of units for each possible category in the dataset
+    let levelZeroSum = 0;
+    let levelOneSums = {};
+    let levelTwoSums = {};
+    let levelThreeSums = {};
+
+    let levelTwoAggregatedSums = {};
+    let levelThreeAggregatedSums = {};
+
+    // <-- Level zero start
+    for (let eachL1category in datasetSummary) {
+
+        // <-- Level one start
+        let eachL1sum = 0;
+        for (let eachL2category in datasetSummary[eachL1category]){
+
+            // <-- Level two start
+            let eachL2sum = 0;
+            for (let eachL3category in datasetSummary[eachL1category][eachL2category]){
+
+                let eachL3value = datasetSummary[eachL1category][eachL2category][eachL3category];
+
+                // deadfemalefirstClas, deadfemalesecondClass, deadfemalethirdClass, deadmalefirstClass,
+                // deadmalesecondClass, deadmalethirdClass, survivedfemalefirstClass, survivedfemalesecondClass,
+                // survivedfemalethirdClass, survivedmalefirstClass, survivedmalesecondClass, survivedmalethirdClass
+                levelThreeSums[eachL1category + eachL2category + eachL3category] = eachL3value;
+
+                // firstClass, secondClass, thirdClass
+                aggregateToDictionaryValues(eachL3category, eachL3value, levelThreeAggregatedSums);
+
+                eachL2sum += eachL3value;
+
+            } // <-- Level two end
+
+            // survivedmale, survivedfemale, deadmale, deadfemale
+            levelTwoSums[eachL1category + eachL2category] = eachL2sum;
+
+            // female, male
+            aggregateToDictionaryValues(eachL2category, eachL2sum, levelTwoAggregatedSums);
+
+            eachL1sum += eachL2sum;
+
+
+        } // <-- Level one end
+
+        // survived, dead
+        levelOneSums[eachL1category] = eachL1sum;
+
+        // all
+        levelZeroSum += eachL1sum;
+
+    } // <-- Level zero end
+
+
+    // Print calculations
+    console.log(JSON.stringify('levelZeroSum: ' + levelZeroSum));
+    console.log(JSON.stringify('levelOneSums: ' + JSON.stringify(levelOneSums)));
+    console.log(JSON.stringify('levelTwoSums: ' + JSON.stringify(levelTwoSums)));
+    console.log(JSON.stringify('levelThreeSums: ' + JSON.stringify(levelThreeSums)));
+    console.log(JSON.stringify('levelTwoAggregatedSums: ' + JSON.stringify(levelTwoAggregatedSums)));
+    console.log(JSON.stringify('levelThreeAggregatedSums: ' + JSON.stringify(levelThreeAggregatedSums)));
+
+
+    // UNITS ARRAY =====================================================
+
+    // Populate the units array
+    let units = [];
+    for (let i=0; i < levelZeroSum; i++){
+        units.push({'id': i});  // the units only have an ID in the initial array
+    }
+
+
+    // VISUALIZE THE DATA ==================================================
+
+    // Calculate edge length
+    let edgeSizeAbsolute = Math.sqrt(levelZeroSum),
+        edgeSizeCeiled = Math.ceil(Math.sqrt(levelZeroSum));
+
+
+    // Scales
+    let scaleSquareX = d3.scaleBand()
+        .domain(d3.range(edgeSizeCeiled))
+        .rangeRound([padding, canvasWidth-padding])
+        .paddingInner(0.05);
+
+    let scaleSquareY = d3.scaleBand()
+        .domain(d3.range(edgeSizeCeiled))
+        .rangeRound([canvasHeight-padding, padding])  // reversed scale
+        .paddingInner(0.05);
+
+
+    // Create coordinates array
+    let coordinates = [];
+    let column;
+    let row;
+    for (row = 0; row < edgeSizeCeiled; row++) {
+
+        for (column = 0; column < edgeSizeCeiled; column++){
+            coordinates.push({'x': scaleSquareX(column), 'y': scaleSquareY(row)});
+        }
+    }
+
+
+    // Create SVG element
+    let svg = d3.select('body')
+            .append('svg')
+            .attr('width', canvasWidth)
+            .attr('height', canvasHeight);
+
+    // Create circles
+    let circles = svg.selectAll('circle')
+                .data(units)
+                .enter()
+                .append('circle')
+                .attr('cx', function (d, i) {
+                    return coordinates[i]['x']
+                })
+                .attr('cy', function (d, i) {
+                    return coordinates[i]['y']
+                })
+                .attr('r', iconSize)
+                .attr('fill', defaultIconColor);
+
+    // Add passenger as initial class
+    circles.attr('class', 'passenger');
+
+    // Color survivors vs casualties
+    d3.select('#casualties-vs-survivors-color-button')
+        .on('click', function () {
+            console.log('click');
+            addClassHorizontal(circles, 'survived', levelOneSums['survived']);
+            addClassHorizontal(circles, 'dead', levelOneSums['dead'], levelOneSums['survived']);
+
+            // Color circles based on category
+            d3.selectAll('.dead')
+                .transition()
+                .duration(500)
+                .attr('fill', 'Silver');
+
+            d3.selectAll('.survived')
+                .transition()
+                .duration(500)
+                .attr('fill', 'DodgerBlue');
+
+        });
+
+    // Move survivors vs casualties
+    d3.select('#casualties-vs-survivors-move-button')
+        .on('click', function () {
+            console.log('click');
+            addClassHorizontal(circles, 'survived', levelOneSums['survived']);
+            addClassHorizontal(circles, 'dead', levelOneSums['dead'], levelOneSums['survived']);
+
+            // Move circles based on category
+            d3.selectAll('.dead')
+                .transition()
+                .duration(500)
+                .attr('cy', function (d) {
+                   return d3.select(this).attr('cy') - 22
+                });
+
+        });
+
+    // Move genders away from each other
+    d3.selectAll('#males-vs-females-move-button')
+        .on('click', function () {
+            console.log('#males-vs-females-move-button clicked');
+
+            d3.selectAll('.dead')
+                .attr('class', function (d, i) {
+                    if (i <= levelTwoSums['deadmale']){
+                        return 'dead-male';
+                    }
+                    else{
+                        return 'dead-female'
+                    }
+                });
+
+            d3.selectAll('.survived')
+                .attr('class', function (d, i) {
+                    if (i <= levelTwoSums['survivedmale']){
+                        return 'survived-male';
+                    }
+                    else{
+                        return 'survived-female'
+                    }
+                });
+
+            // Move circles based on category
+            d3.selectAll('.dead-female')
+                .transition()
+                .duration(500)
+                .attr('cy', function (d) {
+                    return d3.select(this).attr('cy') - 22
+                });
+
+            d3.selectAll('.survived-female')
+                .transition()
+                .duration(500)
+                .attr('cy', function (d) {
+                    return d3.select(this).attr('cy') - 11
+                })
+                .attr('fill', 'LightBlue');
+
+            // // Move circles based on category
+            d3.selectAll('.dead-male')
+                .transition()
+                .delay(250)
+                .duration(500)
+                .attr('cy', function (d) {
+                    return d3.select(this).attr('cy') - 11
+                })
+                .attr('fill', 'DarkGray')
+
+    });
+
+    // Class
+    d3.select('#color-by-class-button')
+        .on('click', function () {
+            console.log('#color-by-class-button clicked');
+
+            d3.selectAll('.survived-female, .survived-male')
+                .transition(1000)
+                .remove();
+
+
+            d3.selectAll('.dead-female')
+                .attr('class', function (d, i) {
+                    if (i <= levelThreeSums['deadfemalethirdClass']) {
+                        return 'dead-female-third-class';
+                    }
+                });
+
+            d3.selectAll('.dead-female-third-class')
+                .transition()
+                .delay(500)
+                .duration(500)
+                .attr('fill', 'Red');
+
+            d3.selectAll('.dead-female-second-class')
+                .transition()
+                .delay(500)
+                .duration(500)
+                .attr('fill', 'Yellow');
+
+
+            d3.selectAll('.dead-male')
+                .attr('class', function (d, i) {
+                    if (i <= levelThreeSums['deadmalethirdClass']) {
+                        return 'dead-male-third-class';
+                    }
+                    // else{
+                    //     return 'dead-female'
+                    // }
+                });
+
+            d3.selectAll('.dead-male-third-class')
+                .transition()
+                .delay(250)
+                .duration(500)
+                .attr('fill', 'Red');
+
+        });
+
+    // Vertical selection
+
+    // 1   11  21  31  41  51  61  71   81   91   2   12  21     32
+    // 1   2   3   4   5   6   7    8    9   10   11  12  13  14 15 16 17 18 19 20 21 22 23 24 25
+    //
+    // let matrixSize = edgeSizeCeiled * edgeSizeCeiled;
+    // let indexTensor =
+    //     tf.tensor2d(d3.range(matrixSize),  // a matrix filled with sequential numbers
+    //         [edgeSizeCeiled, edgeSizeCeiled]);  // matrix dimensions
+    //
+    // indexTensor= indexTensor.transpose();
+    // let indexTensorValues = indexTensor.dataSync();
+    // let transposedIndexArray = Array.from(indexTensorValues);
+    //
+    //
+    // let iterationOrder = [];
+    // d3.selectAll('.survived')
+    //     .data(units, function (d, i) {
+    //         return transposedIndexArray[i]
+    //     })
+    //     .attr('class', function (d, i) {
+    //         iterationOrder.push(i);
+    //         return 'test'
+    //     });
+    //
+    // d3.selectAll('.test')
+    //     .transition()
+    //     .duration(3000)
+    //     .attr('fill', 'black');
+
+
+
+    // Separate the circles
+
+
+
+    //Create labels
+
+    //Create background
+
+
+
+    // FUNCTIONS ==================================================
+
+
+    // Function to inject attributes a each unit
+    function tagUnit(object, newKey, newValue){
+        object[newKey]=newValue;
+    }
+
+
+
+    // Function to inject attributes each unit
+    function tagUnits(arrayOfObjects, newKey, newValue){
+        arrayOfObjects.forEach(
+            function iterator ( value, index, collection ) {
+                tagUnit(collection[index], newKey, newValue);
+            }
+        );
+    }
+
+
+
+    function splitToChunks(array, parts) {
+        let result = [];
+        for (let i = parts; i > 0; i--) {
+            result.push(array.splice(0, Math.ceil(array.length / i)));
+        }
+        return result;
+    }
+
+
+
+    function logString(collectionArray, searchString){
+        // Adds the searchString to the collectionArray if the searchString does not already exist
+        // in the collectionArray.
+
+        if (!collectionArray.includes(searchString)){collectionArray.push(searchString);}
+    }
+
+
+
+    function aggregateToDictionaryValues(key, value, dictionary) {
+        // Aggregates values to dictionary keys. If a key does not exist, it is created.
+        // If it exists, it's value is aggregated.
+
+        if (!dictionary[key]){
+            dictionary[key] = value;
+        }
+        else{
+            dictionary[key] = dictionary[key] + value;
+        }
+    }
+
+
+    /** addClassHorizontal
+     * @param {string} newClassName
+     * @param {number} noOfUnitsInCategory
+     * @param {number} offset - The number of preceding units.
+     * @param d3Selection
+     * @param d3Selection
+     */
+    function addClassHorizontal(d3Selection, newClassName, noOfUnitsInCategory, offset = 0) {
+
+        d3Selection.attr('class', function (d, i) {
+
+            // PROCESS EXISTING CLASSES -----------------------------------------
+            // Query for the current class
+            let currentClass = d3.select(this).attr('class');
+
+            // // If there is no current class, let currentClass be empty string
+            if (currentClass === null){
+                currentClass = '';  // empty string
+            }
+            // // If there is a current class, add space at the end of its name
+            // else{
+            //     currentClass = currentClass + ' '  // add space to class name(s)
+            // }
+
+            // ADD CLASS -------------------------------------------------------
+            // If at correct position, add new class name
+            if (i >= offset && i < offset + noOfUnitsInCategory){
+
+                // Append new class
+                // return currentClass +  newClassName;
+                return newClassName;
+            }
+            else{
+                // If at the position of the previous class, return the current class without change
+                return currentClass
+            }
+
+        });
+
+    }
+
+
+
+</script>
+
+
+
+<!-- Generator: Adobe Illustrator 21.1.0, SVG Export Plug-In  -->
+<!--<svg-->
+	 <!--x="0px" y="0px" width="500px" height="600.3px" viewBox="0 0 2045.7 1767.3"-->
+	 <!--style="enable-background:new 0 0 2045.7 1767.3;" xml:space="preserve">-->
+<!--<style type="text/css">-->
+	<!--.st0{fill:#F2F2F2;}-->
+    <!--.st1{fill:#B3B3B3;}-->
+<!--</style>-->
+<!--<defs>-->
+<!--</defs>-->
+<!--<g>-->
+	<!--<path class="st0" d="M25.5,1766.8c-13.8,0-25-11.1-25-24.7V25.2c0-13.6,11.2-24.7,25-24.7h1994.6c13.8,0,25,11.1,25,24.7v1557.9-->
+		<!--c0,13.6-11.2,24.7-25,24.7h-1495c-14.4,0-26,11.5-26,25.7v108.5c0,13.6-11.2,24.7-25,24.7H25.5z"/>-->
+	<!--<g>-->
+		<!--<path class="st1" d="M2020.1,1c13.5,0,24.5,10.9,24.5,24.2v1557.9c0,13.4-11,24.2-24.5,24.2H525.1c-14.6,0-26.5,11.8-26.5,26.2-->
+			<!--v108.5c0,13.4-11,24.2-24.5,24.2H25.5c-13.5,0-24.5-10.9-24.5-24.2v-133.7v-82V25.2C1,11.9,12,1,25.5,1H2020.1 M2020.1,0H25.5-->
+			<!--C11.4,0,0,11.3,0,25.2v1501.1v82v133.7c0,13.9,11.4,25.2,25.5,25.2H474c14.1,0,25.5-11.3,25.5-25.2v-108.5-->
+			<!--c0-13.9,11.4-25.2,25.5-25.2h1495.1c14.1,0,25.5-11.3,25.5-25.2V25.2C2045.7,11.3,2034.2,0,2020.1,0L2020.1,0z"/>-->
+	<!--</g>-->
+<!--</g>-->
+<!--</svg>-->
+
+
+
+</body>
+</html>
+
+
+
+

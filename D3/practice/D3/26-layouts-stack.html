@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stacks layout</title>
+    <style>
+    </style>
+    <script type="text/javascript" src="d3.js"></script>
+</head>
+<body>
+  <script>
+
+      // Visualization parameters
+      const canvasWidth = 500,
+            canvasHeight = 300
+
+
+      const dataset = [
+          { apples: 5, oranges: 10, grapes: 22 },
+          { apples: 4, oranges: 12, grapes: 28 },
+          { apples: 2, oranges: 19, grapes: 32 },
+          { apples: 7, oranges: 23, grapes: 35 },
+          { apples: 23, oranges: 17, grapes: 43 }
+      ]
+
+      // Set up stack constructor
+      let stack = d3.stack()
+                .keys(['apples', 'oranges', 'grapes'])  // this order will be preserved in the chart
+                .order(d3.stackOrderDescending)         // override order of keys in the previous line
+
+      // Convert dataset to stacks data
+      // (i.e., Data structure in the format of [baselineValue, toplineValue]):
+      // apples:  [0,  5],            [0,  4],           [0,  2],  [0, 7],   [0, 23]
+      // oranges: [5,  5+10    =15],  [4,  4+12    =16], [2,  21], [7, 30],  [23, 40]
+      // grapes:  [15, 5+10+22 =37],  [16, 4+12+28 =44], [21, 53], [30, 65], [40, 83])
+      let seriesData = stack(dataset)
+
+
+      // Set up scales
+      let xScale = d3.scaleBand()
+                 .domain(d3.range(dataset.length))
+                 .rangeRound([0, canvasWidth])
+                 .paddingInner(0.05)
+
+
+      // yMax = 0
+      // flattenedCoordinates = []
+      // seriesData.forEach(
+      //     (series) => series.forEach(
+      //         (beginEndYCoordinates) => beginEndYCoordinates.forEach(
+      //             (yCoodinate) => flattenedCoordinates.push(yCoodinate)
+      //             )
+      //         )
+      //     )
+      // yMin = d3.min(flattenedCoordinates)
+      // yMax = d3.max(flattenedCoordinates)
+
+      // yMin = d3.min(dataset, d => d['apples'] + d['oranges'] + d['grapes'])  // the min value a column can have
+      // yMax = d3.max(dataset, d => d['apples'] + d['oranges'] + d['grapes'])  // the max value a column can have
+
+      // yScale = d3.scaleLinear()
+      //            .domain( [0, yMax] )
+      //            .range( [0, canvasHeight] )
+
+
+      let yScale = d3.scaleLinear()
+        .domain([0, d3.max(dataset, d => d.apples + d.oranges + d.grapes)])
+        .rangeRound([canvasHeight, 0]);
+
+      // Color scale
+      let colorScale = d3.scaleOrdinal(d3.schemeCategory10)
+
+      // Create SVG canvas
+      let svg = d3.select('body')
+              .append('svg')
+                .attr('width', canvasWidth)
+                .attr('height', canvasHeight)
+
+      // Create groups (each layer of stacks gets a group: apples, oranges, grapes)
+      let groups = svg.selectAll('g')
+                  .data(seriesData)  // series data consists of 3 arrays: apples, oranges, grapes
+                  .enter()
+                  .append('g')  // append a group for each of the 3 arrays
+                  .attr('fill', (d,i) => colorScale(i))
+
+
+      // Draw a rectangle for each data value
+      groups.selectAll('rect')
+            .data(d => d)  // iterate within the 3 arrays and bind each apple, orange, and grape value
+            .enter()
+            .append('rect')
+              .attr('x', (d,i) => xScale(i) )
+              .attr('y', (d,i) => yScale(d[1]))  // normally, this would have been d[0], but because the yScale reverses
+              // the coordinates, the point where drawing a square starts is the ending point of the square.
+              .attr('height', (d) => yScale(d[0]) - yScale(d[1]))  // normally, it would have been d[1] - d[0] (i.e.,...
+              // ... endPoint-BeginPoint, or [25-0 = 25] ), but in because the coordinates are reversed by the yScale,
+              // smaller values become larger and larger values become smaller (e.g., 100(was 0) - 75(was 25) = 25). This
+              // effectivaly switches beginPoint and endingPoint
+              .attr('width', xScale.bandwidth())
+
+
+    // A shorter console.log function
+    function cLog (x) {
+        console.log(x)
+    }
+
+  </script>
+</body>
+</html>

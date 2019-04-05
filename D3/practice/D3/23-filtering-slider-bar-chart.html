@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+
+        <meta charset="UTF-8">
+        <title>Slider filtering</title>
+
+        <script type="text/javascript" src="d3.js"></script>
+
+        <style>
+
+            p {
+                display: inline-block;
+            }
+
+            .slider {
+                width: 30px;
+                height: 250px;
+
+                -webkit-appearance: slider-vertical;
+                writing-mode: bt-lr;
+            }
+
+        </style>
+
+    </head>
+
+    <body>
+        <p>
+            <input type="range" class="slider" id="threshold-slider" step="1" aria-orientation="vertical">
+        </p>
+
+        <script type="text/javascript">
+
+            let barsBelowThreshold, barsAboveThreshold
+
+            // DATA ////////////////////////////////////////////////
+
+            var dataset = [ 5, 10, 13, 19, 21, 25, 22, 18, 15, 13,
+                11, 12, 15, 20, 18, 17, 16, 18, 23, 25 ]
+
+
+            // PARAMS ////////////////////////////////////////////////
+
+            var canvasHeight = 250
+            var canvasWidth =  600
+
+
+            // SCALES ////////////////////////////////////////////////
+
+            var xScale = d3.scaleBand()
+                .domain(d3.range(dataset.length))  // creates [1, 2, 3, 4 ... 24, 25]
+                .rangeRound([0, canvasWidth])
+                .paddingInner(0.05)
+
+
+            var yScale = d3.scaleLinear()
+                .domain([0, d3.max(dataset)])
+                .rangeRound([0, canvasHeight])
+
+
+
+            // CANVAS  //////////////////////////////////////////////
+
+            var svg = d3.select('body')
+                .append('svg')
+                .attr('width', canvasWidth)
+                .attr('height', canvasHeight)
+
+
+
+            // BARS  //////////////////////////////////////////////
+
+            var bars = svg
+                .selectAll('rect')
+                .data(dataset)
+                .enter()
+                .append('rect')
+                .attr('x', function (d, i) {
+                    return xScale(i)  // return the position of each element in the xScale
+                })
+                .attr('y', function(d){
+                    return canvasHeight-yScale(d)
+                })
+                .attr('width', xScale.bandwidth())  // return the bar width
+                .attr('height', function (d) {
+                    return yScale(d)
+                })
+                .attr('fill', function (d) {
+                    return 'rgb(0,0,' + Math.round(d*10) + ')'
+                })
+
+            // LABELS //////////////////////////////////////////////
+
+            var labels = svg
+                .selectAll('text')
+                .data(dataset)
+                .enter()
+                .append('text')
+                .text(function (d) {
+                    return d
+                })
+                .attr('x', function (d, i) {
+                    return xScale(i) + xScale.bandwidth() / 2
+                })
+                .attr('y', function (d) {
+                    return canvasHeight - yScale(d) + 14
+                })
+                .attr('font-family', 'sans-serif')
+                .attr('font-size', '11px')
+                .attr('fill', 'white')
+                .attr('text-anchor', 'middle')
+
+
+
+            // SLIDER INTERACTION //////////////////////////////////////////////
+
+            // Set minimum and maximum values for slider
+            d3.select('#threshold-slider')
+                .attr('max', d3.max(dataset, (d) => d))
+                .attr('min', d3.min(dataset, (d) => d) - 1)
+
+            // Change color of bars if they are under slider value
+            d3.select('#threshold-slider')
+                .on('change', function () {
+
+                    // Get current slider value
+                    let threshold = d3.select(this).node().value
+
+                    // Select bars below slider value
+                    barsBelowThreshold = d3.selectAll('rect')
+                                             .filter( d => d < threshold)
+
+                    // Select bars above slider value
+                    barsAboveThreshold = d3.selectAll('rect')
+                                             .filter( d => d > threshold)
+
+                    // Color bars differentially
+                    barsBelowThreshold.style('fill', 'green')
+                    barsAboveThreshold.style('fill', 'red')
+                })
+
+        </script>
+
+    </body>
+
+</html>
