@@ -1,0 +1,300 @@
+Sex	Do.you.believe.in.God	Pick.Random.Number	Height	Hand	Dates	FB.Friends	Weight	Drinks	Varsity	Songs	Diet	Politics.9Cat	Politics.numeric	Politics.3Cat
+Female	Not sure	6	71	Predominantly Left Handed	1	314	138	0	Yes	1564	Omnivore	2. Very Liberal	2	Liberal
+Male	No	2	66	Predominantly Right Handed	2	1228	130	0	No	97	Vegetarian	2. Very Liberal	2	Liberal
+Male	Yes	9	73	Predominantly Right Handed	1	1189	183	0	Yes	1397	Carnivore	7. Moderatly Conservative	7	Conservative
+Female	No	6	67	Predominantly Right Handed	1	0	125	0	No	2241	Omnivore	3. Moderately Liberal	3	Liberal
+Male	Yes	7	71	Predominantly Right Handed	0	709	245	0	No	1299	Omnivore	5. Independent/Middle of Road	5	Moderate
+Male	Not sure	9	75	Predominantly Right Handed	0	1072	161	0	Yes	1718	Vegetarian	3. Moderately Liberal	3	Liberal
+Female	Not sure	7	64	Predominantly Right Handed	1	483	115	0	No	2848	Omnivore	3. Moderately Liberal	3	Liberal
+Female	Not sure	2	60	Predominantly Right Handed	2	600	120	4	Yes	500	Carnivore	3. Moderately Liberal	3	Liberal
+Male	Yes	8	72	Predominantly Right Handed	1	659	174	2	Yes	455	Omnivore	6. Liberal Republican	6	Moderate
+Male	Yes	4	71	Predominantly Right Handed	NA	1647	168	0	No	0	Omnivore	8. Extremely Conservative	8	Conservative
+Male	Not sure	4	67	Predominantly Right Handed	1	696	137	0	No	4596	Omnivore	3. Moderately Liberal	3	Liberal
+Female	No	9	67	Predominantly Right Handed	0	154	170	0	No	1345	Omnivore	3. Moderately Liberal	3	Liberal
+Female	No	3	70	Predominantly Right Handed	1	512	186	0	No	484	Omnivore	2. Very Liberal	2	Liberal
+Male	Yes	5	70	Predominantly Right Handed	0	1225	180	0	No	538	Carnivore	6. Liberal Republican	6	Moderate
+Male	Not sure	8	68	Predominantly Right Handed	0	757	147	3	Yes	653	Omnivore	3. Moderately Liberal	3	Liberal
+Female	Yes	9	69	Predominantly Right Handed	0	1000	130	0	Yes	1200	Carnivore	7. Moderatly Conservative	7	Conservative
+Male	Not sure	9	68	Predominantly Right Handed	0	171	130	0	No	887	Omnivore	2. Very Liberal	2	Liberal
+Male	No	7	68	Predominantly Right Handed	1	900	162	0	Yes	2800	Omnivore	3. Moderately Liberal	3	Liberal
+Female	Not sure	3	64	Predominantly Right Handed	2	599	125	0	No	1588	Omnivore	5. Independent/Middle of Road	5	Moderate
+Male	No	7	71	Predominantly Right Handed	1	200	185	6	No	4000	Omnivore	3. Moderately Liberal	3	Liberal
+Male	No	8	74	Predominantly Right Handed	0	797	185	0	Yes	2000	Carnivore	3. Moderately Liberal	3	Liberal
+Male	Yes	7	72	Predominantly Right Handed	0	786	184	6	Yes	2500	Carnivore	7. Moderatly Conservative	7	Conservative
+Female	Yes	8	68	Predominantly Right Handed	0	337	138	2	Yes	1001	Omnivore	6. Liberal Republican	6	Moderate
+Male	Not sure	6	71	Predominantly Right Handed	1	700	160	0	No	238	Omnivore	5. Independent/Middle of Road	5	Moderate
+Male	No	9	71.5	Predominantly Right Handed	1	285	215	0	No	25	Omnivore	3. Moderately Liberal	3	Liberal
+Male	Yes	7	68.5	Predominantly Right Handed	0	691	145	0	No	593	Omnivore	5. Independent/Middle of Road	5	Moderate
+Female	Not sure	8	64	Predominantly Right Handed	2	0	120	0	Yes	141	Omnivore	6. Liberal Republican	6	Moderate
+Female	Not sure	4	65	Predominantly Right Handed	1	860	130	0	No	10000	Omnivore	3. Moderately Liberal	3	Liberal
+Male	Not sure	5	67	Predominantly Left Handed	1	708	140	2	No	1508	Omnivore	5. Independent/Middle of Road	5	Moderate
+Male	No	6	69	Predominantly Right Handed	0	557	150	0	Yes	1300	Carnivore	2. Very Liberal	2	Liberal
+Male	No	9	75	Predominantly Right Handed	1	1123	188	2	Yes	900	Omnivore	4. Conservative Democrat	4	Moderate
+Male	Not sure	3	76	Predominantly Right Handed	0	1150	210	0	No	1543	Vegetarian	10. Other (please specify)	10	NA
+Male	Yes	4	69	Predominantly Right Handed	1	899	177	0	Yes	320	Omnivore	6. Liberal Republican	6	Moderate
+Male	Not sure	2	68	Predominantly Right Handed	0	600	170	0	No	100	Omnivore	5. Independent/Middle of Road	5	Moderate
+Male	No	4	72	Predominantly Left Handed	0	616	180	0	Yes	0	Omnivore	3. Moderately Liberal	3	Liberal
+Male	No	8	70	Predominantly Right Handed	3	800	150	4	Yes	7000	Omnivore	3. Moderately Liberal	3	Liberal
+Male	Don't want to answer	2	71	Predominantly Right Handed	0	390	132	1	Yes	287	Omnivore	7. Moderatly Conservative	7	Conservative
+Female	Yes	7	65	Predominantly Right Handed	0	773	135	0	No	270	Omnivore	4. Conservative Democrat	4	Moderate
+Female	Yes	8	59	Predominantly Right Handed	1	245	118	0	No	302	Omnivore	3. Moderately Liberal	3	Liberal
+Male	Yes	7	73	Predominantly Right Handed	0	1745	215	6	Yes	1000	Omnivore	7. Moderatly Conservative	7	Conservative
+Male	No	8	68	Predominantly Right Handed	0	1095	129	6	Yes	621	Omnivore	3. Moderately Liberal	3	Liberal
+Male	Yes	7	74	Predominantly Right Handed	1	593	185	2	No	3076	Omnivore	7. Moderatly Conservative	7	Conservative
+Female	Not sure	3	64	Predominantly Right Handed	0	1454	125	0	Yes	332	Omnivore	5. Independent/Middle of Road	5	Moderate
+Male	No	2	71	Predominantly Right Handed	1	575	148	2	Yes	0	Omnivore	4. Conservative Democrat	4	Moderate
+Male	Not sure	9	69	Predominantly Right Handed	1	1302	175	0	Yes	1312	Omnivore	2. Very Liberal	2	Liberal
+Male	No	7	68	Predominantly Right Handed	1	700	150	4	No	1500	Carnivore	3. Moderately Liberal	3	Liberal
+Male	Yes	7	69	Predominantly Right Handed	0	806	164	0	Yes	205	Vegetarian	4. Conservative Democrat	4	Moderate
+Male	No	3	70	Predominantly Right Handed	2	772	145	0	No	3972	Omnivore	2. Very Liberal	2	Liberal
+Female	No	8	64	Predominantly Right Handed	1	815	130	0	No	168	Vegetarian	5. Independent/Middle of Road	5	Moderate
+Female	No	8	63	Predominantly Right Handed	0	781	130	0	No	486	Omnivore	3. Moderately Liberal	3	Liberal
+Female	Yes	9	68	Predominantly Right Handed	0	450	150	4	Yes	700	Omnivore	5. Independent/Middle of Road	5	Moderate
+Female	Yes	5	68	Predominantly Right Handed	0	954	150	2	No	1739	Omnivore	6. Liberal Republican	6	Moderate
+Male	Not sure	4	75	Predominantly Right Handed	1	740	204	4	Yes	4500	Omnivore	3. Moderately Liberal	3	Liberal
+Female	No	5	69	Predominantly Right Handed	0	962	150	0	No	1000	Omnivore	2. Very Liberal	2	Liberal
+Male	No	3	71	Predominantly Right Handed	0	1000	170	0	No	800	Omnivore	3. Moderately Liberal	3	Liberal
+Male	Not sure	2	72	Predominantly Right Handed	1	1007	160	5	No	1549	Omnivore	3. Moderately Liberal	3	Liberal
+Female	No	10	64	Predominantly Right Handed	2	1156	140	0	No	1975	Omnivore	6. Liberal Republican	6	Moderate
+Female	Yes	5	65	Predominantly Right Handed	1	837	110	0	No	129	Carnivore	3. Moderately Liberal	3	Liberal
+Male	No	6	70	Predominantly Right Handed	1	435	170	0	Yes	2500	Omnivore	3. Moderately Liberal	3	Liberal
+Male	No	3	73	Predominantly Right Handed	1	444	160	4	No	6646	Omnivore	3. Moderately Liberal	3	Liberal
+Female	Not sure	2	64	Predominantly Right Handed	1	507	120	4	No	7217	Vegetarian	3. Moderately Liberal	3	Liberal
+Male	Not sure	8	74	Predominantly Right Handed	1	887	170	0	Yes	1230	Omnivore	4. Conservative Democrat	4	Moderate
+Male	No	7	68	Predominantly Right Handed	0	703	125	0	Yes	757	Omnivore	3. Moderately Liberal	3	Liberal
+Male	Yes	4	71	Predominantly Right Handed	0	974	170	0	Yes	614	Omnivore	7. Moderatly Conservative	7	Conservative
+Female	Not sure	5	64	Predominantly Right Handed	1	989	100	0	No	1854	Omnivore	3. Moderately Liberal	3	Liberal
+Male	Yes	6	72	Predominantly Left Handed	0	700	170	0	No	3000	Omnivore	7. Moderatly Conservative	7	Conservative
+Female	Not sure	8	64.5	Predominantly Right Handed	NA	238	146	0	No	1942	Omnivore	3. Moderately Liberal	3	Liberal
+Male	Yes	8	71	Predominantly Right Handed	1	1366	163	6	Yes	257	Carnivore	6. Liberal Republican	6	Moderate
+Male	No	6	73	Predominantly Right Handed	0	600	155	0	No	0	Omnivore	5. Independent/Middle of Road	5	Moderate
+Male	No	10	71	Predominantly Right Handed	0	320	155	0	No	0	Omnivore	3. Moderately Liberal	3	Liberal
+Female	Yes	7	63	Predominantly Right Handed	1	898	124	0	No	2000	Omnivore	3. Moderately Liberal	3	Liberal
+Female	Not sure	5	65	Predominantly Right Handed	2	995	130	2	No	0	Vegetarian	3. Moderately Liberal	3	Liberal
+Female	No	7	67	Predominantly Right Handed	2	778	145	0	Yes	114	Vegetarian	5. Independent/Middle of Road	5	Moderate
+Male	Yes	8	71	Predominantly Right Handed	2	730	180	0	Yes	3425	Carnivore	7. Moderatly Conservative	7	Conservative
+Male	No	2	62	Predominantly Right Handed	1	406	160	0	Yes	561	Carnivore	9. Libertarian/Extreme Right	9	Conservative
+Male	Yes	7	71	Predominantly Right Handed	0	2	175	0	No	0	Omnivore	4. Conservative Democrat	4	Moderate
+Female	Yes	7	66	Predominantly Right Handed	0	523	120	0	Yes	392	Omnivore	3. Moderately Liberal	3	Liberal
+Male	No	8	76	Predominantly Right Handed	1	300	250	5	Yes	100	Carnivore	6. Liberal Republican	6	Moderate
+Male	No	7	73	Predominantly Right Handed	0	130	229	5	Yes	15000	Carnivore	1. Communist/Socialist	1	Liberal
+Male	No	3	71	Predominantly Right Handed	0	524	170	0	No	1956	Omnivore	3. Moderately Liberal	3	Liberal
+Male	No	5	67	Predominantly Right Handed	1	900	150	0	No	516	Omnivore	2. Very Liberal	2	Liberal
+Male	Not sure	4	68	Nearly perfectly Ambidexterous	1	1318	145	6	No	2612	Carnivore	3. Moderately Liberal	3	Liberal
+Female	Yes	4	66	Predominantly Right Handed	0	402	105	0	No	0	Omnivore	5. Independent/Middle of Road	5	Moderate
+Female	Don't want to answer	3	64	Predominantly Right Handed	1	700	142	5	No	2000	Omnivore	3. Moderately Liberal	3	Liberal
+Male	Yes	7	69	Predominantly Right Handed	1	0	149	0	No	0	Omnivore	3. Moderately Liberal	3	Liberal
+Male	Not sure	7	73	Predominantly Right Handed	2	228	182	0	Yes	1250	Omnivore	4. Conservative Democrat	4	Moderate
+Male	Yes	7	73	Predominantly Right Handed	1	678	175	0	Yes	500	Omnivore	9. Libertarian/Extreme Right	9	Conservative
+Male	Not sure	8	75	Predominantly Left Handed	2	1310	180	2	Yes	2400	Omnivore	6. Liberal Republican	6	Moderate
+Male	Not sure	4	72	Predominantly Right Handed	2	988	179	0	Yes	86	Omnivore	4. Conservative Democrat	4	Moderate
+Female	No	1	67	Predominantly Right Handed	1	1259	135	0	Yes	1111	Omnivore	3. Moderately Liberal	3	Liberal
+Male	Yes	9	70	Predominantly Left Handed	0	1000	168	6	Yes	500	Omnivore	2. Very Liberal	2	Liberal
+Male	No	2	76	Predominantly Right Handed	0	650	170	0	No	300	Omnivore	2. Very Liberal	2	Liberal
+Female	Yes	8	64	Predominantly Right Handed	0	1261	150	0	Yes	154	Omnivore	7. Moderatly Conservative	7	Conservative
+Male	Don't want to answer	3	75	Predominantly Right Handed	0	643	175	0	No	2500	Omnivore	3. Moderately Liberal	3	Liberal
+Male	Not sure	1	74	Predominantly Right Handed	1	284	190	2	No	2500	Omnivore	3. Moderately Liberal	3	Liberal
+Male	No	4	71	Predominantly Right Handed	2	796	155	1	No	500	Omnivore	2. Very Liberal	2	Liberal
+Female	Not sure	7	64	Predominantly Right Handed	0	900	130	0	No	300	Vegetarian	5. Independent/Middle of Road	5	Moderate
+Female	Yes	3	67.5	Predominantly Left Handed	0	700	125	0	No	832	Omnivore	6. Liberal Republican	6	Moderate
+Male	No	7	70	Predominantly Right Handed	1	430	140	0	No	0	Omnivore	2. Very Liberal	2	Liberal
+Male	Not sure	7	72	Predominantly Right Handed	0	415	173	6	Yes	32	Carnivore	4. Conservative Democrat	4	Moderate
+Female	Yes	4	63	Predominantly Right Handed	0	833	130	0	No	50	Carnivore		NA	NA
+Male	Not sure	3	69	Predominantly Right Handed	1	400	200	6	Yes	NA	Carnivore	6. Liberal Republican	6	Moderate
+Male	Yes	7	71	Predominantly Right Handed	0	453	167	0	Yes	300	Omnivore	4. Conservative Democrat	4	Moderate
+Female	Not sure	4	64	Predominantly Right Handed	0	450	116	1	No	498	Omnivore	4. Conservative Democrat	4	Moderate
+Female	Yes	3	65	Predominantly Right Handed	1	1456	138	0	Yes	320	Omnivore	4. Conservative Democrat	4	Moderate
+Female	Yes	1	65	Predominantly Right Handed	0	904	142	2	No	2498	Omnivore	5. Independent/Middle of Road	5	Moderate
+Female	Not sure	4	72	Predominantly Right Handed	0	771	180	0	Yes	536	Omnivore	2. Very Liberal	2	Liberal
+Female	Not sure	9	63	Predominantly Right Handed	0	607	112	1	No	0	Omnivore	3. Moderately Liberal	3	Liberal
+Male	Not sure	8	71	Predominantly Right Handed	0	1700	145	3	No	173	Omnivore	3. Moderately Liberal	3	Liberal
+Male	Not sure	8	71	Predominantly Right Handed	1	1500	225	0	No	600	Omnivore	4. Conservative Democrat	4	Moderate
+Female	Not sure	5	58	Predominantly Left Handed	1	461	95	6	No	300	Carnivore	4. Conservative Democrat	4	Moderate
+Female	Not sure	8	65	Predominantly Right Handed	0	333	137	3	Yes	1872	Carnivore	5. Independent/Middle of Road	5	Moderate
+Female	Yes	2	67	Predominantly Right Handed	1	310	160	2	Yes	402	Omnivore	6. Liberal Republican	6	Moderate
+Female	No	2	63	Predominantly Right Handed	0	845	130	4	No	165	Omnivore	3. Moderately Liberal	3	Liberal
+Male	Not sure	3	71	Predominantly Right Handed	0	650	130	0	No	21	Vegetarian	3. Moderately Liberal	3	Liberal
+Male	Not sure	2	71	Predominantly Right Handed	1	730	145	0	No	13	Omnivore	3. Moderately Liberal	3	Liberal
+Female	Not sure	7	61.5	Predominantly Right Handed	1	921	107	5	Yes	947	Omnivore	3. Moderately Liberal	3	Liberal
+Female	Not sure	8	65	Predominantly Right Handed	1	591	125	2	No	1045	Omnivore	5. Independent/Middle of Road	5	Moderate
+Female	Yes	7	66	Predominantly Right Handed	1	1200	140	5	Yes	800	Omnivore	3. Moderately Liberal	3	Liberal
+Female	Not sure	3	68	Predominantly Right Handed	1	821	130	2	No	700	Omnivore	3. Moderately Liberal	3	Liberal
+Female	Not sure	7	62	Predominantly Right Handed	1	1142	112	3	No	1011	Omnivore	2. Very Liberal	2	Liberal
+Female	Yes	4	65	Predominantly Right Handed	0	980	125	0	No	528	Omnivore	4. Conservative Democrat	4	Moderate
+Male	Not sure	6	71	Predominantly Right Handed	0	486	175	0	Yes	120	Omnivore	6. Liberal Republican	6	Moderate
+Male	Yes	7	71	Predominantly Right Handed	0	900	143	6	No	500	Carnivore	6. Liberal Republican	6	Moderate
+Male	No	5	72	Predominantly Right Handed	1	500	185	6	No	1650	Omnivore	2. Very Liberal	2	Liberal
+Female	Not sure	8	62	Predominantly Right Handed	1	664	118	0	No	50	Vegetarian	2. Very Liberal	2	Liberal
+Male	Not sure	5	74.5	Predominantly Right Handed	0	687	230	0	No	358	Omnivore	5. Independent/Middle of Road	5	Moderate
+Male	No	8	80	Predominantly Right Handed	1	773	165	0	Yes	1500	Omnivore	7. Moderatly Conservative	7	Conservative
+Male	No	1	72	Predominantly Right Handed	0	1045	168	0	Yes	982	Omnivore	3. Moderately Liberal	3	Liberal
+Male	Yes	8	72	Predominantly Right Handed	0	925	190	0	Yes	483	Omnivore	6. Liberal Republican	6	Moderate
+Male	Not sure	4	71	Predominantly Right Handed	0	999	144	1	Yes	0	Omnivore	6. Liberal Republican	6	Moderate
+Male	No	5	72	Predominantly Right Handed	0	707	172	0	No	NA	Omnivore	2. Very Liberal	2	Liberal
+Female	No	6	64	Predominantly Right Handed	0	565	140	0	No	356	NA	2. Very Liberal	2	Liberal
+Female	No	7	64	Predominantly Right Handed	3	952	123	0	No	100	Vegetarian	3. Moderately Liberal	3	Liberal
+Male	Not sure	9	71	Predominantly Left Handed	0	301	151	0	No	0	Omnivore	3. Moderately Liberal	3	Liberal
+Female	Yes	9	69	Predominantly Left Handed	0	547	155	0	No	300	Omnivore	4. Conservative Democrat	4	Moderate
+Male	Not sure	10	75	Predominantly Right Handed	1	940	176	0	Yes	3663	NA	5. Independent/Middle of Road	5	Moderate
+Male	Not sure	8	68	Predominantly Left Handed	0	696	185	0	No	250	Omnivore	4. Conservative Democrat	4	Moderate
+Female	Yes	2	64.8	Predominantly Right Handed	0	1426	115	0	No	153	Omnivore	3. Moderately Liberal	3	Liberal
+Male	Yes	7	64.5	Predominantly Left Handed	1	1131	123	0	No	0	Carnivore	5. Independent/Middle of Road	5	Moderate
+Male	Not sure	7	73	Predominantly Right Handed	1	NA	200	0	No	2000	Omnivore	7. Moderatly Conservative	7	Conservative
+Female	Yes	5	64	Predominantly Right Handed	1	244	122	0	No	944	Vegetarian	5. Independent/Middle of Road	5	Moderate
+Female	Yes	7	69	Predominantly Right Handed	1	1159	175	0	Yes	NA	Omnivore	9. Libertarian/Extreme Right	9	Conservative
+Female	Don't want to answer	8	62	Predominantly Right Handed	2	971	140	3	No	3396	Omnivore	2. Very Liberal	2	Liberal
+Male	No	1	68	Predominantly Right Handed	1	0	148	0	No	0	Omnivore	3. Moderately Liberal	3	Liberal
+Male	Yes	5	67	Predominantly Right Handed	0	592	154	0	No	69	Omnivore	6. Liberal Republican	6	Moderate
+Female	Not sure	8	64	Predominantly Right Handed	0	253	135	0	No	212	Omnivore	3. Moderately Liberal	3	Liberal
+Male	Not sure	6	69	Predominantly Right Handed	1	961	154	6	Yes	223	Omnivore	2. Very Liberal	2	Liberal
+Male	Not sure	7	75	Predominantly Right Handed	2	NA	215	0	Yes	1600	Carnivore	6. Liberal Republican	6	Moderate
+Male	Not sure	3	72	Predominantly Right Handed	0	165	210	0	No	0	Omnivore	7. Moderatly Conservative	7	Conservative
+Male	Yes	4	69	Predominantly Right Handed	0	868	195	6	No	NA	Omnivore	5. Independent/Middle of Road	5	Moderate
+Male	Not sure	1	72	Predominantly Left Handed	1	1032	132	0	Yes	693	Omnivore	2. Very Liberal	2	Liberal
+Male	No	7	76	Predominantly Right Handed	0	705	215	0	Yes	30	Omnivore	4. Conservative Democrat	4	Moderate
+Female	No	7	65	Predominantly Right Handed	0	1351	150	3	No	10913	Omnivore	3. Moderately Liberal	3	Liberal
+Male	No	5	68	Predominantly Right Handed	1	632	140	0	No	1137	Omnivore	6. Liberal Republican	6	Moderate
+Male	Not sure	1	66	Predominantly Right Handed	1	0	133	0	Yes	1000	Carnivore	9. Libertarian/Extreme Right	9	Conservative
+Female	Yes	6	63.5	Predominantly Right Handed	1	881	144	0	No	350	Vegetarian	3. Moderately Liberal	3	Liberal
+Male	Not sure	1	71	Predominantly Right Handed	0	1103	150	5	No	2756	Omnivore	3. Moderately Liberal	3	Liberal
+Male	Yes	2	69	Predominantly Right Handed	1	1400	165	0	No	0	Omnivore	4. Conservative Democrat	4	Moderate
+Male	Yes	7	72	Predominantly Right Handed	1	342	154	0	Yes	244	Omnivore	3. Moderately Liberal	3	Liberal
+Male	Yes	7	66	Predominantly Right Handed	0	942	155	4	No	470	Omnivore	3. Moderately Liberal	3	Liberal
+Male	Yes	9	69	Predominantly Right Handed	2	935	168	0	No	1189	Omnivore	6. Liberal Republican	6	Moderate
+Male	No	6	70.5	Predominantly Right Handed	0	499	205	0	No	13980	Carnivore	5. Independent/Middle of Road	5	Moderate
+Male	Not sure	6	72	Predominantly Right Handed	1	1011	185	2	No	1436	Omnivore	3. Moderately Liberal	3	Liberal
+Female	No	7	64	Predominantly Right Handed	2	926	115	5	No	230	Omnivore	5. Independent/Middle of Road	5	Moderate
+Male	Not sure	1	71	Predominantly Right Handed	1	673	150	0	No	0	Omnivore	4. Conservative Democrat	4	Moderate
+Male	Yes	3	74	Predominantly Right Handed	0	769	165	0	No	0	Omnivore	3. Moderately Liberal	3	Liberal
+Female	Yes	2	65	Predominantly Right Handed	0	759	112	0	No	395	Omnivore	4. Conservative Democrat	4	Moderate
+Female	No	7	69	Predominantly Right Handed	0	476	155	0	Yes	1349	NA	2. Very Liberal	2	Liberal
+Male	Yes	5	74	Predominantly Right Handed	1	730	140	0	Yes	492	Omnivore	6. Liberal Republican	6	Moderate
+Male	No	7	72	Predominantly Right Handed	1	1252	184	0	Yes	1516	Omnivore	3. Moderately Liberal	3	Liberal
+Male	No	6	72	Predominantly Right Handed	2	1200	178	2	Yes	0	Omnivore	6. Liberal Republican	6	Moderate
+Male	Yes	9	70	Predominantly Right Handed	1	600	140	2	No	60	Omnivore	4. Conservative Democrat	4	Moderate
+Female	Not sure	6	63.5	Predominantly Right Handed	1	684	135	0	Yes	563	Omnivore	3. Moderately Liberal	3	Liberal
+Male	Not sure	4	74	Predominantly Right Handed	0	1222	215	0	No	6422	Omnivore	3. Moderately Liberal	3	Liberal
+Male	No	3	68	Predominantly Right Handed	0	103	135	0	No	450	Omnivore	5. Independent/Middle of Road	5	Moderate
+Male	Yes	4	66	Predominantly Left Handed	0	646	145	0	Yes	263	Omnivore	6. Liberal Republican	6	Moderate
+Male	Yes	6	65	Predominantly Right Handed	0	709	150	0	No	0	Omnivore	4. Conservative Democrat	4	Moderate
+Female	No	8	59	Predominantly Left Handed	1	643	105	1	Yes	200	NA	3. Moderately Liberal	3	Liberal
+Male	No	1	69	Predominantly Right Handed	0	139	165	0	No	800	Omnivore	6. Liberal Republican	6	Moderate
+Female	Yes	7	63	Predominantly Right Handed	0	872	147	0	No	958	Omnivore	4. Conservative Democrat	4	Moderate
+Male	No	2	75	Predominantly Right Handed	1	716	134	6	No	240	Carnivore	1. Communist/Socialist	1	Liberal
+Female	No	3	65.5	Predominantly Right Handed	1	810	128	0	Yes	533	Omnivore	3. Moderately Liberal	3	Liberal
+Female	No	6	64	Predominantly Right Handed	0	773	140	1	No	401	NA	2. Very Liberal	2	Liberal
+Male	No	8	67	Predominantly Right Handed	0	1230	179	0	No	2731	Omnivore	1. Communist/Socialist	1	Liberal
+Female	Not sure	8	68	Predominantly Right Handed	0	617	127	0	No	0	Omnivore	3. Moderately Liberal	3	Liberal
+Male	No	7	67	Predominantly Right Handed	0	236	132	0	No	0	Omnivore	9. Libertarian/Extreme Right	9	Conservative
+Male	Yes	3	71	Predominantly Right Handed	1	887	168	0	Yes	4500	Carnivore	9. Libertarian/Extreme Right	9	Conservative
+Male	No	6	70	Predominantly Right Handed	2	649	140	6	No	1431	Omnivore	3. Moderately Liberal	3	Liberal
+Male	Not sure	4	75	Predominantly Right Handed	1	200	180	0	Yes	2000	Omnivore	5. Independent/Middle of Road	5	Moderate
+Female	Yes	5	66.5	Predominantly Right Handed	0	686	176	0	Yes	758	Carnivore	3. Moderately Liberal	3	Liberal
+Male	Not sure	9	74	Predominantly Right Handed	0	773	155	0	No	442	Omnivore	3. Moderately Liberal	3	Liberal
+Male	Not sure	7	71	Predominantly Right Handed	0	250	145	6	No	1200	Carnivore	5. Independent/Middle of Road	5	Moderate
+Female	Yes	4	66	Predominantly Right Handed	0	710	150	0	No	300	Omnivore	5. Independent/Middle of Road	5	Moderate
+Female	Not sure	2	66	Predominantly Right Handed	0	499	130	0	No	676	Omnivore	3. Moderately Liberal	3	Liberal
+Female	No	8	70	Predominantly Right Handed	1	1469	137	0	No	2000	Omnivore	2. Very Liberal	2	Liberal
+Male	Not sure	8	71	Predominantly Right Handed	1	788	147	0	Yes	124	Carnivore	4. Conservative Democrat	4	Moderate
+Female	Yes	5	66	Predominantly Right Handed	1	598	135	0	No	255	Carnivore	5. Independent/Middle of Road	5	Moderate
+Male	Yes	1	74	Predominantly Right Handed	1	NA	215	0	No	440	Omnivore	5. Independent/Middle of Road	5	Moderate
+Male	No	3	67	Predominantly Right Handed	1	448	160	0	No	512	Omnivore	4. Conservative Democrat	4	Moderate
+Male	Yes	6	71	Predominantly Right Handed	0	1158	143	0	No	2600	Omnivore	3. Moderately Liberal	3	Liberal
+Female	Not sure	3	65	Predominantly Right Handed	1	875	125	0	No	490	Vegetarian	5. Independent/Middle of Road	5	Moderate
+Male	Not sure	3	75	Predominantly Left Handed	1	1286	177	6	Yes	2267	Carnivore	7. Moderatly Conservative	7	Conservative
+Female	Not sure	8	63	Predominantly Right Handed	0	229	145	0	No	498	Omnivore	3. Moderately Liberal	3	Liberal
+Male	Yes	6	70	Predominantly Right Handed	1	1265	160	0	Yes	502	Carnivore	10. Other (please specify)	10	NA
+Male	Not sure	1	70	Predominantly Right Handed	0	1000	185	6	Yes	553	Omnivore	4. Conservative Democrat	4	Moderate
+Female	No	4	65	Predominantly Right Handed	0	1000	158	0	No	100	Omnivore	2. Very Liberal	2	Liberal
+Female	No	5	65.5	Predominantly Right Handed	2	827	150	0	No	1790	Omnivore	3. Moderately Liberal	3	Liberal
+Female	Not sure	7	64	Predominantly Right Handed	2	1400	140	5	No	2500	Omnivore	4. Conservative Democrat	4	Moderate
+Female	Yes	8	63	Predominantly Right Handed	1	100	119	0	No	250	Omnivore	2. Very Liberal	2	Liberal
+Female	Not sure	9	70	Predominantly Right Handed	0	900	175	0	Yes	350	Omnivore	6. Liberal Republican	6	Moderate
+Female	No	3	68	Predominantly Right Handed	1	951	145	3	No	5257	Omnivore	1. Communist/Socialist	1	Liberal
+Male	Not sure	7	72.8	Predominantly Right Handed	0	1040	169	0	No	0	Omnivore	2. Very Liberal	2	Liberal
+Male	No	1	71	Predominantly Right Handed	2	741	165	0	No	361	Omnivore	3. Moderately Liberal	3	Liberal
+Male	Not sure	3	69	Predominantly Right Handed	1	1100	145	1	No	500	Carnivore	5. Independent/Middle of Road	5	Moderate
+Male	Don't want to answer	3	70	Predominantly Left Handed	1	500	162	6	Yes	1000	Omnivore	7. Moderatly Conservative	7	Conservative
+Female	Not sure	3	64	Predominantly Right Handed	0	880	141	2	No	0	Vegetarian	2. Very Liberal	2	Liberal
+Male	No	2	68	Predominantly Right Handed	0	955	150	2	No	0	Omnivore	4. Conservative Democrat	4	Moderate
+Female	Yes	6	63	Predominantly Right Handed	0	200	140	0	No	300	Omnivore	2. Very Liberal	2	Liberal
+Male	Yes	9	67	Predominantly Right Handed	1	676	122	0	No	34	Vegetarian	2. Very Liberal	2	Liberal
+Male	No	6	72	Predominantly Right Handed	0	500	175	0	No	0	Omnivore	3. Moderately Liberal	3	Liberal
+Male	Don't want to answer	2	67	Predominantly Left Handed	0	963	155	1	No	1534	Omnivore	2. Very Liberal	2	Liberal
+Female	Not sure	7	68	Predominantly Left Handed	0	976	155	4	No	680	Omnivore	3. Moderately Liberal	3	Liberal
+Male	No	3	64	Predominantly Right Handed	0	1229	140	0	No	498	Omnivore	4. Conservative Democrat	4	Moderate
+Male	Yes	3	65	Predominantly Right Handed	0	187	NA	0	No	0	Omnivore	5. Independent/Middle of Road	5	Moderate
+Male	Yes	8	72	Predominantly Right Handed	2	1024	165	0	No	0	Omnivore	6. Liberal Republican	6	Moderate
+Female	Yes	7	68	Predominantly Right Handed	1	1122	160	3	Yes	251	Omnivore	7. Moderatly Conservative	7	Conservative
+Female	Not sure	9	67.2	Predominantly Right Handed	1	233	149.6	0	No	156	Omnivore	3. Moderately Liberal	3	Liberal
+Female	Not sure	6	70	Predominantly Right Handed	0	NA	165	0	Yes	500	Carnivore	5. Independent/Middle of Road	5	Moderate
+Female	No	5	66	Predominantly Right Handed	0	532	204	0	No	486	Omnivore	3. Moderately Liberal	3	Liberal
+Female	Not sure	5	70	Predominantly Right Handed	0	200	135	2	No	113	Omnivore	3. Moderately Liberal	3	Liberal
+Female	Yes	4	62	Predominantly Right Handed	0	597	135	5	No	0	Omnivore	2. Very Liberal	2	Liberal
+Female	No	5	69	Predominantly Right Handed	0	1048	130	6	No	150	Vegetarian	3. Moderately Liberal	3	Liberal
+Male	No	1	73	Predominantly Right Handed	0	739	206	0	Yes	1137	Omnivore	2. Very Liberal	2	Liberal
+Male	No	8	69	Predominantly Right Handed	0	1367	173	0	No	2297	Omnivore	5. Independent/Middle of Road	5	Moderate
+Male	No	8	71	Predominantly Right Handed	0	750	165	6	No	1155	Omnivore	2. Very Liberal	2	Liberal
+Male	No	8	69	Predominantly Right Handed	1	772	155	6	No	1946	Omnivore	2. Very Liberal	2	Liberal
+Male	Not sure	3	72	Predominantly Right Handed	1	450	190	0	Yes	1000	Omnivore	3. Moderately Liberal	3	Liberal
+Male	Yes	6	72	Predominantly Right Handed	0	1300	170	6	Yes	1200	Omnivore	3. Moderately Liberal	3	Liberal
+Female	No	5	63	Predominantly Left Handed	0	303	127	0	Yes	83	Omnivore	10. Other (please specify)	10	NA
+Male	Don't want to answer	7	69	Predominantly Right Handed	0	1000	130	6	No	0	Omnivore	4. Conservative Democrat	4	Moderate
+Male	Yes	4	70	Predominantly Right Handed	2	860	157	5	No	330	Omnivore	6. Liberal Republican	6	Moderate
+Male	Yes	5	75	Predominantly Right Handed	0	800	180	6	Yes	200	Omnivore	5. Independent/Middle of Road	5	Moderate
+Male	No	4	70	Predominantly Right Handed	0	400	180	2	No	1406	Carnivore	3. Moderately Liberal	3	Liberal
+Male	Yes	8	75	Predominantly Right Handed	0	503	185	6	No	357	Omnivore	3. Moderately Liberal	3	Liberal
+Male	No	2	71	Predominantly Right Handed	1	1243	185	5	Yes	1091	Omnivore	2. Very Liberal	2	Liberal
+Female	Not sure	6	64	Predominantly Right Handed	0	1000	140	6	No	0	Omnivore	3. Moderately Liberal	3	Liberal
+Female	No	7	72	Predominantly Right Handed	1	679	185	6	Yes	500	Omnivore	5. Independent/Middle of Road	5	Moderate
+Male	Yes	8	75	Predominantly Right Handed	1	800	215	5	Yes	1100	Omnivore	4. Conservative Democrat	4	Moderate
+Male	Yes	7	68	Predominantly Right Handed	1	870	175	0	Yes	100	Carnivore	7. Moderatly Conservative	7	Conservative
+Female	Yes	4	65	Predominantly Right Handed	1	1168	200	4	No	158	Vegetarian	2. Very Liberal	2	Liberal
+Male	Yes	4	73	Predominantly Left Handed	0	1034	220	0	No	723	Omnivore	2. Very Liberal	2	Liberal
+Male	No	10	74	Predominantly Right Handed	1	717	180	0	Yes	3000	Omnivore	6. Liberal Republican	6	Moderate
+Male	No	9	68	Predominantly Left Handed	1	526	185	0	No	600	Omnivore	6. Liberal Republican	6	Moderate
+Male	Yes	7	67	Predominantly Right Handed	0	400	135	0	Yes	300	Omnivore	2. Very Liberal	2	Liberal
+Male	No	5	70	Predominantly Right Handed	1	1066	167	0	No	0	Carnivore	1. Communist/Socialist	1	Liberal
+Male	No	5	62	Predominantly Right Handed	0	567	130	0	No	0	Omnivore	5. Independent/Middle of Road	5	Moderate
+Female	Yes	7	65	Predominantly Left Handed	3	1038	128	0	No	1449	Omnivore	2. Very Liberal	2	Liberal
+Male	Yes	8	71	Predominantly Right Handed	1	861	165	0	No	0	Omnivore	2. Very Liberal	2	Liberal
+Female	Not sure	9	63	Predominantly Right Handed	1	250	120	0	No	150	Vegetarian	2. Very Liberal	2	Liberal
+Male	No	9	67.5	Predominantly Right Handed	1	636	145	0	No	28	Omnivore	2. Very Liberal	2	Liberal
+Female	Not sure	8	65	Predominantly Right Handed	0	433	130	1	Yes	0	Vegetarian	2. Very Liberal	2	Liberal
+Female	No	3	65	Predominantly Right Handed	0	465	170	0	No	563	Omnivore	2. Very Liberal	2	Liberal
+Female	Not sure	2	67	Predominantly Right Handed	0	0	129	0	Yes	5000	Carnivore	2. Very Liberal	2	Liberal
+Male	Not sure	6	71	Predominantly Left Handed	0	232	135	0	No	652	Omnivore	2. Very Liberal	2	Liberal
+Female	Not sure	6	62.5	Predominantly Right Handed	1	1107	120	0	No	0	Omnivore	2. Very Liberal	2	Liberal
+Female	No	4	67	Predominantly Right Handed	3	1237	143	4	Yes	0	Omnivore	3. Moderately Liberal	3	Liberal
+Male	No	3	72	Predominantly Right Handed	0	585	151	2	Yes	507	Omnivore	3. Moderately Liberal	3	Liberal
+Male	Yes	8	77	Predominantly Left Handed	1	500	285	0	Yes	25	Carnivore	7. Moderatly Conservative	7	Conservative
+Female	No	10	65	Predominantly Right Handed	0	703	140	0	No	0	Vegetarian	3. Moderately Liberal	3	Liberal
+Male	No	8	71	Predominantly Left Handed	1	868	179	2	No	6234	Omnivore	3. Moderately Liberal	3	Liberal
+Male	No	9	70	Predominantly Right Handed	0	400	120	0	No	300	Omnivore	4. Conservative Democrat	4	Moderate
+Male	Yes	7	76	Predominantly Right Handed	2	1200	175	0	Yes	250	Omnivore	7. Moderatly Conservative	7	Conservative
+Female	Not sure	8	64	Predominantly Right Handed	1	1400	120	0	Yes	100	Omnivore	3. Moderately Liberal	3	Liberal
+Female	Yes	8	56	Predominantly Right Handed	0	1300	145	3	Yes	700	Omnivore	6. Liberal Republican	6	Moderate
+Male	Yes	5	72	Predominantly Right Handed	0	750	150	6	No	1001	Carnivore	3. Moderately Liberal	3	Liberal
+Female	Yes	3	67	Predominantly Right Handed	1	1131	143	0	Yes	1000	Omnivore	9. Libertarian/Extreme Right	9	Conservative
+Male	Not sure	2	68	Predominantly Right Handed	1	634	135	0	No	828	Omnivore	3. Moderately Liberal	3	Liberal
+Female	Not sure	5	60	Predominantly Right Handed	1	400	125	0	No	3200	Omnivore	4. Conservative Democrat	4	Moderate
+Male	Not sure	3	73	Predominantly Right Handed	1	781	150	0	No	2983	Omnivore	3. Moderately Liberal	3	Liberal
+Male	No	5	70	Predominantly Right Handed	0	600	150	6	No	2500	Omnivore	9. Libertarian/Extreme Right	9	Conservative
+Female	No	5	65	Predominantly Right Handed	0	536	130	0	No	0	Omnivore	3. Moderately Liberal	3	Liberal
+Male	No	7	68	Predominantly Right Handed	0	830	143	5	No	300	Omnivore	2. Very Liberal	2	Liberal
+Female	Not sure	4	64	Predominantly Right Handed	1	810	170	0	No	2084	Omnivore	2. Very Liberal	2	Liberal
+Male	Not sure	7	71	Predominantly Right Handed	1	299	240	0	No	300	Omnivore	3. Moderately Liberal	3	Liberal
+Female	No	7	NA	Predominantly Right Handed	1	200	115	0	No	25	Omnivore	3. Moderately Liberal	3	Liberal
+Male	Yes	6	70	Predominantly Left Handed	0	1308	135	4	No	152	Omnivore	3. Moderately Liberal	3	Liberal
+Female	Yes	4	64	Predominantly Right Handed	1	929	125	0	Yes	200	Vegetarian	4. Conservative Democrat	4	Moderate
+Female	No	8	66.5	Predominantly Right Handed	1	805	135	0	Yes	562	Omnivore	3. Moderately Liberal	3	Liberal
+Male	No	7	75	Predominantly Left Handed	0	628	180	0	No	0	Omnivore	3. Moderately Liberal	3	Liberal
+Male	Yes	1	66	Predominantly Right Handed	1	276	126	0	No	0	Omnivore	3. Moderately Liberal	3	Liberal
+Male	No	6	70	Predominantly Right Handed	2	460	190	0	No	30	Omnivore	3. Moderately Liberal	3	Liberal
+Male	No	7	71	Predominantly Right Handed	3	2000	200	6	Yes	3000	Omnivore	3. Moderately Liberal	3	Liberal
+Female	Yes	3	64	Predominantly Right Handed	0	761	123	0	No	1800	Omnivore	5. Independent/Middle of Road	5	Moderate
+Female	No	9	71	Predominantly Right Handed	1	717	154.8	0	No	0	Vegetarian	2. Very Liberal	2	Liberal
+Female	No	4	63	Predominantly Right Handed	1	787	110	0	Yes	523	NA	2. Very Liberal	2	Liberal
+Male	No	1	69	Predominantly Right Handed	0	900	163	0	Yes	100	Vegetarian	3. Moderately Liberal	3	Liberal
+Male	Not sure	8	69	Predominantly Right Handed	0	500	155	0	No	1300	Omnivore	4. Conservative Democrat	4	Moderate
+Female	No	7	68	Predominantly Right Handed	0	NA	180	1	No	200	Omnivore	1. Communist/Socialist	1	Liberal
