@@ -1,6 +1,6 @@
 const dataset = titanicDataset
     , ignoredColumns = ['Name']
-    , svgContainerWidth = 600
+    , svgContainerWidth = 800
     , svgContainerHeight = 300
     , padding = 8
     , panelBackgroundPadding = 8

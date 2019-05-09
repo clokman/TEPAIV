@@ -84,16 +84,16 @@ class CPC {
 
         // Generate selector-safe names from column names and categories in the dataset
         // and add these selectors to registry
-        this._selectorsLabelsDictionary = new Map()
+        this._selectorsAndLabelsDictionary = new Map()
 
-        this._selectorsLabelsDictionary.set('column', new Map())
-        this._selectorsLabelsDictionary.get('column').set('selector from', new Map())
-        this._selectorsLabelsDictionary.get('column').set('label from', new Map())
+        this._selectorsAndLabelsDictionary.set('column', new Map())
+        this._selectorsAndLabelsDictionary.get('column').set('selector from', new Map())
+        this._selectorsAndLabelsDictionary.get('column').set('label from', new Map())
 
 
-        this._selectorsLabelsDictionary.set('category', new Map())
-        this._selectorsLabelsDictionary.get('category').set('selector from', new Map())
-        this._selectorsLabelsDictionary.get('category').set('label from', new Map())
+        this._selectorsAndLabelsDictionary.set('category', new Map())
+        this._selectorsAndLabelsDictionary.get('category').set('selector from', new Map())
+        this._selectorsAndLabelsDictionary.get('category').set('label from', new Map())
 
 
 
@@ -111,8 +111,8 @@ class CPC {
 
                 purifiedColumnName = purifiedColumnName.returnString()
 
-                this._selectorsLabelsDictionary.get('column').get('label from').set(columnName, purifiedColumnName)
-                this._selectorsLabelsDictionary.get('column').get('selector from').set(purifiedColumnName, columnName)
+                this._selectorsAndLabelsDictionary.get('column').get('label from').set(columnName, purifiedColumnName)
+                this._selectorsAndLabelsDictionary.get('column').get('selector from').set(purifiedColumnName, columnName)
 
 
 
@@ -126,8 +126,8 @@ class CPC {
 
                 purifiedCellValue = purifiedCellValue.returnString()
 
-                this._selectorsLabelsDictionary.get('category').get('selector from').set(cellValue, purifiedCellValue)
-                this._selectorsLabelsDictionary.get('category').get('label from').set(purifiedCellValue, cellValue)
+                this._selectorsAndLabelsDictionary.get('category').get('selector from').set(cellValue, purifiedCellValue)
+                this._selectorsAndLabelsDictionary.get('category').get('label from').set(purifiedCellValue, cellValue)
 
             })
 
@@ -164,18 +164,18 @@ class CPC {
 
 
                 // Get names and details of what is clicked
-                this._lastClickedColumnSelector = clickedChart.attr('class')
-                this._lastClickedCategorySelector = clickedCategory.attr('class')
+                this._lastClickedColumnLabel = clickedChart.attr('column')
+                this._lastClickedCategoryLabel = clickedCategory.attr('category')
 
-                this._lastClickedColumnLabel = this._selectorsLabelsDictionary
+                this._lastClickedColumnSelector = this._selectorsAndLabelsDictionary
                   .get('column')
-                  .get('label from')
-                  .get(this._lastClickedColumnSelector)
+                  .get('selector from')
+                  .get(this._lastClickedColumnLabel)
 
-                this._lastClickedCategoryLabel = this._selectorsLabelsDictionary
+                this._lastClickedCategorySelector = this._selectorsAndLabelsDictionary
                   .get('category')
-                  .get('label from')
-                  .get(this._lastClickedCategorySelector)
+                  .get('selector from')
+                  .get(this._lastClickedCategoryLabel)
 
 
 
@@ -188,8 +188,6 @@ class CPC {
                     this._lastClickedColumnSelector + ', ' + this._lastClickedCategorySelector +
                     '\nLabels:\n' +
                     this._lastClickedColumnLabel + ', ' + this._lastClickedCategoryLabel)
-
-
 
 
                 //// REMOVE PANELS IF NECESSARY ////
@@ -399,7 +397,7 @@ class CPC {
         // Loop columns and categories in survey results
         surveyResults.forEach((categoriesCountsMap, eachColumnName) => {
 
-            const eachChartSelector = this._selectorsLabelsDictionary
+            const eachChartSelector = this._selectorsAndLabelsDictionary
               .get('column')
               .get('selector from')
               .get(eachColumnName)
@@ -419,16 +417,15 @@ class CPC {
                 , maxValueInArray = d3.max(eachStack.flat(2))
 
             // Append a group for each stacked bar chart
-            const chart = panel
-                .selectAll('g .' + eachChartSelector)
+            const chart = panel.selectAll('g .' + eachChartSelector)
                 .data([0])
                 .enter()
                 .append('g')
                 .attr('class', eachChartSelector)
+                .attr('column', eachColumnName)
 
             // Draw rectangles
-            const rectangles = chart
-                .selectAll('rect')
+            const rectanglesOfChart = chart.selectAll('rect')
                 .data(eachStack, d => {
 
                     // Add cleaned category names (necesary for using them as HTML class names)
@@ -442,15 +439,17 @@ class CPC {
                 .append('rect')
                 .attr('class', d => {
                     // Return the selector name for the related category name in the dataset
-                    const rectangleSelector = this._selectorsLabelsDictionary
+                    const rectangleSelector = this._selectorsAndLabelsDictionary
                       .get('category')
                       .get('selector from')
                       .get(d.key)
                     return rectangleSelector
                 })
+                .attr('category', d => d.key)
+                .classed('foreground', true)
                 .attr('x', d => {
 
-                    const eachCategorySelector = this._selectorsLabelsDictionary
+                    const eachCategorySelector = this._selectorsAndLabelsDictionary
                       .get('category')
                       .get('selector from')
                       .get(d.key)
@@ -463,9 +462,7 @@ class CPC {
 
 
                     if (rectangleIsBackground){
-
                         return xScaleBackground(d[0][0])
-
                     }
                     else{
                         return xScaleFront(d[0][0])
@@ -474,13 +471,12 @@ class CPC {
                 })
                 .attr('y', (d) => {
 
-                    const eachCategorySelector = this._selectorsLabelsDictionary
+                    const eachCategorySelector = this._selectorsAndLabelsDictionary
                       .get('category')
                       .get('selector from')
                       .get(d.key)
 
                     if ((this._drawContextAsBackground && eachCategorySelector === backgroundCategory)){
-
                         return 0
                     }
                     else{
@@ -490,7 +486,7 @@ class CPC {
                 })
                 .attr('width', (d) => {
 
-                    const eachCategorySelector = this._selectorsLabelsDictionary
+                    const eachCategorySelector = this._selectorsAndLabelsDictionary
                       .get('category')
                       .get('selector from')
                       .get(d.key)
@@ -511,7 +507,7 @@ class CPC {
                 })
                 .attr('height', (d,i,g) => {
 
-                    const eachCategorySelector = this._selectorsLabelsDictionary
+                    const eachCategorySelector = this._selectorsAndLabelsDictionary
                       .get('category')
                       .get('selector from')
                       .get(d.key)
@@ -521,7 +517,7 @@ class CPC {
                         return this._svgContainerHeight
                     }
                     else{
-                        return this._barHeight
+                        return this._barHeight - this._padding
                     }
                 })
                 .attr('fill', (d) => {
@@ -620,6 +616,7 @@ class CPC {
                 .attr('x', d => updatedXScaleFront(d[0][0]) + 3)
         })
     }
+
 
     _calculatePanelRanges (numberOfPanels) {
 
