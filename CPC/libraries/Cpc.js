@@ -17,6 +17,8 @@ class CPC {
         this._barHeight = barHeight
         this._panelBackgroundPadding = panelBackgroundPadding
 
+        this._eulerPadding_horizontal = 20 // TODO: Could be added as a parameter
+
         this._absoluteRectangleWidths = false
         if (preferences.includes('absoluteRectangleWidths')){this._absoluteRectangleWidths = true}
 
@@ -262,59 +264,61 @@ class CPC {
                 // Calculate the ranges for the current number of visible panels + 1 more panel
                 const numberOfPanelsThatWillBeVisibleAfterAddition = this._deepestPanelDepth + 1 + 1  // +1 because the counting starts at 0, and +1 in order to refer to the depth of the panel to be added.
 
-                const newFrontRanges = this._calculatePanelRanges(numberOfPanelsThatWillBeVisibleAfterAddition)  //
-                    , newBackgroundRanges = this._calculatePanelRanges(numberOfPanelsThatWillBeVisibleAfterAddition)  //
-                // console.log(updatedFrontRanges)
+
+
 
 
 
                 // Update the xScales in the panel registry for the currently visible panels
                 const currentNumberOfVisiblePanels = this._deepestPanelDepth + 1  // +1 because the counting starts at 0
 
-                d3.range(currentNumberOfVisiblePanels).forEach(i => {
+                const iterationArray = d3.range(currentNumberOfVisiblePanels)
+                iterationArray.forEach(i => {
 
-                    const currentPanelId = 'panel-' + i
-                        , previousPanelId = 'panel-' + (i-1)
+                    const eachPanelId = 'panel-' + i
 
+                      // Update foreground scales
+                    const updatedFrontRanges = this._calculatePanelRanges(numberOfPanelsThatWillBeVisibleAfterAddition, 'front')  //
 
-                    // Update the foreground scales
-                    const [ eachNewFrontRange_start, eachNewFrontRange_end ] = newFrontRanges[i]
+                    const [ eachUpdatedFrontRange_start, eachUpdatedFrontRange_end ] = updatedFrontRanges[i]
 
-                    const oldXScaleFront = this._CpcRegistry.get(currentPanelId)
-                        .get('xScaleFront')
+                      const outdatedXScaleFront = this._CpcRegistry.get(eachPanelId)
+                          .get('xScaleFront')
 
-                    const newXScaleFront = oldXScaleFront.rangeRound([eachNewFrontRange_start, eachNewFrontRange_end])
+                      const updatedXScaleFront = outdatedXScaleFront.rangeRound([eachUpdatedFrontRange_start, eachUpdatedFrontRange_end])
 
-                    this._CpcRegistry.get(currentPanelId)
-                        .set('xScaleFront', newXScaleFront)
-
-
-
-                    // Update the background scales
-                    const [ eachNewBackgroundRange_start, eachNewBackgroundRange_end ] = newBackgroundRanges[i]
-
-                    const oldXScaleBackground = this._CpcRegistry.get(currentPanelId)
-                      .get('xScaleBackground')
-
-                    const newXScaleBackground = oldXScaleBackground.rangeRound([eachNewBackgroundRange_start, eachNewBackgroundRange_end])
-
-                    this._CpcRegistry.get(currentPanelId)
-                      .set('xScaleBackground', newXScaleBackground)
+                      this._CpcRegistry.get(eachPanelId)
+                          .set('xScaleFront', updatedXScaleFront)
 
 
-                    //
-                    // // Update the background scales for the previous panel
-                    // if (i>0){
-                    // const [ eachUpdatedPreviousBackgroundRange_start, eachUpdatedPreviousBackgroundRange_end ] = newBackgroundRanges[i-1]
-                    //
-                    // const previousXScaleBackground = this._CpcRegistry.get(previousPanelId)
-                    //   .get('xScaleBackground')
-                    //
-                    // const updatedPreviousXScaleBackground = previousXScaleBackground.rangeRound([eachUpdatedPreviousBackgroundRange_start, this._svgContainerWidth])
-                    //
-                    // this._CpcRegistry.get(previousPanelId)
-                    //   .set('xScaleBackground', updatedPreviousXScaleBackground)
-                    // }
+
+                      // Update background scales
+                      const updatedBackgroundRanges = this._calculatePanelRanges(numberOfPanelsThatWillBeVisibleAfterAddition, 'background')  //
+
+                      const [ eachUpdatedBackgroundRange_start, eachUpdatedBackgroundRange_end ] = updatedBackgroundRanges[i]
+
+                      const outdatedXScaleBackground = this._CpcRegistry.get(eachPanelId)
+                        .get('xScaleBackground')
+
+                      const updatedXScaleBackground = outdatedXScaleBackground.rangeRound([eachUpdatedBackgroundRange_start, eachUpdatedBackgroundRange_end])
+
+                      this._CpcRegistry.get(eachPanelId)
+                        .set('xScaleBackground', updatedXScaleBackground)
+
+
+                      //
+                      // // Update the background scales for the previous panel
+                      // if (i>0){
+                      // const [ eachUpdatedPreviousBackgroundRange_start, eachUpdatedPreviousBackgroundRange_end ] = newBackgroundRanges[i-1]
+                      //
+                      // const previousXScaleBackground = this._CpcRegistry.get(previousPanelId)
+                      //   .get('xScaleBackground')
+                      //
+                      // const updatedPreviousXScaleBackground = previousXScaleBackground.rangeRound([eachUpdatedPreviousBackgroundRange_start, this._svgContainerWidth])
+                      //
+                      // this._CpcRegistry.get(previousPanelId)
+                      //   .set('xScaleBackground', updatedPreviousXScaleBackground)
+                      // }
 
                 })
 
@@ -597,7 +601,7 @@ class CPC {
                   .attr('y', 0)
                   .attr('height', this._svgContainerHeight)
                   .attr('fill', d => this._assignColor(d))
-                  .attr('opacity', 0.90)
+                  .attr('opacity', 0.50) // 0.90
                   .attr('z', (d,i,g) => {
                       d3.select(g[i]).lower()
 
@@ -752,9 +756,6 @@ class CPC {
 
 
 
-
-
-
             // Select labels
             const textsInPanel = allElementsInPanel
                 .selectAll('text')
@@ -768,7 +769,7 @@ class CPC {
     }
 
 
-    _calculatePanelRanges (numberOfPanels) {
+    _calculatePanelRanges (numberOfPanels, eulerMode=false) {
 
         let panelRanges = []
 
@@ -787,21 +788,44 @@ class CPC {
             .keys(panelKeys)
             .order(d3.stackOrderNone)
         const panelSeries = constructStack(panels)
+        // e.g., panel series: [[0,1], [1,2], [2,3]]
 
         // Make an xScale that spans the entire SVG element
-        const CpcXSpanScale = d3.scaleLinear()
+        const cpcXSpanScale = d3.scaleLinear()
             .domain([0, panelSeries.length])
-            .rangeRound([0,  this._svgContainerWidth])
 
-        // Scale up the stack
+        if (!eulerMode){
+            cpcXSpanScale.rangeRound([0,  this._svgContainerWidth])
+        }
+        else{
+            cpcXSpanScale.rangeRound([0, this._svgContainerWidth - (this._eulerPadding_horizontal * numberOfPanels)])
+        }
+
+
+        // Scale the stack
+        let i = 1 // must NOT be 0, because will be used in multiplication below.
         panelSeries.forEach(panelDataArray => {
+            // e.g., panelDataArray: [[0,1]]
 
             const eachPanelCoordinates = panelDataArray[0]
-            const [domainStart, domainEnd] = eachPanelCoordinates
+            // e.g.: [0, 1]
 
-            let scaledPanelCoordinates = [CpcXSpanScale(domainStart)+this._padding, CpcXSpanScale(domainEnd)]
+            const [eachDomainStart, eachDomainEnd] = eachPanelCoordinates
+
+            let scaledPanelCoordinates
+            if (!eulerMode || eulerMode === 'front'){
+                scaledPanelCoordinates = [cpcXSpanScale(eachDomainStart)+this._padding, cpcXSpanScale(eachDomainEnd)]
+            }
+            else if (eulerMode === 'background') {
+                scaledPanelCoordinates = [
+                    cpcXSpanScale(eachDomainStart) + this._padding,
+                    this._svgContainerWidth - (this._eulerPadding_horizontal * (numberOfPanels-i))
+                ]
+            }
 
             panelRanges.push(scaledPanelCoordinates)
+
+            i += 1
 
 
         })
