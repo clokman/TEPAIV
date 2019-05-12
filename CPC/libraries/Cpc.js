@@ -10,15 +10,21 @@ class CPC {
      */
 
     constructor(dataset, ignoredColumns, svgContainerWidth=600, svgContainerHeight=300, padding=8, panelBackgroundPadding=8, barHeight=80, absoluteRectangleWidths=false, drawContextAsBackground=true){
+
         this._svgContainerWidth = svgContainerWidth
         this._svgContainerHeight = svgContainerHeight
         this._padding = padding
         this._barHeight = barHeight
-        this._absoluteRectangleWidths = false
         this._panelBackgroundPadding = panelBackgroundPadding
-        if (preferences.includes('absoluteWidths')){this._absoluteRectangleWidths = true}
+
+        this._absoluteRectangleWidths = false
+        if (preferences.includes('absoluteRectangleWidths')){this._absoluteRectangleWidths = true}
+
         this._drawContextAsBackground = false
-        if (preferences.includes('contextAsBackground')){this._drawContextAsBackground = true}
+        if (preferences.includes('drawContextAsBackground')){this._drawContextAsBackground = true}
+
+        this._drawContextAsForeground = false
+        if (preferences.includes('drawContextAsForeground')){this._drawContextAsForeground = true}
 
 
         this._ignoredColumns = ignoredColumns
@@ -26,15 +32,18 @@ class CPC {
         this._dataset = dataset
 
         this._currentMaxPossibleValue = dataset.length // initial value.
-        this._datasetSurveyResults = surveyData(dataset, this._ignoredColumns) // map of maps
-
+        this._datasetSurveyResults = surveyData(dataset, this._ignoredColumns) // returns nested map
 
 
 
         // Store information for each panel here
         this._CpcRegistry = new Map()
+        this._colorCount = 0
+
 
         this._deepestPanelDepth = 0
+        this._initialPanelBackgroundAlreadyDrawn = false
+
 
         this._lastClickedColumnSelector = ''
         this._lastClickedCategorySelector = ''
@@ -52,7 +61,9 @@ class CPC {
         this._frontColorScale = d3.scaleOrdinal(d3.schemeCategory10)
         this._rectangleColorRegistry = new Map()
 
-        // SET UP SCALES FOR THE INITIAL PANEL
+
+
+        //// SET UP SCALES FOR THE INITIAL PANEL ////
 
         // Get panel ranges for the current number of visible panels
         const panel0_ranges = this._calculatePanelRanges(this._deepestPanelDepth + 1) // +1, because depth count starts from zero
@@ -82,8 +93,10 @@ class CPC {
 
 
 
-        // Generate selector-safe names from column names and categories in the dataset
-        // and add these selectors to registry
+        // CREATE AND POPULATE LABELS AND SELECTORS DICTIONARY /////////////////////////////////////////////////////////
+
+        //// PREPARE THE DICTIONARY ////
+
         this._selectorsAndLabelsDictionary = new Map()
 
         this._selectorsAndLabelsDictionary.set('column', new Map())
@@ -97,41 +110,64 @@ class CPC {
 
 
 
+        //// ADD UNIVERSAL LABELS AND SELECTORS ////
+
+        // Add labels and selectors for the universal column (e.g., All Titanic passengers)
+        const topColumnLabel = 'All columns'
+        let topColumnSelector = new Str(topColumnLabel)
+        topColumnSelector = topColumnSelector.formatAsCssSelector().returnString()
+        this._selectorsAndLabelsDictionary.get('column').get('selector from').set(topColumnLabel, topColumnSelector)
+        this._selectorsAndLabelsDictionary.get('column').get('label from').set(topColumnSelector, topColumnLabel)
+
+        // Add labels and selectors for the universal category (e.g., All Titanic passengers)
+        const topCategoryLabel = 'All categories'
+        let topCategorySelector = new Str(topCategoryLabel)
+        topCategorySelector = topCategorySelector.formatAsCssSelector().returnString()
+        this._selectorsAndLabelsDictionary.get('category').get('selector from').set(topCategoryLabel, topCategorySelector)
+        this._selectorsAndLabelsDictionary.get('category').get('label from').set(topCategorySelector, topCategoryLabel)
+
+
+
+        //// ADD CATEGORY LABELS AND SELECTORS ////
+
+        // Add column names and labels to the conversion dictionary
         this._dataset.forEach(rowData => {
 
-            Object.entries(rowData).forEach( ([columnName, cellValue]) => {
+            Object.entries(rowData).forEach( ([columnLabel, categoryLabel]) => {
 
-                // Add purified column names (i.e., values of cells) to selectors dictionary
-                let purifiedColumnName = new Str(columnName)
-                purifiedColumnName = purifiedColumnName.purify()
+                // Add column selectors to selectors dictionary
+                let columnSelector = new Str(columnLabel)
+                columnSelector = columnSelector.formatAsCssSelector()
 
-                if (purifiedColumnName.startsWithNumber) {
-                    throw (`Column names in the dataset should not start with numbers. The name '${purifiedColumnName.returnString()}' starts with a number.`)
+                if (columnSelector.startsWithNumber) {
+                    throw (`Column names in the dataset should not start with numbers. The name '${columnSelector.returnString()}' starts with a number.`)
                 }
 
-                purifiedColumnName = purifiedColumnName.returnString()
+                columnSelector = columnSelector.returnString()
 
-                this._selectorsAndLabelsDictionary.get('column').get('label from').set(columnName, purifiedColumnName)
-                this._selectorsAndLabelsDictionary.get('column').get('selector from').set(purifiedColumnName, columnName)
+                this._selectorsAndLabelsDictionary.get('column').get('label from').set(columnLabel, columnSelector)
+                this._selectorsAndLabelsDictionary.get('column').get('selector from').set(columnSelector, columnLabel)
 
 
 
                 // Add purified category names (i.e., values of cells) to selectors dictionary
-                let purifiedCellValue = new Str(cellValue)
-                purifiedCellValue = purifiedCellValue.purify()
+                let categorySelector = new Str(categoryLabel)
+                categorySelector = categorySelector.formatAsCssSelector()
 
-                if (purifiedCellValue.startsWithNumber) {
-                    throw (`Cell values in the dataset should not start with numbers. The value '${purifiedCellValue.returnString()}' starts with a number.`)
+                if (categorySelector.startsWithNumber) {
+                    throw (`Cell values in the dataset should not start with numbers. The value '${categorySelector.returnString()}' starts with a number.`)
                 }
 
-                purifiedCellValue = purifiedCellValue.returnString()
+                categorySelector = categorySelector.returnString()
 
-                this._selectorsAndLabelsDictionary.get('category').get('selector from').set(cellValue, purifiedCellValue)
-                this._selectorsAndLabelsDictionary.get('category').get('label from').set(purifiedCellValue, cellValue)
+                this._selectorsAndLabelsDictionary.get('category').get('selector from').set(categoryLabel, categorySelector)
+                this._selectorsAndLabelsDictionary.get('category').get('label from').set(categorySelector, categoryLabel)
 
             })
 
         })
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
         // Draw the first panel
@@ -144,7 +180,7 @@ class CPC {
     _makeNewPanelOnClick(){
 
         //// CREATE NEW PANEL UPON CLICKING ////
-        this._svg.selectAll('rect')
+        this._svg.selectAll('.foreground-rectangle')
             .on('click', (d, i, g) => {
 
 
@@ -177,9 +213,6 @@ class CPC {
                   .get('selector from')
                   .get(this._lastClickedCategoryLabel)
 
-
-
-
                 this._lastClickedPanelDepth = Number(clickedPanel.attr('depth')) // returns string, hence the conversion
 
                 console.log('_lastClickedPanelDepth:' + this._lastClickedPanelDepth + ', ' +
@@ -188,6 +221,7 @@ class CPC {
                     this._lastClickedColumnSelector + ', ' + this._lastClickedCategorySelector +
                     '\nLabels:\n' +
                     this._lastClickedColumnLabel + ', ' + this._lastClickedCategoryLabel)
+
 
 
                 //// REMOVE PANELS IF NECESSARY ////
@@ -227,25 +261,60 @@ class CPC {
 
                 // Calculate the ranges for the current number of visible panels + 1 more panel
                 const numberOfPanelsThatWillBeVisibleAfterAddition = this._deepestPanelDepth + 1 + 1  // +1 because the counting starts at 0, and +1 in order to refer to the depth of the panel to be added.
-                const newRanges = this._calculatePanelRanges(numberOfPanelsThatWillBeVisibleAfterAddition)  //
-                console.log(newRanges)
+
+                const newFrontRanges = this._calculatePanelRanges(numberOfPanelsThatWillBeVisibleAfterAddition)  //
+                    , newBackgroundRanges = this._calculatePanelRanges(numberOfPanelsThatWillBeVisibleAfterAddition)  //
+                // console.log(updatedFrontRanges)
+
 
 
                 // Update the xScales in the panel registry for the currently visible panels
                 const currentNumberOfVisiblePanels = this._deepestPanelDepth + 1  // +1 because the counting starts at 0
+
                 d3.range(currentNumberOfVisiblePanels).forEach(i => {
 
-                    const panelId = 'panel-' + i
+                    const currentPanelId = 'panel-' + i
+                        , previousPanelId = 'panel-' + (i-1)
 
-                    const oldXScale = this._CpcRegistry.get(panelId)
+
+                    // Update the foreground scales
+                    const [ eachNewFrontRange_start, eachNewFrontRange_end ] = newFrontRanges[i]
+
+                    const oldXScaleFront = this._CpcRegistry.get(currentPanelId)
                         .get('xScaleFront')
 
-                    const [ eachNewRange_start, eachNewRange_end ] = newRanges[i]
+                    const newXScaleFront = oldXScaleFront.rangeRound([eachNewFrontRange_start, eachNewFrontRange_end])
 
-                    const newXScale = oldXScale.rangeRound([eachNewRange_start, eachNewRange_end])
+                    this._CpcRegistry.get(currentPanelId)
+                        .set('xScaleFront', newXScaleFront)
 
-                    this._CpcRegistry.get(panelId)
-                        .set('xScaleFront', newXScale)
+
+
+                    // Update the background scales
+                    const [ eachNewBackgroundRange_start, eachNewBackgroundRange_end ] = newBackgroundRanges[i]
+
+                    const oldXScaleBackground = this._CpcRegistry.get(currentPanelId)
+                      .get('xScaleBackground')
+
+                    const newXScaleBackground = oldXScaleBackground.rangeRound([eachNewBackgroundRange_start, eachNewBackgroundRange_end])
+
+                    this._CpcRegistry.get(currentPanelId)
+                      .set('xScaleBackground', newXScaleBackground)
+
+
+                    //
+                    // // Update the background scales for the previous panel
+                    // if (i>0){
+                    // const [ eachUpdatedPreviousBackgroundRange_start, eachUpdatedPreviousBackgroundRange_end ] = newBackgroundRanges[i-1]
+                    //
+                    // const previousXScaleBackground = this._CpcRegistry.get(previousPanelId)
+                    //   .get('xScaleBackground')
+                    //
+                    // const updatedPreviousXScaleBackground = previousXScaleBackground.rangeRound([eachUpdatedPreviousBackgroundRange_start, this._svgContainerWidth])
+                    //
+                    // this._CpcRegistry.get(previousPanelId)
+                    //   .set('xScaleBackground', updatedPreviousXScaleBackground)
+                    // }
 
                 })
 
@@ -269,7 +338,9 @@ class CPC {
 
                     const clickedPanelId = 'panel-' + (this._lastClickedPanelDepth)
 
-                    const clickedPanelData = this._CpcRegistry.get(clickedPanelId).get('data')
+                    const clickedPanelData = this._CpcRegistry
+                      .get(clickedPanelId)
+                      .get('data')
 
                     targetSubsetOfData = clickedPanelData
 
@@ -277,10 +348,15 @@ class CPC {
 
                 // Make the query on the clicked panel's data
                 const drilledDownSubsetOfData =
-                    d3.group(targetSubsetOfData, d => d[this._lastClickedColumnSelector])
-                        .get(this._lastClickedCategoryLabel)
+                    d3.group(targetSubsetOfData,
+                        d => d[this._lastClickedColumnSelector]
+                    ).get(this._lastClickedCategoryLabel)
 
-                const summaryOfDrilledDownSubsetOfData = d3.rollup(targetSubsetOfData, v => v.length, d => d[this._lastClickedColumnSelector]).get(this._lastClickedCategorySelector)
+                const summaryOfDrilledDownSubsetOfData =
+                  d3.rollup(targetSubsetOfData,
+                      v => v.length,
+                      d => d[this._lastClickedColumnSelector]
+                  ).get(this._lastClickedCategorySelector)
 
 
 
@@ -300,7 +376,7 @@ class CPC {
                     .rangeRound([ newPanel_rangeStart, newPanel_rangeEnd ])
 
                 // Draw the new panel
-                this._drawPanel(xScaleForNewPanel, drilledDownSubsetOfData, this._lastClickedCategorySelector)
+                this._drawPanel(xScaleForNewPanel, drilledDownSubsetOfData, this._lastClickedCategoryLabel)
                 // Re-run this method again (necessary for updating the selection that is being watched)
                 this._makeNewPanelOnClick()
 
@@ -325,10 +401,9 @@ class CPC {
      * @param data {d3 data}
      * @returns d3 selection for the created panel
      */
-    _drawPanel(xScale, data, backgroundCategory=null){
+    _drawPanel(xScale, data, backgroundCategoryLabel=null){
 
         let chartCount = 0
-          , colorCount = 0
 
         const xScaleFront = xScale
 
@@ -410,11 +485,9 @@ class CPC {
                 .keys(Object.keys(eachCategoryCountsObject))
                 .order(d3.stackOrderDescending)
 
-            // console.log('eachCategoryCountsArray')
-            // console.log(eachCategoryCountsArray)
             // Do the conversion to stack
-            const eachStack = stackConstructor(eachCategoryCountsArray)
-                , maxValueInArray = d3.max(eachStack.flat(2))
+            const eachForegroundStack = stackConstructor(eachCategoryCountsArray)
+                , maxValueInArray = d3.max(eachForegroundStack.flat(2))
 
             // Append a group for each stacked bar chart
             const chart = panel.selectAll('g .' + eachChartSelector)
@@ -424,17 +497,124 @@ class CPC {
                 .attr('class', eachChartSelector)
                 .attr('column', eachColumnName)
 
-            // Draw rectangles
-            const rectanglesOfChart = chart.selectAll('rect')
-                .data(eachStack, d => {
 
-                    // Add cleaned category names (necesary for using them as HTML class names)
-                    // const eachUncleanCategoryNameFromDataset = new Str(d.key)
-                    //       , purifiedCategoryName = eachUncleanCategoryNameFromDataset.purify().returnString()
-                    // d.purifiedKey = purifiedCategoryName
 
-                    return d
+            ////  ESTABLISH CONDITIONS ////
+
+            let backgroundCategoryLabelParameterIsProvided = false
+            // If the background parameter is provided
+            if (backgroundCategoryLabel) {
+                backgroundCategoryLabelParameterIsProvided = true
+            }
+
+
+            let drawingFirstPanelForFirstTimeWithBackground = false
+            if (this._drawContextAsBackground &&
+                !this._initialPanelBackgroundAlreadyDrawn &&
+                this._deepestPanelDepth===0 &&
+                !backgroundCategoryLabelParameterIsProvided){
+
+                drawingFirstPanelForFirstTimeWithBackground = true
+
+            }
+
+
+
+            //// GENERATE BACKGROUND STACK FOR THE INITIAL PANEL ////
+
+            let backgroundStack = []
+
+            if (drawingFirstPanelForFirstTimeWithBackground){
+
+                const surveyResultForFirstPanelBackground = surveyData(data, [], true)
+
+                surveyResultForFirstPanelBackground.forEach((categoriesCountsMap, eachColumnName) => {
+
+                    const eachCategoryCountsObject = Object.fromEntries(categoriesCountsMap)
+                      , eachCategoryCountsArray = Array(eachCategoryCountsObject)
+
+                    // Setup stack constuctor
+                    const backgroundStackConstructor = d3.stack()
+                      .keys(Object.keys(eachCategoryCountsObject))
+                      .order(d3.stackOrderDescending)
+
+                    // Do the conversion to stack
+                    backgroundStack = backgroundStackConstructor(eachCategoryCountsArray)
+
                 })
+            }
+
+
+
+            //// GENERATE BACKGROUND STACK FOR PANELS OTHER THAN THE INITIAL PANEL ////
+
+            if(backgroundCategoryLabelParameterIsProvided){
+
+                eachForegroundStack.forEach(e => {  // NOTE: Iteration of eachForegroundStack is NOT a mistake;
+                                                    // it is done in order to filter it so that the background stack is not in it.
+
+                    const currentCategoryLabelInStack = e.key
+
+                    // If the current category in iteration is the background category,
+                    // add that category in its separate stack
+                    if (currentCategoryLabelInStack === backgroundCategoryLabel) {
+
+                        backgroundStack.push(e)
+
+                        // If user selected NOT to draw the context category as bar a that encompasses...
+                        // the entire width of panel, do not include that element.
+                        if (!this._drawContextAsForeground){
+                            eachForegroundStack.pop(e)
+                        }
+                    }
+                })
+            }
+
+
+
+
+            //// DRAW BACKGROUND RECTANGLES ////
+            // this._initialPanelBackgroundAlreadyDrawn = false
+
+
+            if (this._drawContextAsBackground || drawingFirstPanelForFirstTimeWithBackground ){
+
+                const backgroundRectangle = panel.selectAll('.background-rectangle')
+                  .data(backgroundStack)
+                  .enter()
+                  .append('rect')
+                  .attr('class', d => {
+                      const rectangleSelector = this._selectorsAndLabelsDictionary
+                        .get('category')
+                        .get('selector from')
+                        .get(d.key)
+
+                      return rectangleSelector
+                  })
+                  .classed('background-rectangle', true)
+                  .attr('x', d => xScaleBackground(d[0][0]))
+                  .attr('width', d => xScaleBackground(d[0][1]) - xScaleBackground(d[0][0]))
+                  .attr('y', 0)
+                  .attr('height', this._svgContainerHeight)
+                  .attr('fill', d => this._assignColor(d))
+                  .attr('opacity', 0.90)
+                  .attr('z', (d,i,g) => {
+                      d3.select(g[i]).lower()
+
+                      // if (g[i].attr('class').includes('All-'))
+
+                  })
+
+                if (drawingFirstPanelForFirstTimeWithBackground){
+                    this._initialPanelBackgroundAlreadyDrawn = true
+                }
+            }
+
+
+            //// DRAW FOREGROUND RECTANGLES ////
+
+            const foregroundRectangles = chart.selectAll('.foreground-rectangle')
+                .data(eachForegroundStack, d => d )
                 .enter()
                 .append('rect')
                 .attr('class', d => {
@@ -446,103 +626,18 @@ class CPC {
                     return rectangleSelector
                 })
                 .attr('category', d => d.key)
-                .classed('foreground', true)
-                .attr('x', d => {
-
-                    const eachCategorySelector = this._selectorsAndLabelsDictionary
-                      .get('category')
-                      .get('selector from')
-                      .get(d.key)
-
-                    let rectangleIsBackground = false
-
-                    if ((this._drawContextAsBackground && eachCategorySelector === backgroundCategory)){
-                        rectangleIsBackground = true
-                    }
+                .classed('foreground-rectangle', true)
+                .attr('x', d => xScaleFront(d[0][0]))
+                .attr('y', (d) => this._yScale(chartCount) + this._padding*2 )
+                .attr('width', (d) => xScaleFront(d[0][1]) - xScaleFront(d[0][0]))
+                .attr('height', this._barHeight - this._padding)
+                .attr('fill', (d) => this._assignColor(d))
 
 
-                    if (rectangleIsBackground){
-                        return xScaleBackground(d[0][0])
-                    }
-                    else{
-                        return xScaleFront(d[0][0])
-                    }
-
-                })
-                .attr('y', (d) => {
-
-                    const eachCategorySelector = this._selectorsAndLabelsDictionary
-                      .get('category')
-                      .get('selector from')
-                      .get(d.key)
-
-                    if ((this._drawContextAsBackground && eachCategorySelector === backgroundCategory)){
-                        return 0
-                    }
-                    else{
-                        return this._yScale(chartCount) + this._padding*2
-                    }
-
-                })
-                .attr('width', (d) => {
-
-                    const eachCategorySelector = this._selectorsAndLabelsDictionary
-                      .get('category')
-                      .get('selector from')
-                      .get(d.key)
-
-                    let rectangleIsBackground = false
-                    if ((this._drawContextAsBackground && eachCategorySelector === backgroundCategory)){
-                        rectangleIsBackground = true
-                    }
-
-
-                    if (rectangleIsBackground){
-                        return xScaleBackground(d[0][1]) - xScaleBackground(d[0][0])
-                    }
-                    else{
-                        return xScaleFront(d[0][1]) - xScaleFront(d[0][0])
-                    }
-
-                })
-                .attr('height', (d,i,g) => {
-
-                    const eachCategorySelector = this._selectorsAndLabelsDictionary
-                      .get('category')
-                      .get('selector from')
-                      .get(d.key)
-
-                    if((this._drawContextAsBackground && eachCategorySelector === backgroundCategory)){
-                        d3.select(g[i].parentNode).lower()
-                        return this._svgContainerHeight
-                    }
-                    else{
-                        return this._barHeight - this._padding
-                    }
-                })
-                .attr('fill', (d) => {
-
-                    // Check if the category name is in the color registry
-                    const eachCategoryLabel = d.key
-
-                    let categoryIsAlreadyAssignedColor = false
-                    if (this._rectangleColorRegistry.get(eachCategoryLabel) !== undefined){
-                        categoryIsAlreadyAssignedColor = true
-                    }
-
-                    // If category is NOT in the color registry, assign color and add it to registry
-                    if (!categoryIsAlreadyAssignedColor){
-                        this._rectangleColorRegistry.set(eachCategoryLabel, this._frontColorScale(colorCount))
-
-                        colorCount += 1
-                    }
-
-                    return this._rectangleColorRegistry.get(eachCategoryLabel)
-                })
 
             const barLabels = chart
                 .selectAll('text')
-                .data(eachStack)
+                .data(eachForegroundStack)
                 .enter()
                 .append('text')
                 .text(d => d.key)
@@ -560,7 +655,28 @@ class CPC {
 
     }
 
+    /*
+    @parameter d - d3's datum object (the first parameter of d3's anonymous functions)
+    @returns {String} - A CSS color name
+     */
+    _assignColor(d) {
+        // Check if the category name is in the color registry
+        const eachCategoryLabel = d.key
 
+        let categoryIsAlreadyAssignedColor = false
+        if (this._rectangleColorRegistry.get(eachCategoryLabel) !== undefined) {
+            categoryIsAlreadyAssignedColor = true
+        }
+
+        // If category is NOT in the color registry, assign color and add it to registry
+        if (!categoryIsAlreadyAssignedColor) {
+            this._rectangleColorRegistry.set(eachCategoryLabel, this._frontColorScale(this._colorCount))
+
+            this._colorCount += 1
+        }
+
+        return this._rectangleColorRegistry.get(eachCategoryLabel)
+    }
 
     _updatePanels(){
 
@@ -571,19 +687,19 @@ class CPC {
 
             // Get changed variables
             const updatedXScaleFront = panelRecord.get('xScaleFront')
+                , updatedXScaleBackground = panelRecord.get('xScaleBackground')
 
-            //// UPDATE WIDTH ////
+            //// UPDATE WIDTHS ////
 
-            const allGroupsInPanel = this._svg
+            const allElementsInPanel = this._svg
                 .select('#' + panelId)
-                .selectAll('g')
 
-            // Select rectangles
-            const rectanglesInPanel = allGroupsInPanel
-                .selectAll('rect')
+            // Select rectangles in panel
+            const foreGroundRectanglesInPanel = allElementsInPanel
+                .selectAll('.foreground-rectangle')
 
-            // Shorten bars
-            rectanglesInPanel
+            // Update foreground rectangles
+            foreGroundRectanglesInPanel
                 .transition()
                 .duration(500)
                 .attr('x', d => {
@@ -605,8 +721,42 @@ class CPC {
                     // callback can be entered here
                 })
 
+            const backgroundRectanglesInPanel = allElementsInPanel
+              .selectAll('.background-rectangle')
+
+
+            // Update background rectangles
+            backgroundRectanglesInPanel
+                .transition()
+                .duration(500)
+                .attr('x', d => {
+
+                    if (this._drawContextAsBackground){
+                        return updatedXScaleBackground(d[0][0])  // TODO: Placeholder; needs to be changed. (First modify the panel resize function so that it can accomodate padding.)
+                    }
+                    else{
+                        return updatedXScaleBackground(d[0][0])
+                    }
+
+                })
+                .attr('width', d => {
+
+                    return updatedXScaleBackground(d[0][1]) - updatedXScaleBackground(d[0][0])
+
+                })
+                .on('end', () => {
+                    // callback can be entered here
+                })
+
+
+
+
+
+
+
+
             // Select labels
-            const textsInPanel = allGroupsInPanel
+            const textsInPanel = allElementsInPanel
                 .selectAll('text')
 
             // Reposition labels
@@ -672,7 +822,7 @@ class CPC {
  * @param omitColumns {Array}
  * @return {Map}
  */
-function surveyData(data, omitColumns=[]){
+function surveyData(data, omitColumns=[], onlyGetRowCountForUppermostLevel=false){
 
     // const columnNames = data.columns
 
@@ -684,15 +834,26 @@ function surveyData(data, omitColumns=[]){
 
 
     let outerMap = new Map()
-        , innerMap
+      , innerMap
 
-    filteredColumnNames.forEach( columnName => {
 
-        innerMap = d3.rollup(data, v=>v.length, d => d[columnName])
+        if (onlyGetRowCountForUppermostLevel){
 
-        outerMap.set(columnName, innerMap)
+            innerMap = new Map()
+            innerMap.set('All categories', d3.rollup(data, v => v.length))
 
-    })
+            outerMap.set('All columns', innerMap)
+        }
+        else{
+            filteredColumnNames.forEach( columnName => {
+
+                innerMap = d3.rollup(data, v => v.length, d => d[columnName])
+
+                outerMap.set(columnName, innerMap)
+            })
+        }
+
+
 
     return outerMap
 
@@ -717,13 +878,13 @@ class Str{
     }
 
 
-    purify(){
+    formatAsCssSelector(){
 
         const uncleanString = this.content
 
         const stringWithoutSpaces = uncleanString.replace(/ /g,'-')  // '/ /g' replace all instances of space character with empty string (global behavior in the scope of the string)
-        const stringWithoutPunctuation = stringWithoutSpaces.replace(/[^a-zA-Z-0-9]/g, '')
-
+            , stringWithoutPunctuation = stringWithoutSpaces.replace(/[^a-zA-Z-0-9]/g, '')
+            // , stringLowerCase = stringWithoutPunctuation.toLowerCase() // TODO: Lowercase selector names should be implemented, but implementation breaks the app.
 
         this.content = stringWithoutPunctuation
 
