@@ -18,6 +18,7 @@ class CPC {
         this._panelBackgroundPadding = panelBackgroundPadding
 
         this._eulerPadding_horizontal = 20 // TODO: Could be added as a parameter
+        this._eulerPadding_vertical = 20 // TODO: Could be added as a parameter
 
         this._absoluteRectangleWidths = false
         if (preferences.includes('absoluteRectangleWidths')){this._absoluteRectangleWidths = true}
@@ -68,8 +69,9 @@ class CPC {
         //// SET UP SCALES FOR THE INITIAL PANEL ////
 
         // Get panel ranges for the current number of visible panels
-        const panel0_ranges = this._calculateXRangesForGivenNumberOfPanels(this._deepestPanelDepth + 1) // +1, because depth count starts from zero
-        const [ panel0_rangeStart, panel0_rangeEnd ] = panel0_ranges[0]
+        const panel0_ranges = this._calculateRangesForGivenNumberOfPanels(this._deepestPanelDepth + 1) // +1, because depth count starts from zero
+            , panel0_xRanges = panel0_ranges.get('x ranges')
+        const [ panel0_rangeStart, panel0_rangeEnd ] = panel0_xRanges[0]
 
         // Set up xScale
         const xScaleForInitialPanel = d3.scaleLinear()
@@ -277,13 +279,14 @@ class CPC {
                     const eachPanelId = 'panel-' + i
 
                       // Update foreground scales
-                    const updatedFrontRanges = this._calculateXRangesForGivenNumberOfPanels(numberOfPanelsThatWillBeVisibleAfterAddition, 'front')  //
+                    const updatedFrontRanges = this._calculateRangesForGivenNumberOfPanels(numberOfPanelsThatWillBeVisibleAfterAddition, 'front')  //
+                    const updatedFrontXRanges = updatedFrontRanges.get('x ranges')
 
-                    const [ eachUpdatedFrontRange_start, eachUpdatedFrontRange_end ] = updatedFrontRanges[i]
+                    const [ eachUpdatedFrontXRange_start, eachUpdatedFrontXRange_end ] = updatedFrontXRanges[i]
 
                     const outdatedXScaleFront = this._CpcRegistry.get(eachPanelId)
                           .get('xScaleFront')
-                    const updatedXScaleFront = outdatedXScaleFront.rangeRound([eachUpdatedFrontRange_start, eachUpdatedFrontRange_end])
+                    const updatedXScaleFront = outdatedXScaleFront.rangeRound([eachUpdatedFrontXRange_start, eachUpdatedFrontXRange_end])
 
                     this._CpcRegistry.get(eachPanelId)
                       .set('xScaleFront', updatedXScaleFront)
@@ -291,9 +294,10 @@ class CPC {
 
 
                     // Update background scales
-                    const updatedBackgroundRanges = this._calculateXRangesForGivenNumberOfPanels(numberOfPanelsThatWillBeVisibleAfterAddition, 'background')  //
+                    const updatedBackgroundRanges = this._calculateRangesForGivenNumberOfPanels(numberOfPanelsThatWillBeVisibleAfterAddition, 'background')  //
+                        , updatedBackgroundXRanges = updatedBackgroundRanges.get('x ranges')
 
-                    const [ eachUpdatedBackgroundRange_start, eachUpdatedBackgroundRange_end ] = updatedBackgroundRanges[i]
+                    const [ eachUpdatedBackgroundRange_start, eachUpdatedBackgroundRange_end ] = updatedBackgroundXRanges[i]
 
                     const outdatedXScaleBackground = this._CpcRegistry.get(eachPanelId)
                         .get('xScaleBackground')
@@ -353,24 +357,41 @@ class CPC {
                 this._deepestPanelDepth += 1
 
                 // Get panel front ranges for the current number of visible panels
-                const frontScaleRangesForNewPanel = this._calculateXRangesForGivenNumberOfPanels(this._deepestPanelDepth + 1, 'front') // +1, because depth count starts from zero
-                const [ newPanel_frontRangeStart, newPanel_frontRangeEnd ] = frontScaleRangesForNewPanel[frontScaleRangesForNewPanel.length-1]  // get last element (newly added range)
+                const scaleRangesForNewPanel = this._calculateRangesForGivenNumberOfPanels(this._deepestPanelDepth + 1, 'front') // +1, because depth count starts from zero
+                    , xScaleRangesForNewPanel = scaleRangesForNewPanel.get('x ranges')
+                const [ newPanel_frontRangeStart, newPanel_frontRangeEnd ] = xScaleRangesForNewPanel[xScaleRangesForNewPanel.length-1]  // get last element (newly added range)
 
                 // Get panel background ranges for the current number of visible panels
-                const backgroundScaleRangesForNewNumberOfPanels = this._calculateXRangesForGivenNumberOfPanels(this._deepestPanelDepth + 1, 'background') // +1, because depth count starts from zero
-                const [ newPanel_backgroundRangeStart, newPanel_backgroundRangeEnd ] = backgroundScaleRangesForNewNumberOfPanels[backgroundScaleRangesForNewNumberOfPanels.length-1]  // get last element (newly added range)
-debugger
+                const backgroundScaleRangesForNewNumberOfPanels = this._calculateRangesForGivenNumberOfPanels(this._deepestPanelDepth + 1, 'background') // +1, because depth count starts from zero
+                    , backgroundXScaleRanges = backgroundScaleRangesForNewNumberOfPanels.get('x ranges')
+                    , backgroundXScaleRangesForNewPanel = backgroundXScaleRanges[backgroundXScaleRanges.length-1]
+                const [ newPanel_backgroundXRangeStart, newPanel_backgroundXRangeEnd ] =  backgroundXScaleRangesForNewPanel // get last element (newly added range)
 
-                // Create a front xScale for the new panel
+
+                // Create front xScale for the new panel
                 const frontXScaleForNewPanel = d3.scaleLinear()
                     .domain([0, this._currentMaxPossibleValue])
                     .rangeRound([ newPanel_frontRangeStart, newPanel_frontRangeEnd ])
 
-                // Create a background xScale for the new panel
-
+                // Create background xScale for the new panel
                 const backgroundXScaleForNewPanel = d3.scaleLinear()
                     .domain([0, maximumPossibleColumnValueInPanel])
-                    .rangeRound([ newPanel_backgroundRangeStart, newPanel_backgroundRangeEnd ])
+                    .rangeRound([ newPanel_backgroundXRangeStart, newPanel_backgroundXRangeEnd ])
+
+                
+                //
+                // // Get panel background Y ranges for the current number of visible panels
+                // const backgroundYScaleRangesForNewNumberOfPanels = this._calculateYRangesForGivenNumberOfPanels(this._deepestPanelDepth + 1, 'background') // +1, because depth count starts from zero
+                // // const [ newPanel_backgroundYRangeStart, newPanel_backgroundYRangeEnd ] = backgroundYScaleRangesForNewNumberOfPanels[backgroundYScaleRangesForNewNumberOfPanels.length-1]  // get last element (newly added range)
+                //
+                // // Create background yScale for the new panel
+                // const backgroundYScaleForNewPanel = d3.scaleBand()
+                //     .domain(d3.range(this._datasetSurveyResults.size))
+                //     .rangeRound([
+                //         0 + this._eulerPadding_vertical,
+                //         this._svgContainerHeight - this._eulerPadding_vertical
+                //     ])
+                //     .paddingInner(1)
 
 
                 // Draw the new panel
@@ -763,7 +784,7 @@ debugger
 
 
 
-    _calculateXRangesForGivenNumberOfPanels (numberOfPanels, eulerMode=null) {
+    _calculateRangesForGivenNumberOfPanels (numberOfPanels, eulerMode=null) {
 
         // Check for errors
         const validEulerModes = ['front', 'background', null]
@@ -771,7 +792,9 @@ debugger
         if (numberOfPanels < 0){throw `numberOfPanels parameter cannot be "${numberOfPanels}". It should be greater than 0`}
 
 
-        let panelRanges = []
+        let panelRanges = new Map()
+
+        let xRangesOfPanel = []
 
         // Generate data for inputting it to the d3's stack generator
         // The format is: [ {0:1, 1:1, 2:1 } ]
@@ -823,17 +846,17 @@ debugger
                 ]
             }
 
-            panelRanges.push(scaledPanelCoordinates)
+            xRangesOfPanel.push(scaledPanelCoordinates)
 
             i += 1
-            debugger
 
         })
-
         // Remove padding at the beginning of the first range
-        panelRanges[0][0] -= this._padding
+        xRangesOfPanel[0][0] -= this._padding
 
         // Return the scaled stack, which corresponds to ranges for each panel
+        panelRanges.set('x ranges', xRangesOfPanel)
+
         return panelRanges
 
     }
