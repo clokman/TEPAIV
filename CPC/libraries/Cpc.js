@@ -794,7 +794,10 @@ class CPC {
 
         let panelRanges = new Map()
 
+        // Initialize output variables
         let xRangesOfPanel = []
+          , yRangesOfPanel = []
+          , yCoordinatesOfAllChartsInPanel = []
 
         // Generate data for inputting it to the d3's stack generator
         // The format is: [ {0:1, 1:1, 2:1 } ]
@@ -813,19 +816,39 @@ class CPC {
         const panelSeries = constructStack(panels)
         // e.g., panel series: [[0,1], [1,2], [2,3]]
 
+
+
         // Make an xScale that spans the entire SVG element
         const cpcXSpanScale = d3.scaleLinear()
             .domain([0, panelSeries.length])
 
+
+        // Make a yScale that spans the entire SVG element
+        const labelsOfDatasetColumnsBeingDrawnAsCharts = this._dataset.columns.filter(
+            eachColumnLabel => !this._ignoredColumns.includes(eachColumnLabel)
+        )
+        const numberOfChartsInPanel = labelsOfDatasetColumnsBeingDrawnAsCharts.length
+
+        const cpcYSpanScale = d3.scaleBand()
+            .domain(d3.range(numberOfChartsInPanel))
+
+
+
+        // Add ranges to x and y scales
         if (!eulerMode){
             cpcXSpanScale.rangeRound([0,  this._svgContainerWidth])
+            cpcYSpanScale.rangeRound([0,  this._svgContainerHeight])
         }
         else{
-            cpcXSpanScale.rangeRound([0, this._svgContainerWidth - (this._eulerPadding_horizontal * numberOfPanels)])
+            const verticalPadding = this._eulerPadding_vertical * numberOfPanels
+                , horizontalPadding = this._eulerPadding_horizontal * numberOfPanels
+
+            cpcXSpanScale.rangeRound([0, this._svgContainerWidth - horizontalPadding])
+            cpcYSpanScale.rangeRound([0 + verticalPadding, this._svgContainerHeight - verticalPadding])
         }
 
 
-        // Scale the stack
+        // Scale the x stack to end up with ranges
         let i = 1 // must NOT be 0, because will be used in multiplication below.
         panelSeries.forEach(panelDataArray => {
             // e.g., panelDataArray: [[0,1]]
@@ -835,18 +858,19 @@ class CPC {
 
             const [eachDomainStart, eachDomainEnd] = eachPanelCoordinates
 
-            let scaledPanelCoordinates
+            let scaledXRangesForCurrentPanel
             if (!eulerMode || eulerMode === 'front'){
-                scaledPanelCoordinates = [cpcXSpanScale(eachDomainStart)+this._padding, cpcXSpanScale(eachDomainEnd)]
+                scaledXRangesForCurrentPanel = [cpcXSpanScale(eachDomainStart)+this._padding, cpcXSpanScale(eachDomainEnd)]
+
             }
             else if (eulerMode === 'background') {
-                scaledPanelCoordinates = [
+                scaledXRangesForCurrentPanel = [
                     cpcXSpanScale(eachDomainStart) + this._padding,
                     this._svgContainerWidth - (this._eulerPadding_horizontal * i)
                 ]
             }
 
-            xRangesOfPanel.push(scaledPanelCoordinates)
+            xRangesOfPanel.push(scaledXRangesForCurrentPanel)
 
             i += 1
 
@@ -854,8 +878,67 @@ class CPC {
         // Remove padding at the beginning of the first range
         xRangesOfPanel[0][0] -= this._padding
 
-        // Return the scaled stack, which corresponds to ranges for each panel
+        // Add the scaled stack, which corresponds to x ranges for each panel
         panelRanges.set('x ranges', xRangesOfPanel)
+
+
+
+
+        // Scale the y stack to end up with ranges
+        d3.range(numberOfPanels).forEach( i => {
+
+            let scaledYRangesForCurrentPanel
+
+            if (!eulerMode){
+                scaledYRangesForCurrentPanel = [
+                    cpcYSpanScale(0)+this._padding,
+                    cpcYSpanScale(numberOfChartsInPanel-1)-this._padding
+                ]
+            }
+            else if (eulerMode === 'front'){
+
+                const verticalPadding = i * this._eulerPadding_vertical
+
+                scaledYRangesForCurrentPanel = [
+                    cpcYSpanScale(0) + this._padding + verticalPadding,
+                    cpcYSpanScale(numberOfChartsInPanel-1) - this._padding - verticalPadding
+                ]
+            }
+
+            else if (eulerMode === 'background') {
+
+                const verticalPadding = i * this._eulerPadding_vertical
+
+                scaledYRangesForCurrentPanel = [
+                    cpcYSpanScale(0) + verticalPadding,
+                    cpcYSpanScale(numberOfChartsInPanel-1) - verticalPadding
+                ]
+
+            }
+
+            yRangesOfPanel.push(scaledYRangesForCurrentPanel)
+
+        })
+        panelRanges.set('y ranges', yRangesOfPanel)
+
+
+
+
+        // TODO: FEATURE: Dynamic chart height COULD be implemented via enhancing this block
+        // Calculate chart positions and heights
+        // d3.range(numberOfChartsInPanel).forEach( i => {
+        //
+        //     const yCoordinateOfCurrentChart = cpcYSpanScale(i)
+        //     // ,     yRangeEndOfCurrentChart = yCoordinateOfCurrentChart + this._barHeight
+        //
+        //     yCoordinatesOfAllChartsInPanel.push(yCoordinateOfCurrentChart)
+        //
+        // })
+        //
+        // panelRanges.set('y positions for charts', yCoordinatesOfAllChartsInPanel)
+
+        console.log(panelRanges)
+
 
         return panelRanges
 
