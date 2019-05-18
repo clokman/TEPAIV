@@ -5,10 +5,37 @@
     <title>CPC</title>
 
 
+    <!--======================== EXTERNAL MODULES ========================-->
 
     <script type="text/javascript" src="./libraries/external/d3/d3.js"></script>
     <script type="text/javascript" src="./libraries/external/d3/d3-array.js"></script>
-    <script type="text/javascript" src="./libraries/Cpc.js" ></script>
+
+    <!--    Semantic UI     -->
+    <link rel="stylesheet" type="text/css" href="libraries/external/semantic/dist/semantic.min.css">
+    <script src="libraries/external/jquery-3.1.1.min.js"></script>
+    <script src="libraries/external/semantic/dist/semantic.min.js"></script>
+
+
+    <!--     VUE     -->
+    <!-- Vue development version, includes helpful console warnings -->
+<!--    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>-->
+
+    <!-- Vue production version, optimized for size and speed -->
+    <!--<script src="https://cdn.jsdelivr.net/npm/vue"></script>-->
+
+
+
+
+    <!--========================-- INTERNAL MODULES ========================-->
+    <script type="text/javascript" src="./data/datasets.js"></script>
+
+    <script type="text/javascript" src="libraries/cpc/str.js"></script>
+    <script type="text/javascript" src="libraries/cpc/survey-data.js"></script>
+    <script type="text/javascript" src="./libraries/cpc/navigator.js" ></script>
+    <script type="text/javascript" src="./libraries/cpc/controls.js" ></script>
+
+
+
 
 
 
@@ -17,8 +44,50 @@
 
 <body>
 
-    <script type="text/javascript" src="./data/titanic.js"></script>
-    <script type="text/javascript" src="app.js"></script>
+
+
+    <!--======================== CONTROLS ========================-->
+
+
+    <!--========== OMIT COLUMNS TEXTBOX ==========-->
+
+    <!--    <br><br>-->
+<!--    <div id='omit-columns-input' class="ui left action input">-->
+<!--        <button class="ui white labeled icon button">-->
+<!--            <i class="x icon"></i>-->
+<!--            Omit Columns-->
+<!--        </button>-->
+<!--        <input v-model="vueValue" type="text" placeholder="Name,Gender..." value="">-->
+
+<!--        <p>{{ vueValue.split(',') }}</p>-->
+
+<!--    </div>-->
+
+<!--    <br><br>-->
+
+
+<!--    <script type="text/javascript">-->
+
+<!--        let omittedColumns = new Vue({-->
+
+<!--            el: '#omit-columns-input',-->
+<!--            data: {-->
+<!--                vueValue: 'Name'-->
+<!--            }-->
+<!--        })-->
+
+<!--        let ignoredColumnsFromInput = omittedColumns.vueValue.split(',')-->
+
+<!--    </script>-->
+
+
+
+
+    <!--======================== APP LOGIC ========================-->
+
+    <script type="text/javascript" src="./app.js"></script>
+
+
 
 </body>
 </html>
