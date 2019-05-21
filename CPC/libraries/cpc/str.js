@@ -16,14 +16,18 @@
 // Module content goes here.
 const version = "2.0"
 
+    /**
+     *
+     * @param input {string}
+     * @return {string}
+     */
+    function formatAsCssSelector(input){
 
-function formatAsCssSelector(inputString){
-
-    if(startsWithNumber(inputString)){
-        throw new Error(`Input string should not start with a number. The current string is "${inputString}".`)
+    if(startsWithNumber(input)){
+        throw new Error(`Input string should not start with a number. The current string is "${input}".`)
     }
 
-    const stringWithoutSpaces = inputString.replace(/ /g,'-')  // '/ /g' replace all instances of space character with empty string (global behavior in the scope of the string)
+    const stringWithoutSpaces = input.replace(/ /g,'-')  // '/ /g' replace all instances of space character with empty string (global behavior in the scope of the string)
         , stringWithoutPunctuation = stringWithoutSpaces.replace(/[^a-zA-Z-0-9]/g, '')
         , stringLowerCase = stringWithoutPunctuation.toLowerCase()
 
@@ -31,10 +35,13 @@ function formatAsCssSelector(inputString){
 }
 
 
-
-
-function startsWithNumber(inputString){
-    const firstCharacter = inputString[0]
+    /**
+     *
+     * @param input {string}
+     * @return {boolean}
+     */
+    function startsWithNumber(input){
+    const firstCharacter = input[0]
         , conversionAttempt = Number(firstCharacter)
         , isNumber = !(isNaN(conversionAttempt))  // returns true or false
 
@@ -42,7 +49,16 @@ function startsWithNumber(inputString){
 }
 
 
+    /**
+     *
+     * @param input {Number}
+     * @return {string}
+     */
+    function formatNumberAsPercentage(input){
 
+        return input + '%'
+
+    }
 
 
 
@@ -52,6 +68,7 @@ function startsWithNumber(inputString){
     exports.version = version
     exports.formatAsCssSelector = formatAsCssSelector
     exports.startsWithNumber = startsWithNumber
+    exports.formatNumberAsPercentage = formatNumberAsPercentage
 
 
 

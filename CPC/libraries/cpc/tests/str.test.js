@@ -46,3 +46,16 @@ test ('Should return false if string does not start with a number', () => {
         .toBe(false)
 
 })
+
+
+
+
+
+//// formatNumberAsPercentage() ////
+
+test ('Should return formatted string with a  percentage sign', () => {
+
+    expect(str.formatNumberAsPercentage(4))
+        .toBe('4%')
+
+})
