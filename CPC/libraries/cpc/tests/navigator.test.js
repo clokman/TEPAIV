@@ -15,6 +15,7 @@ global.d3 = {
     ...require("../../external/d3/d3-array")
 }
 
+global.svg = require("../svg")
 global.str = require("../str")
 global.data = require("../../cpc/data")
 
@@ -32,10 +33,10 @@ const navigator = require("../navigator")
 test ('Should instantiate object', () => {
 
     // Create a svg object that that the container can exist in
-    const mySvg = new navigator.Svg(111, 222)
+    const mySvg = new svg.Svg(111, 222)
         , parentSelection = d3.select('body').select('svg')
 
-    const myContainer = new navigator.Container(parentSelection)
+    const myContainer = new svg.Container(parentSelection)
     expect(myContainer).toBeDefined()
 
 })
@@ -46,10 +47,10 @@ test ('Should instantiate object', () => {
 test ('Should get and set class and ID with single and chain syntax', () => {
 
     // Create a svg object that that the container can exist in
-    const mySvg = new navigator.Svg(111, 222)
+    const mySvg = new svg.Svg(111, 222)
         , parentSelection = d3.select('body').select('svg')
 
-    const myContainer = new navigator.Container(parentSelection)
+    const myContainer = new svg.Container(parentSelection)
 
 
     //// SINGLE METHOD ///
@@ -124,8 +125,8 @@ test ('Should get and set rectangle width and height correctly in single and cha
     //// SINGLE METHOD ////
 
     // Get
-    expect(myChart.width()).toBe(50)
-    expect(myChart.height()).toBe(50)
+    expect(myChart.width()).toBe(75)
+    expect(myChart.height()).toBe(300)
 
     // Set (and then get to see what is set)
     expect(myChart.width(100).width()).toBe(100)
@@ -157,7 +158,7 @@ test ('Should get and set rectangle width and height correctly in single and cha
 
 test ('Should instantiate object', () => {
 
-    const mySvg = new navigator.Svg()
+    const mySvg = new svg.Svg()
 
     expect(mySvg).toBeDefined()
 
@@ -166,7 +167,7 @@ test ('Should instantiate object', () => {
 
 test ('Should get and set Svg width and height correctly in single and chain syntax', () => {
 
-    const mySvg = new navigator.Svg()
+    const mySvg = new svg.Svg()
 
     mySvg.width(111)
          .height(222)
@@ -314,7 +315,7 @@ test ('Should get and set percentage text fill color using single and chain synt
 
 test ('Should instantiate a Text class object', () => {
 
-    const myText = new navigator.Text()
+    const myText = new svg.Text()
 
     expect(myText).toBeDefined()
 
@@ -325,8 +326,8 @@ test ('Should instantiate a Text class object', () => {
 // test ('Should update attributes of a text object on DOM', () => {
 //
 //     d3.select('body').selectAll('svg').remove()
-//     const mySvg = new navigator.Svg(500, 500)
-//     const myText = new navigator.Text()
+//     const mySvg = new svg.Svg(500, 500)
+//     const myText = new svg.Text()
 //
 //     myText.x(200).fill('blue').id('Earth').y(10).class('M').text('You are here').update(0)
 //
@@ -339,7 +340,7 @@ test ('Should instantiate a Text class object', () => {
 
 test ('Should get and set text', () => {
 
-    const myText = new navigator.Text()
+    const myText = new svg.Text()
 
     //// SINGLE METHOD ///
     expect(myText.text()).toBe('Text')
@@ -349,7 +350,7 @@ test ('Should get and set text', () => {
 
 test ('Should get and set coordinates', () => {
 
-    const myText = new navigator.Text()
+    const myText = new svg.Text()
 
     //// SINGLE METHOD ///
 
@@ -375,7 +376,7 @@ test ('Should get and set coordinates', () => {
 
 test ('Should get and set fill color using single and chain syntax', () => {
 
-    const myText = new navigator.Text()
+    const myText = new svg.Text()
 
     // Single method
     expect(myText.fill('green').fill()).toBe('green')
@@ -393,7 +394,7 @@ test ('Should get and set fill color using single and chain syntax', () => {
 
 test ('Should get and set anchor using single and chain syntax', () => {
 
-    const myText = new navigator.Text()
+    const myText = new svg.Text()
 
     // Single method
     expect(myText.textAnchor('middle').textAnchor()).toBe('middle')
@@ -411,7 +412,7 @@ test ('Should get and set anchor using single and chain syntax', () => {
 
 test ('Should get and set fill color using single and chain syntax', () => {
 
-    const myText = new navigator.Text()
+    const myText = new svg.Text()
 
     // Single method
     expect(myText.textAnchor('green').textAnchor()).toBe('green')
@@ -428,7 +429,7 @@ test ('Should get and set fill color using single and chain syntax', () => {
 
 test ('Should set Text class and ID with single and chain syntax', () => {
 
-    const myText = new navigator.Text()
+    const myText = new svg.Text()
 
 
     //// SINGLE METHOD ///
@@ -472,7 +473,7 @@ test ('Should set Text class and ID with single and chain syntax', () => {
 
 test ('Should instantiate a Rectangle class object', () => {
 
-    const myRectangle = new navigator.Rectangle()
+    const myRectangle = new svg.Rectangle()
 
     expect(myRectangle).toBeDefined()
 
@@ -484,7 +485,7 @@ test ('Should instantiate a Rectangle class object', () => {
 //// X and Y COORDINATES ///
 test ('Should set rectangle x and y coordinates', () => {
 
-    const myRectangle = new navigator.Rectangle()
+    const myRectangle = new svg.Rectangle()
 
     //// SINGLE METHOD ///
 
@@ -525,7 +526,7 @@ test ('Should set rectangle x and y coordinates', () => {
 
 test ('Should get and set rectangle width and height correctly in single and chain syntax', () => {
 
-    const myRectangle = new navigator.Rectangle()
+    const myRectangle = new svg.Rectangle()
 
     //// SINGLE METHOD ////
 
@@ -558,7 +559,7 @@ test ('Should get and set rectangle width and height correctly in single and cha
 
 test ('Should get and set fill color using single and chain syntax', () => {
 
-    const myRectangle = new navigator.Rectangle()
+    const myRectangle = new svg.Rectangle()
 
     // Single method
     expect(myRectangle.fill('green').fill()).toBe('green')
@@ -577,7 +578,7 @@ test ('Should get and set fill color using single and chain syntax', () => {
 
 test ('Should set rectangle class and ID with single and chain syntax', () => {
 
-    const myRectangle = new navigator.Rectangle()
+    const myRectangle = new svg.Rectangle()
 
 
     //// SINGLE METHOD ///

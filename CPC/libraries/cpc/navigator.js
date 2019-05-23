@@ -13,18 +13,8 @@
 
 
 
-
-
 // Module content goes here.
 const version = "3.0"
-
-
-
-
-
-
-
-
 
 
 
@@ -68,7 +58,6 @@ class Chart extends svg.Container {
 
 
             // Initialize
-
 
             this._draw()
             this.updateChart()
@@ -207,9 +196,6 @@ class Chart extends svg.Container {
 
         }
 
-
-        height(){}
-        width(){}
 
 
         _generateDefaultStackMap(){
