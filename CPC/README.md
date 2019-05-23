@@ -1,7 +1,7 @@
 # Conditional Probability Calculator
 
 To view demos: 
-1. Clone or download the TEPAIV repository. 
+1. Clone or download the TEPAIV repository (i.e., the parent directory). 
 2. Navigate to demos folder of a project (e.g., TEPAIV/CPC/demos) and enter the directory of the demo you wish to see.
 3. Open index.html of that directory.
 
