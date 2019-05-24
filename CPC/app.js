@@ -3,27 +3,29 @@
 // slider.value = svgCanvas.width()
 // monitor.innerText = slider.value
 
+mySvg = new container.Svg()
+
+myRectangle = new shape.Rectangle().x(50).update()
+myRectangle.fill('blue').update()
+
+myText = new shape.Text()
+myText.x(100).fill('red').update()
 
 
-// myRectangle = new svg.Rectangle().x(50).update()
-// myText = new svg.Text()
-// myText.x(100).fill('red').update()
-//
-//
-// parentSelection = d3.select('body').select('svg')
-// myContainer = new navigator.Container()
-// myContainer2 = new navigator.Container()
-// myContainer.id('Earth').class('M').update()
-//
-// myContainer2.class('container').update()
-// myContainer2.id('container-1').update()
+const parentElementForCategory = d3.select('body').select('svg')
+    .append('g')
+    .attr('class', 'my-category-container')
+myCategory = new navigator.Category(parentElementForCategory)
+myCategory.x(10).y(100).fill('dodgerblue').update()
 
 
-// myChart = new navigator.Chart()
-// myChart.x(300)
+const parentElementForChart = d3.select('body').select('svg')
+    .append('g')
+    .attr('class', 'my-chart-container')
 
+myChart = new navigator.Chart(parentElementForChart)
+myChart.x(300).update()
 
-// myCategory = new navigator.Category()
 
 
 // const dataset = datasets.titanic
