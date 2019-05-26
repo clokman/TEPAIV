@@ -82,7 +82,7 @@ test ('Should get and set class and ID with single and chain syntax', () => {
 
 //// UPDATE CONTAINER REGISTRY ////
 
-test ('Should update registry', () => {
+test ('Should update and query registry', () => {
 
     // Create a svg object that that the container can exist in
     const mySvg = new container.Svg(111, 222)
@@ -91,18 +91,22 @@ test ('Should update registry', () => {
     const myGroup = new container.Group(parentSelection)
 
     // Get initial value of registry
-    expect(myGroup.registry()).toBeInstanceOf(Map)
-    expect(myGroup.registry().size).toBe(0)
-
+    expect(myGroup.objects()).toBeInstanceOf(Map)
+    expect(myGroup.objects().size).toBe(0)
 
 
     const myRectangle = new shape.Rectangle()
 
-    // Add item to registry
-    myGroup.registry('id-1', myRectangle)
-    expect(myGroup.registry().size).toBe(1)
-    expect(myGroup.registry().get('id-1').height()).toBe(50)
-    expect(myGroup.registry().get('id-1').x()).toBe(0)
+    // Add item to registry (use two parameters)
+    myGroup.objects('id-1', myRectangle)
+    expect(myGroup.objects().size).toBe(1)
+    expect(myGroup.objects().get('id-1').height()).toBe(50)
+    expect(myGroup.objects().get('id-1').x()).toBe(0)
+
+
+    // Get item from registry (use one parameter)
+    expect(myGroup.objects('id-1').width()).toBe(50)
+    expect(myGroup.objects('id-1').y()).toBe(0)
 
 })
 

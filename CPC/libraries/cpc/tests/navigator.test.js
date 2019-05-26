@@ -117,7 +117,7 @@ test ('Should get and set domain correctly in single and chain syntax', () => {
 
     // Get range
     expect(myChart.range()).toEqual([320, 20])
-    expect(myChart._scaledStack.data().get('category-1').get('start')).toEqual(320)
+    expect(myChart._rangeStack.data().get('category-1').get('start')).toEqual(320)
 
     //// Set Range
     expect(myChart.range([100, 0]).range()).toEqual([100, 0])
@@ -197,19 +197,19 @@ test ('Should get and set percentage using single and chain syntax', () => {
 
     // Single method
     expect(myCategory.percentage(10).percentage()).toBe(10)
-    expect(myCategory._percentageText.text()).toBe('10%')
+    expect(myCategory._percentageTextObject.text()).toBe('10%')
 
     expect(myCategory.percentage(20).percentage()).toBe(20)
-    expect(myCategory._percentageText.text()).toBe('20%')
+    expect(myCategory._percentageTextObject.text()).toBe('20%')
 
 
     // Chain syntax
     expect(myCategory.x(111).percentage(30).percentage()).toBe(30)
-    expect(myCategory._percentageText.text()).toBe('30%')
+    expect(myCategory._percentageTextObject.text()).toBe('30%')
 
 
     expect(myCategory.percentage(40).y(222).percentage()).toBe(40)
-    expect(myCategory._percentageText.text()).toBe('40%')
+    expect(myCategory._percentageTextObject.text()).toBe('40%')
 
 
 })
@@ -232,3 +232,43 @@ test ('Should get and set percentage text fill color using single and chain synt
 
 
 })
+
+
+//// CLASS ///
+
+test ('Should get and set parent group class of the category using single and chain syntax', () => {
+
+    const myCategory = new navigator.Category()
+
+
+    //// SINGLE METHOD ///
+
+    // Class
+    expect(myCategory.class()).toBe(null)
+    // expect(myCategory.class('class-1').class()).toBe('class-1')
+
+    // // ID
+    // expect(myCategory.id()).toBe(null)
+    // expect(myCategory.id('id-1').id()).toBe('id-1')
+
+
+
+    //// CHAIN SYNTAX ////
+
+    // // ID and Class
+    // myCategory.class('M').id('Earth')
+    // expect(myCategory.class()).toBe('M')
+    // expect(myCategory.id()).toBe('Earth')
+    //
+    //
+    // //// CHAIN SYNTAX ////
+    //
+    // // ID and Class with other methods
+    // myCategory.x(8888).class('M').id('Vulcan').y(9999)
+    // expect(myCategory.class()).toBe('M')
+    // expect(myCategory.id()).toBe('Vulcan')
+    // expect(myCategory.x()).toBe(8888)
+    // expect(myCategory.y()).toBe(9999)
+
+})
+

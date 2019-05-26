@@ -33,7 +33,7 @@ class Chart extends container.Group {
 
         // Private parameters
         this._label = 'Chart Label'
-        this._stack = new data.Stack()
+        this._domainStack = new data.Stack()
         this._x = 400
         this._y = 20
         this._height = 300
@@ -43,8 +43,8 @@ class Chart extends container.Group {
         // Private variables
         this._container = super.selectSelf()
 
-        this._stackMin = this._stack.min()
-        this._stackMax = this._stack.max()
+        this._stackMin = this._domainStack.min()
+        this._stackMax = this._domainStack.max()
 
         this._rangeStart = this._y + this._height  // bottom edge of chart
         this._rangeEnd = this._y                   // top edge
@@ -53,7 +53,7 @@ class Chart extends container.Group {
             .domain([this._stackMin, this._stackMax])
             .rangeRound([this._rangeStart, this._rangeEnd])
 
-        this._scaledStack = this._stack.scale(this._scaleFunction)
+        this._rangeStack = this._domainStack.scale(this._scaleFunction)
 
 
         // Initialize
@@ -81,26 +81,40 @@ class Chart extends container.Group {
                 this._rangeEnd = end
 
                 // Update scale function
-                this._scaleFunction.rangeRound([start, end])
+                this._scaleFunction.rangeRound([this._rangeStart, this._rangeEnd])
 
                 // Rescale stack data
-                this._scaledStack = this._stack.scale(this._scaleFunction)
+                this._rangeStack = this._domainStack.scale(this._scaleFunction)
+
+
+
+                // Update y coordinates of each category
+
+                // LOOP //
+                this.objects().forEach(
+                    (eachCategoryObject, eachCategoryId) => {
+
+                        const newStart = this._rangeStack.data().get(eachCategoryId).get('start')
+                            , newEnd = this._rangeStack.data().get(eachCategoryId).get('end')
+
+                        eachCategoryObject
+                            .y(newEnd)
+                            .height(newStart-newEnd)
+
+
+                    }
+                )
 
                 return this
             }
 
-        }
-
-    update(){
-
-        super.update()
-
     }
+
 
     _draw(){
 
         // LOOP //
-        this._scaledStack.data().forEach(
+        this._rangeStack.data().forEach(
             (eachCategoryData, eachCategoryId) => {
 
                 const start = eachCategoryData.get('start')
@@ -122,14 +136,14 @@ class Chart extends container.Group {
                     .y(end)
                     .height(start-end)
                     .width(this._width)
-                    .id(eachCategoryId)
-                    .class('categoryObject')
+                    // .id(eachCategoryId)
+                    .class('category-rectangle')
                     .update()
 
                 categoryObject.percentage(start).update()
 
                 // Update registry
-                this.registry(eachCategoryId, categoryObject)
+                this.objects(eachCategoryId, categoryObject)
             }
 
         )
@@ -146,7 +160,7 @@ class Chart extends container.Group {
             this._x = value
 
             // LOOP //
-            this.registry().forEach(
+            this.objects().forEach(
                 (eachCategoryObject, eachCategoryId) => {
 
                     eachCategoryObject.x(this._x)
@@ -160,28 +174,28 @@ class Chart extends container.Group {
     }
 
 
-    y(value){
-
-        if (!arguments.length){
-            return this._y
-        }
-        else{
-            this.registry().forEach(
-                (eachCategoryObject, eachCategoryId) => {
-
-                    eachCategoryObject
-
-                }
-
-            )
-
-            this._y = value
-
-
-            return this
-        }
-
-    }
+    // y(value){
+    //
+    //     if (!arguments.length){
+    //         return this._y
+    //     }
+    //     else{
+    //         // this.registry().forEach(
+    //         //     (eachCategoryObject, eachCategoryId) => {
+    //         //
+    //         //         eachCategoryObject
+    //         //
+    //         //     }
+    //         //
+    //         // )
+    //
+    //         this._y = value
+    //
+    //
+    //         return this
+    //     }
+    //
+    // }
 
 
     width(value){
@@ -193,7 +207,7 @@ class Chart extends container.Group {
             this._width = value
 
             // LOOP //
-            this.registry().forEach(
+            this.objects().forEach(
                 (eachCategoryObject, eachCategoryId) => {
 
                     eachCategoryObject.width(this._width)
@@ -259,60 +273,167 @@ class Chart extends container.Group {
 
 
 
-
-class Category extends shape.Rectangle {
-
-
-    constructor(parentContainer=d3.select('body').select('svg'), x=25, y=25, percentage='0', percentageTextOffsetX=0, percentageTextOffsetY=3, percentageTextFill='white', percentageTextAnchor='middle') {
-
-        super(parentContainer)
+class Category extends container.Group {
 
 
-        super.x(x)
-        super.y(y)
+    constructor(parentContainerSelection=d3.select('body').select('svg')) {
 
-        this._percentage = percentage
+        super(parentContainerSelection)
 
-        this._percentageTextOffsetX = percentageTextOffsetX
-        this._percentageTextOffsetY = percentageTextOffsetY
+        // Private Parameters //
+        this._x = 25
+        this._y = 25
+        this._width = 20
+        this._height = 100
+        this._percentage = '0'
+        this._percentageTextOffsetX = 0
+        this._percentageTextOffsetY = 3
+        this._percentageTextFill = 'white'
+        this._percentageTextAnchor = 'middle'
 
-        this._percentageTextFill = percentageTextFill
-        this._percentageTextAnchor = percentageTextAnchor
 
-        this._percentageText = new shape.Text(parentContainer)
+        // Initialize //
+        this._rectangleObject = new shape.Rectangle(this._parentContainerSelection)
+        this.objects('rectangle', this._rectangleObject)  // add object to container registry
 
-        this.initiatePercentageText()
+        this._percentageTextObject = new shape.Text(this._parentContainerSelection)
+        this.objects('percentage-text', this._percentageTextObject)  // add object to container registry
+
+        this.initializePercentageText()
 
         this.update()
     }
 
 
-    initiatePercentageText(){
+    initializePercentageText(){
 
         this.percentage(this._percentage)  // format and set percentageText object's inner text
         this._calculateAndUpdatePercentageTextPosition()
 
-        this._percentageText.fill(this._percentageTextFill)
-        this._percentageText.textAnchor(this._percentageTextAnchor)
+        this._percentageTextObject.fill(this._percentageTextFill)
+        this._percentageTextObject.textAnchor(this._percentageTextAnchor)
 
     }
 
 
-    update(transitionDuration){
+    // update(transitionDuration){
+    //
+    //     // this._calculateAndUpdatePercentageTextPosition()
+    //     this._rectangleObject.update(transitionDuration)
+    //     this._percentageTextObject.update(transitionDuration)
+    // }
 
-        this._calculateAndUpdatePercentageTextPosition()
-        super.update(transitionDuration)
-        this._percentageText.update(transitionDuration)
+
+    x(value) {
+
+        // Getter
+        if (!arguments.length) {
+            return this._x
+        }
+        // Setter
+        else {
+
+            // Update x value of category
+            this._x = value
+
+            // Update x value of rectangle
+            this._rectangleObject.x(value)
+
+            // Recalculate percentage text position based on new rectangle parameters
+            const newPercentageTextCoordinateX = this._calculateHorizontalPercentageTextPositionBasedOnRectangleParameters()
+            this._percentageTextObject.x(newPercentageTextCoordinateX)
+
+            return this
+        }
+
     }
 
-    _calculateAndUpdatePercentageTextPosition(){
 
-        this._percentageTextPositionX = this._calculateHorizontalPercentageTextPositionBasedOnRectangleParameters()
-        this._percentageTextPositionY = this._calculateVerticalPercentageTextPositionBasedOnRectangleParameters()
-        this._percentageText.x(this._percentageTextPositionX)
-        this._percentageText.y(this._percentageTextPositionY)
+    y(value) {
+
+        // Getter
+        if (!arguments.length) {
+            return this._y
+        }
+        // Setter
+        else {
+
+            // Update y value of category
+            this._y = value
+
+            // Update y value of rectangle
+            this._rectangleObject.y(value)
+
+            const newPercentageTextCoordinateY = this._calculateVerticalPercentageTextPositionBasedOnRectangleParameters()
+            this._percentageTextObject.y(newPercentageTextCoordinateY)
+
+            return this
+        }
 
     }
+
+
+    width(value) {
+
+        // Getter
+        if (!arguments.length) {
+            return this._width
+        }
+        // Setter
+        else {
+
+            // Update width value of category
+            this._width = value
+
+            // Update width value of rectangle
+            this._rectangleObject.width(value)
+
+            // Recalculate percentage text position based on new rectangle parameters
+            const newPercentageTextCoordinateX = this._calculateHorizontalPercentageTextPositionBasedOnRectangleParameters()
+            this._percentageTextObject.x(newPercentageTextCoordinateX)
+
+            return this
+        }
+
+    }
+
+
+    height(value) {
+
+        // Getter
+        if (!arguments.length) {
+            return this._height
+        }
+        // Setter
+        else {
+
+            // Update width value of category
+            this._height = value
+
+            // Update width value of rectangle
+            this._rectangleObject.height(value)
+
+            // Recalculate percentage text position based on new rectangle parameters
+            const newPercentageTextCoordinateY = this._calculateVerticalPercentageTextPositionBasedOnRectangleParameters()
+            this._percentageTextObject.y(newPercentageTextCoordinateY)
+
+            return this
+        }
+
+    }
+
+
+    fill(value) {
+        if (!arguments.length) {
+            return this._rectangleObject.fill()
+        }
+        else {
+            this._rectangleObject.fill(value)
+
+            return this
+        }
+    }
+
 
     percentage(value) {
 
@@ -326,7 +447,7 @@ class Category extends shape.Rectangle {
             this._percentage = value
 
             const formattedPercentageString = str.formatNumberAsPercentage(this._percentage)
-            this._percentageText.text(formattedPercentageString)
+            this._percentageTextObject.text(formattedPercentageString)
 
             return this
         }
@@ -337,65 +458,30 @@ class Category extends shape.Rectangle {
 
         // Getter
         if (!arguments.length){
-            return this._percentageText.fill()
+            return this._percentageTextObject.fill()
         }
         // Setter
         else{
-            this._percentageText.fill(value)
+            this._percentageTextObject.fill(value)
             return this
         }
     }
 
 
-    x(value) {
+    _calculateAndUpdatePercentageTextPosition(){
 
-        // Getter
-        if (!arguments.length) {
-            return super.x()
-        }
-        // Setter
-        else {
-
-            // Update x value of rectangle
-            super.x(value)
-
-            // Recalculate percentage text position based on new rectangle parameters
-            const newPercentageTextCoordinateX = this._calculateHorizontalPercentageTextPositionBasedOnRectangleParameters()
-            this._percentageText.x(newPercentageTextCoordinateX)
-
-            return this
-        }
-
-    }
-
-
-
-    y(value) {
-
-        // Getter
-        if (!arguments.length) {
-            return super.y()
-        }
-        // Setter
-        else {
-
-            // Update y value of rectangle
-            super.y(value)
-
-            const newPercentageTextCoordinateY = this._calculateVerticalPercentageTextPositionBasedOnRectangleParameters()
-
-            this._percentageText.y(newPercentageTextCoordinateY)
-
-            return this
-        }
+        this._percentageTextPositionX = this._calculateHorizontalPercentageTextPositionBasedOnRectangleParameters()
+        this._percentageTextPositionY = this._calculateVerticalPercentageTextPositionBasedOnRectangleParameters()
+        this._percentageTextObject.x(this._percentageTextPositionX)
+        this._percentageTextObject.y(this._percentageTextPositionY)
 
     }
 
 
     _calculateHorizontalPercentageTextPositionBasedOnRectangleParameters(){
 
-        const x = super.x()
-            , horizontalMidPoint = super.width()/2
+        const x = this._rectangleObject.x()
+            , horizontalMidPoint = this._rectangleObject.width()/2
             , offset = this._percentageTextOffsetX
 
         return x + horizontalMidPoint + offset
@@ -405,8 +491,8 @@ class Category extends shape.Rectangle {
 
     _calculateVerticalPercentageTextPositionBasedOnRectangleParameters(){
 
-        const y = super.y()
-            , verticalMidPoint = super.height()/2
+        const y = this._rectangleObject.y()
+            , verticalMidPoint = this._rectangleObject.height()/2
             , offset = this._percentageTextOffsetY
 
         return y + verticalMidPoint + offset

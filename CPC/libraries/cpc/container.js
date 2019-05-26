@@ -73,20 +73,20 @@ class Svg {
 class Group {
 
 
-    constructor( parentContainer=d3.select('body').select('svg') ) {
+    constructor( parentContainerSelection=d3.select('body').select('svg') ) {
 
-        // Public parameters
-        this._parentContainer = parentContainer
-        this._containedInstancesRegistry = new Map
+        // Public Parameters
+        this._parentContainerSelection = parentContainerSelection
+        this._objects = new Map
 
 
-        // Private parameters
+        // Private Parameters
         this._htmlClass = null
         this._htmlId = null
         this._data = [null]   // WARNING: If data.length is more than 1, multiple containers may be created
 
 
-        // Private variables
+        // Private Variables
         this._containerSelection = null  // will store d3 selection of self
 
 
@@ -99,7 +99,7 @@ class Group {
 
     create(){
 
-        this._containerSelection = this._parentContainer
+        this._containerSelection = this._parentContainerSelection
             .selectAll('g' + ' #' + this._htmlId)  // must indeed contain id selector. Otherwise would select existing groups, and this would prevent creating more than one container within the svg.
             .data(this._data)  // dummy data
             .enter()
@@ -116,17 +116,20 @@ class Group {
             .attr('class', this.class())
             .attr('id', this.id())
 
-
         // Call the update method of each object contained within container (e.g., svg.rect or svg.text)
-        this.registry().forEach(
+        this.objects().forEach(
             (eachInstance, eachId) => {
 
+                // TODO: This error should be tested
+                // Make sure the object has an update function of its own
                 if (!eachInstance.update){throw Error (`The object contained within the container does not appear to have an update() method. The id of this object is ${eachId} `)}
 
                 eachInstance.update(transitionDuration)
 
             }
         )
+
+
 
         return this
 
@@ -165,13 +168,16 @@ class Group {
      * @param id {string}
      * @param instance - Instance of a class
      */
-    registry(id, instance){
+    objects(id, instance){
 
         if (!arguments.length){
-            return this._containedInstancesRegistry
+            return this._objects
+        }
+        else if (arguments.length === 1){
+            return this._objects.get(id)
         }
         else {
-            this._containedInstancesRegistry.set(id, instance)
+            this._objects.set(id, instance)
             return this
         }
 
