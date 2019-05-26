@@ -13,8 +13,7 @@ myText.x(100).fill('red').update()
 
 
 const parentElementForCategory = d3.select('body').select('svg')
-    // .append('g')
-    // .attr('class', 'my-category-container')
+
 myCategory = new navigator.Category(parentElementForCategory)
 myCategory.x(10).y(100).fill('dodgerblue').update()
 
@@ -22,8 +21,6 @@ myCategory.x(10).y(100).fill('dodgerblue').update()
 
 
 const parentElementForChart = d3.select('body').select('svg')
-    .append('g')
-    .attr('class', 'my-chart-container')
 
 myChart = new navigator.Chart(parentElementForChart)
 myChart.x(300).update()

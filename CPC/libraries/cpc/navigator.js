@@ -120,24 +120,16 @@ class Chart extends container.Group {
                 const start = eachCategoryData.get('start')
                 const end = eachCategoryData.get('end')
 
-                const parentContainerForCategory = this._container
-                    .selectAll('g' + '#' + eachCategoryId)
-                    .data([[start, end]])
-                    .enter()
-                    .append('g')
-                    .attr('class', 'category')
-                    .attr('id', eachCategoryId)
-
-                const categoryObject = new Category(parentContainerForCategory)
-
+                // const categoryObject = new Category(parentContainerForCategory)
+                const categoryObject = new Category(this._container)
 
                 categoryObject
                     .x(this._x)
                     .y(end)
                     .height(start-end)
                     .width(this._width)
-                    // .id(eachCategoryId)
-                    .class('category-rectangle')
+                    .id(eachCategoryId)
+                    .class('category')
                     .update()
 
                 categoryObject.percentage(start).update()
