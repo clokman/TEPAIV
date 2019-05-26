@@ -293,10 +293,10 @@ class Category extends container.Group {
 
 
         // Initialize //
-        this._rectangleObject = new shape.Rectangle(this._parentContainerSelection)
+        this._rectangleObject = new shape.Rectangle(this._containerSelection)
         this.objects('rectangle', this._rectangleObject)  // add object to container registry
 
-        this._percentageTextObject = new shape.Text(this._parentContainerSelection)
+        this._percentageTextObject = new shape.Text(this._containerSelection)
         this.objects('percentage-text', this._percentageTextObject)  // add object to container registry
 
         this.initializePercentageText()
