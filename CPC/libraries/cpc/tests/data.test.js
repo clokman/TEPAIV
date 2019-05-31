@@ -85,7 +85,7 @@ test ('Should generate various example data', () => {
 
     // Generate the default variant of example data
     myStack.populateWithExampleData()   // parameter defaults to 'generic'
-    const exampleData1= myStack.data()
+    const exampleData1 = myStack.data()
 
     // Probe the generated data
     expect(exampleData1).toBeInstanceOf(Map)

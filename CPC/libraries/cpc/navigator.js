@@ -201,14 +201,8 @@ class Chart extends container.Group {
 
 
         // Initialize //
-
-        // Set domainStack and calculate related variable values
-        // TODO: stack method needs map input in order to initialize this instance properties. This is too implicit and proine to errors; must be fixed.
-        const initiatorData = this._domainStack.populateWithExampleData().data()
-
-        this.stack(initiatorData)
-
-
+        this._calculateVariablesDependentOnDomainStack()
+        this._updatePropertiesOfCategoryObjects()
         this._draw()
 
     }
@@ -242,12 +236,9 @@ class Chart extends container.Group {
         // Set new data
         if (parameterIsObject){
 
-            this._domainStack.data(value) // value is a new Map object in this case
-            this._calculateDomainRelatedVariables()
+            this._domainStack = value  // value is a Stack object in this case
 
-            this._transitionFromOldToNewCategories();
-
-            this._updatePropertiesOfCategoryObjects()
+            this._updateData()
             this.update()
 
             return this
@@ -277,7 +268,6 @@ class Chart extends container.Group {
         }
 
     }
-
 
     y(value){
 
@@ -443,6 +433,67 @@ class Chart extends container.Group {
 
     }
 
+    _updateData() {
+        this._calculateVariablesDependentOnDomainStack()
+        this._replaceOldCategoriesWithNewOnes()
+        this._updatePropertiesOfCategoryObjects()
+    }
+
+
+    /**
+     * (Re-)calculates the values for domain stack related variables
+     * @return {Chart}
+     * @private
+     */
+    _calculateVariablesDependentOnDomainStack(){
+
+        //// CALCULATE VARIABLES THAT DEPEND ON DATA ////
+        // This is necessary both for inital data and for setting new data
+
+        // Recalculate stats for the new data
+        this._domainMin = this._domainStack.min()
+        this._domainMax = this._domainStack.max()
+
+        // Update scale function
+        this._scaleFunction
+            .domain([this._domainMin, this._domainMax])
+            .rangeRound([this._rangeStart, this._rangeEnd])
+
+        // Update range stack
+        this._rangeStack = this._domainStack.copy()
+        this._rangeStack.scale(this._scaleFunction)
+
+        return this
+    }
+
+
+    _replaceOldCategoriesWithNewOnes() {
+
+        // TODO: This can be achieved more gracefully by using .removeLast(), etc. The current method simply removes the old categories and creates new ones without transitions.
+
+        // Remove old category objects in chart
+        this.removeAll()
+
+        // Re-create new category objects to chart
+        this._createCategoryObjectsFromRangeStack()
+    }
+
+
+    _createCategoryObjectsFromRangeStack() {
+
+        // LOOP //
+        this._rangeStack.data().forEach(
+            (eachCategoryData, eachCategoryId) => {
+
+                // Instantiate a Category object for each category in Stack
+                const categoryObject = new Category(this._container)
+
+                // Add the created objects to container registry
+                this.objects(eachCategoryId, categoryObject)
+            }
+        )
+    }
+
 
     _updatePropertiesOfCategoryObjects(){
 
@@ -466,62 +517,6 @@ class Chart extends container.Group {
             }
         )
 
-
-    }
-
-
-    /**
-     * (Re-)calculates the values for domain stack related variables
-     * @return {Chart}
-     * @private
-     */
-    _calculateDomainRelatedVariables(){
-
-        //// CALCULATE VARIABLES THAT DEPEND ON DATA ////
-        // This is necessary both for inital data and for setting new data
-
-        // Recalculate stats for the new data
-        this._domainMin = this._domainStack.min()
-        this._domainMax = this._domainStack.max()
-
-        // Update scale function
-        this._scaleFunction
-            .domain([this._domainMin, this._domainMax])
-            .rangeRound([this._rangeStart, this._rangeEnd])
-
-        // Update range stack
-        this._rangeStack = this._domainStack.copy()
-        this._rangeStack.scale(this._scaleFunction)
-
-        return this
-    }
-
-
-    _transitionFromOldToNewCategories() {
-
-        // TODO: This can be achieved more gracefully by using .removeLast(), etc. The current method simply removes the old categories and creates new ones without transitions
-
-        // Remove old category objects in chart
-        this.removeAll()
-
-        // Re-create new category objects to chart
-        this._createCategoryObjectsFromRangeStack()
-    }
-
-
-    _createCategoryObjectsFromRangeStack() {
-
-        // LOOP //
-        this._rangeStack.data().forEach(
-            (eachCategoryData, eachCategoryId) => {
-
-                // Instantiate a Category object for each category in Stack
-                const categoryObject = new Category(this._container)
-
-                // Add the created objects to container registry
-                this.objects(eachCategoryId, categoryObject)
-            }
-        )
     }
 
 }

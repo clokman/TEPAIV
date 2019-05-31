@@ -27,10 +27,9 @@ myChart.x(300).update()
 
 
 // TODO: This block is a temporary solution until Chart.stack() is fixed
-const tempStackData = new data.Stack()
+const tempStack = new data.Stack()
     .populateWithExampleData('gender')
-    .data()
-myChart.stack(tempStackData)
+myChart.stack(tempStack)
 
 
 

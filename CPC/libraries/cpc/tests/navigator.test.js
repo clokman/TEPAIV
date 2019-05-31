@@ -310,7 +310,7 @@ test ('Should update stack data and also the related instance variables', () => 
     const myStack = new data.Stack()
     myStack.populateWithExampleData('gender')
 
-    myChart.stack(myStack.data())
+    myChart.stack(myStack)
 
     // Probe to see if data is correctly updated
     expect(myChart.stack().size).toBe(2)
