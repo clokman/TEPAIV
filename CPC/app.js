@@ -26,6 +26,17 @@ myChart = new navigator.Chart(parentElementForChart)
 myChart.x(300).update()
 
 
+// TODO: This block is a temporary solution until Chart.stack() is fixed
+const tempStackData = new data.Stack()
+    .populateWithExampleData('gender')
+    .data()
+myChart.stack(tempStackData)
+
+
+
+const parentElementForPanel = d3.select('body').select('svg')
+myPanel = new navigator.Panel(parentElementForChart)
+
 
 // const dataset = datasets.titanic
 //     , ignoredColumns = ignoredColumnsFromInput

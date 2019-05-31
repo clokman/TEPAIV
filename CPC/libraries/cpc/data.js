@@ -23,16 +23,52 @@ class Stack {
 
     constructor() {
 
-        this._data = new Map()
-        this.generateSample()
+        this._data = null
+        this.populateWithExampleData()
 
         this._scaleFunction = null  // will be set if scale() method is used
 
     }
 
 
-    data(){
-        return this._data
+    /**
+     *
+     * @param {None|Map|String} value
+     * @return {*|Map<any, any>|Map|Map|Map|Map|Map}
+     */
+    data(value){
+
+        // Establish conditions for parameter
+        const parameterIsNull = !arguments.length
+            , parameterIsString = typeof value === 'string'
+            , parameterIsObject = typeof value === 'object'
+
+
+        // Get data
+        if(parameterIsNull){
+            return this._data
+        }
+
+
+        // Query data
+        if (parameterIsString){
+            return this._data.get(value)
+        }
+
+
+        // Set new data
+        if (parameterIsObject){
+            this._data = value
+            return this
+        }
+
+    }
+
+
+    copy(){
+
+        return _.cloneDeep(this)
+
     }
 
 
@@ -97,28 +133,57 @@ class Stack {
     }
 
 
-    generateSample(){
+    populateWithExampleData(variant='generic'){
 
-        this._data.set('category-1', new Map())
-            .get('category-1')
-            .set('label', 'Category One')
-            .set('start', 0)
-            .set('end', 10)
+        const exampleData = new Map()
 
-        this._data.set('category-2', new Map())
-            .get('category-2')
-            .set('label', 'Category Two')
-            .set('start', 10)
-            .set('end', 20)
+        if (variant === 'generic'){
 
-        this._data.set('category-3', new Map())
-            .get('category-3')
-            .set('label', 'Category Three')
-            .set('start', 20)
-            .set('end', 30)
+
+            exampleData.set('category-1', new Map())
+                .get('category-1')
+                .set('label', 'Category One')
+                .set('start', 0)
+                .set('end', 10)
+                .set('percentage', 33)
+
+            exampleData.set('category-2', new Map())
+                .get('category-2')
+                .set('label', 'Category Two')
+                .set('start', 10)
+                .set('end', 20)
+                .set('percentage', 33)
+
+            exampleData.set('category-3', new Map())
+                .get('category-3')
+                .set('label', 'Category Three')
+                .set('start', 20)
+                .set('end', 30)
+                .set('percentage', 33)
+        }
+
+
+        if (variant === 'gender'){
+
+            exampleData.set('male', new Map())
+                .get('male')
+                .set('label', 'Male')
+                .set('start', 0)
+                .set('end', 33)
+                .set('percentage', 33)
+
+            exampleData.set('female', new Map())
+                .get('female')
+                .set('label', 'Female')
+                .set('start', 33)
+                .set('end', 100)
+                .set('percentage', 67)
+        }
+
+
+        this.data(exampleData)
 
         return this
-
     }
 
 }

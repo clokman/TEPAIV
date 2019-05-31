@@ -38,15 +38,120 @@ const navigator = require("../navigator")
 
 //// INSTANTIATE ///
 
-test ('Should instantiate a Rectangle class object', () => {
+test ('Should instantiate a Rectangle class object with default options', () => {
 
+   // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+
+    const mySvg = new container.Svg()
     const myRectangle = new shape.Rectangle()
 
+    // Verify that the object exists
     expect(myRectangle).toBeDefined()
+
+    // Verify that the DOM counterpart of the object exists
+    expect(document.getElementsByTagName('rect').length)
+        .toBe(1)
+
+})
+
+//// INSTANTIATE AS CHILD ////
+
+test ('Should instantiate a rectangle as a child object of another element', () => {
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+
+
+    // Create a svg object as the topmost container
+    const mySvg = new container.Svg(640, 480)
+        , svgSelection = mySvg.select()
+
+    // Create a parent container for rectangle
+    const myGroup = new container.Group(svgSelection)
+        , groupSelection = myGroup.select()
+
+    // Create the rectangle
+    const myRectangle = new shape.Rectangle(groupSelection)
+
+
+    // Verify that DOM counterpart of the rectangle is created
+    const noOfRectangles = document
+        .getElementsByTagName('rect')
+        .length
+    expect(noOfRectangles).toBe(1)
+
+
+    // Verify that rectangle has a parent group
+    const parentElementType = document
+        .getElementsByTagName('rect')[0]
+        .parentElement
+        .tagName
+    expect(parentElementType).toBe('g')
 
 })
 
 
+//// SELECT ///
+
+test ("Should return a Selection to the rectangle's corresponding DOM element" , () => {
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+
+
+    // Create an svg object that that the rectangle can exist in
+    const mySvg = new container.Svg(640, 480)
+
+    // Initiate rectangle instance
+    const myRectangle = new shape.Rectangle()  // implicitly attaches to svg
+
+    // Set a property on DOM using select method
+    myRectangle.select().attr('id', 'my-rect')
+
+
+    // Verify that the element is created in DOM and has the correct attribute
+    expect(document.getElementById('my-rect').getAttribute('id'))
+        .toBe('my-rect')
+
+    // Get a property from DOM using select method
+    expect(myRectangle.select().attr('id')).toBe('my-rect')
+
+
+})
+
+
+/// REMOVE ///
+
+test ("Should remove rectangle's corresponding element in DOM", () => {
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+
+
+    // Create a svg object that that the container can exist in
+    const mySvg = new container.Svg(111, 222)
+        , parentSelection = mySvg.select()
+
+    // Initiate group instance
+    const myRectangle = new shape.Rectangle(parentSelection)
+    myRectangle.id('my-rect').update()
+
+    // Verify that a corresponding element is created in DOM
+    expect(document.getElementById('my-rect')).toBeDefined()
+
+
+    // Remove element from DOM
+    myRectangle.remove()
+
+    // Verify that the element is longer in DOM
+    expect(document.getElementById('my-rect')).toBe(null)
+
+})
+
+
+//// UPDATE ////
+// TODO: TEST WRITTEN FOR UPDATE METHOD
 
 
 //// X and Y COORDINATES ///
@@ -54,7 +159,7 @@ test ('Should set rectangle x and y coordinates', () => {
 
     const myRectangle = new shape.Rectangle()
 
-    //// SINGLE METHOD ///
+    // SINGLE METHOD //
 
     // X
     expect(myRectangle.x()).toBe(0)
@@ -66,7 +171,7 @@ test ('Should set rectangle x and y coordinates', () => {
     expect(myRectangle.y(222).y()).toBe(222)
 
 
-    //// CHAIN SYNTAX ///
+    // CHAIN SYNTAX //
 
     // x().y()
     myRectangle.x(888).y(999)
@@ -95,7 +200,7 @@ test ('Should get and set rectangle width and height correctly in single and cha
 
     const myRectangle = new shape.Rectangle()
 
-    //// SINGLE METHOD ////
+    // SINGLE METHOD //
 
     // Get
     expect(myRectangle.width()).toBe(50)
@@ -106,7 +211,7 @@ test ('Should get and set rectangle width and height correctly in single and cha
     expect(myRectangle.height(100).height()).toBe(100)
 
 
-    //// CHAIN SYNTAX////
+    // CHAIN SYNTAX //
 
     // width().height()
     myRectangle.width(999).height(111)
@@ -148,27 +253,24 @@ test ('Should set rectangle class and ID with single and chain syntax', () => {
     const myRectangle = new shape.Rectangle()
 
 
-    //// SINGLE METHOD ///
+    // SINGLE METHOD //
 
     // Class
-    expect(myRectangle.class()).toBe(null)
+    expect(myRectangle.class()).toBe('rectangle')
     expect(myRectangle.class('class-1').class()).toBe('class-1')
 
     // ID
-    expect(myRectangle.id()).toBe(null)
+    expect(myRectangle.id()).toBeDefined()  // it will be (e.g.) 'rectangle-4' by default
     expect(myRectangle.id('id-1').id()).toBe('id-1')
 
 
 
-    //// CHAIN SYNTAX ////
+    // CHAIN SYNTAX //
 
     // ID and Class
     myRectangle.class('M').id('Earth')
     expect(myRectangle.class()).toBe('M')
     expect(myRectangle.id()).toBe('Earth')
-
-
-    //// CHAIN SYNTAX ////
 
     // ID and Class with other methods
     myRectangle.class('M').id('Vulcan').width(8888).height(9999)
@@ -187,44 +289,140 @@ test ('Should set rectangle class and ID with single and chain syntax', () => {
 
 test ('Should instantiate a Text class object', () => {
 
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+
+    const mySvg = new container.Svg()
     const myText = new shape.Text()
 
+    // Verify that the object exists
     expect(myText).toBeDefined()
+
+    // Verify that the DOM counterpart of the object exists
+    expect(document.getElementsByTagName('text').length)
+        .toBe(1)
+
 
 })
 
 
-// TODO: DOM testing incorporated to tests
-// test ('Should update attributes of a text object on DOM', () => {
-//
-//     d3.select('body').selectAll('svg').remove()
-//     const mySvg = new container.Svg(500, 500)
-//     const myText = new shape.Text()
-//
-//     myText.x(200).fill('blue').id('Earth').y(10).class('M').text('You are here').update(0)
-//
-//     expect(d3.select('body').select('svg').select('#Earth')).toBe('10')
-//     // expect(d3.select('body').select('svg').select('#Earth').attr('y')).toBe('10')
-//
-//
-// })
 
+test ('Should instantiate text as a child object of another element', () => {
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+
+
+    // Create a svg object as the topmost container
+    const mySvg = new container.Svg(640, 480)
+        , svgSelection = mySvg.select()
+
+    // Create a parent container for text
+    const myGroup = new container.Group(svgSelection)
+        , groupSelection = myGroup.select()
+
+    // Create the text object
+    const myText = new shape.Text(groupSelection)
+
+
+    // Verify that DOM counterpart of the text object is created
+    const noOfTextElements = document
+        .getElementsByTagName('text')
+        .length
+    expect(noOfTextElements).toBe(1)
+
+
+    // Verify that text element has a parent group
+    const parentElementType = document
+        .getElementsByTagName('text')[0]
+        .parentElement
+        .tagName
+    expect(parentElementType).toBe('g')
+
+})
+
+
+//// SELECT ///
+
+test ("Should return a Selection to the text's corresponding DOM element" , () => {
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+
+
+    // Create an svg object that that the text can exist in
+    const mySvg = new container.Svg(640, 480)
+
+    // Initiate text instance
+    const myText = new shape.Text()  // implicitly attaches to svg
+
+    // Set a property on DOM using select method
+    myText.select().attr('id', 'my-text')
+
+
+    // Verify that the element is created in DOM and has the correct attribute
+    expect(document.getElementById('my-text').getAttribute('id'))
+        .toBe('my-text')
+
+    // Get a property from DOM using select method
+    expect(myText.select().attr('id')).toBe('my-text')
+
+
+})
+
+
+/// REMOVE ///
+
+test ("Should remove text's corresponding element in DOM", () => {
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+
+
+    // Create a svg object that that the text can exist in
+    const mySvg = new container.Svg()
+
+    // Initiate text instance
+    const myText = new shape.Text()  // implicitly attaches to svg
+    myText.id('my-text').update()
+
+    // Verify that a corresponding element is created in DOM
+    expect(document.getElementById('my-text')).toBeDefined()
+
+
+    // Remove element from DOM
+    myText.remove()
+
+    // Verify that the element is longer in DOM
+    expect(document.getElementById('my-text')).toBe(null)
+
+})
+
+
+//// UPDATE ////
+// TODO: TEST WRITTEN FOR UPDATE METHOD
+
+
+//// TEXT ////
 
 test ('Should get and set text', () => {
 
     const myText = new shape.Text()
 
-    //// SINGLE METHOD ///
+    // SINGLE METHOD //
     expect(myText.text()).toBe('Text')
     expect(myText.text('my text').text()).toBe('my text')
 })
 
 
+
+//// COORDINATES ////
+
 test ('Should get and set coordinates', () => {
 
     const myText = new shape.Text()
 
-    //// SINGLE METHOD ///
+    // SINGLE METHOD //
 
     // x()
     expect(myText.x(11).x()).toBe(11)
@@ -262,7 +460,7 @@ test ('Should get and set fill color using single and chain syntax', () => {
 })
 
 
-// TEXT ANCHOR ///
+//// TEXT ANCHOR ///
 
 test ('Should get and set anchor using single and chain syntax', () => {
 
@@ -304,7 +502,7 @@ test ('Should set Text class and ID with single and chain syntax', () => {
     const myText = new shape.Text()
 
 
-    //// SINGLE METHOD ///
+    // SINGLE METHOD //
 
     // Class
     expect(myText.class()).toBe(null)
@@ -316,7 +514,7 @@ test ('Should set Text class and ID with single and chain syntax', () => {
 
 
 
-    //// CHAIN SYNTAX ////
+    // CHAIN SYNTAX //
 
     // ID and Class
     myText.class('M').id('Earth')
@@ -324,7 +522,7 @@ test ('Should set Text class and ID with single and chain syntax', () => {
     expect(myText.id()).toBe('Earth')
 
 
-    //// CHAIN SYNTAX ////
+    // CHAIN SYNTAX //
 
     // ID and Class with other methods
     myText.x(8888).class('M').id('Vulcan').y(9999)

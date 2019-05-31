@@ -28,21 +28,30 @@ class Svg {
         this._width = width
         this._height = height
 
+        this._selection = null  // set by .create()
+
         this.create()
     }
 
     create(){
-        d3.select('body')
+        this._selection = d3.select('body')
             .append('svg')
             .attr('width', this._width)
             .attr('height', this._height)
     }
 
+
+    select(){
+        return this._selection
+    }
+
+
     update(){
-        const svgElement = d3.select('svg')
+        this.select()
             .attr('width', this._width)
             .attr('height', this._height)
     }
+
 
     width(value){
 
@@ -69,11 +78,14 @@ class Svg {
 
 
 
-
+/**
+ * NOTE: For this class to be instantiated, there must be <b>at least</b> a SVG element existing in DOM.
+ * This is true even if the class is initiated with default parameters.
+ */
 class Group {
 
 
-    constructor( parentContainerSelection=d3.select('body').select('svg') ) {
+    constructor(parentContainerSelection=d3.select('body').select('svg')) {
 
         // Public Parameters
         this._parentContainerSelection = parentContainerSelection
@@ -87,7 +99,7 @@ class Group {
 
 
         // Private Variables
-        this._containerSelection = null  // will store d3 selection of self
+        this._selection = null  // will store d3 selection of self
 
 
         // Initialize
@@ -99,7 +111,7 @@ class Group {
 
     create(){
 
-        this._containerSelection = this._parentContainerSelection
+        this._selection = this._parentContainerSelection
             .selectAll('g' + ' #' + this._htmlId)  // must indeed contain id selector. Otherwise would select existing groups, and this would prevent creating more than one container within the svg.
             .data(this._data)  // dummy data
             .enter()
@@ -112,7 +124,7 @@ class Group {
     update(transitionDuration=500){
 
         // Update container attributes
-        this._containerSelection
+        this._selection
             .attr('class', this.class())
             .attr('id', this.id())
 
@@ -129,15 +141,52 @@ class Group {
             }
         )
 
-
-
         return this
 
     }
 
 
+    select(){
+        return this._selection
+    }
+
+
+    remove(){
+        this.select().remove()  // .remove() method in the end belongs to d3
+    }
+
+
+    removeLast(n=1){
+
+        // LOOP
+        d3.range(n).forEach(i => {
+
+            const lastIndexOfMap = this.objects().size-1
+                , arrayifiedMap = Array.from(this.objects())
+                , lastKeyAndValueOfMap = arrayifiedMap[lastIndexOfMap]
+                , lastKeyOfMap = lastKeyAndValueOfMap[0]
+
+            const lastObject = this.objects().get(lastKeyOfMap)
+
+            // Remove element from DOM
+            const domSelection = lastObject.remove()
+
+            // Remove object from registry
+            this.objects().delete(lastKeyOfMap)
+
+            return this
+        })
+    }
+
+    removeAll(){
+
+        const numberOfObjects = this.objects().size
+        this.removeLast(numberOfObjects )
+
+    }
+
     selectSelf(){
-        return this._containerSelection
+        return this._selection
     }
 
 
