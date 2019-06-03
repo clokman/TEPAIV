@@ -65,54 +65,75 @@ class Panel extends container.Group {
 
     constructor(parentContainerSelection){
 
-        // if (!arguments.length){
-        //     parentContainerSelection = new container.Svg
-        // }
-
         // Superclass Init //
         super(parentContainerSelection)
-
-        super.class('panel')
+        this.class('panel')
             .update()
 
-        // Public Parameters //
-        // this._eulerPadding_horizontal = 20
-        // this._eulerPadding_vertical = 10
-
-
         // Private Parameters //
-        // this._query =
-        this._data = this._generateSampleData()
+        this._x = 25
+        this._y = 25
+        this._width = 100
+        this._height = 500
+        this._padding = 0.1
+
+        this._stacks = null
+        this._populateWithExampleData()
 
 
         // Private Variables //
-        this._noOfCharts = this._data.size
-        this._yScale = d3.scaleBand()
-            .domain(d3.range(this._noOfCharts))
-            .rangeRound([0, this._parentContainerSelection.attr('height')])
+        this._chartCount = this._stacks.size
 
-        // this._currentMaxPossibleValue = dataset.length // initial value.
+        this._chartHeights = null
+        this._calculateChartHeights()
+
+        this._yScale = (value) => {
+
+            const yScale = d3.scaleBand()
+                .domain(d3.range(this._chartCount))
+                .rangeRound([this._y+this._height, this._y])
+                .paddingInner(this._padding)
+
+            return yScale(value)
+        }
+
+        // this.backgroundObject = new Background()
+        //
+        // this._backgroundGroupObject = new container.Group(this.select())
+        //     .class('background')
+        //     .update()
+        //
+        // this._backgroundRectangleObject = new shape.Rectangle(this._backgroundGroupObject.select())
+        //     .class('background-rectangle')
+        //     .update()
+        //
+        // this._backgroundTextObject = new shape.Text(this._backgroundGroupObject.select())
+
+
+
 
 
         // Initialize //
 
-        // LOOP //
+        // loop //
         let i = 0
-        this._data.forEach(
+        this._stacks.forEach(
             (eachStack, eachStackId) => {
 
-                const chart = new Chart()
+                const chart = new Chart(this.select())
+                    .stack(eachStack)
+                    .id(eachStackId)
+                    .x(this._x)
+                    .y(this._yScale(i))  // TODO: Private variable SHOULD be replaced with getter (when a getter is implemented).
+                    .height(this._chartHeights)
+                    .width(this._width)
+                    .update()
+
 
 
                 this.objects(eachStackId, chart)
 
-                // chart.data(eachColumnStack)  // TODO: Added a .data() method to Chart class for getting and setting _domainStack. The challenge will be to let this the setter functionality to redraw the chart upon entering new data.
-                // chart.x(...)
-                // chart.y(this._yScale(i))
-
-
                 i++
-
 
             }
         )
@@ -121,36 +142,137 @@ class Panel extends container.Group {
 
 
 
+    }
 
+    _calculateChartHeights(){
+
+        this._chartHeights =  this._height / this._chartCount
+
+        return this
 
     }
 
 
-    data(){
+    stacks(value){
 
         // this._data = value
         // this._numberOfCharts = this_data.size
+
+
+        // Establish conditions for parameter
+        const parameterIsNull = !arguments.length
+            , parameterIsString = typeof value === 'string'
+            , parameterIsObject = typeof value === 'object'
+
+
+        // Get data
+        if(parameterIsNull){
+            return this._stacks
+        }
+
+
+        // Query data
+        if (parameterIsString){
+            return this._stacks.get(value)
+        }
+
+
+        // Set new data
+        if (parameterIsObject){
+
+            this._stacks = value  // value is a stacks in this case
+
+            // this._updateData()
+            // this.update()
+
+            return this
+        }
+
     }
 
 
-    _generateSampleData(){
+    y(value){
+
+        // Getter
+        if (!arguments.length) {
+            return this._y
+        }
+
+        // Setter
+        else {
+            this._y = value
+            // range of this._yScale is not recalculated in this method as it is a live variable
+
+            // loop //
+            let i = 0
+            this.objects().forEach(
+                (eachChartObject, eachChartId) => {
+
+                    eachChartObject
+                        .y(this._yScale(i))
+
+                    i ++
+
+                }
+            )
+
+            return this
+        }
+
+    }
+
+
+    height(value){
+
+        // Getter
+        if (!arguments.length) {
+            return this._height
+        }
+
+        // Setter
+        else {
+            this._height = value
+
+            this._calculateChartHeights()
+            // range of this._yScale is not recalculated in this method as it is a live variable
+
+            // loop //
+            let i = 0
+            this.objects().forEach(
+                (eachChartObject, eachChartId) => {
+
+                    eachChartObject
+                        .y(this._yScale(i))
+                        .height(this._chartHeights)
+
+                    i ++
+
+                }
+            )
+
+            return this
+        }
+
+    }
+
+
+    _populateWithExampleData(){
 
         // Genetate stacks
-        const stack1 = new data.Stack()
-            , stack2 = new data.Stack()
-            , stack3 = new data.Stack()
-
-        // Add custom data to one of the stacks
-        stack2.populateWithExampleData('gender')
+        const genderStack = new data.Stack().populateWithExampleData('gender')
+            , classStack = new data.Stack().populateWithExampleData('class')
+            , statusStack = new data.Stack().populateWithExampleData('status')
 
         // Combine stacks in one map
-        const sampleData = new Map()
-        sampleData.set('status', stack1)
-        sampleData.set('gender', stack2)
-        sampleData.set('class', stack3)
+        const exampleStacks = new Map()
+        exampleStacks.set('gender', genderStack)
+        exampleStacks.set('class', classStack)
+        exampleStacks.set('status', statusStack)
 
 
-        return sampleData
+        this.stacks(exampleStacks)
+
+        return this
     }
 
 }
@@ -163,7 +285,7 @@ class Panel extends container.Group {
  * NOTE: For this class to be instantiated, there must be <b>at least</b> a SVG element existing in DOM.
  * This is true even if the class is initiated with default parameters.
  */
-class Chart extends container.Group {
+class Chart extends container.Group{
 
 
     constructor(parentContainerSelection){
@@ -177,10 +299,10 @@ class Chart extends container.Group {
 
         // Private parameters //
         this._label = 'Chart Label'
-        this._x = 400
-        this._y = 20
+        this._x = 25
+        this._y = 25
         this._height = 300
-        this._width = 75
+        this._width = 100
 
 
         // Private variables //
@@ -247,28 +369,6 @@ class Chart extends container.Group {
     }
 
 
-    x(value){
-
-        if (!arguments.length){
-            return this._x
-        }
-        else{
-            this._x = value
-
-            // LOOP //
-            this.objects().forEach(
-                (eachCategoryObject, eachCategoryId) => {
-
-                    eachCategoryObject.x(this._x)
-
-                }
-            )
-
-            return this
-        }
-
-    }
-
     y(value){
 
         if (!arguments.length){
@@ -291,29 +391,6 @@ class Chart extends container.Group {
             const newRangeEnd = this._y
 
             this.range([newRangeStart, newRangeEnd])
-
-            return this
-        }
-
-    }
-
-
-    width(value){
-
-        if (!arguments.length){
-            return this._width
-        }
-        else{
-            this._width = value
-
-            // LOOP //
-            this.objects().forEach(
-                (eachCategoryObject, eachCategoryId) => {
-
-                    eachCategoryObject.width(this._width)
-
-                }
-            )
 
             return this
         }
@@ -530,7 +607,7 @@ class Chart extends container.Group {
  * NOTE: For this class to be instantiated, there must be <b>at least</b> a SVG element existing in DOM.
  * This is true even if the class is initiated with default parameters.
  */
-class Category extends container.Group {
+class Category extends shape.CaptionedRectangle{
 
 
     constructor(parentContainerSelection=d3.select('body').select('svg')) {
@@ -538,149 +615,12 @@ class Category extends container.Group {
         super(parentContainerSelection)
 
         // Private Parameters //
-        this._x = 25
-        this._y = 25
-        this._width = 20
-        this._height = 100
-        this._percentage = '0'
-        this._percentageTextOffsetX = 0
-        this._percentageTextOffsetY = 3
-        this._percentageTextFill = 'white'
-        this._percentageTextAnchor = 'middle'
 
-
-        // Initialize //
-        this._rectangleObject = new shape.Rectangle(this._selection)
-        this.objects('rectangle', this._rectangleObject)  // add object to container registry
-
-        this._percentageTextObject = new shape.Text(this._selection)
-        this.objects('percentage-text', this._percentageTextObject)  // add object to container registry
-
-        this.initializePercentageText()
-
-        this.update()
-    }
-
-
-    initializePercentageText(){
-
+        this._percentage = 10
         this.percentage(this._percentage)  // format and set percentageText object's inner text
-        this._calculateAndUpdatePercentageTextPosition()
-
-        this._percentageTextObject.fill(this._percentageTextFill)
-        this._percentageTextObject.textAnchor(this._percentageTextAnchor)
-
-    }
 
 
-    x(value) {
 
-        // Getter
-        if (!arguments.length) {
-            return this._x
-        }
-        // Setter
-        else {
-
-            // Update x value of category
-            this._x = value
-
-            // Update x value of rectangle
-            this._rectangleObject.x(value)
-
-            // Recalculate percentage text position based on new rectangle parameters
-            const newPercentageTextCoordinateX = this._calculateHorizontalPercentageTextPositionBasedOnRectangleParameters()
-            this._percentageTextObject.x(newPercentageTextCoordinateX)
-
-            return this
-        }
-
-    }
-
-
-    y(value) {
-
-        // Getter
-        if (!arguments.length) {
-            return this._y
-        }
-        // Setter
-        else {
-
-            // Update y value of category
-            this._y = value
-
-            // Update y value of rectangle
-            this._rectangleObject.y(value)
-
-            const newPercentageTextCoordinateY = this._calculateVerticalPercentageTextPositionBasedOnRectangleParameters()
-            this._percentageTextObject.y(newPercentageTextCoordinateY)
-
-            return this
-        }
-
-    }
-
-
-    width(value) {
-
-        // Getter
-        if (!arguments.length) {
-            return this._width
-        }
-        // Setter
-        else {
-
-            // Update width value of category
-            this._width = value
-
-            // Update width value of rectangle
-            this._rectangleObject.width(value)
-
-            // Recalculate percentage text position based on new rectangle parameters
-            const newPercentageTextCoordinateX = this._calculateHorizontalPercentageTextPositionBasedOnRectangleParameters()
-            this._percentageTextObject.x(newPercentageTextCoordinateX)
-
-            return this
-        }
-
-    }
-
-
-    height(value) {
-
-        // Getter
-        if (!arguments.length) {
-            return this._height
-        }
-        // Setter
-        else {
-
-            // Update width value of category
-            this._height = value
-
-            // Update width value of rectangle
-            this._rectangleObject.height(value)
-
-            // Recalculate percentage text position based on new rectangle parameters
-            const newPercentageTextCoordinateY = this._calculateVerticalPercentageTextPositionBasedOnRectangleParameters()
-            this._percentageTextObject.y(newPercentageTextCoordinateY)
-
-            return this
-        }
-
-    }
-
-
-    fill(value) {
-        if (!arguments.length) {
-            return this._rectangleObject.fill()
-        }
-        else {
-            this._rectangleObject.fill(value)
-
-            return this
-        }
     }
 
 
@@ -696,64 +636,23 @@ class Category extends container.Group {
             this._percentage = value
 
             const formattedPercentageString = str.formatNumberAsPercentage(this._percentage)
-            this._percentageTextObject.text(formattedPercentageString)
+            this._textObject.text(formattedPercentageString)
 
             return this
         }
     }
 
 
-    percentageTextFill(value) {
+    text(value){
+        console.warn(
+            '.text() method should not be used for Category class instances. ' +
+            'Instead, .percentage() method must be used modify percentage text.')
 
-        // Getter
-        if (!arguments.length){
-            return this._percentageTextObject.fill()
-        }
-        // Setter
-        else{
-            this._percentageTextObject.fill(value)
-            return this
-        }
-    }
-
-
-    _calculateAndUpdatePercentageTextPosition(){
-
-        this._percentageTextPositionX = this._calculateHorizontalPercentageTextPositionBasedOnRectangleParameters()
-        this._percentageTextPositionY = this._calculateVerticalPercentageTextPositionBasedOnRectangleParameters()
-        this._percentageTextObject.x(this._percentageTextPositionX)
-        this._percentageTextObject.y(this._percentageTextPositionY)
+        return super.text(value)
 
     }
-
-
-    _calculateHorizontalPercentageTextPositionBasedOnRectangleParameters(){
-
-        const x = this._rectangleObject.x()
-            , horizontalMidPoint = this._rectangleObject.width()/2
-            , offset = this._percentageTextOffsetX
-
-        return x + horizontalMidPoint + offset
-
-    }
-
-
-    _calculateVerticalPercentageTextPositionBasedOnRectangleParameters(){
-
-        const y = this._rectangleObject.y()
-            , verticalMidPoint = this._rectangleObject.height()/2
-            , offset = this._percentageTextOffsetY
-
-        return y + verticalMidPoint + offset
-
-    }
-
 
 }
-
-
-
-
 
 
 

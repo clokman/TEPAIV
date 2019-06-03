@@ -1,8 +1,6 @@
 const str = require('../str')
 
 
-
-
 //// formatAsCssSelector() ////
 
 test ('Should format string as CSS selector', () => {

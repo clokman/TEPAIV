@@ -169,15 +169,58 @@ class Stack {
                 .get('male')
                 .set('label', 'Male')
                 .set('start', 0)
-                .set('end', 33)
-                .set('percentage', 33)
+                .set('end', 64)
+                .set('percentage', 64)
 
             exampleData.set('female', new Map())
                 .get('female')
                 .set('label', 'Female')
-                .set('start', 33)
+                .set('start', 64)
                 .set('end', 100)
-                .set('percentage', 67)
+                .set('percentage', 36)
+        }
+
+
+        if (variant === 'class'){
+
+            exampleData.set('first-class', new Map())
+                .get('first-class')
+                .set('label', 'First Class')
+                .set('start', 0)
+                .set('end', 25)
+                .set('percentage', 25)
+
+            exampleData.set('second-class', new Map())
+                .get('second-class')
+                .set('label', 'Second Class')
+                .set('start', 25)
+                .set('end', 46)
+                .set('percentage', 21)
+
+            exampleData.set('third-class', new Map())
+                .get('third-class')
+                .set('label', 'Third Class')
+                .set('start', 46)
+                .set('end', 100)
+                .set('percentage', 54)
+        }
+
+
+        if (variant === 'status'){
+
+            exampleData.set('survived', new Map())
+                .get('survived')
+                .set('label', 'Survived')
+                .set('start', 0)
+                .set('end', 38)
+                .set('percentage', 38)
+
+            exampleData.set('died', new Map())
+                .get('died')
+                .set('label', 'Died')
+                .set('start', 38)
+                .set('end', 100)
+                .set('percentage', 62)
         }
 
 

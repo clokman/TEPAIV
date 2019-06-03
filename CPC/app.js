@@ -3,38 +3,89 @@
 // slider.value = svgCanvas.width()
 // monitor.innerText = slider.value
 
-mySvg = new container.Svg()
 
-myRectangle = new shape.Rectangle().x(50).update()
+//// SVG  ////
+
+mySvg = new container.Svg(800, 600)
+
+
+//// RECTANGLE  ////
+
+myRectangle = new shape.Rectangle().x(400).y(25).update()
 myRectangle.fill('blue').update()
 
+
+
+//// TEXT  ////
+
 myText = new shape.Text()
-myText.x(100).fill('red').update()
+myText.x(450).fill('red').update()
 
 
+
+//// CATEGORY  ////
 const parentElementForCategory = d3.select('body').select('svg')
 
 myCategory = new navigator.Category(parentElementForCategory)
-myCategory.x(10).y(100).fill('dodgerblue').update()
+myCategory.x(400).y(100).fill('dodgerblue').update()
 
 
+//// CAPTIONED RECTANGLE ////
 
+// CAPTION AT CENTER
+myCaptionedRectangleCenter = new shape.CaptionedRectangle(parentElementForCategory)
+myCaptionedRectangleCenter
+    .x(400)
+    .y(175)
+    .width(250)
+    .height(100)
+    .fill('green')
+    .text('Caption')
+    .update()
+
+// CAPTION AT TOP LEFT
+myCaptionedRectangleTopLeft = new shape.CaptionedRectangle(parentElementForCategory)
+myCaptionedRectangleTopLeft
+    .textAlignment('top-left')
+    .x(400)
+    .y(300)
+    .width(250)
+    .height(100)
+    .fill('green')
+    .text('Caption')
+    .update()
+
+
+// DEMO
+// myCaptionedRectangleTopLeft.x(350).y(350).fill('blue').width('300').height('200').text('Hello').textAlignment('center').update()
+
+
+//// CHART  ////
 
 const parentElementForChart = d3.select('body').select('svg')
 
 myChart = new navigator.Chart(parentElementForChart)
-myChart.x(300).update()
+myChart.x(280).update()
 
 
-// TODO: This block is a temporary solution until Chart.stack() is fixed
 const tempStack = new data.Stack()
     .populateWithExampleData('gender')
 myChart.stack(tempStack)
 
 
 
-const parentElementForPanel = d3.select('body').select('svg')
-myPanel = new navigator.Panel(parentElementForChart)
+//// PANEL ////
+
+// const parentElementForPanel = d3.select('body').select('svg')
+myPanel = new navigator.Panel()
+
+// Demo Code //
+// myPanel.objects('gender').x(300).y(25).height(100).width(100).update()
+// myPanel.objects('status').x(300).y(135).height(100).width(100).update()
+// myPanel.objects('class').x(300).y(245).height(100).width(100).update()
+// myPanel.objects('class').objects('first-class').fill('blue').update()
+
+
 
 
 // const dataset = datasets.titanic

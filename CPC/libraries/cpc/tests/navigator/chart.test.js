@@ -17,73 +17,32 @@ if (typeof Object.fromEntries !== 'function') {
 
 // D3 //
 global.d3 = {
-    ...require("../../external/d3/d3"),
-    ...require("../../external/d3/d3-array")
+    ...require("../../../external/d3/d3"),
+    ...require("../../../external/d3/d3-array")
 }
 
 
 // Lodash //
-global._ = require("../../external/lodash")
+global._ = require("../../../external/lodash")
 
 
 // Internal //
-global.shape = require("../shape")
-global.str = require("../str")
-global.data = require("../../cpc/data")
-global.container = require("../container")
+global.container = require("../../container")
+global.shape = require("../../shape")
+global.str = require("../../str")
+global.data = require("../../../cpc/data")
 
 
 //// MODULES BEING TESTED ////
-const datasets = require("../../../data/datasets")
-const navigator = require("../navigator")
+const datasets = require("../../../../data/datasets")
+const navigator = require("../../navigator")
 
 
 
 
 
 
-//// PANEL /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//// INSTANTIATE ///
-
-test ('Should instantiate object', () => {
-
-    const svg = new container.Svg()
-    const myPanel = new navigator.Panel()
-
-    expect(myPanel).toBeDefined()
-
-})
-
-
-//// SAMPLE DATA ////
-
-test ('Should initialize with sample data', () => {
-
-    parentContainerSelection = d3.select('body')
-        .append("svg")
-        .attr("width", 1280)
-        .attr("height", 1024)
-
-    const myPanel = new navigator.Panel(parentContainerSelection)
-
-    // Probe the initial sample data
-    expect(myPanel._data.size).toBe(3)
-    expect(myPanel._data.get('gender').data().get('male').get('label')).toEqual('Male')
-    expect(myPanel._data.get('status').data().get('category-3').get('label')).toEqual('Category Three')
-    expect(myPanel._data.get('class').data().get('category-2').get('percentage')).toEqual(33)
-
-
-    // Check if data stats are being calculated correctly
-    expect(myPanel._noOfCharts).toBe(3)
-})
-
-
-
-
-
-
-//// CHART /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//// UNIT TESTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 //// INSTANTIATE ///
@@ -170,8 +129,8 @@ test ('Should get and set width and height correctly in single and chain syntax'
     // SINGLE METHOD //
 
     // Get
-    expect(myChart.width()).toBe(75)
-    expect(myChart._width).toBe(75)
+    expect(myChart.width()).toBe(100)
+    expect(myChart._width).toBe(100)
 
     expect(myChart.height()).toBe(300)
     expect(myChart._height).toBe(300)
@@ -222,10 +181,10 @@ test ('Should get and set domain correctly in single and chain syntax', () => {
     // SINGLE METHOD //
 
     // Get range
-    expect(myChart.range()).toEqual([320, 20])
+    expect(myChart.range()).toEqual([325, 25])
 
     expect(myChart._rangeStack.data().get('category-1').get('start'))
-        .toEqual(320)
+        .toEqual(325)
 
     // Set Range
     myChart.range([100, 0])
@@ -318,7 +277,7 @@ test ('Should update stack data and also the related instance variables', () => 
     expect(myChart.stack().get('female').get('label'))
         .toBe('Female')
     expect(myChart.stack('female').get('start'))
-        .toBe(33)
+        .toBe(64)
     expect(myChart.stack('female').get('end'))
         .toBe(100)
 
@@ -327,7 +286,7 @@ test ('Should update stack data and also the related instance variables', () => 
     expect(myChart.stack('male').get('start'))
         .toBe(0)
     expect(myChart.stack('male').get('end'))
-        .toBe(33)
+        .toBe(64)
 
 
     // Do a manual check on the updated private stack variable in the instance
@@ -347,146 +306,3 @@ test ('Should update stack data and also the related instance variables', () => 
 
 
 })
-
-
-
-//// CATEGORY /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-//// INSTANTIATE ///
-
-test ('Should instantiate a Category class object', () => {
-
-    const myCategory = new navigator.Category()
-
-    expect(myCategory).toBeDefined()
-
-})
-
-
-//// COORDINATES ///
-
-test ('Should get and set coordinates', () => {
-
-    const myCategory = new navigator.Category()
-
-    // SINGLE METHOD //
-
-    // x()
-    expect(myCategory.x(11).x()).toBe(11)
-    // y()
-    expect(myCategory.y(22).y()).toBe(22)
-
-    // x().y()
-    myCategory.x(33).y(44)
-    expect(myCategory.x()).toBe(33)
-    expect(myCategory.y()).toBe(44)
-
-    // y().x()
-    myCategory.y(55).x(66)
-    expect(myCategory.y()).toBe(55)
-    expect(myCategory.x()).toBe(66)
-
-})
-
-
-
-//// FILL ///
-
-test ('Should get and set fill color using single and chain syntax', () => {
-
-    const myCategory = new navigator.Category()
-
-    // Single method
-    expect(myCategory.fill('green').fill()).toBe('green')
-    expect(myCategory.fill('red').fill()).toBe('red')
-
-    // Chain syntax
-    expect(myCategory.x(111).fill('red').fill()).toBe('red')
-    expect(myCategory.fill('blue').y(222).fill()).toBe('blue')
-
-
-})
-
-
-//// PERCENTAGE VALUE & PERCENTAGE TEXT ///
-
-test ('Should get and set percentage using single and chain syntax', () => {
-
-    const myCategory = new navigator.Category()
-
-    // Single method
-    expect(myCategory.percentage(10).percentage()).toBe(10)
-    expect(myCategory._percentageTextObject.text()).toBe('10%')
-
-    expect(myCategory.percentage(20).percentage()).toBe(20)
-    expect(myCategory._percentageTextObject.text()).toBe('20%')
-
-
-    // Chain syntax
-    expect(myCategory.x(111).percentage(30).percentage()).toBe(30)
-    expect(myCategory._percentageTextObject.text()).toBe('30%')
-
-
-    expect(myCategory.percentage(40).y(222).percentage()).toBe(40)
-    expect(myCategory._percentageTextObject.text()).toBe('40%')
-
-
-})
-
-
-
-//// PERCENTAGE TEXT COLOR ///
-
-test ('Should get and set percentage text fill color using single and chain syntax', () => {
-
-    const myCategory = new navigator.Category()
-
-    // Single method
-    expect(myCategory.percentageTextFill('green').percentageTextFill()).toBe('green')
-    expect(myCategory.percentageTextFill('red').percentageTextFill()).toBe('red')
-
-    // Chain syntax
-    expect(myCategory.x(111).percentageTextFill('red').percentageTextFill()).toBe('red')
-    expect(myCategory.percentageTextFill('blue').y(222).percentageTextFill()).toBe('blue')
-
-
-})
-
-
-//// CLASS ///
-
-test ('Should get and set parent group class of the category using single and chain syntax', () => {
-
-    const myCategory = new navigator.Category()
-
-
-    // SINGLE METHOD //
-
-    // Class
-    expect(myCategory.class()).toBe(null)
-    // expect(myCategory.class('class-1').class()).toBe('class-1')
-
-    // ID
-    expect(myCategory.id()).toBe(null)
-    expect(myCategory.id('id-1').id()).toBe('id-1')
-
-
-
-    // CHAIN SYNTAX //
-
-    // ID and Class
-    myCategory.class('M').id('Earth')
-    expect(myCategory.class()).toBe('M')
-    expect(myCategory.id()).toBe('Earth')
-
-
-    // ID and Class with other methods
-    myCategory.x(8888).class('M').id('Vulcan').y(9999)
-    expect(myCategory.class()).toBe('M')
-    expect(myCategory.id()).toBe('Vulcan')
-    expect(myCategory.x()).toBe(8888)
-    expect(myCategory.y()).toBe(9999)
-
-})
-

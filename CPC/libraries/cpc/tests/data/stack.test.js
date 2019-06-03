@@ -11,21 +11,22 @@ if (typeof Object.fromEntries !== 'function') {
 }
 
 global.d3 = {
-    ...require("../../external/d3/d3"),
-    ...require("../../external/d3/d3-array")
+    ...require("../../../external/d3/d3"),
+    ...require("../../../external/d3/d3-array")
 }
-global._ = require("../../external/lodash")
+global._ = require("../../../external/lodash")
 
-global.str = require("../str")
-const datasets = require("../../../data/datasets")
-const data = require("../data")
-
-
+global.str = require("../../str")
+const datasets = require("../../../../data/datasets")
+const data = require("../../data")
 
 
 
 
-//// STACK /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//// UNIT TESTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 //// INITIATE ////
 test ('Should instantiate the class with initial sample data and summary statistics' , () => {
@@ -108,9 +109,7 @@ test ('Should generate various example data', () => {
 
 
 
-
-
-    // VARIANT 2
+    // VARIANT: GENDER
 
     myStack.populateWithExampleData('gender')
     const exampleData2 = myStack.data()
@@ -129,7 +128,7 @@ test ('Should generate various example data', () => {
         .toBe(0)
 
     expect(exampleData2.get('male').get('end'))
-        .toBe(33)
+        .toBe(64)
 
 
     // Probe another category
@@ -137,9 +136,69 @@ test ('Should generate various example data', () => {
         .toBe(100)
 
     expect(exampleData2.get('female').get('percentage'))
-        .toBe(67)
+        .toBe(36)
 
 
+
+    // VARIANT: CLASS
+
+    myStack.populateWithExampleData('class')
+    const exampleDataClass = myStack.data()
+
+
+    // Probe the generated data
+    expect(exampleDataClass).toBeInstanceOf(Map)
+    expect(exampleDataClass.size).toBe(3)
+
+
+    // Probe one category
+    expect(exampleDataClass.get('first-class').get('label'))
+        .toBe('First Class')
+
+    expect(exampleDataClass.get('first-class').get('start'))
+        .toBe(0)
+
+    expect(exampleDataClass.get('first-class').get('end'))
+        .toBe(25)
+
+
+    // Probe another category
+    expect(exampleDataClass.get('third-class').get('end'))
+        .toBe(100)
+
+    expect(exampleDataClass.get('third-class').get('percentage'))
+        .toBe(54)
+
+
+
+    // VARIANT: STATUS
+
+    myStack.populateWithExampleData('status')
+    const exampleDataStatus = myStack.data()
+
+
+    // Probe the generated data
+    expect(exampleDataStatus).toBeInstanceOf(Map)
+    expect(exampleDataStatus.size).toBe(2)
+
+
+    // Probe one category
+    expect(exampleDataStatus.get('survived').get('label'))
+        .toBe('Survived')
+
+    expect(exampleDataStatus.get('survived').get('start'))
+        .toBe(0)
+
+    expect(exampleDataStatus.get('survived').get('end'))
+        .toBe(38)
+
+
+    // Probe another category
+    expect(exampleDataStatus.get('died').get('end'))
+        .toBe(100)
+
+    expect(exampleDataStatus.get('died').get('percentage'))
+        .toBe(62)
 
 
 })

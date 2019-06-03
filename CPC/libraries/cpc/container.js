@@ -36,8 +36,8 @@ class Svg {
     create(){
         this._selection = d3.select('body')
             .append('svg')
-            .attr('width', this._width)
-            .attr('height', this._height)
+              .attr('width', this._width)
+              .attr('height', this._height)
     }
 
 
@@ -46,10 +46,19 @@ class Svg {
     }
 
 
+    clear(){
+
+        this.select().selectAll('*').remove()
+
+        return this
+    }
+
+
     update(){
         this.select()
             .attr('width', this._width)
             .attr('height', this._height)
+
     }
 
 
@@ -61,15 +70,22 @@ class Svg {
         else{
             this._width = value
             this.update()
+
             return this
         }
     }
 
     height(value){
 
-        if (!arguments.length){return this._height}
-        else{this._height = value}
+        if (!arguments.length){
+            return this._height
+        }
+        else{
+            this._height = value
+        }
+
         this.update()
+
         return this
     }
 }
@@ -95,8 +111,12 @@ class Group {
         // Private Parameters
         this._htmlClass = null
         this._htmlId = null
-        this._data = [null]   // WARNING: If data.length is more than 1, multiple containers may be created
 
+        this._x = 25
+        this._width = 100
+        // For horizontal CPC, `this._y` and `this._height` were not included in this generic class. These values require specific calculations, and are handled by more specific children classes.
+
+        this._data = [null]   // WARNING: If data.length is more than 1, multiple containers may be created
 
         // Private Variables
         this._selection = null  // will store d3 selection of self
@@ -209,6 +229,52 @@ class Group {
 
             return this
         }
+    }
+
+
+    x(value){
+
+        if (!arguments.length){
+            return this._x
+        }
+        else{
+            this._x = value
+
+            // LOOP //
+            this.objects().forEach(
+                (eachObjectInGroup, eachObjectId) => {
+
+                    eachObjectInGroup.x(this._x)
+
+                }
+            )
+
+            return this
+        }
+
+    }
+
+
+    width(value){
+
+        if (!arguments.length){
+            return this._width
+        }
+        else{
+            this._width = value
+
+            // LOOP //
+            this.objects().forEach(
+                (eachObjectInGroup, eachObjectId) => {
+
+                    eachObjectInGroup.width(this._width)
+
+                }
+            )
+
+            return this
+        }
+
     }
 
 
