@@ -75,45 +75,99 @@ class Panel extends container.Group {
         this._y = 25
         this._width = 100
         this._height = 500
-        this._padding = 0.1
+
+
+        this._innerPadding = {    // pixels
+            top: 30,
+            bottom: 10,
+            left: 10,
+            right: 10
+        }
+        this._paddingBetweenCharts = 0.05  // proportion
+
+        this._innerX = () => this._x + this._innerPadding.left
+        this._innerY = () =>  this._y + this._innerPadding.top
+        this._innerWidth = () =>  this._width - this._innerPadding.left - this._innerPadding.right
+        this._innerHeight = () => this._height - this._innerPadding.top - this._innerPadding.bottom
+
+        this._backgroundFill = 'lightgray'
+        this._backgroundText = 'Panel label'
+        this._backgroundTextFill = 'darkgray'
+
 
         this._stacks = null
         this._populateWithExampleData()
 
 
         // Private Variables //
-        this._chartCount = this._stacks.size
+        this._chartCount = () =>  this._stacks.size
 
-        this._chartHeights = null
-        this._calculateChartHeights()
+        this._chartHeights = () => {
+
+            const totalPaddingBetweenCharts = this._innerHeight() * this._paddingBetweenCharts
+
+            return  (this._innerHeight() - totalPaddingBetweenCharts) / this._chartCount()
+        }
+
 
         this._yScale = (value) => {
 
+            const rangeStart = this._innerY() + this._innerHeight()
+            const rangeEnd = this._innerY()
+
             const yScale = d3.scaleBand()
-                .domain(d3.range(this._chartCount))
-                .rangeRound([this._y+this._height, this._y])
-                .paddingInner(this._padding)
+                .domain(d3.range(this._chartCount()))
+                .rangeRound([rangeStart, rangeEnd])
+                .paddingInner(this._paddingBetweenCharts)
 
             return yScale(value)
         }
 
-        // this.backgroundObject = new Background()
-        //
-        // this._backgroundGroupObject = new container.Group(this.select())
-        //     .class('background')
-        //     .update()
-        //
-        // this._backgroundRectangleObject = new shape.Rectangle(this._backgroundGroupObject.select())
-        //     .class('background-rectangle')
-        //     .update()
-        //
-        // this._backgroundTextObject = new shape.Text(this._backgroundGroupObject.select())
-
-
-
-
 
         // Initialize //
+
+        // this.objects('background', this._backgroundObject)
+        // TODO: Adding _backgroundObject to objects() throws error. For consistency, this should be accomplished.
+        this._createBackgroundObject()
+
+        this._createCharts()
+
+        this.update()
+
+    }
+
+
+    update(transitionDuration){
+
+        if (this._backgroundObject){
+            this._backgroundObject.update(transitionDuration)
+        }
+
+        super.update(transitionDuration)
+
+        return this
+
+    }
+
+
+    _createBackgroundObject() {
+
+        this._backgroundObject = new shape.CaptionedRectangle(this.select())
+
+        this._backgroundObject
+            .textAlignment('top-left')
+            .class('background')
+            .x(this.x())
+            .y(this.y())
+            .height(this.height())
+            .width(this.width())
+            .fill(this._backgroundFill)
+            .text(this._backgroundText)
+            .textFill(this._backgroundTextFill)
+    }
+
+
+    _createCharts() {
 
         // loop //
         let i = 0
@@ -123,12 +177,11 @@ class Panel extends container.Group {
                 const chart = new Chart(this.select())
                     .stack(eachStack)
                     .id(eachStackId)
-                    .x(this._x)
-                    .y(this._yScale(i))  // TODO: Private variable SHOULD be replaced with getter (when a getter is implemented).
-                    .height(this._chartHeights)
-                    .width(this._width)
+                    .x(this._innerX())
+                    .y(this._yScale(i))
+                    .height(this._chartHeights())
+                    .width(this._innerWidth())
                     .update()
-
 
 
                 this.objects(eachStackId, chart)
@@ -137,19 +190,6 @@ class Panel extends container.Group {
 
             }
         )
-
-
-
-
-
-    }
-
-    _calculateChartHeights(){
-
-        this._chartHeights =  this._height / this._chartCount
-
-        return this
-
     }
 
 
@@ -191,6 +231,39 @@ class Panel extends container.Group {
     }
 
 
+    x(value){
+
+        // Getter
+        if (!arguments.length){
+            return this._x
+        }
+
+        // Setter
+        else{
+
+            this._x = value
+
+            // Update background object
+            this._backgroundObject
+                .x(this._x)
+
+
+            // Update charts
+            // LOOP //
+            this.objects().forEach(
+                (eachObjectInGroup, eachObjectId) => {
+
+                    eachObjectInGroup.x(this._innerX())
+
+                }
+            )
+
+            return this
+        }
+
+    }
+
+
     y(value){
 
         // Getter
@@ -200,9 +273,17 @@ class Panel extends container.Group {
 
         // Setter
         else {
+
             this._y = value
             // range of this._yScale is not recalculated in this method as it is a live variable
 
+
+            // Update background object
+            this._backgroundObject
+                .y(this._y)
+
+
+            // Update charts
             // loop //
             let i = 0
             this.objects().forEach(
@@ -212,6 +293,40 @@ class Panel extends container.Group {
                         .y(this._yScale(i))
 
                     i ++
+
+                }
+            )
+
+            return this
+        }
+
+    }
+
+
+    width(value){
+
+        // Getter
+        if (!arguments.length){
+            return this._width
+        }
+
+        // Setter
+        else{
+
+            this._width = value
+
+
+            // Update background object
+            this._backgroundObject
+                .width(this._width)
+
+
+            // Update charts
+            // LOOP //
+            this.objects().forEach(
+                (eachObjectInGroup, eachObjectId) => {
+
+                    eachObjectInGroup.width(this._innerWidth())
 
                 }
             )
@@ -233,9 +348,13 @@ class Panel extends container.Group {
         else {
             this._height = value
 
-            this._calculateChartHeights()
-            // range of this._yScale is not recalculated in this method as it is a live variable
 
+            // Update background
+            this._backgroundObject
+                .height(this._height)
+
+
+            // Update charts
             // loop //
             let i = 0
             this.objects().forEach(
@@ -243,7 +362,7 @@ class Panel extends container.Group {
 
                     eachChartObject
                         .y(this._yScale(i))
-                        .height(this._chartHeights)
+                        .height(this._chartHeights())
 
                     i ++
 
@@ -255,6 +374,12 @@ class Panel extends container.Group {
 
     }
 
+
+    // text(){
+    //
+    //
+    //
+    // }
 
     _populateWithExampleData(){
 

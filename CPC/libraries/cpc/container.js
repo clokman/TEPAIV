@@ -152,7 +152,7 @@ class Group {
         this.objects().forEach(
             (eachInstance, eachId) => {
 
-                // TODO: This error should be tested
+                // TODO: This error COULD be tested
                 // Make sure the object has an update function of its own
                 if (!eachInstance.update){throw Error (`The object contained within the container does not appear to have an update() method. The id of this object is ${eachId} `)}
 
@@ -205,7 +205,7 @@ class Group {
 
     }
 
-    selectSelf(){
+    selectSelf(){  // TODO: This method SHOULD be deleted because it is replaced by select()
         return this._selection
     }
 

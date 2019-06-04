@@ -250,7 +250,7 @@ class Text extends Shape {
     }
 
 
-    update(transitionDuration){
+    update(transitionDuration=500){
 
         this._selection
             .transition().duration(transitionDuration)

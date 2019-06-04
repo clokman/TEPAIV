@@ -116,6 +116,21 @@ test ('Should instantiate object as a child of specified parent element', () => 
 })
 
 
+
+
+//// PANEL NESTING ////
+
+test ('Panel should be created as a child of another panel', () => {
+
+
+
+    expect()
+
+})
+
+
+
+
 //// GENERATE EXAMPLE DATA ////
 
 test ('Should initialize with example data', () => {
@@ -135,7 +150,7 @@ test ('Should initialize with example data', () => {
 
 
     // Check if data stats are being calculated correctly
-    expect(myPanel._chartCount).toBe(3)
+    expect(myPanel._chartCount()).toBe(3)
 })
 
 
@@ -154,7 +169,7 @@ test ('Should calculate the number of charts in panel', () => {
     const myPanel = new navigator.Panel(parentContainerSelection)
 
     // Check if data stats are being calculated correctly
-    expect(myPanel._chartCount).toBe(3)
+    expect(myPanel._chartCount()).toBe(3)
 
 })
 
@@ -182,7 +197,7 @@ test ('Should create charts of the panel as a child of panel, and with right att
     const chartElements =  document
         .getElementsByClassName('panel')[0]
         .getElementsByClassName('chart')
-    expect(chartElements.length).toBe(myPanel._chartCount)
+    expect(chartElements.length).toBe(myPanel._chartCount())
 
 
     // Verify that all children charts in the panel has the correct HTML attributes
@@ -255,32 +270,42 @@ test ('Should create charts of the panel as a child of panel, and with right att
 
 // TODO: Panel background tests completed
 test ('Should initialize with a background rectangle', () => {
-    //
-    // // Clear JEST's DOM to prevent leftovers from previous tests
-    // document.body.innerHTML = ''
-    //
-    // const svg = new container.Svg()
-    // const myPanel = new navigator.Panel()
-    //
-    // // Verify that the panel background object is initiated
-    // expect(myPanel._backgroundGroupObject).toBeDefined()
-    //
-    // // Verify that the panel background element is created on DOM
-    // const panelBackgroundElement = document.getElementsByClassName('background')[0]
-    // expect(panelBackgroundElement).toBeDefined()
-    //
-    //
-    // // Verify that the panel background element has the right children on DOM
-    // expect(panelBackgroundElement.children.length).toBe(2)
-    // expect(panelBackgroundElement.children[0].tagName).toBe('rect')
-    // expect(panelBackgroundElement.children[1].tagName).toBe('text')
-    //
-    //
-    //
-    //
-    //
-    // // Verify that background rectangle
-    // expect()
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+
+    const svg = new container.Svg()
+    const myPanel = new navigator.Panel
+
+    // Verify that the panel background object is initiated
+    expect(myPanel._backgroundObject).toBeDefined()
+
+    // Verify that the panel background element is created in DOM
+    const panelBackgroundElement = document.getElementsByClassName('background')[0]
+    expect(panelBackgroundElement).toBeDefined()
+
+
+    // Verify that the panel background element has the right children on DOM
+    expect(panelBackgroundElement.children.length).toBe(2)
+    expect(panelBackgroundElement.children[0].tagName).toBe('rect')
+    expect(panelBackgroundElement.children[1].tagName).toBe('text')
+
+    // Verify that background rectangle has the right parent element
+    expect(d3
+        .select('.background')
+        .node()
+        .parentNode.getAttribute('class')
+    ).toBe('panel')
+
+
+    // Verify that background rectangle has the right attributes
+    expect(d3.select('.background').attr('class')).toBe('background')
+    // expect(d3.select('.background').select('rect').attr('x')).toBe()
+    // expect(d3.select('.background').select('rect').attr('y')).toBe()
+    // expect(d3.select('.background').select('rect').attr('height')).toBe()
+    // expect(d3.select('.background').select('rect').attr('width')).toBe()
+    // expect(d3.select('.background').select('rect').attr('fill')).toBe()
+
 
 })
 
@@ -301,11 +326,11 @@ test ('YScale should initiate correctly', () => {
         .id('my-panel')
         .update()
 
-    expect(myPanel._chartCount).toBe(3)
+    expect(myPanel._chartCount()).toBe(3)
 
-    expect(myPanel._yScale(0)).toBe(370)
-    expect(myPanel._yScale(1)).toBe(198)
-    expect(myPanel._yScale(2)).toBe(26)
+    expect(myPanel._yScale(0)).toBe(366)
+    expect(myPanel._yScale(1)).toBe(211)
+    expect(myPanel._yScale(2)).toBe(56)
 
 })
 
@@ -326,29 +351,29 @@ test ('YScale should return correct values automatically if any variable involve
         .update()
 
     // Check number of charts in panel
-    expect(myPanel._chartCount).toBe(3)
+    expect(myPanel._chartCount()).toBe(3)
 
     // Get initial yScale calculations three panel locations
-    expect(myPanel._yScale(0)).toBe(370)
-    expect(myPanel._yScale(1)).toBe(198)
-    expect(myPanel._yScale(2)).toBe(26)
+    expect(myPanel._yScale(0)).toBe(366)
+    expect(myPanel._yScale(1)).toBe(211)
+    expect(myPanel._yScale(2)).toBe(56)
 
     // Update y coordinate of panel
     myPanel.y(100).update()
 
     // Verify that yScale is updated
-    expect(myPanel._yScale(0)).toBe(445)
-    expect(myPanel._yScale(1)).toBe(273)
-    expect(myPanel._yScale(2)).toBe(101)
+    expect(myPanel._yScale(0)).toBe(366)
+    expect(myPanel._yScale(1)).toBe(211)
+    expect(myPanel._yScale(2)).toBe(56)
 
 
     // Update height of panel
     myPanel.height(500).update()
 
     // Verify that yScale is updated
-    expect(myPanel._yScale(0)).toBe(445)
-    expect(myPanel._yScale(1)).toBe(273)
-    expect(myPanel._yScale(2)).toBe(101)
+    expect(myPanel._yScale(0)).toBe(366)
+    expect(myPanel._yScale(1)).toBe(211)
+    expect(myPanel._yScale(2)).toBe(56)
 
 })
 
@@ -394,17 +419,17 @@ test ('Should get and set X and Y coordinates of the panel correctly', () => {
             .objects('male')
             .objects('rectangle')
             .y()
-    ).toBe(623)
+    ).toBe(418)
 
     expect(
         myPanel.objects('gender')
             .objects('female')
             .objects('rectangle')
             .y()
-    ).toBe(575)
+    ).toBe(366)
 
     expect(myPanel.height()).toBe(400)
-    expect(myPanel._chartHeights).toBe(133.33333333333334)
+    expect(myPanel._chartHeights).toBe(145.66666666666666)
 
     expect(myPanel.class()).toBe('my-class')
     expect(myPanel.id()).toBe('my-id')

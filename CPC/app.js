@@ -33,7 +33,13 @@ myCategory.x(400).y(100).fill('dodgerblue').update()
 //// CAPTIONED RECTANGLE ////
 
 // CAPTION AT CENTER
-myCaptionedRectangleCenter = new shape.CaptionedRectangle(parentElementForCategory)
+const parentElementForCaptionedRectangle = d3
+    .select('body')
+    .select('svg')
+    .append('g')
+      .attr('id', 'parent-container-of-captioned-rectangle')
+
+myCaptionedRectangleCenter = new shape.CaptionedRectangle(parentElementForCaptionedRectangle)
 myCaptionedRectangleCenter
     .x(400)
     .y(175)
@@ -44,7 +50,7 @@ myCaptionedRectangleCenter
     .update()
 
 // CAPTION AT TOP LEFT
-myCaptionedRectangleTopLeft = new shape.CaptionedRectangle(parentElementForCategory)
+myCaptionedRectangleTopLeft = new shape.CaptionedRectangle()
 myCaptionedRectangleTopLeft
     .textAlignment('top-left')
     .x(400)
