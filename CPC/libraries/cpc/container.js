@@ -198,12 +198,14 @@ class Group {
         })
     }
 
+
     removeAll(){
 
         const numberOfObjects = this.objects().size
         this.removeLast(numberOfObjects )
 
     }
+
 
     selectSelf(){  // TODO: This method SHOULD be deleted because it is replaced by select()
         return this._selection
@@ -297,6 +299,34 @@ class Group {
         }
 
     }
+
+    /**
+     * If the parameter is already a D3 Selection, returns it as it is. If the parameter is an object that an return a D3 selection via one of its method, calls this method and returns the returned D3 selection.
+     * @param parentSpecifier {Object|Selection}
+     * @return {*}
+     */
+    static getD3SelectionFromVariousParameterTypes(parentSpecifier){
+
+        const parameterIsAD3Selection = classUtils.isInstanceOf(parentSpecifier, 'Selection')
+
+        const parameterIsAnObject = classUtils.isInstanceOf(parentSpecifier, 'Panel')
+        const parameterIsASelectableObject = !!parentSpecifier.select  // checks if method exists
+
+        if (parameterIsAD3Selection) {
+            return parentSpecifier
+        }
+
+        if (parameterIsASelectableObject) {
+            return parentSpecifier.select()
+        }
+
+
+        // Error if parent is not a D3 selection or an object that can return a D3 selection
+        if(!parameterIsAD3Selection && !parameterIsASelectableObject){
+            throw Error(`Parent parameter must either be an instance of either D3 Selection or an Object with a select() method that returns a D3 selection. The current parent parameter is ${parent}`)
+        }
+    }
+
 }
 
 

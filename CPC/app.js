@@ -84,6 +84,8 @@ myChart.stack(tempStack)
 
 // const parentElementForPanel = d3.select('body').select('svg')
 myPanel = new navigator.Panel()
+    .bgFill('#deebf7')
+    .update()
 
 // Demo Code //
 // myPanel.objects('gender').x(300).y(25).height(100).width(100).update()
@@ -91,7 +93,13 @@ myPanel = new navigator.Panel()
 // myPanel.objects('class').x(300).y(245).height(100).width(100).update()
 // myPanel.objects('class').objects('first-class').fill('blue').update()
 
+myChildPanel1 = new navigator.Panel(myPanel)
+    .bgFill('#9ecae1')
+    .update()
 
+// myChildPanel2 = new navigator.Panel(myChildPanel1)
+//     .bgFill('#3182bd')
+//     .update()
 
 
 // const dataset = datasets.titanic

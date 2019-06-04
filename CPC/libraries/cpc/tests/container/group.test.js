@@ -20,6 +20,7 @@ global.d3 = {
     ...require("../../../external/d3/d3-array")
 }
 
+global.classUtils = require("../../../utils/classUtils")
 global.container = require("../../container")
 global.shape = require("../../shape")
 
@@ -257,5 +258,28 @@ test ('Should remove the last item, and then all items from group registry and f
     // Verify removal of corresponding DOM elements
     expect(document.getElementsByTagName('rect').length)
         .toBe(0)
+
+})
+
+//// GET PARENT SELECTION FROM OBJECTS ////
+
+test ('Should return a D3 Selection form various inputs ', () => {
+
+    const svg = d3.select('body').append('svg')
+
+
+    // If the parameter is already a D3 Selection, return it as it is
+    const selectionFromSelection = container.Group.getD3SelectionFromVariousParameterTypes(svg)
+    expect(classUtils.isInstanceOf(selectionFromSelection, 'Selection'))
+        .toBe(true)
+
+
+
+    const myGroup = new container.Group()
+
+    // If an object with selection method is given as parameter, return the D3 Selection from this object
+    const selectionFromSelectableObject = container.Group.getD3SelectionFromVariousParameterTypes(myGroup)
+    expect(classUtils.isInstanceOf(selectionFromSelectableObject, 'Selection'))
+        .toBe(true)
 
 })

@@ -63,14 +63,34 @@ class Navigator extends container.Group{
  */
 class Panel extends container.Group {
 
-    constructor(parentContainerSelection){
+
+    constructor(parentContainerSelectionOrObject){
+
+        // Superclass Init Prep:
+        // Establish parent container type
+        // and return a D3 selection regardless of the parent container's type //
+        let thisPanelIsBeingEmbeddedInAnotherPanel = false
+        let parentContainerSelection
+
+        if (arguments.length){
+
+            // Get a D3 Selection from the parameter (or just return it as it is, in case it is already a D3 Selection)
+            parentContainerSelection = container.Group.getD3SelectionFromVariousParameterTypes(parentContainerSelectionOrObject)
+
+            // Check if this panel is being embedded inside another panel
+            thisPanelIsBeingEmbeddedInAnotherPanel = classUtils.isInstanceOf(parentContainerSelectionOrObject, 'Panel')
+        }
+
 
         // Superclass Init //
         super(parentContainerSelection)
         this.class('panel')
             .update()
 
+
         // Private Parameters //
+        this.parentObject = thisPanelIsBeingEmbeddedInAnotherPanel ? parentContainerSelectionOrObject : null
+
         this._bgExtension = 0
         this._bgFill = 'lightgray'
         this._bgText = 'Panel label'
@@ -80,8 +100,6 @@ class Panel extends container.Group {
         this._y = 25
         this._width = 100
         this._height = 500
-
-
 
         this._innerPadding = {    // pixels
             top: 30,
@@ -139,8 +157,34 @@ class Panel extends container.Group {
 
         this.update()
 
+        if (thisPanelIsBeingEmbeddedInAnotherPanel){
+            this._updateParametersToBeAChildPanel()
+        }
+
     }
 
+    _updateParametersToBeAChildPanel(transitionTime=4000){
+
+
+        // Make room in parent panel
+        this.parentObject.bgExtension(120).update(transitionTime)
+
+        // Modify current panel's properties to fit it to the room created in parent panel
+        this.x(this.parentObject.x() + 100)
+            .height(this.parentObject.height() - 30)
+            .y(this.parentObject.y() + 15)
+            .update(transitionTime)
+
+        // TODO: This is a temporary solution to get parent and grandparent objects, until a recursive version is implemented
+        try{
+
+            const grandParentObject = this.parentObject.parentObject
+            grandParentObject.bgExtension(230).update(transitionTime)
+
+        }
+        catch (e) {}
+
+    }
 
     update(transitionDuration){
 
