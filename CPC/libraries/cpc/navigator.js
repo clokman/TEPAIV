@@ -71,10 +71,16 @@ class Panel extends container.Group {
             .update()
 
         // Private Parameters //
+        this._bgExtension = 0
+        this._bgFill = 'lightgray'
+        this._bgText = 'Panel label'
+        this._bgTextFill = 'darkgray'
+
         this._x = 25
         this._y = 25
         this._width = 100
         this._height = 500
+
 
 
         this._innerPadding = {    // pixels
@@ -85,14 +91,13 @@ class Panel extends container.Group {
         }
         this._paddingBetweenCharts = 0.05  // proportion
 
+
         this._innerX = () => this._x + this._innerPadding.left
         this._innerY = () =>  this._y + this._innerPadding.top
         this._innerWidth = () =>  this._width - this._innerPadding.left - this._innerPadding.right
         this._innerHeight = () => this._height - this._innerPadding.top - this._innerPadding.bottom
 
-        this._backgroundFill = 'lightgray'
-        this._backgroundText = 'Panel label'
-        this._backgroundTextFill = 'darkgray'
+
 
 
         this._stacks = null
@@ -161,9 +166,9 @@ class Panel extends container.Group {
             .y(this.y())
             .height(this.height())
             .width(this.width())
-            .fill(this._backgroundFill)
-            .text(this._backgroundText)
-            .textFill(this._backgroundTextFill)
+            .fill(this._bgFill)
+            .text(this._bgText)
+            .textFill(this._bgTextFill)
     }
 
 
@@ -379,17 +384,17 @@ class Panel extends container.Group {
 
         // Getter
         if (!arguments.length) {
-            return this._backgroundText
+            return this._bgText
         }
 
         // Setter
         else {
 
-            this._backgroundText = value
+            this._bgText = value
 
             // Update background
             this._backgroundObject
-                .text(this._backgroundText)
+                .text(this._bgText)
 
 
             return this
@@ -402,17 +407,17 @@ class Panel extends container.Group {
 
         // Getter
         if (!arguments.length) {
-            return this._backgroundTextFill
+            return this._bgTextFill
         }
 
         // Setter
         else {
 
-            this._backgroundTextFill = value
+            this._bgTextFill = value
 
             // Update background
             this._backgroundObject
-                .textFill(this._backgroundTextFill)
+                .textFill(this._bgTextFill)
 
 
             return this
@@ -426,21 +431,45 @@ class Panel extends container.Group {
 
         // Getter
         if (!arguments.length) {
-            return this._backgroundFill
+            return this._bgFill
         }
 
         // Setter
         else {
 
-            this._backgroundFill = value
+            this._bgFill = value
 
             // Update background
             this._backgroundObject
-                .fill(this._backgroundFill)
+                .fill(this._bgFill)
 
 
             return this
         }
+
+    }
+
+
+    bgExtension(value){
+
+        // Getter
+        if (!arguments.length) {
+            return this._bgExtension
+        }
+
+        // Setter
+        else {
+
+            this._bgExtension = value
+
+            // Update background
+            this._backgroundObject
+                .width(this._width + this._bgExtension)
+
+
+            return this
+        }
+
 
     }
 

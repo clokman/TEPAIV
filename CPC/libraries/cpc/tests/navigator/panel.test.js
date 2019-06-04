@@ -362,18 +362,18 @@ test ('YScale should return correct values automatically if any variable involve
     myPanel.y(100).update()
 
     // Verify that yScale is updated
-    expect(myPanel._yScale(0)).toBe(366)
-    expect(myPanel._yScale(1)).toBe(211)
-    expect(myPanel._yScale(2)).toBe(56)
+    expect(myPanel._yScale(0)).toBe(441)
+    expect(myPanel._yScale(1)).toBe(286)
+    expect(myPanel._yScale(2)).toBe(131)
 
 
     // Update height of panel
-    myPanel.height(500).update()
+    myPanel.height(100).update()
 
     // Verify that yScale is updated
-    expect(myPanel._yScale(0)).toBe(366)
-    expect(myPanel._yScale(1)).toBe(211)
-    expect(myPanel._yScale(2)).toBe(56)
+    expect(myPanel._yScale(0)).toBe(171)
+    expect(myPanel._yScale(1)).toBe(151)
+    expect(myPanel._yScale(2)).toBe(131)
 
 })
 
@@ -419,17 +419,17 @@ test ('Should get and set X and Y coordinates of the panel correctly', () => {
             .objects('male')
             .objects('rectangle')
             .y()
-    ).toBe(418)
+    ).toBe(615)
 
     expect(
         myPanel.objects('gender')
             .objects('female')
             .objects('rectangle')
             .y()
-    ).toBe(366)
+    ).toBe(574)
 
     expect(myPanel.height()).toBe(400)
-    expect(myPanel._chartHeights).toBe(145.66666666666666)
+    expect(myPanel._chartHeights()).toBe(114)
 
     expect(myPanel.class()).toBe('my-class')
     expect(myPanel.id()).toBe('my-id')
