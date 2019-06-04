@@ -375,11 +375,75 @@ class Panel extends container.Group {
     }
 
 
-    // text(){
-    //
-    //
-    //
-    // }
+    bgText(value){
+
+        // Getter
+        if (!arguments.length) {
+            return this._backgroundText
+        }
+
+        // Setter
+        else {
+
+            this._backgroundText = value
+
+            // Update background
+            this._backgroundObject
+                .text(this._backgroundText)
+
+
+            return this
+        }
+
+    }
+
+
+    bgTextFill(value){
+
+        // Getter
+        if (!arguments.length) {
+            return this._backgroundTextFill
+        }
+
+        // Setter
+        else {
+
+            this._backgroundTextFill = value
+
+            // Update background
+            this._backgroundObject
+                .textFill(this._backgroundTextFill)
+
+
+            return this
+        }
+
+    }
+
+
+
+    bgFill(value){
+
+        // Getter
+        if (!arguments.length) {
+            return this._backgroundFill
+        }
+
+        // Setter
+        else {
+
+            this._backgroundFill = value
+
+            // Update background
+            this._backgroundObject
+                .fill(this._backgroundFill)
+
+
+            return this
+        }
+
+    }
+
 
     _populateWithExampleData(){
 
