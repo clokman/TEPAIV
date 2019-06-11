@@ -163,7 +163,7 @@ class Panel extends container.Group {
 
     }
 
-    _updateParametersToBeAChildPanel(transitionTime=4000){
+    _updateParametersToBeAChildPanel(transitionTime){
 
 
         // Make room in parent panel
@@ -176,6 +176,8 @@ class Panel extends container.Group {
             .update(transitionTime)
 
         // TODO: This is a temporary solution to get parent and grandparent objects, until a recursive version is implemented
+        // TODO: A possible solution is to implement a try-while loop
+
         try{
 
             const grandParentObject = this.parentObject.parentObject

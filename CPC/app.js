@@ -6,7 +6,7 @@
 
 //// SVG  ////
 
-mySvg = new container.Svg(800, 600)
+mySvg = new container.Svg(1600, 1280)
 
 
 //// RECTANGLE  ////
@@ -23,11 +23,11 @@ myText.x(450).fill('red').update()
 
 
 
-//// CATEGORY  ////
-const parentElementForCategory = d3.select('body').select('svg')
-
-myCategory = new navigator.Category(parentElementForCategory)
-myCategory.x(400).y(100).fill('dodgerblue').update()
+// //// CATEGORY  ////
+// const parentElementForCategory = d3.select('body').select('svg')
+//
+// myCategory = new navigator.Category(parentElementForCategory)
+// myCategory.x(400).y(100).fill('dodgerblue').update()
 
 
 //// CAPTIONED RECTANGLE ////
@@ -97,9 +97,9 @@ myChildPanel1 = new navigator.Panel(myPanel)
     .bgFill('#9ecae1')
     .update()
 
-// myChildPanel2 = new navigator.Panel(myChildPanel1)
-//     .bgFill('#3182bd')
-//     .update()
+myChildPanel2 = new navigator.Panel(myChildPanel1)
+    .bgFill('#3182bd')
+    .update()
 
 
 // const dataset = datasets.titanic

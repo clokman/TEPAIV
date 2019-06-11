@@ -33,6 +33,7 @@ class Svg {
         this.create()
     }
 
+
     create(){
         this._selection = d3.select('body')
             .append('svg')
