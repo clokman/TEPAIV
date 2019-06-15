@@ -34,7 +34,7 @@ const classUtils = require("../classUtils")
 //// UNIT TESTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-//// CHECK CLASS OF INSTANCE ////
+//// CHECK INSTANCE CLASS ////
 test ('Should return class name of instances', () => {
 
 
@@ -75,5 +75,40 @@ test ('Should return class name of instances', () => {
         .toBe(true)
     expect(classUtils.isInstanceOf(mySvg, 'String'))
         .toBe(false)
+
+})
+
+
+
+//// CHECK EXISTENCE INSTANCE PROPERTIES////
+
+test ('Should pass (return error) if an instance property does (not) exist', () => {
+
+    class MyClass {
+        constructor(){
+
+            this.property1 = 0
+            this.property2 = 1
+            this.property3 = 'a'
+            this.property4 = true
+            this.property5 = false
+            this.property6 = null
+            // this.property7  // would throw error if uncommented
+
+        }
+    }
+
+    const myInstance = new MyClass()
+
+    // Should return error if a property is missing
+    expect(() =>
+        classUtils.requireProperties(myInstance, ['property1', 'a'])
+    ).toThrow("Properties \"a\" do not exist in the provided MyClass instance.")
+
+
+    // Should return no error if all properties exist
+    expect(classUtils.requireProperties(myInstance,
+        ['property1', 'property2', 'property3', 'property4', 'property5', 'property6']
+    )).toBe()
 
 })

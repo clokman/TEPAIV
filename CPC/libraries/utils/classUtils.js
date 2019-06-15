@@ -28,13 +28,36 @@ function isInstanceOf (instance, expectedClass){
 }
 
 
+function requireProperties (instance, propertyKeys){
 
-                                                
+    const requiredProperties = propertyKeys
+    let missingProperties = []
+
+    // If any property is missing from the Dataset instance, add them to array
+    requiredProperties.forEach( (propertyKey) => {
+
+        if(!instance.hasOwnProperty(propertyKey)){
+            missingProperties.push(propertyKey)
+        }
+    })
+
+    // If array is not emty, this means that at least one required property is missing from Dataset instance
+    if (missingProperties.length !== 0){
+
+        throw Error(`Properties "${missingProperties}" do not exist in the provided ${instance.constructor.name} instance.`)
+
+    }
+
+}
+
+
+
 //// UMD FOOT ////////////////////////////////////////////////////////////////////////
                              
     //// MODULE.EXPORTS ////
     exports.version = version;
     exports.isInstanceOf = isInstanceOf;
+    exports.requireProperties = requireProperties;
 
 
 	Object.defineProperty(exports, '__esModule', { value: true });

@@ -233,72 +233,72 @@ class Stack {
 
 
 
-    class FrequenciesArray {
-
-        /**
-         * @param dictionariesArray {Array} - An array that contains dictionaries of frequencies.
-         *                                   An example of such an array is:
-         *                                   let frontData = [
-         *                                        { firstClass: 10,  secondClass: 8,  thirdClass: 25 }
-         *                                       ,{ firstClass: 4,  secondClass: 12, thirdClass: 28 }
-         *                                       ,{ firstClass: 2,  secondClass: 19, thirdClass: 32 }
-         *                                       ,{ firstClass: 7,  secondClass: 23, thirdClass: 35 }
-         *                                       ,{ firstClass: 23, secondClass: 17, thirdClass: 43 }
-         *                                   ]
-         */
-        constructor(dictionariesArray) {
-
-            this.data = dictionariesArray
-
-            // Calculate database statistics
-            this.maxValue = this._findMaxValue()
-            this.uniqueKeys = this._extractUniqueKeys()
-
-        }
-
-        /**
-         * @return {number}
-         */
-
-        _findMaxValue() {
-            let values = []
-
-            let dictionaryArray = this.data
-
-            for (let eachArrayIndex in dictionaryArray){
-                for (let eachDictionaryKey in dictionaryArray[eachArrayIndex]){
-
-                    let eachDictionaryValue = dictionaryArray[eachArrayIndex][eachDictionaryKey]
-                    values.push(eachDictionaryValue)
-                    // cLog(eachDictionaryValue)
-                }
-            }
-
-            let maxValue = d3.max(values)
-            return maxValue
-        }
-
-
-        /**
-         * @return {Array} - An array of unique keys in the dictionary
-         */
-        _extractUniqueKeys() {
-
-            let dictionariesArray = this.data
-
-            let keys = []
-            for (let eachArrayIndex in dictionariesArray){
-                for (let eachDictKey in dictionariesArray[eachArrayIndex]){
-
-                    if (!(keys.includes(eachDictKey)) ){
-                        let newKey = eachDictKey
-                        keys.push(eachDictKey)
-                    }
-                }
-            }
-            return keys
-        }
-    }
+    // class FrequenciesArray {
+    //
+    //     /**
+    //      * @param dictionariesArray {Array} - An array that contains dictionaries of frequencies.
+    //      *                                   An example of such an array is:
+    //      *                                   let frontData = [
+    //      *                                        { firstClass: 10,  secondClass: 8,  thirdClass: 25 }
+    //      *                                       ,{ firstClass: 4,  secondClass: 12, thirdClass: 28 }
+    //      *                                       ,{ firstClass: 2,  secondClass: 19, thirdClass: 32 }
+    //      *                                       ,{ firstClass: 7,  secondClass: 23, thirdClass: 35 }
+    //      *                                       ,{ firstClass: 23, secondClass: 17, thirdClass: 43 }
+    //      *                                   ]
+    //      */
+    //     constructor(dictionariesArray) {
+    //
+    //         this.data = dictionariesArray
+    //
+    //         // Calculate database statistics
+    //         this.maxValue = this._findMaxValue()
+    //         this.uniqueKeys = this._extractUniqueKeys()
+    //
+    //     }
+    //
+    //     /**
+    //      * @return {number}
+    //      */
+    //
+    //     _findMaxValue() {
+    //         let values = []
+    //
+    //         let dictionaryArray = this.data
+    //
+    //         for (let eachArrayIndex in dictionaryArray){
+    //             for (let eachDictionaryKey in dictionaryArray[eachArrayIndex]){
+    //
+    //                 let eachDictionaryValue = dictionaryArray[eachArrayIndex][eachDictionaryKey]
+    //                 values.push(eachDictionaryValue)
+    //                 // cLog(eachDictionaryValue)
+    //             }
+    //         }
+    //
+    //         let maxValue = d3.max(values)
+    //         return maxValue
+    //     }
+    //
+    //
+    //     /**
+    //      * @return {Array} - An array of unique keys in the dictionary
+    //      */
+    //     _extractUniqueKeys() {
+    //
+    //         let dictionariesArray = this.data
+    //
+    //         let keys = []
+    //         for (let eachArrayIndex in dictionariesArray){
+    //             for (let eachDictKey in dictionariesArray[eachArrayIndex]){
+    //
+    //                 if (!(keys.includes(eachDictKey)) ){
+    //                     let newKey = eachDictKey
+    //                     keys.push(eachDictKey)
+    //                 }
+    //             }
+    //         }
+    //         return keys
+    //     }
+    // }
 
 
 
@@ -352,7 +352,6 @@ class Stack {
 
     //// MODULE.EXPORTS ////
     exports.Stack = Stack;
-    exports.FrequenciesArray = FrequenciesArray;
 
 
     Object.defineProperty(exports, '__esModule', {value: true});
