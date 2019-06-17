@@ -106,7 +106,7 @@ class Group {
 
         // Public Parameters
         this._parentContainerSelection = parentContainerSelection
-        this._objects = new Map() // TODO: 'Map' should be Map()
+        this._objects = new Map()
 
         // Private Parameters
         this._htmlClass = null
