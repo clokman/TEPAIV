@@ -13,7 +13,11 @@ if (typeof Object.fromEntries !== 'function') {
 }
 
 
-//// REQUIREMENTS ////
+//// NODE-ONLY DEPENDENCIES ////
+require("../../../../../Utilities/jest-console")
+
+
+//// UMD DEPENDENCIES ////
 
 // D3 //
 global.d3 = {
@@ -34,8 +38,7 @@ global.str = require("../../str")
 global.data = require("../../../cpc/data")
 
 
-//// MODULES BEING TESTED ////
-const datasets = require("../../../../data/datasets")
+//// MODULE(S) BEING TESTED ////
 const navigator = require("../../navigator")
 
 
@@ -143,6 +146,7 @@ test ('Should initialize with example data', () => {
 
     const myPanel = new navigator.Panel(parentContainerSelection)
 
+
     // Probe the initial sample data
     expect(myPanel.stacks().size).toBe(3)
     expect(myPanel.stacks('gender').data('male').get('label')).toEqual('Male')
@@ -152,6 +156,35 @@ test ('Should initialize with example data', () => {
 
     // Check if data stats are being calculated correctly
     expect(myPanel._chartCount()).toBe(3)
+
+
+    // Probe the initial data visually
+    expectTable(myPanel.stacks(), `\
+┌───────────────────┬──────────┬──────────────────────────────────────────────┐
+│ (iteration index) │   Key    │                    Values                    │
+├───────────────────┼──────────┼──────────────────────────────────────────────┤
+│         0         │ 'gender' │ Stack { _data: [Map], _scaleFunction: null } │
+│         1         │ 'class'  │ Stack { _data: [Map], _scaleFunction: null } │
+│         2         │ 'status' │ Stack { _data: [Map], _scaleFunction: null } │
+└───────────────────┴──────────┴──────────────────────────────────────────────┘`)
+    expectTable(myPanel.stacks('gender'), `\
+┌────────────────┬────────┐
+│    (index)     │ Values │
+├────────────────┼────────┤
+│     _data      │        │
+│ _scaleFunction │  null  │
+└────────────────┴────────┘`)
+    expectTable(myPanel.stacks('gender').data('male'), `\
+┌───────────────────┬──────────────┬────────┐
+│ (iteration index) │     Key      │ Values │
+├───────────────────┼──────────────┼────────┤
+│         0         │   'label'    │ 'Male' │
+│         1         │   'start'    │   0    │
+│         2         │    'end'     │   64   │
+│         3         │ 'percentage' │   64   │
+└───────────────────┴──────────────┴────────┘`)
+
+
 })
 
 
@@ -495,6 +528,14 @@ test ('Should update panel stacks, and also the related instance variables', () 
     expect(myPanel.stacks('class').data('first-class').get('label'))
         .toBe('First Class')
 
+    expectTable(myPanel.stacks(), `\
+┌───────────────────┬──────────┬──────────────────────────────────────────────┐
+│ (iteration index) │   Key    │                    Values                    │
+├───────────────────┼──────────┼──────────────────────────────────────────────┤
+│         0         │ 'gender' │ Stack { _data: [Map], _scaleFunction: null } │
+│         1         │ 'class'  │ Stack { _data: [Map], _scaleFunction: null } │
+│         2         │ 'status' │ Stack { _data: [Map], _scaleFunction: null } │
+└───────────────────┴──────────┴──────────────────────────────────────────────┘`)
 
     // Create replacement stacks
     const replacementStack1 =  new data.Stack()
@@ -503,12 +544,21 @@ test ('Should update panel stacks, and also the related instance variables', () 
     const replacementStack2 =  new data.Stack()
         .populateWithExampleData('generic')
 
-    const replacementsStacks = new Map()
-    replacementsStacks.set('generic-1', replacementStack1)
-    replacementsStacks.set('generic-2', replacementStack2)
+    const replacementStacks = new data.Stacks()
+        .clear()
+        .add('generic-1', replacementStack1)
+        .add('generic-2', replacementStack2)
 
     // Update stacks in Panel
-    myPanel.stacks(replacementsStacks)
+    myPanel.stacks(replacementStacks)
+
+    expectTable(myPanel.stacks(), `\
+┌───────────────────┬─────────────┬──────────────────────────────────────────────┐
+│ (iteration index) │     Key     │                    Values                    │
+├───────────────────┼─────────────┼──────────────────────────────────────────────┤
+│         0         │ 'generic-1' │ Stack { _data: [Map], _scaleFunction: null } │
+│         1         │ 'generic-2' │ Stack { _data: [Map], _scaleFunction: null } │
+└───────────────────┴─────────────┴──────────────────────────────────────────────┘`)
 
 
     // Probe to see if data is correctly updated
@@ -530,8 +580,8 @@ test ('Should update panel stacks, and also the related instance variables', () 
 
 
     // Do a manual check on the updated private stack variable in the instance
-    expect(myPanel._stacks.size).toBe(2)
-    expect(myPanel._stacks.get('generic-2').data('category-2').get('label'))
+    expect(myPanel.stacks().size).toBe(2)
+    expect(myPanel.stacks().get('generic-2').data('category-2').get('label'))
         .toBe('Category Two')
 
     // Check if other stacks-related variables are currectly updated after change of stacks

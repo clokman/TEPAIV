@@ -35,7 +35,6 @@ const data = require("../../data")
 
 //// UNIT TESTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 //// INITIATE ////
 
 test ('Instantiate the class with initial sample data and summary statistics' , () => {
@@ -46,13 +45,33 @@ test ('Instantiate the class with initial sample data and summary statistics' , 
 
 
     expectTable(myStacks.data(), `\
-┌───────────────────┬──────────┬──────────────────────────────────────────────┐
-│ (iteration index) │   Key    │                    Values                    │
-├───────────────────┼──────────┼──────────────────────────────────────────────┤
-│         0         │ 'gender' │ Stack { _data: [Map], _scaleFunction: null } │
-│         1         │ 'class'  │ Stack { _data: [Map], _scaleFunction: null } │
-│         2         │ 'status' │ Stack { _data: [Map], _scaleFunction: null } │
-└───────────────────┴──────────┴──────────────────────────────────────────────┘`)
+┌───────────────────┬─────┬────────┐
+│ (iteration index) │ Key │ Values │
+├───────────────────┼─────┼────────┤
+└───────────────────┴─────┴────────┘`)
+
+})
+
+
+
+//// GENERATE EXAMPLE DATA ////
+
+test ('Generate sample data' , () => {
+
+    const myStacks = new data.Stacks()
+
+    expect(myStacks).toBeDefined()
+
+
+    expectTable(myStacks.data(), `\
+┌───────────────────┬─────┬────────┐
+│ (iteration index) │ Key │ Values │
+├───────────────────┼─────┼────────┤
+└───────────────────┴─────┴────────┘`)
+
+
+    myStacks.populateWithExampleData()
+
     expectTable(myStacks.data('gender').data('male'), `\
 ┌───────────────────┬──────────────┬────────┐
 │ (iteration index) │     Key      │ Values │
@@ -91,6 +110,7 @@ test ('Instantiate the class with initial sample data and summary statistics' , 
 test ('Return the data in Stacks' , () => {
 
     const myStacks = new data.Stacks()
+    myStacks.populateWithExampleData()
 
     expect(myStacks.data().size).toBe(3)
 
@@ -112,7 +132,7 @@ test ('Return the data in Stacks' , () => {
 test ('Set new data for Stacks', () => {
 
     const myStacks = new data.Stacks()
-
+    myStacks.populateWithExampleData()
 
     // Check initial Stacks data
     expectTable(myStacks.data(), `\
@@ -148,6 +168,7 @@ test ('Set new data for Stacks', () => {
 test ('Add a new Stack to Stacks', () => {
 
     const myStacks = new data.Stacks()
+    myStacks.populateWithExampleData()
 
 
     // Check initial Stacks data
@@ -185,6 +206,8 @@ test ('Add a new Stack to Stacks', () => {
 test ('Should query the data in Stacks', () => {
 
     const myStacks = new data.Stacks()
+    myStacks.populateWithExampleData()
+
 
     // Check initial Stacks data
     expectTable(myStacks.data(), `\
@@ -228,6 +251,8 @@ test ('Convert a nested map object to a Stack', () => {
 
     // Create a Stacks object
     const myStacks = new data.Stacks()
+    myStacks.populateWithExampleData()
+
 
     expectTable(myStacks.data(), `\
 ┌───────────────────┬──────────┬──────────────────────────────────────────────┐

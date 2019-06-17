@@ -123,7 +123,7 @@ class Panel extends container.Group {
 
 
         // Private Variables //
-        this._chartCount = () =>  this._stacks.size
+        this._chartCount = () =>  this.stacks().size
 
         this._chartHeights = () => {
 
@@ -222,7 +222,7 @@ class Panel extends container.Group {
 
         // loop //
         let i = 0
-        this._stacks.forEach(
+        this.stacks().forEach(
             (eachStack, eachStackId) => {
 
                 const chart = new Chart(this.select())
@@ -258,20 +258,20 @@ class Panel extends container.Group {
 
         // Get data
         if(parameterIsNull){
-            return this._stacks
+            return this._stacks.data()
         }
 
 
         // Query data
         if (parameterIsString){
-            return this._stacks.get(value)
+            return this._stacks.data(value)  // returns the requested Stack object
         }
 
 
         // Set new data
         if (parameterIsObject){
 
-            this._stacks = value  // value is a stacks in this case
+            this._stacks = value  // value is a Stacks object in this case
 
             // this._updateData()
             // this.update()
@@ -520,19 +520,19 @@ class Panel extends container.Group {
     }
 
 
+
     _populateWithExampleData(){
 
-        // Genetate stacks
+        // Generate example Stack x 3
         const genderStack = new data.Stack().populateWithExampleData('gender')
             , classStack = new data.Stack().populateWithExampleData('class')
             , statusStack = new data.Stack().populateWithExampleData('status')
 
-        // Combine stacks in one map
-        const exampleStacks = new Map()
-        exampleStacks.set('gender', genderStack)
-        exampleStacks.set('class', classStack)
-        exampleStacks.set('status', statusStack)
-
+        // Combine example stacks in a Stack object
+        const exampleStacks = new data.Stacks()
+        exampleStacks.add('gender', genderStack)
+        exampleStacks.add('class', classStack)
+        exampleStacks.add('status', statusStack)
 
         this.stacks(exampleStacks)
 

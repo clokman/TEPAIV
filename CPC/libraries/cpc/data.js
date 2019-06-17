@@ -23,8 +23,6 @@ class Stacks{
 
         this._data = new Map()
 
-        this.populateWithExampleData()
-
     }
 
 
