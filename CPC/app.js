@@ -73,7 +73,7 @@ const parentElementForChart = d3.select('body').select('svg')
 myChart = new navigator.Chart(parentElementForChart)
 myChart.x(280).update()
 
-
+// Update data of chart
 const tempStack = new data.Stack()
     .populateWithExampleData('gender')
 myChart.stack(tempStack)
@@ -109,11 +109,3 @@ myChildPanel2 = new navigator.Panel(myChildPanel1)
 const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv', 'Name')
 titanicDataset.build()
 
-
-const myQueryString = async () => {
-
-    const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv')
-    await titanicDataset.build()
-
-    return await new dataset.DrilldownQueryTemplate(titanicDataset, ['Survived'])
-}
