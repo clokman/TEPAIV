@@ -123,6 +123,10 @@ const version = "1.0"
      }
 
 
+     summarize(){
+         return this.drilldownAndSummarize()
+     }
+
 
      drilldownAndSummarize (...drilldownPath){
 

@@ -126,8 +126,12 @@ test ('Dataset should initiate with an omitted column', async () => {
 
 
 
-test ('BREAKDOWN (d3.group) dataset by column using .breakdown(), and then manually drilldown with .get()', async () => {
+test ('BREAKDOWN dataset by column using .breakdown(), and then manually drilldown with .get()', async () => {
 
+    // Query terminology:
+    // BREAKDOWN: d3.group()
+    // DRILLDOWN: d3.group().get()
+    // BREAKDOWN+SUMMARIZE: d3.rollup()
 
     const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv', 'Name')
     await titanicDataset.build()
@@ -208,7 +212,12 @@ test ('BREAKDOWN (d3.group) dataset by column using .breakdown(), and then manua
 })
 
 
-test ('DRILLDOWN (d3.group().get()) dataset by category using drilldown()', async () => {
+test ('DRILLDOWN dataset by category using drilldown()', async () => {
+
+    // Query terminology:
+    // BREAKDOWN: d3.group()
+    // DRILLDOWN: d3.group().get()
+    // BREAKDOWN+SUMMARIZE: d3.rollup()
 
     const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv', 'Name')
     await titanicDataset.build()
@@ -339,8 +348,12 @@ test ('DRILLDOWN (d3.group().get()) dataset by category using drilldown()', asyn
 
 
 
-test ('DRILLDOWN (d3.group().get()) the dataset and BREAKDOWN+SUMMARIZE (d3.rollup) of all categories in the context of the drilled down data', async () => {
+test ('DRILLDOWN the dataset and BREAKDOWN+SUMMARIZE of all categories in the context of the drilled down data', async () => {
 
+    // Query terminology:
+    // BREAKDOWN: d3.group()
+    // DRILLDOWN: d3.group().get()
+    // BREAKDOWN+SUMMARIZE: d3.rollup()
 
     const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv', 'Name')
     await titanicDataset.build()
@@ -408,6 +421,31 @@ test ('DRILLDOWN (d3.group().get()) the dataset and BREAKDOWN+SUMMARIZE (d3.roll
 
 })
 
+
+
+test ('BREAKDOWN+SUMMARIZE level-0/SURFACE data with summarize()', async () => {
+
+    // Query terminology:
+    // BREAKDOWN: d3.group()
+    // DRILLDOWN: d3.group().get()
+    // BREAKDOWN+SUMMARIZE: d3.rollup()
+
+    const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv', 'Name')
+    await titanicDataset.build()
+
+    const datasetSummary = titanicDataset.summarize()
+
+
+    expectTable(datasetSummary, `\
+┌───────────────────┬──────────┬────────────────────────────────────────────────────────────────────┐
+│ (iteration index) │   Key    │                               Values                               │
+├───────────────────┼──────────┼────────────────────────────────────────────────────────────────────┤
+│         0         │ 'Ticket' │ Map { '1st class' => 323, '2nd class' => 277, '3rd class' => 709 } │
+│         1         │ 'Status' │              Map { 'Survived' => 500, 'Died' => 809 }              │
+│         2         │ 'Gender' │               Map { 'Female' => 466, 'Male' => 843 }               │
+└───────────────────┴──────────┴────────────────────────────────────────────────────────────────────┘`)
+
+})
 
 
 
