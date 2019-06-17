@@ -350,14 +350,14 @@ test ('DRILLDOWN (d3.group().get()) the dataset and BREAKDOWN+SUMMARIZE (d3.roll
     // DRILLDOWN, and then BREAKDOWN+SUMMARIZE --- Zero depth (summary of initial/surface data without drilling down)
     const datasetSummary = titanicDataset.drilldownAndSummarize()
 
-    expectTable(Array.from(datasetSummary), `\
-┌─────────┬──────────┬────────────────────────────────────────────────────────────────────┐
-│ (index) │    0     │                                 1                                  │
-├─────────┼──────────┼────────────────────────────────────────────────────────────────────┤
-│    0    │ 'Ticket' │ Map { '1st class' => 323, '2nd class' => 277, '3rd class' => 709 } │
-│    1    │ 'Status' │              Map { 'Survived' => 500, 'Died' => 809 }              │
-│    2    │ 'Gender' │               Map { 'Female' => 466, 'Male' => 843 }               │
-└─────────┴──────────┴────────────────────────────────────────────────────────────────────┘`)
+    expectTable(datasetSummary, `\
+┌───────────────────┬──────────┬────────────────────────────────────────────────────────────────────┐
+│ (iteration index) │   Key    │                               Values                               │
+├───────────────────┼──────────┼────────────────────────────────────────────────────────────────────┤
+│         0         │ 'Ticket' │ Map { '1st class' => 323, '2nd class' => 277, '3rd class' => 709 } │
+│         1         │ 'Status' │              Map { 'Survived' => 500, 'Died' => 809 }              │
+│         2         │ 'Gender' │               Map { 'Female' => 466, 'Male' => 843 }               │
+└───────────────────┴──────────┴────────────────────────────────────────────────────────────────────┘`)
 
 
 
@@ -365,14 +365,14 @@ test ('DRILLDOWN (d3.group().get()) the dataset and BREAKDOWN+SUMMARIZE (d3.roll
     // DRILLDOWN, and then BREAKDOWN+SUMMARIZE --- One category deep
     const femaleSubsetSummary = titanicDataset.drilldownAndSummarize({'Gender':'Female'})
 
-    expectTable(Array.from(femaleSubsetSummary), `\
-┌─────────┬──────────┬────────────────────────────────────────────────────────────────────┐
-│ (index) │    0     │                                 1                                  │
-├─────────┼──────────┼────────────────────────────────────────────────────────────────────┤
-│    0    │ 'Ticket' │ Map { '1st class' => 144, '2nd class' => 106, '3rd class' => 216 } │
-│    1    │ 'Status' │              Map { 'Survived' => 339, 'Died' => 127 }              │
-│    2    │ 'Gender' │                      Map { 'Female' => 466 }                       │
-└─────────┴──────────┴────────────────────────────────────────────────────────────────────┘`)
+    expectTable(femaleSubsetSummary, `\
+┌───────────────────┬──────────┬────────────────────────────────────────────────────────────────────┐
+│ (iteration index) │   Key    │                               Values                               │
+├───────────────────┼──────────┼────────────────────────────────────────────────────────────────────┤
+│         0         │ 'Ticket' │ Map { '1st class' => 144, '2nd class' => 106, '3rd class' => 216 } │
+│         1         │ 'Status' │              Map { 'Survived' => 339, 'Died' => 127 }              │
+│         2         │ 'Gender' │                      Map { 'Female' => 466 }                       │
+└───────────────────┴──────────┴────────────────────────────────────────────────────────────────────┘`)
 
 
 
@@ -381,14 +381,14 @@ test ('DRILLDOWN (d3.group().get()) the dataset and BREAKDOWN+SUMMARIZE (d3.roll
     const femaleSurvivorsSubsetSummary =
         titanicDataset.drilldownAndSummarize({'Gender':'Female'}, {'Status':'Survived'})
 
-    expectTable(Array.from(femaleSurvivorsSubsetSummary), `\
-┌─────────┬──────────┬───────────────────────────────────────────────────────────────────┐
-│ (index) │    0     │                                 1                                 │
-├─────────┼──────────┼───────────────────────────────────────────────────────────────────┤
-│    0    │ 'Ticket' │ Map { '1st class' => 139, '2nd class' => 94, '3rd class' => 106 } │
-│    1    │ 'Status' │                     Map { 'Survived' => 339 }                     │
-│    2    │ 'Gender' │                      Map { 'Female' => 339 }                      │
-└─────────┴──────────┴───────────────────────────────────────────────────────────────────┘`)
+    expectTable(femaleSurvivorsSubsetSummary, `\
+┌───────────────────┬──────────┬───────────────────────────────────────────────────────────────────┐
+│ (iteration index) │   Key    │                              Values                               │
+├───────────────────┼──────────┼───────────────────────────────────────────────────────────────────┤
+│         0         │ 'Ticket' │ Map { '1st class' => 139, '2nd class' => 94, '3rd class' => 106 } │
+│         1         │ 'Status' │                     Map { 'Survived' => 339 }                     │
+│         2         │ 'Gender' │                      Map { 'Female' => 339 }                      │
+└───────────────────┴──────────┴───────────────────────────────────────────────────────────────────┘`)
 
 
 
@@ -397,25 +397,18 @@ test ('DRILLDOWN (d3.group().get()) the dataset and BREAKDOWN+SUMMARIZE (d3.roll
     const firstClassFemaleSurvivorsSubsetSummary =
         titanicDataset.drilldownAndSummarize({'Gender':'Female'}, {'Status':'Survived'}, {'Ticket':'1st class'})
 
-    expectTable(Array.from(firstClassFemaleSurvivorsSubsetSummary), `\
-┌─────────┬──────────┬────────────────────────────┐
-│ (index) │    0     │             1              │
-├─────────┼──────────┼────────────────────────────┤
-│    0    │ 'Ticket' │ Map { '1st class' => 139 } │
-│    1    │ 'Status' │ Map { 'Survived' => 139 }  │
-│    2    │ 'Gender' │  Map { 'Female' => 139 }   │
-└─────────┴──────────┴────────────────────────────┘`)
+    expectTable(firstClassFemaleSurvivorsSubsetSummary, `\
+┌───────────────────┬──────────┬────────────────────────────┐
+│ (iteration index) │   Key    │           Values           │
+├───────────────────┼──────────┼────────────────────────────┤
+│         0         │ 'Ticket' │ Map { '1st class' => 139 } │
+│         1         │ 'Status' │ Map { 'Survived' => 139 }  │
+│         2         │ 'Gender' │  Map { 'Female' => 139 }   │
+└───────────────────┴──────────┴────────────────────────────┘`)
 
 })
 
 
-
-
-test ('Should BREAKDOWN+SUMMARIZE (d3.rollup) level-0/surface data without any drilldown', () => {
-
-    expect()
-
-})
 
 
 test ('Should query the dataset for counts of nested categories using private interface', async () => {

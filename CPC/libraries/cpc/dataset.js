@@ -111,7 +111,7 @@ const version = "1.0"
          const returningTheDataWithoutDrillingDown = !arguments.length
 
          if (returningTheDataWithoutDrillingDown) {
-             queryString = 'd3.group(this.data)'
+             queryString = new DrilldownQuery(this).queryString
          }
 
          if (!returningTheDataWithoutDrillingDown){
@@ -437,38 +437,27 @@ class DrilldownQuery{
 
     }
 
+
     _constructDrilldownQuery(){
 
         let argumentsSubstring = ''
           , gettersSubstring = ''
 
-        this._drilldownPath.forEach(step => {  // e.g., {'Gender':'Male'}
-            Object.entries(step).forEach( ([column, category]) => {
+        if (this._drilldownPath){
 
-                argumentsSubstring += `, g=>g['${column}']`
-                gettersSubstring += `.get('${category}')`
+            this._drilldownPath.forEach(step => {  // e.g., {'Gender':'Male'}
+                Object.entries(step).forEach( ([column, category]) => {
 
+                    argumentsSubstring += `, g=>g['${column}']`
+                    gettersSubstring += `.get('${category}')`
+
+                })
             })
-        })
+        }
 
         this.queryString = `d3.group(this.data${argumentsSubstring})${gettersSubstring}`
 
     }
-
-
-
-    // _parseDrilldownPath(){
-    //
-    //     this._drilldownPath.forEach(step => {  // e.g., {'Gender':'Male'}
-    //         Object.entries(step).forEach( ([column, category]) => {
-    //
-    //             this._categoryPath.push(category)
-    //             this._columnPath.push(column)
-    //
-    //         })
-    //     })
-    //
-    // }
 
 
 }

@@ -17,13 +17,107 @@
 const version = "1.0"
 
 
+class Stacks{
+
+    constructor(){
+
+        this._data = new Map()
+
+        this.populateWithExampleData()
+
+    }
+
+
+    data(value){
+
+        // Establish conditions for parameter
+        const parameterIsNull = !arguments.length
+            , parameterIsString = typeof value === 'string'
+            , parameterIsObject = typeof value === 'object'
+
+
+        // Get data
+        if(parameterIsNull){
+            return this._data
+        }
+
+
+        // Query data
+        if (parameterIsString){
+            return this._data.get(value)
+        }
+
+
+        // Set new data
+        if (parameterIsObject){
+            this._data = value
+            return this
+        }
+
+    }
+
+
+    add(label, stack){
+
+        this.data().set(label, stack)
+
+        return this
+    }
+
+
+    clear(){
+
+        this.data().clear()
+
+        return this
+    }
+
+
+    populateWithExampleData(){
+
+
+        const genderStack = new Stack().populateWithExampleData('gender')
+        const classStack = new Stack().populateWithExampleData('class')
+        const statusStack = new Stack().populateWithExampleData('status')
+
+        this.data()
+            .set('gender', genderStack)
+            .set('class', classStack)
+            .set('status', statusStack)
+
+        return this
+    }
+
+
+    /**
+     * A nested map is a Map with other Maps in itself.
+     */
+    fromNestedMap(map){
+
+        this.clear()
+
+        map.forEach( (categoriesSummary, columnName) => {
+
+            const stack = new Stack().fromShallowMap(categoriesSummary)
+            this.add(columnName, stack)
+
+        })
+
+        return this
+
+    }
+
+
+
+}
 
 class Stack {
 
 
     constructor() {
 
-        this._data = null
+        this._data = new Map()
+
         this.populateWithExampleData()
 
         this._scaleFunction = null  // will be set if scale() method is used
@@ -71,6 +165,41 @@ class Stack {
 
     }
 
+    /**
+     * A shallow map is a Map with no maps nested in it. (e.g., Map([ ['a',1], ['b',2] ])
+     * @param map {Map}
+     * @return {Stack}
+     */
+    fromShallowMap(map){
+
+        const stackData = new Map()
+
+        let counts = []
+        map.forEach( (count, categoryName) => { counts.push(count) })
+
+        const percentages = arrayUtils.toPercentages(counts)
+        const stackValues = arrayUtils.toStackData(counts)
+
+        let i = 0
+        map.forEach( (count, categoryName) => {
+
+            stackData.set(categoryName, new Map())
+                .get(categoryName)
+                  .set('label', categoryName)
+                  .set('count', count)
+                  .set('percentage', percentages[i])
+                  .set('start', stackValues[i][0])
+                  .set('end', stackValues[i][1])
+
+            i++
+        })
+
+        this.data(stackData)
+
+        return this
+
+
+    }
 
     scale(scaleFunction){
 
@@ -139,27 +268,26 @@ class Stack {
 
         if (variant === 'generic'){
 
-
             exampleData.set('category-1', new Map())
                 .get('category-1')
-                .set('label', 'Category One')
-                .set('start', 0)
-                .set('end', 10)
-                .set('percentage', 33)
+                    .set('label', 'Category One')
+                    .set('start', 0)
+                    .set('end', 10)
+                    .set('percentage', 33)
 
             exampleData.set('category-2', new Map())
                 .get('category-2')
-                .set('label', 'Category Two')
-                .set('start', 10)
-                .set('end', 20)
-                .set('percentage', 33)
+                    .set('label', 'Category Two')
+                    .set('start', 10)
+                    .set('end', 20)
+                    .set('percentage', 33)
 
             exampleData.set('category-3', new Map())
                 .get('category-3')
-                .set('label', 'Category Three')
-                .set('start', 20)
-                .set('end', 30)
-                .set('percentage', 33)
+                    .set('label', 'Category Three')
+                    .set('start', 20)
+                    .set('end', 30)
+                    .set('percentage', 33)
         }
 
 
@@ -233,124 +361,13 @@ class Stack {
 
 
 
-    // class FrequenciesArray {
-    //
-    //     /**
-    //      * @param dictionariesArray {Array} - An array that contains dictionaries of frequencies.
-    //      *                                   An example of such an array is:
-    //      *                                   let frontData = [
-    //      *                                        { firstClass: 10,  secondClass: 8,  thirdClass: 25 }
-    //      *                                       ,{ firstClass: 4,  secondClass: 12, thirdClass: 28 }
-    //      *                                       ,{ firstClass: 2,  secondClass: 19, thirdClass: 32 }
-    //      *                                       ,{ firstClass: 7,  secondClass: 23, thirdClass: 35 }
-    //      *                                       ,{ firstClass: 23, secondClass: 17, thirdClass: 43 }
-    //      *                                   ]
-    //      */
-    //     constructor(dictionariesArray) {
-    //
-    //         this.data = dictionariesArray
-    //
-    //         // Calculate database statistics
-    //         this.maxValue = this._findMaxValue()
-    //         this.uniqueKeys = this._extractUniqueKeys()
-    //
-    //     }
-    //
-    //     /**
-    //      * @return {number}
-    //      */
-    //
-    //     _findMaxValue() {
-    //         let values = []
-    //
-    //         let dictionaryArray = this.data
-    //
-    //         for (let eachArrayIndex in dictionaryArray){
-    //             for (let eachDictionaryKey in dictionaryArray[eachArrayIndex]){
-    //
-    //                 let eachDictionaryValue = dictionaryArray[eachArrayIndex][eachDictionaryKey]
-    //                 values.push(eachDictionaryValue)
-    //                 // cLog(eachDictionaryValue)
-    //             }
-    //         }
-    //
-    //         let maxValue = d3.max(values)
-    //         return maxValue
-    //     }
-    //
-    //
-    //     /**
-    //      * @return {Array} - An array of unique keys in the dictionary
-    //      */
-    //     _extractUniqueKeys() {
-    //
-    //         let dictionariesArray = this.data
-    //
-    //         let keys = []
-    //         for (let eachArrayIndex in dictionariesArray){
-    //             for (let eachDictKey in dictionariesArray[eachArrayIndex]){
-    //
-    //                 if (!(keys.includes(eachDictKey)) ){
-    //                     let newKey = eachDictKey
-    //                     keys.push(eachDictKey)
-    //                 }
-    //             }
-    //         }
-    //         return keys
-    //     }
-    // }
-
-
-
-//
-//     function tests_dictionariesArray() {
-//
-//         // Preparation
-//
-//         let frontData = [
-//             { firstClass: 10,  secondClass: 8,  thirdClass: 25 }
-//             ,{ firstClass: 4,  secondClass: 12, thirdClass: 28 }
-//             ,{ firstClass: 2,  secondClass: 19, thirdClass: 32 }
-//             ,{ firstClass: 7,  secondClass: 23, thirdClass: 35 }
-//             ,{ firstClass: 23, secondClass: 17, thirdClass: 43 }
-//         ]
-//
-//         frontData = new FrequenciesArray(frontData)
-//
-//         let baseData = [
-//             { firstClass: 110, secondClass: 8,  thirdClass: 25 }
-//             ,{ firstClass: 6,  secondClass: 122, thirdClass: 28 }
-//             ,{ firstClass: 50, secondClass: 60, thirdClass: 20 }
-//             ,{ firstClass: 50, secondClass: 60, thirdClass: 70 }
-//             ,{ firstClass: 30, secondClass: 40, thirdClass: 50 }
-//         ]
-//         baseData = new FrequenciesArray(baseData)
-//
-//
-//         QUnit.module('DictionariesArray')
-//         QUnit.test('.data()', (assert) => {
-//             assert.equal(typeof(baseData.data), 'object', 'baseData.data must be an array/object.')
-//             assert.equal(typeof(baseData.data[0]), 'object', 'baseData must be an array/object.')
-//             assert.equal(
-//                 JSON.stringify(baseData.data[0])
-//                 , "{\"firstClass\":110,\"secondClass\":8,\"thirdClass\":25}"
-//                 , 'baseData.data[0] must exactly match the template.')
-//         })
-//
-//         QUnit.test('.maxValue', (assert) => {
-//             assert.equal(
-//                 frontData.maxValue
-//                 , 43
-//                 , 'Max value must be 43.')
-//         })
-//
-//     }
 
 
 
 //// UMD FOOT ////////////////////////////////////////////////////////////////////////
 
     //// MODULE.EXPORTS ////
+    exports.Stacks = Stacks;
     exports.Stack = Stack;
 
 
