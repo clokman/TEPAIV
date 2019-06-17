@@ -36,7 +36,7 @@ const version = "1.0"
 
         this.data = null
 
-        this.columnNames = () => this._getColumnNames()
+        this.columnNames = []
         this.categoryNames = []
         this.structure = new Map()
         this._queryPath = new Map()

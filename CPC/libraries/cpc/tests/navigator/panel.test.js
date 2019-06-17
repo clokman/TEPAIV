@@ -32,10 +32,12 @@ global._ = require("../../../external/lodash")
 
 // Internal //
 global.classUtils = require("../../../utils/classUtils")
+global.arrayUtils = require("../../../../../Utilities/arrayUtils")
 global.container = require("../../container")
 global.shape = require("../../shape")
 global.str = require("../../str")
 global.data = require("../../../cpc/data")
+global.dataset = require("../../../cpc/dataset")
 
 
 //// MODULE(S) BEING TESTED ////
@@ -122,19 +124,6 @@ test ('Should instantiate object as a child of specified parent element', () => 
 
 
 
-//// PANEL NESTING ////
-
-test ('Panel should be created as a child of another panel', () => {
-
-
-
-    expect()
-
-})
-
-
-
-
 //// GENERATE EXAMPLE DATA ////
 
 test ('Should initialize with example data', () => {
@@ -208,7 +197,150 @@ test ('Should calculate the number of charts in panel', () => {
 })
 
 
-/// INITIALIZATION: DOM STRUCTURE AND ATTRIBUTES OF PANEL ////
+
+//// INITIATE BY VISUALIZING A DATASET ////
+
+test ('Visualize the dataset in panel', async () => {
+
+    const titanicDataset = new dataset.Dataset(
+        'http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv',
+        'Name'
+    )
+    await titanicDataset.build()
+
+    expectTable(titanicDataset.data, `\
+┌─────────┬─────────────┬────────────┬──────────┐
+│ (index) │   Ticket    │   Status   │  Gender  │
+├─────────┼─────────────┼────────────┼──────────┤
+│    0    │ '1st class' │ 'Survived' │ 'Female' │
+│    1    │ '1st class' │ 'Survived' │  'Male'  │
+│    2    │ '1st class' │   'Died'   │ 'Female' │
+│    3    │ '1st class' │   'Died'   │  'Male'  │
+│    4    │ '1st class' │   'Died'   │ 'Female' │
+│    5    │ '1st class' │ 'Survived' │  'Male'  │
+│    6    │ '1st class' │ 'Survived' │ 'Female' │
+│    7    │ '1st class' │   'Died'   │  'Male'  │
+│    8    │ '1st class' │ 'Survived' │ 'Female' │
+│    9    │ '1st class' │   'Died'   │  'Male'  │
+└─────────┴─────────────┴────────────┴──────────┘
+˅˅˅ 1299 more rows`, 0, 10)
+
+
+
+    const myPanel = new navigator.Panel()
+
+
+    // Summarize the titanic dataset
+    const titanicSummary = titanicDataset.summarize()
+    expectTable(titanicSummary, `\
+┌───────────────────┬──────────┬────────────────────────────────────────────────────────────────────┐
+│ (iteration index) │   Key    │                               Values                               │
+├───────────────────┼──────────┼────────────────────────────────────────────────────────────────────┤
+│         0         │ 'Ticket' │ Map { '1st class' => 323, '2nd class' => 277, '3rd class' => 709 } │
+│         1         │ 'Status' │              Map { 'Survived' => 500, 'Died' => 809 }              │
+│         2         │ 'Gender' │               Map { 'Female' => 466, 'Male' => 843 }               │
+└───────────────────┴──────────┴────────────────────────────────────────────────────────────────────┘`)
+    // Summary produces a nested map (1-level deep)
+
+    // Convert the nested map into a Stacks object
+    titanicStacks = new data.Stacks()
+    titanicStacks.fromNestedMap(titanicSummary)
+
+    expectTable(titanicStacks, `\
+┌─────────┐
+│ (index) │
+├─────────┤
+│  _data  │
+└─────────┘`)
+    expectTable(titanicStacks.data(), `\
+┌───────────────────┬──────────┬──────────────────────────────────────────────┐
+│ (iteration index) │   Key    │                    Values                    │
+├───────────────────┼──────────┼──────────────────────────────────────────────┤
+│         0         │ 'Ticket' │ Stack { _data: [Map], _scaleFunction: null } │
+│         1         │ 'Status' │ Stack { _data: [Map], _scaleFunction: null } │
+│         2         │ 'Gender' │ Stack { _data: [Map], _scaleFunction: null } │
+└───────────────────┴──────────┴──────────────────────────────────────────────┘`)
+
+    // Import the new stacks object to be panel's new data
+    myPanel.stacks(titanicStacks).update()
+    expectTable(myPanel.stacks(), `\
+┌───────────────────┬──────────┬──────────────────────────────────────────────┐
+│ (iteration index) │   Key    │                    Values                    │
+├───────────────────┼──────────┼──────────────────────────────────────────────┤
+│         0         │ 'Ticket' │ Stack { _data: [Map], _scaleFunction: null } │
+│         1         │ 'Status' │ Stack { _data: [Map], _scaleFunction: null } │
+│         2         │ 'Gender' │ Stack { _data: [Map], _scaleFunction: null } │
+└───────────────────┴──────────┴──────────────────────────────────────────────┘`)
+    expectTable(myPanel.stacks('Gender').data('Female'), `\
+┌───────────────────┬──────────────┬──────────┐
+│ (iteration index) │     Key      │  Values  │
+├───────────────────┼──────────────┼──────────┤
+│         0         │   'label'    │ 'Female' │
+│         1         │   'count'    │   466    │
+│         2         │ 'percentage' │   35.6   │
+│         3         │   'start'    │    0     │
+│         4         │    'end'     │   466    │
+└───────────────────┴──────────────┴──────────┘`)
+    expectTable(myPanel.stacks('Gender').data('Male'), `\
+┌───────────────────┬──────────────┬────────┐
+│ (iteration index) │     Key      │ Values │
+├───────────────────┼──────────────┼────────┤
+│         0         │   'label'    │ 'Male' │
+│         1         │   'count'    │  843   │
+│         2         │ 'percentage' │  64.4  │
+│         3         │   'start'    │  466   │
+│         4         │    'end'     │  1309  │
+└───────────────────┴──────────────┴────────┘`)
+
+
+    // Check if Panel properties are updated after the new Stacks data is imported
+    const maleCategoryObject = myPanel.objects('Gender').objects('Male')
+        , maleRectangleObject = maleCategoryObject.objects('rectangle')
+        , maleTextObject = maleCategoryObject.objects('text')
+
+
+    const femaleCategoryObject = myPanel.objects('Gender').objects('Female')
+        , femaleRectangleObject = femaleCategoryObject.objects('rectangle')
+        , femaleTextObject = femaleCategoryObject.objects('text')
+
+    maleObjectProperties = {
+        'y': maleCategoryObject.y(),
+        'height': maleCategoryObject.height(),
+        'text': maleTextObject.text()
+    }
+    expectTable(maleObjectProperties,`\
+┌─────────┬─────────┐
+│ (index) │ Values  │
+├─────────┼─────────┤
+│    y    │   56    │
+│ height  │   94    │
+│  text   │ '64.4%' │
+└─────────┴─────────┘`)
+
+    femaleObjectProperties = {
+        'y': femaleCategoryObject.y(),
+        'height': femaleCategoryObject.height(),
+        'text': femaleTextObject.text()
+    }
+    expectTable(femaleObjectProperties,`\
+┌─────────┬─────────┐
+│ (index) │ Values  │
+├─────────┼─────────┤
+│    y    │   150   │
+│ height  │   52    │
+│  text   │ '35.6%' │
+└─────────┴─────────┘`)
+
+
+})
+
+
+
+
+
+
+
+//// INITIALIZATION: DOM STRUCTURE AND ATTRIBUTES OF PANEL ////
 
 test ('Should create charts of the panel as a child of panel, and with right attributes', () => {
 
@@ -231,6 +363,8 @@ test ('Should create charts of the panel as a child of panel, and with right att
     const chartElements =  document
         .getElementsByClassName('panel')[0]
         .getElementsByClassName('chart')
+
+
     expect(chartElements.length).toBe(myPanel._chartCount())
 
 
@@ -522,12 +656,7 @@ test ('Should update panel stacks, and also the related instance variables', () 
 
     const myPanel = new navigator.Panel()
 
-    // Probe initial example data
-    expect(myPanel.stacks('gender').data('male').get('label'))
-        .toBe('Male')
-    expect(myPanel.stacks('class').data('first-class').get('label'))
-        .toBe('First Class')
-
+    // View initial example data
     expectTable(myPanel.stacks(), `\
 ┌───────────────────┬──────────┬──────────────────────────────────────────────┐
 │ (iteration index) │   Key    │                    Values                    │
@@ -536,6 +665,14 @@ test ('Should update panel stacks, and also the related instance variables', () 
 │         1         │ 'class'  │ Stack { _data: [Map], _scaleFunction: null } │
 │         2         │ 'status' │ Stack { _data: [Map], _scaleFunction: null } │
 └───────────────────┴──────────┴──────────────────────────────────────────────┘`)
+
+    // Probe initial example data further
+    expect(myPanel.stacks('gender').data('male').get('label'))
+        .toBe('Male')
+    expect(myPanel.stacks('class').data('first-class').get('label'))
+        .toBe('First Class')
+
+
 
     // Create replacement stacks
     const replacementStack1 =  new data.Stack()
@@ -549,7 +686,8 @@ test ('Should update panel stacks, and also the related instance variables', () 
         .add('generic-1', replacementStack1)
         .add('generic-2', replacementStack2)
 
-    // Update stacks in Panel
+
+    // Replace stacks in Panel
     myPanel.stacks(replacementStacks)
 
     expectTable(myPanel.stacks(), `\
@@ -560,8 +698,7 @@ test ('Should update panel stacks, and also the related instance variables', () 
 │         1         │ 'generic-2' │ Stack { _data: [Map], _scaleFunction: null } │
 └───────────────────┴─────────────┴──────────────────────────────────────────────┘`)
 
-
-    // Probe to see if data is correctly updated
+    // Probe further to see if data is correctly updated
     expect(myPanel.stacks().size).toBe(2)
 
     expect(myPanel.stacks('generic-1').data('category-1').get('label'))

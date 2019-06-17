@@ -116,36 +116,10 @@ class Panel extends container.Group {
         this._innerHeight = () => this._height - this._innerPadding.top - this._innerPadding.bottom
 
 
-
-
-        this._stacks = null
+        this._stacks = new data.Stacks()
         this._populateWithExampleData()
 
-
-        // Private Variables //
-        this._chartCount = () =>  this.stacks().size
-
-        this._chartHeights = () => {
-
-            const totalPaddingBetweenCharts = this._innerHeight() * this._paddingBetweenCharts
-
-            return  (this._innerHeight() - totalPaddingBetweenCharts) / this._chartCount()
-        }
-
-
-        this._yScale = (value) => {
-
-            const rangeStart = this._innerY() + this._innerHeight()
-            const rangeEnd = this._innerY()
-
-            const yScale = d3.scaleBand()
-                .domain(d3.range(this._chartCount()))
-                .rangeRound([rangeStart, rangeEnd])
-                .paddingInner(this._paddingBetweenCharts)
-
-            return yScale(value)
-        }
-
+        this._awaitingUpdateAfterDataChange = false
 
         // Initialize //
 
@@ -153,7 +127,7 @@ class Panel extends container.Group {
         // TODO: Adding _backgroundObject to objects() throws error. For consistency, this should be accomplished.
         this._createBackgroundObject()
 
-        this._createCharts()
+        this._createChartsBasedOnStacksData()
 
         this.update()
 
@@ -161,6 +135,32 @@ class Panel extends container.Group {
             this._updateParametersToBeAChildPanel()
         }
 
+    }
+
+
+    _yScale(value){
+
+        const rangeStart = this._innerY() + this._innerHeight()
+        const rangeEnd = this._innerY()
+
+        const yScale = d3.scaleBand()
+            .domain(d3.range(this._chartCount()))
+            .rangeRound([rangeStart, rangeEnd])
+            .paddingInner(this._paddingBetweenCharts)
+
+        return yScale(value)
+    }
+
+
+    _chartHeights(){
+
+        const totalPaddingBetweenCharts = this._innerHeight() * this._paddingBetweenCharts
+
+        return  (this._innerHeight() - totalPaddingBetweenCharts) / this._chartCount()
+    }
+
+    _chartCount(){
+        return this.stacks().size
     }
 
     _updateParametersToBeAChildPanel(transitionTime){
@@ -181,7 +181,7 @@ class Panel extends container.Group {
         try{
 
             const grandParentObject = this.parentObject.parentObject
-            grandParentObject.bgExtension(230).update(transitionTime)
+            grandParentObject.bgExtension(230).update(transitionTime)  // TODO: MUST remove magic number --- What is this 230?
 
         }
         catch (e) {}
@@ -194,9 +194,24 @@ class Panel extends container.Group {
             this._backgroundObject.update(transitionDuration)
         }
 
+        this._updateDomIfStacksDataHasChanged()
+
         super.update(transitionDuration)
 
         return this
+
+    }
+
+
+    _updateDomIfStacksDataHasChanged() {  // TODO: This method introduces a new pattern: Now, aftr the data of an object is updated, myObject.update() method must be called to update DOM. This behavior MUST be implemented also for navigator.Chart() and other classes that allow updating their data with a setter.
+
+        if (this._awaitingUpdateAfterDataChange){
+
+            this.removeAll()
+            this._createChartsBasedOnStacksData()
+
+            this._awaitingUpdateAfterDataChange = false
+        }
 
     }
 
@@ -218,7 +233,7 @@ class Panel extends container.Group {
     }
 
 
-    _createCharts() {
+    _createChartsBasedOnStacksData() {
 
         // loop //
         let i = 0
@@ -273,8 +288,7 @@ class Panel extends container.Group {
 
             this._stacks = value  // value is a Stacks object in this case
 
-            // this._updateData()
-            // this.update()
+            this._awaitingUpdateAfterDataChange = true
 
             return this
         }
@@ -810,7 +824,7 @@ class Chart extends container.Group{
 
     _replaceOldCategoriesWithNewOnes() {
 
-        // TODO: This can be achieved more gracefully by using .removeLast(), etc. The current method simply removes the old categories and creates new ones without transitions.
+        // TODO: This can be achieved more gracefully by using Group.removeLast(), etc. The current method simply removes the old categories and creates new ones without transitions.
 
         // Remove old category objects in chart
         this.removeAll()

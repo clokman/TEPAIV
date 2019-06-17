@@ -176,6 +176,14 @@ class Group {
     }
 
 
+    removeAll(){
+
+        const numberOfObjects = this.objects().size
+        this.removeLast(numberOfObjects)
+
+    }
+
+
     removeLast(n=1){
 
         // LOOP
@@ -196,14 +204,6 @@ class Group {
 
             return this
         })
-    }
-
-
-    removeAll(){
-
-        const numberOfObjects = this.objects().size
-        this.removeLast(numberOfObjects )
-
     }
 
 
