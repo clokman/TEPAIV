@@ -40,11 +40,33 @@ const dataset = require("../../dataset")
 
 test ('Should read data with d3', async () => {
 
-    expect.assertions(1)
+    expect.assertions(2)
 
     const titanicDataset = await d3.csv('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv')
 
     expect(titanicDataset.length).toBe(1309)
+    
+    expectTable(titanicDataset, `\
+┌─────────┬─────────────┬────────────┬──────────┬─────────────────────────────────────────────────────┐
+│ (index) │   Ticket    │   Status   │  Gender  │                        Name                         │
+├─────────┼─────────────┼────────────┼──────────┼─────────────────────────────────────────────────────┤
+│    0    │ '1st class' │ 'Survived' │ 'Female' │           'Allen, Miss. Elisabeth Walton'           │
+│    1    │ '1st class' │ 'Survived' │  'Male'  │          'Allison, Master. Hudson Trevor'           │
+│    2    │ '1st class' │   'Died'   │ 'Female' │           'Allison, Miss. Helen Loraine'            │
+│    3    │ '1st class' │   'Died'   │  'Male'  │       'Allison, Mr. Hudson Joshua Creighton'        │
+│    4    │ '1st class' │   'Died'   │ 'Female' │  'Allison, Mrs. Hudson J C (Bessie Waldo Daniels)'  │
+│    5    │ '1st class' │ 'Survived' │  'Male'  │                'Anderson, Mr. Harry'                │
+│    6    │ '1st class' │ 'Survived' │ 'Female' │         'Andrews, Miss. Kornelia Theodosia'         │
+│    7    │ '1st class' │   'Died'   │  'Male'  │              'Andrews, Mr. Thomas Jr'               │
+│    8    │ '1st class' │ 'Survived' │ 'Female' │   'Appleton, Mrs. Edward Dale (Charlotte Lamson)'   │
+│    9    │ '1st class' │   'Died'   │  'Male'  │              'Artagaveytia, Mr. Ramon'              │
+│   10    │ '1st class' │   'Died'   │  'Male'  │              'Astor, Col. John Jacob'               │
+│   11    │ '1st class' │ 'Survived' │ 'Female' │ 'Astor, Mrs. John Jacob (Madeleine Talmadge Force)' │
+│   12    │ '1st class' │ 'Survived' │ 'Female' │           'Aubart, Mme. Leontine Pauline'           │
+│   13    │ '1st class' │ 'Survived' │ 'Female' │            'Barber, Miss. Ellen Nellie'             │
+│   14    │ '1st class' │ 'Survived' │  'Male'  │       'Barkworth, Mr. Algernon Henry Wilson'        │
+└─────────┴─────────────┴────────────┴──────────┴─────────────────────────────────────────────────────┘
+˅˅˅ 1294 more rows`, 0, 15)
 
 
 })
@@ -72,7 +94,7 @@ test ('Should read data with d3.csv wrapped in a function', async () => {
 
 test ('Should initiate a Dataset instance, read data into it, and calculate properties', async () => {
 
-    expect.assertions(9)
+    expect.assertions(11)
 
     const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv')
     await titanicDataset.build()
@@ -80,6 +102,47 @@ test ('Should initiate a Dataset instance, read data into it, and calculate prop
 
     expect(titanicDataset.data).toBeDefined()
     expect(titanicDataset.data).toHaveLength(1309)
+
+    expectTable(titanicDataset.data, `\
+┌─────────┬─────────────┬────────────┬──────────┬─────────────────────────────────────────────────────┐
+│ (index) │   Ticket    │   Status   │  Gender  │                        Name                         │
+├─────────┼─────────────┼────────────┼──────────┼─────────────────────────────────────────────────────┤
+│    0    │ '1st class' │ 'Survived' │ 'Female' │           'Allen, Miss. Elisabeth Walton'           │
+│    1    │ '1st class' │ 'Survived' │  'Male'  │          'Allison, Master. Hudson Trevor'           │
+│    2    │ '1st class' │   'Died'   │ 'Female' │           'Allison, Miss. Helen Loraine'            │
+│    3    │ '1st class' │   'Died'   │  'Male'  │       'Allison, Mr. Hudson Joshua Creighton'        │
+│    4    │ '1st class' │   'Died'   │ 'Female' │  'Allison, Mrs. Hudson J C (Bessie Waldo Daniels)'  │
+│    5    │ '1st class' │ 'Survived' │  'Male'  │                'Anderson, Mr. Harry'                │
+│    6    │ '1st class' │ 'Survived' │ 'Female' │         'Andrews, Miss. Kornelia Theodosia'         │
+│    7    │ '1st class' │   'Died'   │  'Male'  │              'Andrews, Mr. Thomas Jr'               │
+│    8    │ '1st class' │ 'Survived' │ 'Female' │   'Appleton, Mrs. Edward Dale (Charlotte Lamson)'   │
+│    9    │ '1st class' │   'Died'   │  'Male'  │              'Artagaveytia, Mr. Ramon'              │
+│   10    │ '1st class' │   'Died'   │  'Male'  │              'Astor, Col. John Jacob'               │
+│   11    │ '1st class' │ 'Survived' │ 'Female' │ 'Astor, Mrs. John Jacob (Madeleine Talmadge Force)' │
+│   12    │ '1st class' │ 'Survived' │ 'Female' │           'Aubart, Mme. Leontine Pauline'           │
+│   13    │ '1st class' │ 'Survived' │ 'Female' │            'Barber, Miss. Ellen Nellie'             │
+│   14    │ '1st class' │ 'Survived' │  'Male'  │       'Barkworth, Mr. Algernon Henry Wilson'        │
+└─────────┴─────────────┴────────────┴──────────┴─────────────────────────────────────────────────────┘
+˅˅˅ 1294 more rows`, 0, 15)
+
+
+    expectTable(titanicDataset.data, `\
+˄˄˄ 1300 preceding rows
+┌─────────┬─────────────┬────────────┬──────────┬───────────────────────────────────────────┐
+│ (index) │   Ticket    │   Status   │  Gender  │                   Name                    │
+├─────────┼─────────────┼────────────┼──────────┼───────────────────────────────────────────┤
+│    0    │ '3rd class' │ 'Survived' │ 'Female' │ 'Yasbeck, Mrs. Antoni (Selini Alexander)' │
+│    1    │ '3rd class' │   'Died'   │  'Male'  │          'Youseff, Mr. Gerious'           │
+│    2    │ '3rd class' │   'Died'   │  'Male'  │            'Yousif, Mr. Wazli'            │
+│    3    │ '3rd class' │   'Died'   │  'Male'  │          'Yousseff, Mr. Gerious'          │
+│    4    │ '3rd class' │   'Died'   │ 'Female' │          'Zabour, Miss. Hileni'           │
+│    5    │ '3rd class' │   'Died'   │ 'Female' │          'Zabour, Miss. Thamine'          │
+│    6    │ '3rd class' │   'Died'   │  'Male'  │        'Zakarian, Mr. Mapriededer'        │
+│    7    │ '3rd class' │   'Died'   │  'Male'  │           'Zakarian, Mr. Ortin'           │
+│    8    │ '3rd class' │   'Died'   │  'Male'  │           'Zimmerman, Mr. Leo'            │
+└─────────┴─────────────┴────────────┴──────────┴───────────────────────────────────────────┘
+˅˅˅ 0 more rows`,1300, 9)
+
 
     expect(titanicDataset.columnNames).toEqual(["Ticket", "Status", "Gender", "Name"])
     // For category names, see the test that initiates the dataset with an omitted column.
@@ -95,6 +158,9 @@ test ('Should initiate a Dataset instance, read data into it, and calculate prop
 
     }
 )
+
+
+
 
 test ('Dataset should initiate with an omitted column', async () => {
 
