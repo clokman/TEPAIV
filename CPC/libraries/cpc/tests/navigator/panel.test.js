@@ -14,7 +14,7 @@ if (typeof Object.fromEntries !== 'function') {
 
 
 //// NODE-ONLY DEPENDENCIES ////
-require("../../../../../Utilities/jest-console")
+require("../../../../../JestUtils/jest-console")
 
 
 //// UMD DEPENDENCIES ////
@@ -32,7 +32,7 @@ global._ = require("../../../external/lodash")
 
 // Internal //
 global.classUtils = require("../../../utils/classUtils")
-global.arrayUtils = require("../../../../../Utilities/arrayUtils")
+global.arrayUtils = require("../../../utils/arrayUtils")
 global.container = require("../../container")
 global.shape = require("../../shape")
 global.str = require("../../str")
@@ -173,7 +173,6 @@ test ('Should initialize with example data', () => {
 │         3         │ 'percentage' │   64   │
 └───────────────────┴──────────────┴────────┘`)
 
-
 })
 
 
@@ -200,7 +199,7 @@ test ('Should calculate the number of charts in panel', () => {
 
 //// INITIATE BY VISUALIZING A DATASET ////
 
-test ('Visualize the dataset in panel', async () => {
+test ('Visualize a dataset manually by changing Stakcs in Panel', async () => {
 
     const titanicDataset = new dataset.Dataset(
         'http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv',

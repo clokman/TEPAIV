@@ -13,7 +13,7 @@ if (typeof Object.fromEntries !== 'function') {
 }
 
 //// TESTING LIBRARIES ////
-require("../../../../../Utilities/jest-console")
+require("../../../../../JestUtils/jest-console")
 
 //// REQUIREMENTS ////
 

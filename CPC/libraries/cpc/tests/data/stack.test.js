@@ -11,7 +11,7 @@ if (typeof Object.fromEntries !== 'function') {
 }
 
 // NODE-ONLY DEPENDENCIES //
-require("../../../../../Utilities/jest-console")
+require("../../../../../JestUtils/jest-console")
 
 
 // UMD DEPENDENCIES //
@@ -22,7 +22,7 @@ global.d3 = {
 global._ = require("../../../external/lodash")
 
 global.str = require("../../str")
-global.arrayUtils = require("../../../../../Utilities/arrayUtils")
+global.arrayUtils = require("../../../utils/arrayUtils")
 
 
 // THE MODULE BEING TESTED //

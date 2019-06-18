@@ -14,11 +14,11 @@ if (typeof Object.fromEntries !== 'function') {
 
 
 //// TESTING LIBRARIES ////
-require('../../Utilities/jest-console')
+require('../../../../JestUtils/jest-console')
 
 
 //// REQUIREMENTS ////
-global._ = require("../external/lodash")
+global._ = require("../../../../JestUtils/external/lodash")
 
 
 
