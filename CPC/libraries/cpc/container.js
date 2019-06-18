@@ -12,7 +12,7 @@
 
 
 
-               
+
 // Module content goes here. 
 const version = "1.0"
 
@@ -102,10 +102,11 @@ class Svg {
 class Group {
 
 
-    constructor(parentContainerSelection=d3.select('body').select('svg')) {
+    constructor(parentContainerSelectionOrObject=d3.select('body').select('svg')) {
+
+        this.parentContainerSelection = container.Group.getD3SelectionFromVariousParameterTypes(parentContainerSelectionOrObject)
 
         // Public Parameters
-        this._parentContainerSelection = parentContainerSelection
         this._objects = new Map()
 
         // Private Parameters
@@ -131,7 +132,7 @@ class Group {
 
     create(){
 
-        this._selection = this._parentContainerSelection
+        this._selection = this.parentContainerSelection
             .selectAll('g' + ' #' + this._htmlId)  // must indeed contain id selector. Otherwise would select existing groups, and this would prevent creating more than one container within the svg.
             .data(this._data)  // dummy data
             .enter()
