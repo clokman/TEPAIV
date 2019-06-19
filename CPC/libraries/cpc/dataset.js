@@ -39,14 +39,8 @@ const version = "1.0"
         this.columnNames = []
         this.categoryNames = []
         this.structure = new Map()
-        this._queryPath = new Map()
 
-        this.counts = null
-        this.frequenciesArray = null
-        this.totalsArray = null  // base frequencies
-
-        this.rowCount = null
-        this.columnCount = null
+        this.summary = null
 
 
     }
@@ -58,7 +52,7 @@ const version = "1.0"
 
             this._omitColumns.forEach( (omittedColumnName) => {
                 delete d[omittedColumnName]  // d3 reads each column cell as a row property. This line deletes the property that matches an omitted column name from the row being currently read.
-                // TODO: This is a hack. If there is a legit way to ignore a column when D3 is reading it, that method should be used.
+                // TODO: This is a hack. If there is a legitimate way to ignore a column when D3 is reading it, that method should be used.
             })
 
             return d
@@ -79,13 +73,11 @@ const version = "1.0"
      _calculateInstanceProperties(){
 
          this.columnNames = this.data.columns
-         this.columnCount = this.columnNames.length
-         this.rowCount = this.data.length
-
-         this.counts = this._countOccurrencesOfEachCategory()
 
          this.structure = this._mapDatasetStructure()
          this.categoryNames = this._getCategoryNames()
+
+         this.summary = this.summarize()
      }
 
 
@@ -204,37 +196,6 @@ const version = "1.0"
         })
 
         return structure
-
-    }
-
-
-    /**
-     * Calculate frequency of each value for each column
-     * @return {Map<any, any>}
-     * @private
-     */
-    _countOccurrencesOfEachCategory(){
-
-        let outerMap = new Map()
-            , innerMap
-            , groupedData
-
-        this.columnNames.forEach(columnName => {
-
-            groupedData = this.breakdown(columnName)
-
-            innerMap = new Map()
-            groupedData.forEach((key, value) => {
-
-                innerMap.set(value, key)
-                outerMap.set(columnName, innerMap)
-
-            })
-
-        })
-
-        // console.log(outerMap)
-        return outerMap
 
     }
 

@@ -156,6 +156,13 @@ test ('Should initiate a Dataset instance, read data into it, and calculate prop
     expect(titanicDataset.structure.get('Ticket')).toEqual(["1st class", "2nd class", "3rd class"])
     expect(titanicDataset.structure.get('Status')).toEqual(["Survived", "Died"])
 
+
+
+    // Verify that a dataset summary is calculated upon initiation dataset
+        // This test is skipped due to excessive output due to inclusion of 'Name' column.
+        // The test is carried out in [REF-1], where this column is not included.
+
+
     }
 )
 
@@ -164,7 +171,7 @@ test ('Should initiate a Dataset instance, read data into it, and calculate prop
 
 test ('Dataset should initiate with an omitted column', async () => {
 
-    expect.assertions(10)
+    expect.assertions(11)
 
     const titanicDataset = new dataset.Dataset(
           'http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv',
@@ -186,6 +193,18 @@ test ('Dataset should initiate with an omitted column', async () => {
     expect(titanicDataset.structure.get('Gender')).toEqual(["Female", "Male"])
     expect(titanicDataset.structure.get('Ticket')).toEqual(["1st class", "2nd class", "3rd class"])
     expect(titanicDataset.structure.get('Status')).toEqual(["Survived", "Died"])
+
+
+    // Verify that a dataset summary is calculated upon initiation dataset
+    // [REF-1]
+    expectTable(titanicDataset.summary, `\
+┌───────────────────┬──────────┬────────────────────────────────────────────────────────────────────┐
+│ (iteration index) │   Key    │                               Values                               │
+├───────────────────┼──────────┼────────────────────────────────────────────────────────────────────┤
+│         0         │ 'Ticket' │ Map { '1st class' => 323, '2nd class' => 277, '3rd class' => 709 } │
+│         1         │ 'Status' │              Map { 'Survived' => 500, 'Died' => 809 }              │
+│         2         │ 'Gender' │               Map { 'Female' => 466, 'Male' => 843 }               │
+└───────────────────┴──────────┴────────────────────────────────────────────────────────────────────┘`)
 
 })
 
