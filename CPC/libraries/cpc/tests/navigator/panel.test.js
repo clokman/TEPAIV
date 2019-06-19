@@ -97,7 +97,7 @@ test ('Should instantiate object as a child of specified parent element', () => 
     // Create a panel container
     const parentContainerSelection = mySvg.select()  // this first select is NOT D3 code but s container.Svg method (which returns a D3 Selection)
         .append('g')
-        .attr('id', 'parent-container')
+        .attr('id', 'parent-container')  // id must be given directly with d3; Group.id().update() does not work with JEST
 
 
     // Create panel as a child of the parent container
