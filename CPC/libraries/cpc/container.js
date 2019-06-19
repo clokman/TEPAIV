@@ -104,6 +104,7 @@ class Group {
 
     constructor(parentContainerSelectionOrObject=d3.select('body').select('svg')) {
 
+        // TODO: If there is  no SVG element already existing in DOM, init method should return an error
         this.parentContainerSelection = container.Group.getD3SelectionFromVariousParameterTypes(parentContainerSelectionOrObject)
 
         // Public Parameters

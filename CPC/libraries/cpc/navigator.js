@@ -25,8 +25,18 @@ const version = "3.0"
  * This is true even if the class is initiated with default parameters.
  */
 class Navigator extends container.Group{
-    constructor (){
-        super()
+
+    constructor (parentContainerSelectionOrObject){
+
+        // Superclass Init //
+        super(parentContainerSelectionOrObject)
+            .class('navigator')
+            .update()
+
+        this.datasetObject = null
+        this._awaitingDomUpdateAfterDataChange = false
+
+
         // this._ignoredColumns = ignoredColumns
         //
         // this._datasetSurveyResults = surveyData(dataset, this._ignoredColumns)
@@ -50,11 +60,64 @@ class Navigator extends container.Group{
         // const panel0_ranges = this._calculateRangesForGivenNumberOfPanels(this._deepestPanelDepth + 1) // +1, because depth count starts from zero
 
     }
+
+    update(transitionDuration){
+
+        this._updateDomIfStacksDataHasChanged()
+
+        super.update(transitionDuration)
+
+        return this
+
+    }
+
+
+    _updateDomIfStacksDataHasChanged(){
+
+        if (this._awaitingDomUpdateAfterDataChange){
+        //
+        //     this.removeAll()
+            this._createPanelZeroBasedOnDataset()
+
+            this._awaitingDomUpdateAfterDataChange = false
+        }
+
+    }
+
+    _createPanelZeroBasedOnDataset(){
+
+        // const levelZeroDatasetSummaryMap = this.summarizeDataset()
+        // summaryStacks = new Stacks()
+        // summaryStacks.fromNestedMap(levelZeroDatasetSummaryMap)
+        //
+        // const panelZero = new Panel(this.select())
+        //     .stacks(eachStack)
+        //     .id('panel-0')
+        //     .x(this._xScale(0))
+        //     .y(this.y())
+        //     .height(this.height())
+        //     .width(this.width())
+        //     .update()
+        //
+        // this.objects('panel-0', panelObject)
+
+    }
+
+
+    async loadDataset(path, omitColumns){
+
+        this.datasetObject = new dataset.Dataset(path, omitColumns)
+        await this.datasetObject.build()
+
+        this._awaitingDomUpdateAfterDataChange = true
+
+        return this
+
+    }
+
+
+
 }
-
-
-
-
 
 
 /**
@@ -66,24 +129,14 @@ class Panel extends container.Group {
 
     constructor(parentContainerSelectionOrObject){
 
-        // Superclass Init Prep:
-        // Establish parent container type
-        // and return a D3 selection regardless of the parent container's type //
-        let thisPanelIsBeingEmbeddedInAnotherPanel = false
-        let parentContainerSelection
-
-        if (arguments.length){
-
-            // Get a D3 Selection from the parameter (or just return it as it is, in case it is already a D3 Selection)
-            parentContainerSelection = container.Group.getD3SelectionFromVariousParameterTypes(parentContainerSelectionOrObject)
-
-            // Check if this panel is being embedded inside another panel
-            thisPanelIsBeingEmbeddedInAnotherPanel = classUtils.isInstanceOf(parentContainerSelectionOrObject, 'Panel')
-        }
-
-
         // Superclass Init //
-        super(parentContainerSelection)
+        super(parentContainerSelectionOrObject)
+
+        let thisPanelIsBeingEmbeddedInAnotherPanel =
+            arguments.length ?
+                classUtils.isInstanceOf(parentContainerSelectionOrObject, 'Panel') :
+                false
+
         this.class('panel')
             .update()
 
@@ -101,7 +154,7 @@ class Panel extends container.Group {
         this._width = 100
         this._height = 500
 
-        this._innerPadding = {    // pixels
+        this._innerPadding = {  // pixels
             top: 30,
             bottom: 10,
             left: 10,
@@ -119,7 +172,7 @@ class Panel extends container.Group {
         this._stacks = new data.Stacks()
         this._populateWithExampleData()
 
-        this._awaitingUpdateAfterDataChange = false
+        this._awaitingDomUpdateAfterDataChange = false
 
         // Initialize //
 
@@ -138,29 +191,31 @@ class Panel extends container.Group {
     }
 
 
-    _yScale(value){
+    update(transitionDuration){
 
-        const rangeStart = this._innerY() + this._innerHeight()
-        const rangeEnd = this._innerY()
+        if (this._backgroundObject){
+            this._backgroundObject.update(transitionDuration)
+        }
 
-        const yScale = d3.scaleBand()
-            .domain(d3.range(this._chartCount()))
-            .rangeRound([rangeStart, rangeEnd])
-            .paddingInner(this._paddingBetweenCharts)
+        this._updateDomIfStacksDataHasChanged()
 
-        return yScale(value)
+        super.update(transitionDuration)
+
+        return this
+
     }
 
 
-    _chartHeights(){
+    _updateDomIfStacksDataHasChanged() {  // TODO: This method introduces a new pattern: Now, aftr the data of an object is updated, myObject.update() method must be called to update DOM. This behavior MUST be implemented also for navigator.Chart() and other classes that allow updating their data with a setter.
 
-        const totalPaddingBetweenCharts = this._innerHeight() * this._paddingBetweenCharts
+        if (this._awaitingDomUpdateAfterDataChange){
 
-        return  (this._innerHeight() - totalPaddingBetweenCharts) / this._chartCount()
-    }
+            this.removeAll()
+            this._createChartsBasedOnStacksData()
 
-    _chartCount(){
-        return this.stacks().size
+            this._awaitingDomUpdateAfterDataChange = false
+        }
+
     }
 
     _updateParametersToBeAChildPanel(transitionTime){
@@ -188,31 +243,29 @@ class Panel extends container.Group {
 
     }
 
-    update(transitionDuration){
+    _chartCount(){
+        return this.stacks().size
+    }
 
-        if (this._backgroundObject){
-            this._backgroundObject.update(transitionDuration)
-        }
+    _chartHeights(){
 
-        this._updateDomIfStacksDataHasChanged()
+        const totalPaddingBetweenCharts = this._innerHeight() * this._paddingBetweenCharts
 
-        super.update(transitionDuration)
-
-        return this
-
+        return  (this._innerHeight() - totalPaddingBetweenCharts) / this._chartCount()
     }
 
 
-    _updateDomIfStacksDataHasChanged() {  // TODO: This method introduces a new pattern: Now, aftr the data of an object is updated, myObject.update() method must be called to update DOM. This behavior MUST be implemented also for navigator.Chart() and other classes that allow updating their data with a setter.
+    _yScale(value){
 
-        if (this._awaitingUpdateAfterDataChange){
+        const rangeStart = this._innerY() + this._innerHeight()
+        const rangeEnd = this._innerY()
 
-            this.removeAll()
-            this._createChartsBasedOnStacksData()
+        const yScale = d3.scaleBand()
+            .domain(d3.range(this._chartCount()))
+            .rangeRound([rangeStart, rangeEnd])
+            .paddingInner(this._paddingBetweenCharts)
 
-            this._awaitingUpdateAfterDataChange = false
-        }
-
+        return yScale(value)
     }
 
 
@@ -288,7 +341,7 @@ class Panel extends container.Group {
 
             this._stacks = value  // value is a Stacks object in this case
 
-            this._awaitingUpdateAfterDataChange = true
+            this._awaitingDomUpdateAfterDataChange = true
 
             return this
         }
