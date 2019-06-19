@@ -536,28 +536,6 @@ test ('BREAKDOWN+SUMMARIZE level-0/SURFACE data with summarize()', async () => {
 
 test ('Should query the dataset for counts of nested categories using private interface', async () => {
 
-
-    const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv')
-    await titanicDataset.build()
-
-
-    const initialSurveyResults = titanicDataset._countOccurrencesOfEachCategory()
-
-    const females = initialSurveyResults.get('Gender').get('Female')
-        , firstClass = initialSurveyResults.get('Ticket').get('1st class')
-        , thirdClass = initialSurveyResults.get('Ticket').get('3rd class')
-        , died = initialSurveyResults.get('Status').get('Died')
-
-    expect(females).toHaveLength(466)
-    expect(firstClass).toHaveLength(323)
-    expect(thirdClass).toHaveLength(709)
-    expect(died).toHaveLength(809)
-
-})
-
-
-test ('Should query the dataset for counts of nested categories using private interface', async () => {
-
     const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv')
     await titanicDataset.build()
 
