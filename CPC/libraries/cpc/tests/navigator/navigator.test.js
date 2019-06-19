@@ -27,6 +27,9 @@ global.d3 = {
 global._ = require("../../../external/lodash")
 
 global.classUtils = require("../../../utils/classUtils")
+global.arrayUtils = require("../../../utils/arrayUtils")
+global.str = require("../../str")
+global.data = require("../../data")
 global.dataset = require("../../dataset")
 global.container = require("../../container")
 global.shape = require("../../shape")
@@ -54,9 +57,10 @@ test ('Instantiate Navigator class (no parent object specified)', async () => {
 
     // Create Navigator object
     const aNavigator = new navigator.Navigator()
-    aNavigator.select()
-        .attr('class', 'a-navigator')
-        .attr('id', 'the-navigator')
+    aNavigator
+        .class('a-navigator')
+        .id('the-navigator')
+        .update()
 
 
     expect(aNavigator).toBeDefined()
@@ -92,8 +96,7 @@ test ('Instantiate Navigator class as a child of a Svg class object',  () => {
     // Create Navigator object
     const myNavigator = new navigator.Navigator(mySvg)
 
-    myNavigator.select()
-        .attr('id', 'child-navigator')
+    myNavigator.id('child-navigator').update()
 
 
     const parentId = document.getElementById('child-navigator')
@@ -120,15 +123,13 @@ test ('Instantiate Navigator class as a child of a Group class object',  () => {
 
     // Create a parent Group object
     const parentGroup = new container.Group(mySvg)
-    parentGroup.select()
-        .attr('id', 'parent-group')  // id must be given directly with d3; Group.id().update() does not work with JEST
+    parentGroup.id('parent-group').update()
 
 
     // Create Navigator object
     const myNavigator = new navigator.Navigator(parentGroup)
 
-    myNavigator.select()
-        .attr('id', 'child-navigator')
+    myNavigator.id('child-navigator').update()
 
 
     // Verify that the parent is a group element
@@ -149,7 +150,7 @@ test ('Instantiate Navigator class as a child of a Group class object',  () => {
 
 
 
-test ('Load a csv dataset to Navigator and verify related calculations are made', async () => {
+test ('Load a csv dataset to Navigator and verify that related calculations are made', async () => {
 
     // Clear JEST's DOM to prevent leftovers from previous tests
     document.body.innerHTML = ''
@@ -219,17 +220,30 @@ test ('Update DOM after new data is loaded', async () => {
     // Create svg container
     const svg = new container.Svg()
     svg.select()
-        .attr('id', 'topmost-svg')
+        .attr('id', 'topmost-svg')   // setting id with d3, because Svg does not have an id method at the time of writing this test
 
+
+
+
+    //// CREATE A NAVIGATOR OBJECT AND VERIFY IT EXISTS ON DOM ////
 
     // Create Navigator object and tag it for later selectability
     const myNavigator = new navigator.Navigator()
-    myNavigator.select()
-        .attr('id', 'my-navigator')
+    myNavigator.id('my-navigator').update()
+
+
+    // Verify that DOM only has a Navigator element in it
+    const elementsInSvg = document.getElementById('topmost-svg').children
+    expect(elementsInSvg.length).toBe(1)
+    expect(elementsInSvg[0].id).toBe('my-navigator')
+
+
+
+
+    //// LOAD A DATASET INTO NAVIGATOR ////
 
     // Check initial state of dataset-related flags
     expect(myNavigator._awaitingDomUpdateAfterDataChange).toBe(false)
-
 
     // Load a dataset
     await myNavigator.loadDataset(
@@ -241,12 +255,11 @@ test ('Update DOM after new data is loaded', async () => {
     expect(myNavigator._awaitingDomUpdateAfterDataChange).toBe(true)
 
 
-    // Verify that DOM only has a Navigator element in it
-    const elementsInSvg = document.getElementById('topmost-svg').children
-    expect(elementsInSvg.length).toBe(1)
-    expect(elementsInSvg[0].id).toBe('my-navigator')
 
-    // Verify that navigator element has no Panels in it
+
+    //// CONFIRM THE CREATION OF PANEL ON DOM AS A CHILD OF NAVIGATOR ELEMENT //
+
+    // Verify that navigator element has no Panels in it prior to calling .update()
     let numberOfPanelElementsInNavigator
     numberOfPanelElementsInNavigator = document
         .getElementById('my-navigator')
@@ -258,19 +271,48 @@ test ('Update DOM after new data is loaded', async () => {
     // Update DOM
     myNavigator.update()
 
-    // // Verify that a Panel is created in DOM
-    // numberOfPanelElementsInNavigator = document
-    //     .getElementById('my-navigator')
-    //     .getElementsByClassName('panel')
-    //     // .length
-    // expect(numberOfPanelElementsInNavigator).toBe(1)
+
+    // Verify that a Panel is created in DOM as Navigator's child after update() is called
+    numberOfPanelElementsInNavigator = document
+        .getElementById('my-navigator')
+        .getElementsByClassName('panel')
+        .length
+    expect(numberOfPanelElementsInNavigator).toBe(1)
 
 
-    // Verify that the data-related flags are switched
+    // Verify that the data-related flags are switched after update()
     expect(myNavigator._awaitingDomUpdateAfterDataChange).toBe(false)
 
 
-    // // Verify that `this` is returned after updating DOM
+
+
+    //// CONFIRM THAT NAVIGATOR OBJECT CONTAINS THE PANEL OBJECT IN THE BACK END ////
+
+    const objectsInNavigator = myNavigator.objects()
+
+    expectTable(objectsInNavigator, `\
+┌───────────────────┬───────────┬─────────┐
+│ (iteration index) │    Key    │ Values  │
+├───────────────────┼───────────┼─────────┤
+│         0         │ 'panel-0' │ [Panel] │
+└───────────────────┴───────────┴─────────┘`)
+
+
+    //// VERIFY THE FIRST PANEL IN NAVIGATOR CONTAINS A SUMMARY OF THE LOADED DATASET ////
+    const panelObjectOfPanelZero = myNavigator.objects('panel-0')
+    const stacksInFirstPanel = panelObjectOfPanelZero.stacks()
+    
+    expectTable(stacksInFirstPanel, `\
+┌───────────────────┬──────────┬──────────────────────────────────────────────┐
+│ (iteration index) │   Key    │                    Values                    │
+├───────────────────┼──────────┼──────────────────────────────────────────────┤
+│         0         │ 'Ticket' │ Stack { _data: [Map], _scaleFunction: null } │
+│         1         │ 'Status' │ Stack { _data: [Map], _scaleFunction: null } │
+│         2         │ 'Gender' │ Stack { _data: [Map], _scaleFunction: null } │
+└───────────────────┴──────────┴──────────────────────────────────────────────┘`)
+
+
+    // Verify that `this` is returned after updating DOM
 
 
 

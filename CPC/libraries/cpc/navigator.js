@@ -86,30 +86,33 @@ class Navigator extends container.Group{
 
     _createPanelZeroBasedOnDataset(){
 
-        // const levelZeroDatasetSummaryMap = this.summarizeDataset()
-        // summaryStacks = new Stacks()
-        // summaryStacks.fromNestedMap(levelZeroDatasetSummaryMap)
-        //
-        // const panelZero = new Panel(this.select())
-        //     .stacks(eachStack)
+        const levelZeroDatasetSummary = this.datasetObject.summary // returns Map
+
+        const summaryStacks = new data.Stacks()
+        summaryStacks.fromNestedMap(levelZeroDatasetSummary)
+
+        const panelObject = new Panel(this.select())
+            .stacks(summaryStacks)
+            .update()
+
         //     .id('panel-0')
         //     .x(this._xScale(0))
         //     .y(this.y())
         //     .height(this.height())
         //     .width(this.width())
-        //     .update()
-        //
-        // this.objects('panel-0', panelObject)
+
+        this.objects('panel-0', panelObject)
 
     }
 
 
     async loadDataset(path, omitColumns){
 
+        this._awaitingDomUpdateAfterDataChange = true
+
         this.datasetObject = new dataset.Dataset(path, omitColumns)
         await this.datasetObject.build()
 
-        this._awaitingDomUpdateAfterDataChange = true
 
         return this
 
