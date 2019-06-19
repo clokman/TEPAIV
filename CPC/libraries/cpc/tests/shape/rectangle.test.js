@@ -23,7 +23,7 @@ global.d3 = {
 global.classUtils = require("../../../utils/classUtils")
 global.container = require("../../container")
 global.shape = require("../../shape")
-global.str = require("../../str")
+global.stringUtils = require("../../../utils/stringUtils")
 global.data = require("../../../cpc/data")
 
 //// MODULES BEING TESTED ////

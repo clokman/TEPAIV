@@ -969,7 +969,7 @@ class Category extends shape.CaptionedRectangle{
 
             this._percentage = value
 
-            const formattedPercentageString = str.formatNumberAsPercentage(this._percentage)
+            const formattedPercentageString = stringUtils.formatNumberAsPercentage(this._percentage)
             this._textObject.text(formattedPercentageString)
 
             return this

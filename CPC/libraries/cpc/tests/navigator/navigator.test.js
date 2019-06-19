@@ -28,7 +28,7 @@ global._ = require("../../../external/lodash")
 
 global.classUtils = require("../../../utils/classUtils")
 global.arrayUtils = require("../../../utils/arrayUtils")
-global.str = require("../../str")
+global.stringUtils = require("../../../utils/stringUtils")
 global.data = require("../../data")
 global.dataset = require("../../dataset")
 global.container = require("../../container")

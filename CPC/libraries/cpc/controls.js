@@ -22,7 +22,7 @@ class Slider{
 
     constructor(label, value, min, max, instanceToCallOnUpdate, instanceMethodToCallOnUpdate){
 
-        const formattedLabel = str.formatAsCssSelector(label)
+        const formattedLabel = stringUtils.formatAsCssSelector(label)
 
         this._sliderId = formattedLabel + '-slider'
         this._monitorId = this._sliderId + '-monitor'

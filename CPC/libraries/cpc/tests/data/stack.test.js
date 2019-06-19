@@ -21,7 +21,7 @@ global.d3 = {
 }
 global._ = require("../../../external/lodash")
 
-global.str = require("../../str")
+global.stringUtils = require("../../../utils/stringUtils")
 global.arrayUtils = require("../../../utils/arrayUtils")
 
 
