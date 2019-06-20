@@ -100,6 +100,12 @@ const version = "1.0"
 
          let queryString
 
+         // Check if parameter is entered as [{path1}, {path2}] instead of {path1}, {path2}
+         const singleArrayIsEnteredAsAParameter = arguments.length && drilldownPath[0].constructor.name === 'Array'
+         if (singleArrayIsEnteredAsAParameter){
+            drilldownPath = drilldownPath[0]
+         }
+
          const returningTheDataWithoutDrillingDown = !arguments.length
 
          if (returningTheDataWithoutDrillingDown) {
@@ -346,7 +352,7 @@ class BreakdownQuery {
 
     }
 
-
+    // TODO: This method and the class that wraps it SHOULD be checked for obsolete code
     _constructGettersSubstring(){
 
         let substring = ''
@@ -386,7 +392,7 @@ class DrilldownQuery{
 
         // Public Parameters //
         this._datasetObject = dataset
-        this._drilldownPath = drilldownPath
+        this._currentDrilldownPath = drilldownPath
 
         // Public Variables
         this.queryString = ''
@@ -408,9 +414,9 @@ class DrilldownQuery{
         let argumentsSubstring = ''
           , gettersSubstring = ''
 
-        if (this._drilldownPath){
+        if (this._currentDrilldownPath){
 
-            this._drilldownPath.forEach(step => {  // e.g., {'Gender':'Male'}
+            this._currentDrilldownPath.forEach(step => {  // e.g., {'Gender':'Male'}
                 Object.entries(step).forEach( ([column, category]) => {
 
                     argumentsSubstring += `, g=>g['${column}']`

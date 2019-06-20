@@ -297,6 +297,7 @@ test ('BREAKDOWN dataset by column using .breakdown(), and then manually drilldo
 })
 
 
+
 test ('DRILLDOWN dataset by category using drilldown()', async () => {
 
     // Query terminology:
@@ -429,6 +430,127 @@ test ('DRILLDOWN dataset by category using drilldown()', async () => {
 
 
 })
+
+
+
+
+test ('DRILLDOWN the dataset and BREAKDOWN+SUMMARIZE of all categories in the context of the drilled down data', async () => {
+
+    // Query terminology:
+    // BREAKDOWN: d3.group()
+    // DRILLDOWN: d3.group().get()
+    // BREAKDOWN+SUMMARIZE: d3.rollup()
+
+    const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv', 'Name')
+    await titanicDataset.build()
+
+//
+//
+//     // DRILLDOWN, and then BREAKDOWN+SUMMARIZE --- Zero depth (summary of initial/surface data without drilling down)
+//     const datasetSummary = titanicDataset.drilldownAndSummarize()
+//
+//     expectTable(datasetSummary, `\
+// ┌───────────────────┬──────────┬────────────────────────────────────────────────────────────────────┐
+// │ (iteration index) │   Key    │                               Values                               │
+// ├───────────────────┼──────────┼────────────────────────────────────────────────────────────────────┤
+// │         0         │ 'Ticket' │ Map { '1st class' => 323, '2nd class' => 277, '3rd class' => 709 } │
+// │         1         │ 'Status' │              Map { 'Survived' => 500, 'Died' => 809 }              │
+// │         2         │ 'Gender' │               Map { 'Female' => 466, 'Male' => 843 }               │
+// └───────────────────┴──────────┴────────────────────────────────────────────────────────────────────┘`)
+//
+//
+//
+//
+//     // DRILLDOWN, and then BREAKDOWN+SUMMARIZE --- One category deep
+//     const femaleSubsetSummary = titanicDataset.drilldownAndSummarize({'Gender':'Female'})
+//
+//     expectTable(femaleSubsetSummary, `\
+// ┌───────────────────┬──────────┬────────────────────────────────────────────────────────────────────┐
+// │ (iteration index) │   Key    │                               Values                               │
+// ├───────────────────┼──────────┼────────────────────────────────────────────────────────────────────┤
+// │         0         │ 'Ticket' │ Map { '1st class' => 144, '2nd class' => 106, '3rd class' => 216 } │
+// │         1         │ 'Status' │              Map { 'Survived' => 339, 'Died' => 127 }              │
+// │         2         │ 'Gender' │                      Map { 'Female' => 466 }                       │
+// └───────────────────┴──────────┴────────────────────────────────────────────────────────────────────┘`)
+//
+//
+//
+//     // DRILLDOWN, and then BREAKDOWN+SUMMARIZE --- Two categories deep
+//
+//     const femaleSurvivorsSubsetSummary =
+//         titanicDataset.drilldownAndSummarize({'Gender':'Female'}, {'Status':'Survived'})
+//
+//     expectTable(femaleSurvivorsSubsetSummary, `\
+// ┌───────────────────┬──────────┬───────────────────────────────────────────────────────────────────┐
+// │ (iteration index) │   Key    │                              Values                               │
+// ├───────────────────┼──────────┼───────────────────────────────────────────────────────────────────┤
+// │         0         │ 'Ticket' │ Map { '1st class' => 139, '2nd class' => 94, '3rd class' => 106 } │
+// │         1         │ 'Status' │                     Map { 'Survived' => 339 }                     │
+// │         2         │ 'Gender' │                      Map { 'Female' => 339 }                      │
+// └───────────────────┴──────────┴───────────────────────────────────────────────────────────────────┘`)
+//
+//
+//
+//     // DRILLDOWN, and then BREAKDOWN+SUMMARIZE --- Three categories deep
+//
+//     const firstClassFemaleSurvivorsSubsetSummary =
+//         titanicDataset.drilldownAndSummarize({'Gender':'Female'}, {'Status':'Survived'}, {'Ticket':'1st class'})
+//
+//     expectTable(firstClassFemaleSurvivorsSubsetSummary, `\
+// ┌───────────────────┬──────────┬────────────────────────────┐
+// │ (iteration index) │   Key    │           Values           │
+// ├───────────────────┼──────────┼────────────────────────────┤
+// │         0         │ 'Ticket' │ Map { '1st class' => 139 } │
+// │         1         │ 'Status' │ Map { 'Survived' => 139 }  │
+// │         2         │ 'Gender' │  Map { 'Female' => 139 }   │
+// └───────────────────┴──────────┴────────────────────────────┘`)
+
+
+    // DRILLDOWN, and then BREAKDOWN+SUMMARIZE --- Providing an array as parameter
+
+    const arrayParameterSummary =
+        titanicDataset.drilldownAndSummarize([{'Gender':'Female'}, {'Status':'Survived'}])
+
+    expectTable(arrayParameterSummary, `\
+┌───────────────────┬──────────┬───────────────────────────────────────────────────────────────────┐
+│ (iteration index) │   Key    │                              Values                               │
+├───────────────────┼──────────┼───────────────────────────────────────────────────────────────────┤
+│         0         │ 'Ticket' │ Map { '1st class' => 139, '2nd class' => 94, '3rd class' => 106 } │
+│         1         │ 'Status' │                     Map { 'Survived' => 339 }                     │
+│         2         │ 'Gender' │                      Map { 'Female' => 339 }                      │
+└───────────────────┴──────────┴───────────────────────────────────────────────────────────────────┘`)
+
+
+
+
+})
+
+
+
+test ('BREAKDOWN+SUMMARIZE level-0/SURFACE data with summarize()', async () => {
+
+    // Query terminology:
+    // BREAKDOWN: d3.group()
+    // DRILLDOWN: d3.group().get()
+    // BREAKDOWN+SUMMARIZE: d3.rollup()
+
+    const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv', 'Name')
+    await titanicDataset.build()
+
+    const datasetSummary = titanicDataset.summarize()
+
+
+    expectTable(datasetSummary, `\
+┌───────────────────┬──────────┬────────────────────────────────────────────────────────────────────┐
+│ (iteration index) │   Key    │                               Values                               │
+├───────────────────┼──────────┼────────────────────────────────────────────────────────────────────┤
+│         0         │ 'Ticket' │ Map { '1st class' => 323, '2nd class' => 277, '3rd class' => 709 } │
+│         1         │ 'Status' │              Map { 'Survived' => 500, 'Died' => 809 }              │
+│         2         │ 'Gender' │               Map { 'Female' => 466, 'Male' => 843 }               │
+└───────────────────┴──────────┴────────────────────────────────────────────────────────────────────┘`)
+
+})
+
 
 
 
