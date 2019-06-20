@@ -42,8 +42,10 @@ const navigator = require("../../navigator")
 
 
 
-
 //// UNIT TESTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//// INSTANTIATION ////////////////////////////////////////////////////////////////////////
 
 
 test ('Instantiate Navigator class (no parent object specified)', async () => {
@@ -56,14 +58,17 @@ test ('Instantiate Navigator class (no parent object specified)', async () => {
         .attr('id', 'topmost-svg')
 
     // Create Navigator object
-    const aNavigator = new navigator.Navigator()
-    aNavigator
+    const myNavigator = new navigator.Navigator()
+
+
+    // Use different tags for testing
+    myNavigator
         .class('a-navigator')
         .id('the-navigator')
         .update()
 
 
-    expect(aNavigator).toBeDefined()
+    expect(myNavigator).toBeDefined()
 
     // Verify that a panel now exists in DOM
     const numberOfPanelsInDomAfterCreatingPanel = document
@@ -212,6 +217,11 @@ test ('Load a csv dataset to Navigator and verify that related calculations are 
 
 
 
+
+
+//// LOADING DATA ////////////////////////////////////////////////////////////////////////
+
+
 test ('Update DOM after new data is loaded', async () => {
 
     // Clear JEST's DOM to prevent leftovers from previous tests
@@ -280,13 +290,26 @@ test ('Update DOM after new data is loaded', async () => {
     expect(numberOfPanelElementsInNavigator).toBe(1)
 
 
+    // Verify that the created panel has the right id and class
+    const panelElement = document
+        .getElementById('my-navigator')
+        .getElementsByClassName('panel')[0]
+    const panelElementId = panelElement.getAttribute('id')
+    const panelElementClass = panelElement.getAttribute('class')
+    const panelElementDepth = panelElement.getAttribute('depth')
+
+    expect(panelElementId).toBe('panel-0')
+    expect(panelElementClass).toBe('panel')
+
+
     // Verify that the data-related flags are switched after update()
     expect(myNavigator._awaitingDomUpdateAfterDataChange).toBe(false)
 
 
 
 
-    //// CONFIRM THAT NAVIGATOR OBJECT CONTAINS THE PANEL OBJECT IN THE BACK END ////
+
+    //// CONFIRM THAT NAVIGATOR OBJECT NOW CONTAINS THE PANEL OBJECT IN THE BACK END ////
 
     const objectsInNavigator = myNavigator.objects()
 
@@ -296,6 +319,7 @@ test ('Update DOM after new data is loaded', async () => {
 ├───────────────────┼───────────┼─────────┤
 │         0         │ 'panel-0' │ [Panel] │
 └───────────────────┴───────────┴─────────┘`)
+
 
 
     //// VERIFY THE FIRST PANEL IN NAVIGATOR CONTAINS A SUMMARY OF THE LOADED DATASET ////
@@ -312,9 +336,65 @@ test ('Update DOM after new data is loaded', async () => {
 └───────────────────┴──────────┴──────────────────────────────────────────────┘`)
 
 
+
+
+
+    /// VERIFY CHAIN SYNTAX COMPATIBILITY ////
+
     // Verify that `this` is returned after updating DOM
+    const returnedObject = myNavigator.update()
+        , typeOfReturnedObject = returnedObject.constructor.name
 
-
+    expect(typeOfReturnedObject).toBe('Navigator')
 
 })
 
+
+
+
+
+
+//// INTERACTIVITY ////////////////////////////////////////////////////////////////////////
+
+
+test ('Clicking on a category must make a query and visualize query results with a new panel', async () => {
+
+    //// PREPARE DOM AND PARENT ELEMENT ////
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+
+    // Create svg container
+    const svg = new container.Svg()
+    svg.select()
+        .attr('id', 'topmost-svg')   // setting id with d3, because Svg does not have an id method at the time of writing this test
+
+
+
+
+    //// CREATE A NAVIGATOR OBJECT ////
+
+    // Create Navigator object and tag it for later selectability
+    const myNavigator = new navigator.Navigator()
+    myNavigator.id('my-navigator').update()
+
+
+
+
+    //// LOAD A DATASET INTO NAVIGATOR ////
+
+    // Check initial state of dataset-related flags
+    expect(myNavigator._awaitingDomUpdateAfterDataChange).toBe(false)
+
+    // Load a dataset
+    await myNavigator.loadDataset(
+        'http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv',
+        ['Name']
+    )
+
+
+    //// GET CLICKED CATEGORY NAME ////
+    // TODO: CLICKS MUST BE MOCKED AND VISUAL QUERY FUNCTIONALTY MUST BE TESTED
+
+
+})

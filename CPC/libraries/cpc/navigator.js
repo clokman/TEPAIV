@@ -37,12 +37,15 @@ class Navigator extends container.Group{
         this._awaitingDomUpdateAfterDataChange = false
 
 
-        // this._ignoredColumns = ignoredColumns
-        //
+        this._currentPanelDepth = -1  // `-1`, so that the first panel can be labeled as `panel-0`
+
+        this._lastClickedCategoryName = null
+        this._lastClickedColumnName = null
+
+        this._currentDrilldownPathParameter = []
+
         // this._datasetSurveyResults = surveyData(dataset, this._ignoredColumns)
         // this._lastQuery = surveyData(dataset, this._ignoredColumns)
-        //
-        // this._noOfPanels = 0
         //
         // this.xScale = d3.linear()
         //
@@ -55,11 +58,112 @@ class Navigator extends container.Group{
         // this._frontColorScale = d3.scaleOrdinal(d3.schemeCategory10)
         // this._rectangleColorRegistry = new Map()
 
-
-
         // const panel0_ranges = this._calculateRangesForGivenNumberOfPanels(this._deepestPanelDepth + 1) // +1, because depth count starts from zero
 
+
+
+        this._whenACategoryIsClicked(()=>{
+
+            try {
+
+                console.log('Clicked on a category')
+                console.log('Column: ' + this._lastClickedColumnName)
+                console.log('Category: ' + this._lastClickedCategoryName)
+                console.log('------------')
+
+
+                const column = this._lastClickedColumnName
+                const category = this._lastClickedCategoryName
+
+                // Prepare the DRILLDOWN+SUMMARIZE query
+
+                // Modify last query based on clicked panel depth
+                this._currentDrilldownPathParameter = this._currentDrilldownPathParameter.slice(0, this._lastClickedPanelDepth)
+
+                this._currentDrilldownPathParameter.push( {[column]:category} )
+                // this._currentDrilldownPathParameter =  {[column]:category}
+                console.log(this._currentDrilldownPathParameter)
+
+
+                // Make a DRILLDOWN+SUMMARIZE query
+
+                let drilldownResult
+
+                drilldownResult = this.datasetObject.drilldownAndSummarize(this._currentDrilldownPathParameter)
+                console.log(drilldownResult)
+
+                const drilldownResultStacks = new data.Stacks()
+                drilldownResultStacks.fromNestedMap(drilldownResult)
+
+
+
+                // Create a new child panel based on query results
+
+                const lastClickedPanelObject = this.objects(this._lastClickedPanelName)
+
+                this._currentPanelDepth += 1
+                const childPanelName = `panel-${this._currentPanelDepth}`
+
+                const childPanelObject = new Panel(lastClickedPanelObject)
+                    .stacks(drilldownResultStacks)
+                    .id(childPanelName)
+                    .update()
+
+                childPanelObject.select()
+                    .attr('depth', this._currentPanelDepth)   // TODO: Panel.depth() method MUST be implemented and used here instead
+
+
+                // Add panel to objects registry
+                this.objects(childPanelName, childPanelObject)
+
+
+
+            } catch (e) {
+                console.warn(`No data is available for category "${this._lastClickedCategoryName}" for drilldown.`)
+                throw (e)
+            }
+
+
+
+
+        })
+
     }
+
+
+    _whenACategoryIsClicked(callback){
+
+
+        // this.select()  // this first select is not a D3 method
+        // d3.select('svg').selectAll('.category')
+        // d3.select(document.getElementsByClassName('navigator')[0]).selectAll('.category')
+        d3.selectAll(".category")  // TODO: This selection should be made more specific. However, no d3-based specific chain selection method work in this method, while they work in JS console.
+            .on('click', (d, i, g) => {
+
+                const clickedCategory = g[i]
+                const clickedChart  = g[i].parentNode
+                const clickedPanelElement = g[i].parentNode.parentNode
+
+                if (clickedPanelElement.getAttribute('class') === 'panel') {   // TODO: This if block is a workaround to prevent non-panel .category class objects from being processed. When the d3.selection issue is fixed, this block should not be in an if statement.
+
+                    this._lastClickedCategoryName = clickedCategory.getAttribute('id')
+                    this._lastClickedColumnName = clickedChart.getAttribute('id')
+                    this._lastClickedPanelName = clickedPanelElement.getAttribute('id')
+                    this._lastClickedPanelDepth = Number(clickedPanelElement.getAttribute('depth'))
+
+                    // this._goingDeeper = clickedPanelDepth === this._currentPanelDepth
+                    // this._stayingAtSameLevel = clickedPanelDepth === this._currentPanelDepth - 1
+                    // this._goingUpward = clickedPanelDepth === this._currentPanelDepth - 2  // TODO: This MUST be changed from a magic number to a generalizable algorithm
+                    callback.call(this)
+
+                }
+
+                this._whenACategoryIsClicked(callback)  // keep listening
+
+            })
+
+    }
+
 
     update(transitionDuration){
 
@@ -70,7 +174,6 @@ class Navigator extends container.Group{
         return this
 
     }
-
 
     _updateDomIfStacksDataHasChanged(){
 
@@ -84,6 +187,7 @@ class Navigator extends container.Group{
 
     }
 
+
     _createPanelZeroBasedOnDataset(){
 
         const levelZeroDatasetSummary = this.datasetObject.summary // returns Map
@@ -91,17 +195,18 @@ class Navigator extends container.Group{
         const summaryStacks = new data.Stacks()
         summaryStacks.fromNestedMap(levelZeroDatasetSummary)
 
+
+        this._currentPanelDepth += 1
+        const panelId = `panel-${this._currentPanelDepth}`
         const panelObject = new Panel(this.select())
             .stacks(summaryStacks)
+            .id(panelId)
             .update()
 
-        //     .id('panel-0')
-        //     .x(this._xScale(0))
-        //     .y(this.y())
-        //     .height(this.height())
-        //     .width(this.width())
+        panelObject.select()
+            .attr('depth', this._currentPanelDepth)   // TODO: Panel.depth() method MUST be implemented and used here instead
 
-        this.objects('panel-0', panelObject)
+        this.objects(panelId, panelObject)
 
     }
 
@@ -120,7 +225,12 @@ class Navigator extends container.Group{
 
 
 
+
 }
+
+
+
+
 
 
 /**
