@@ -104,7 +104,10 @@ class Navigator extends container.Group{
                 this._currentPanelDepth += 1
                 const childPanelName = `panel-${this._currentPanelDepth}`
 
-                const childPanelObject = new Panel(lastClickedPanelObject)
+
+                const xCoordinateOfNewPanel = lastClickedPanelObject.x()+lastClickedPanelObject.width()
+                const yCoordinateOfNewPanel = lastClickedPanelObject.y()
+                const childPanelObject = new Panel(lastClickedPanelObject, xCoordinateOfNewPanel, yCoordinateOfNewPanel)
                     .stacks(drilldownResultStacks)
                     .id(childPanelName)
                     .update()
@@ -133,8 +136,6 @@ class Navigator extends container.Group{
 
     _whenACategoryIsClicked(callback){
 
-
-        // this.select()  // this first select is not a D3 method
         // d3.select('svg').selectAll('.category')
         // d3.select(document.getElementsByClassName('navigator')[0]).selectAll('.category')
         d3.selectAll(".category")  // TODO: This selection should be made more specific. However, no d3-based specific chain selection method work in this method, while they work in JS console.
@@ -151,9 +152,6 @@ class Navigator extends container.Group{
                     this._lastClickedPanelName = clickedPanelElement.getAttribute('id')
                     this._lastClickedPanelDepth = Number(clickedPanelElement.getAttribute('depth'))
 
-                    // this._goingDeeper = clickedPanelDepth === this._currentPanelDepth
-                    // this._stayingAtSameLevel = clickedPanelDepth === this._currentPanelDepth - 1
-                    // this._goingUpward = clickedPanelDepth === this._currentPanelDepth - 2  // TODO: This MUST be changed from a magic number to a generalizable algorithm
                     callback.call(this)
 
                 }
@@ -240,7 +238,7 @@ class Navigator extends container.Group{
 class Panel extends container.Group {
 
 
-    constructor(parentContainerSelectionOrObject){
+    constructor(parentContainerSelectionOrObject, x=0, y=0){
 
         // Superclass Init //
         super(parentContainerSelectionOrObject)
@@ -262,8 +260,8 @@ class Panel extends container.Group {
         this._bgText = 'Panel label'
         this._bgTextFill = 'darkgray'
 
-        this._x = 25
-        this._y = 25
+        this._x = x
+        this._y = y
         this._width = 100
         this._height = 500
 
@@ -384,13 +382,14 @@ class Panel extends container.Group {
 
     _createBackgroundObject() {
 
-        this._backgroundObject = new shape.CaptionedRectangle(this.select())
+        this._backgroundObject = new shape.CaptionedRectangle(this.select(),
+            this.x(),
+            this.y()
+        )
 
         this._backgroundObject
             .textAlignment('top-left')
             .class('background')
-            .x(this.x())
-            .y(this.y())
             .height(this.height())
             .width(this.width())
             .fill(this._bgFill)
@@ -406,11 +405,9 @@ class Panel extends container.Group {
         this.stacks().forEach(
             (eachStack, eachStackId) => {
 
-                const chart = new Chart(this.select())
+                const chart = new Chart(this.select(), this._innerX(), this._yScale(i))
                     .stack(eachStack)
                     .id(eachStackId)
-                    .x(this._innerX())
-                    .y(this._yScale(i))
                     .height(this._chartHeights())
                     .width(this._innerWidth())
                     .update()
@@ -732,7 +729,8 @@ class Panel extends container.Group {
 class Chart extends container.Group{
 
 
-    constructor(parentContainerSelection){
+    constructor(
+        parentContainerSelection, x=0, y=0){
 
         // Superclass init //
         super(parentContainerSelection)  // Creates a container that is a child of parent container
@@ -743,8 +741,8 @@ class Chart extends container.Group{
 
         // Private parameters //
         this._label = 'Chart Label'
-        this._x = 25
-        this._y = 25
+        this._x = x
+        this._y = y
         this._height = 300
         this._width = 100
 
@@ -1006,8 +1004,11 @@ class Chart extends container.Group{
         this._rangeStack.data().forEach(
             (eachCategoryData, eachCategoryId) => {
 
+                // Calculate y position of Category object
+                const y = this._rangeStack.data(eachCategoryId).get('end')
+
                 // Instantiate a Category object for each category in Stack
-                const categoryObject = new Category(this._container)
+                const categoryObject = new Category(this._container, this._x, y)
 
                 // Add the created objects to container registry
                 this.objects(eachCategoryId, categoryObject)
@@ -1054,15 +1055,16 @@ class Chart extends container.Group{
 class Category extends shape.CaptionedRectangle{
 
 
-    constructor(parentContainerSelection=d3.select('body').select('svg')) {
+    constructor(
+        parentContainerSelection=d3.select('body').select('svg'),
+        x ,y) {
 
-        super(parentContainerSelection)
+        super(parentContainerSelection, x, y)
 
         // Private Parameters //
 
         this._percentage = 10
         this.percentage(this._percentage)  // format and set percentageText object's inner text
-
 
 
     }

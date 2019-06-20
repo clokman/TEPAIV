@@ -22,14 +22,16 @@ const version = "1.0"
 
 class Shape {
 
-    constructor(parentContainerSelection=d3.select('body').select('svg')){
+    constructor(
+        parentContainerSelection=d3.select('body').select('svg'),
+        x=0, y=0){
 
         // Public Parameters //
         this._parentContainerSelection = parentContainerSelection  // gets first existing SVG on DOM
 
         // Private Parameters //
-        this._x = 0
-        this._y = 0
+        this._x = x
+        this._y = y
         this._fill = 'gray'
 
         this._htmlClass = null
@@ -123,10 +125,12 @@ class Rectangle extends Shape {
     /*
     param svg {SvgCanvas}
      */
-    constructor(parentContainerSelection=d3.select('body').select('svg')) {
+    constructor(
+        parentContainerSelection=d3.select('body').select('svg'),
+        x, y) {
 
         // Superclass Init //
-        super(parentContainerSelection)
+        super(parentContainerSelection, x, y)
         this.class('rectangle')
             .id(`rectangle-${rectangleCounter}`)
         rectangleCounter++
@@ -207,13 +211,13 @@ class Rectangle extends Shape {
 
 class Text extends Shape {
 
-    constructor(parentContainerSelection=d3.select('body').select('svg')){
+    constructor(
+        parentContainerSelection=d3.select('body').select('svg'),
+        x, y){
 
         // Superclass Init //
-        super(parentContainerSelection)
-        this.x(25)
-            .y(25)
-            .fill('black')
+        super(parentContainerSelection, x, y)
+        this.fill('black')
 
 
         // Private Parameters //
@@ -335,15 +339,17 @@ class Text extends Shape {
 
 class CaptionedRectangle extends container.Group{
 
-    constructor(parentContainerSelection=d3.select('body').select('svg')) {
+    constructor(
+        parentContainerSelection=d3.select('body').select('svg'),
+        x=0, y=0) {
 
 
         // Superclass Init //
         super(parentContainerSelection)
 
         // Interfaced Private Parameters //
-        this._x = 25
-        this._y = 25
+        this._x = x
+        this._y = y
         this._width = 50
         this._height = 50
 
@@ -359,15 +365,18 @@ class CaptionedRectangle extends container.Group{
 
 
         // Initialize //
-        this._rectangleObject = new shape.Rectangle(this._selection)
+        this._rectangleObject = new shape.Rectangle(this._selection, this._x, this._y)
         this.objects('rectangle', this._rectangleObject)  // add object to container registry
 
-        this._textObject = new shape.Text(this._selection)
+
+        this._textPositionX = this._calculateHorizontalTextPositionBasedOnRectangleParameters(this._textAlignment)
+        this._textPositionY = this._calculateVerticalTextPositionBasedOnRectangleParameters(this._textAlignment)
+
+        this._textObject = new shape.Text(this._selection, this._textPositionX, this._textPositionY)
         this.objects('text', this._textObject)  // add object to container registry
 
         this.initializeRectangle()
         this.initializeText()
-
         this.update()
 
     }
@@ -386,6 +395,67 @@ class CaptionedRectangle extends container.Group{
         this._calculateAndUpdateTextPositionProperties()
 
         this._textObject.fill(this._textFill)
+
+    }
+
+
+    _calculateAndUpdateTextPositionProperties(textAlignment=this._textAlignment){
+
+        if (textAlignment === 'top-left'){
+            this._textObject
+                .dominantBaseline('hanging')
+                .textAnchor('start')
+        }
+
+        if (textAlignment === 'center'){
+            this._textObject
+                .dominantBaseline('auto')
+                .textAnchor('middle')
+        }
+
+        this._textPositionX = this._calculateHorizontalTextPositionBasedOnRectangleParameters(textAlignment)
+        this._textPositionY = this._calculateVerticalTextPositionBasedOnRectangleParameters(textAlignment)
+
+        this._textObject.x(this._textPositionX)
+        this._textObject.y(this._textPositionY)
+
+    }
+
+
+    _calculateHorizontalTextPositionBasedOnRectangleParameters(textAlignment=this._textAlignment){
+
+        const x = this._rectangleObject.x()
+            , horizontalMidPoint = this._rectangleObject.width()/2
+            , offset = this._centerTextOffsetX
+            , padding = this._textPadding
+
+
+        if (textAlignment === 'center'){
+            return x + horizontalMidPoint + offset
+        }
+
+        if (textAlignment === 'top-left'){
+            return x + padding
+        }
+
+    }
+
+
+    _calculateVerticalTextPositionBasedOnRectangleParameters(textAlignment=this._textAlignment){
+
+        const y = this._rectangleObject.y()
+            , verticalMidPoint = this._rectangleObject.height() / 2
+            , offset = this._centerTextOffsetY
+            , padding = this._textPadding
+
+
+        if (textAlignment === 'center') {
+            return y + verticalMidPoint + offset
+        }
+
+        if (textAlignment === 'top-left'){
+            return y + padding
+        }
 
     }
 
@@ -542,67 +612,6 @@ class CaptionedRectangle extends container.Group{
             this._calculateAndUpdateTextPositionProperties()
 
             return this
-        }
-
-    }
-
-
-    _calculateAndUpdateTextPositionProperties(textAlignment=this._textAlignment){
-
-        if (textAlignment === 'top-left'){
-            this._textObject
-                .dominantBaseline('hanging')
-                .textAnchor('start')
-        }
-
-        if (textAlignment === 'center'){
-            this._textObject
-                .dominantBaseline('auto')
-                .textAnchor('middle')
-        }
-
-        this._textPositionX = this._calculateHorizontalTextPositionBasedOnRectangleParameters(textAlignment)
-        this._textPositionY = this._calculateVerticalTextPositionBasedOnRectangleParameters(textAlignment)
-
-        this._textObject.x(this._textPositionX)
-        this._textObject.y(this._textPositionY)
-
-    }
-
-
-    _calculateHorizontalTextPositionBasedOnRectangleParameters(textAlignment=this._textAlignment){
-
-        const x = this._rectangleObject.x()
-            , horizontalMidPoint = this._rectangleObject.width()/2
-            , offset = this._centerTextOffsetX
-            , padding = this._textPadding
-
-
-        if (textAlignment === 'center'){
-            return x + horizontalMidPoint + offset
-        }
-
-        if (textAlignment === 'top-left'){
-            return x + padding
-        }
-
-    }
-
-
-    _calculateVerticalTextPositionBasedOnRectangleParameters(textAlignment=this._textAlignment){
-
-        const y = this._rectangleObject.y()
-            , verticalMidPoint = this._rectangleObject.height() / 2
-            , offset = this._centerTextOffsetY
-            , padding = this._textPadding
-
-
-        if (textAlignment === 'center') {
-            return y + verticalMidPoint + offset
-        }
-
-        if (textAlignment === 'top-left'){
-            return y + padding
         }
 
     }
