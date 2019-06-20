@@ -182,10 +182,10 @@ test ('Should get and set domain correctly in single and chain syntax', () => {
     // SINGLE METHOD //
 
     // Get range
-    expect(myChart.range()).toEqual([300, 0])
+    expect(myChart.range()).toEqual([325, 25])
 
     expect(myChart._rangeStack.data().get('category-1').get('start'))
-        .toEqual(300)
+        .toEqual(325)
 
     // Set Range
     myChart.range([100, 0])

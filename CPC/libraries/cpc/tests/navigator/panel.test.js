@@ -311,7 +311,7 @@ test ('Visualize a dataset manually by changing Stakcs in Panel', async () => {
 ┌─────────┬─────────┐
 │ (index) │ Values  │
 ├─────────┼─────────┤
-│    y    │   31    │
+│    y    │   56    │
 │ height  │   94    │
 │  text   │ '64.4%' │
 └─────────┴─────────┘`)
@@ -325,7 +325,7 @@ test ('Visualize a dataset manually by changing Stakcs in Panel', async () => {
 ┌─────────┬─────────┐
 │ (index) │ Values  │
 ├─────────┼─────────┤
-│    y    │   125   │
+│    y    │   150   │
 │ height  │   52    │
 │  text   │ '35.6%' │
 └─────────┴─────────┘`)
@@ -495,9 +495,9 @@ test ('YScale should initiate correctly', () => {
 
     expect(myPanel._chartCount()).toBe(3)
 
-    expect(myPanel._yScale(0)).toBe(341)
-    expect(myPanel._yScale(1)).toBe(186)
-    expect(myPanel._yScale(2)).toBe(31)
+    expect(myPanel._yScale(0)).toBe(366)
+    expect(myPanel._yScale(1)).toBe(211)
+    expect(myPanel._yScale(2)).toBe(56)
 
 })
 
@@ -521,9 +521,9 @@ test ('YScale should return correct values automatically if any variable involve
     expect(myPanel._chartCount()).toBe(3)
 
     // Get initial yScale calculations three panel locations
-    expect(myPanel._yScale(0)).toBe(341)
-    expect(myPanel._yScale(1)).toBe(186)
-    expect(myPanel._yScale(2)).toBe(31)
+    expect(myPanel._yScale(0)).toBe(366)
+    expect(myPanel._yScale(1)).toBe(211)
+    expect(myPanel._yScale(2)).toBe(56)
 
     // Update y coordinate of panel
     myPanel.y(100).update()
@@ -564,7 +564,7 @@ test ('Should get and set X and Y coordinates of the panel correctly', () => {
 
 
     // Check initial x and y values
-    expect(myPanel.x()).toBe(0)
+    expect(myPanel.x()).toBe(25)
     // expect(myPanel.y()).toBe(100)  // TODO
 
     // Change variables coordinate
