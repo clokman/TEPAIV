@@ -20,12 +20,10 @@ require('../jest-console')
 
 
 global.d3 = {
-    ...require("../../Learning Tests/libraries/d3/d3"),
-    ...require("../../Learning Tests/libraries/d3/d3-array")
+    ...require("../external/d3/d3"),
+    ...require("../external/d3/d3-array")
 }
-
-global._ = require("../../Learning Tests/libraries/lodash")
-
+global._ = require("../external/lodash")
 
 
 //// TESTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -123,6 +121,33 @@ test ('Clear console history', () => {
 
     console.log('b')
     expect(consoleHistory).toBe('b')
+
+})
+
+
+test ('Compare console history with expected', () => {
+
+    clearConsoleHistory()
+
+
+    // Log an item with console.log() and check it in history
+    console.log('first log')
+    expectConsoleHistory('first log')
+
+    // Log another item and check it in history
+    console.log('second log')
+    expectConsoleHistory(`\
+first log\
+second log\
+`)
+
+    // Clear console history and see if comparison is OK afterward
+    clearConsoleHistory()
+    expectConsoleHistory(``)
+
+    // Add a third item and check if comparison is OK
+    console.log('third log')
+    expectConsoleHistory(`third log`)
 
 })
 

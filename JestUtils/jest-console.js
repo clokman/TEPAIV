@@ -49,13 +49,18 @@ expectLog = function(variable, expectedOutput, format='pretty'){
 }
 
 
+expectConsoleHistory = function(expectedHistory){
+    expect(consoleHistory).toBe(expectedHistory)
+}
+
 clearConsoleHistory = function () {
     consoleHistory = ''
 }
 
 
-exports.jestTable = expectTable
-exports.jestOutput = expectLog
+exports.expectTable = expectTable
+exports.expectLog = expectLog
 exports.clearConsoleHistory = clearConsoleHistory
+exports.expectConsoleHistory = expectConsoleHistory
 exports.consoleHistory = consoleHistory
 exports.lastConsoleOutput = lastConsoleOutput
