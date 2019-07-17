@@ -28,7 +28,7 @@ function toPercentages(array){
     array.forEach( (element) => {
 
         const percentage = (element/total) * 100
-        const roundedPercentage = _.round(percentage, 1)
+        const roundedPercentage = _.round(percentage, 0)
 
         percentages.push(roundedPercentage)
 

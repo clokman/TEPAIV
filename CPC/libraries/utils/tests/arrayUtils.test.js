@@ -58,7 +58,7 @@ test ('Convert array to percentages', () => {
     // Array with decimals
     numbers = [1, 3, 5]
     percentages = arrayUtils.toPercentages(numbers)
-    expect(percentages).toEqual([11.1, 33.3, 55.6])
+    expect(percentages).toEqual([11, 33, 56])
 
 })
 
