@@ -313,7 +313,7 @@ test ('Convert a nested map object to a Stack', () => {
 ├───────────────────┼──────────────┼─────────┤
 │         0         │   'label'    │ 'First' │
 │         1         │   'count'    │   323   │
-│         2         │ 'percentage' │  24.7   │
+│         2         │ 'percentage' │   25    │
 │         3         │   'start'    │    0    │
 │         4         │    'end'     │   323   │
 └───────────────────┴──────────────┴─────────┘`)

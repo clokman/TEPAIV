@@ -15,6 +15,7 @@ if (typeof Object.fromEntries !== 'function') {
 
 //// NODE-ONLY DEPENDENCIES ////
 require("../../../../../JestUtils/jest-console")
+require("../../../../../JestUtils/jest-dom")
 
 
 //// UMD DEPENDENCIES ////
@@ -24,10 +25,15 @@ global.d3 = {
     ...require("../../../external/d3/d3"),
     ...require("../../../external/d3/d3-array")
 }
-
+// Disable d3 transitions
+d3.selection.prototype.transition = jest.fn( function(){return this} )
+d3.selection.prototype.duration = jest.fn( function(){return this} )
 
 // Lodash //
 global._ = require("../../../external/lodash")
+
+// JQuery //
+global.$ = require("../../../external/jquery-3.1.1.min")
 
 
 // Internal //
@@ -53,7 +59,7 @@ const navigator = require("../../navigator")
 
 //// INSTANTIATE ///
 
-test ('Should instantiate object', () => {
+test ('Instantiate panel', () => {
 
     // Clear JEST's DOM to prevent leftovers from previous tests
     document.body.innerHTML = ''
@@ -82,7 +88,7 @@ test ('Should instantiate object', () => {
 })
 
 
-test ('Should instantiate object as a child of specified parent element', () => {
+test ('Instantiate panel as a child of specified parent element', () => {
 
     // Clear JEST's DOM to prevent leftovers from previous tests
     document.body.innerHTML = ''
@@ -126,7 +132,7 @@ test ('Should instantiate object as a child of specified parent element', () => 
 
 //// GENERATE EXAMPLE DATA ////
 
-test ('Should initialize with example data', () => {
+test ('Initialize with example data', () => {
 
     parentContainerSelection = d3.select('body')
         .append("svg")
@@ -179,7 +185,7 @@ test ('Should initialize with example data', () => {
 //// CALCULATE DATA STATS ////
 
 // CHART COUNT //
-test ('Should calculate the number of charts in panel', () => {
+test ('Calculate the number of charts in panel', () => {
 
     // Clear JEST's DOM to prevent leftovers from previous tests
     document.body.innerHTML = ''
@@ -199,7 +205,7 @@ test ('Should calculate the number of charts in panel', () => {
 
 //// INITIATE BY VISUALIZING A DATASET ////
 
-test ('Visualize a dataset manually by changing Stakcs in Panel', async () => {
+test ('Visualize a dataset manually by changing Stacks in Panel', async () => {
 
     const titanicDataset = new dataset.Dataset(
         'http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv',
@@ -276,7 +282,7 @@ test ('Visualize a dataset manually by changing Stakcs in Panel', async () => {
 ├───────────────────┼──────────────┼──────────┤
 │         0         │   'label'    │ 'Female' │
 │         1         │   'count'    │   466    │
-│         2         │ 'percentage' │   35.6   │
+│         2         │ 'percentage' │    36    │
 │         3         │   'start'    │    0     │
 │         4         │    'end'     │   466    │
 └───────────────────┴──────────────┴──────────┘`)
@@ -286,7 +292,7 @@ test ('Visualize a dataset manually by changing Stakcs in Panel', async () => {
 ├───────────────────┼──────────────┼────────┤
 │         0         │   'label'    │ 'Male' │
 │         1         │   'count'    │  843   │
-│         2         │ 'percentage' │  64.4  │
+│         2         │ 'percentage' │   64   │
 │         3         │   'start'    │  466   │
 │         4         │    'end'     │  1309  │
 └───────────────────┴──────────────┴────────┘`)
@@ -308,13 +314,13 @@ test ('Visualize a dataset manually by changing Stakcs in Panel', async () => {
         'text': maleTextObject.text()
     }
     expectTable(maleObjectProperties,`\
-┌─────────┬─────────┐
-│ (index) │ Values  │
-├─────────┼─────────┤
-│    y    │   56    │
-│ height  │   94    │
-│  text   │ '64.4%' │
-└─────────┴─────────┘`)
+┌─────────┬────────┐
+│ (index) │ Values │
+├─────────┼────────┤
+│    y    │   56   │
+│ height  │   94   │
+│  text   │ '64%'  │
+└─────────┴────────┘`)
 
     femaleObjectProperties = {
         'y': femaleCategoryObject.y(),
@@ -322,13 +328,13 @@ test ('Visualize a dataset manually by changing Stakcs in Panel', async () => {
         'text': femaleTextObject.text()
     }
     expectTable(femaleObjectProperties,`\
-┌─────────┬─────────┐
-│ (index) │ Values  │
-├─────────┼─────────┤
-│    y    │   150   │
-│ height  │   52    │
-│  text   │ '35.6%' │
-└─────────┴─────────┘`)
+┌─────────┬────────┐
+│ (index) │ Values │
+├─────────┼────────┤
+│    y    │  150   │
+│ height  │   52   │
+│  text   │ '36%'  │
+└─────────┴────────┘`)
 
 
 })
@@ -341,7 +347,7 @@ test ('Visualize a dataset manually by changing Stakcs in Panel', async () => {
 
 //// INITIALIZATION: DOM STRUCTURE AND ATTRIBUTES OF PANEL ////
 
-test ('Should create charts of the panel as a child of panel, and with right attributes', () => {
+test ('Create charts in the panel, and make sure that they are children and have the right attributes', () => {
 
     // Clear JEST's DOM to prevent leftovers from previous tests
     document.body.innerHTML = ''
@@ -436,7 +442,7 @@ test ('Should create charts of the panel as a child of panel, and with right att
 
 
 // TODO: Panel background tests completed
-test ('Should initialize with a background rectangle', () => {
+test ('Initialize panel with a background rectangle', () => {
 
     // Clear JEST's DOM to prevent leftovers from previous tests
     document.body.innerHTML = ''
@@ -503,7 +509,7 @@ test ('YScale should initiate correctly', () => {
 
 
 
-test ('YScale should return correct values automatically if any variable involved in the calculation is updated', () => {
+test ('YScale should return correct values automatically if any variable involved in its calculation is updated', () => {
 
 
     // Clear JEST's DOM to prevent leftovers from previous tests
@@ -511,19 +517,39 @@ test ('YScale should return correct values automatically if any variable involve
 
     // Create svg
     const svg = new container.Svg()
+        .height(1280)
 
     // Create panel
     const myPanel = new navigator.Panel()
         .id('my-panel')
         .update()
 
-    // Check number of charts in panel
+    // Select elements of Panel in DOM
+    const chartElementsInPanel = document.querySelectorAll('#my-panel .chart')
+    const backgroundElementInPanel = document.querySelectorAll('#my-panel .background')
+
+
+    // Check number of charts in panel //
+    // Object:
     expect(myPanel._chartCount()).toBe(3)
+    // DOM:
+    expect(chartElementsInPanel).toHaveLength(3)
+    expect(backgroundElementInPanel).toHaveLength(1)
+
 
     // Get initial yScale calculations three panel locations
+    // Object:
     expect(myPanel._yScale(0)).toBe(366)
     expect(myPanel._yScale(1)).toBe(211)
     expect(myPanel._yScale(2)).toBe(56)
+    // DOM:
+    const topRectangleOfCategory0 = chartElementsInPanel[0].querySelectorAll('rect')[1]
+    const topRectangleOfCategory1 = chartElementsInPanel[1].querySelectorAll('rect')[2]
+    const topRectangleOfCategory2 = chartElementsInPanel[2].querySelectorAll('rect')[1]
+    expect(topRectangleOfCategory0.getAttribute('y')).toBe('366')
+    expect(topRectangleOfCategory1.getAttribute('y')).toBe('211')
+    expect(topRectangleOfCategory2.getAttribute('y')).toBe('56')
+
 
     // Update y coordinate of panel
     myPanel.y(100).update()
@@ -533,93 +559,97 @@ test ('YScale should return correct values automatically if any variable involve
     expect(myPanel._yScale(1)).toBe(286)
     expect(myPanel._yScale(2)).toBe(131)
 
+    // Verify that y coordinates on DOM are updated
+    expect(topRectangleOfCategory0.getAttribute('y')).toBe('441')
+    expect(topRectangleOfCategory1.getAttribute('y')).toBe('286')
+    expect(topRectangleOfCategory2.getAttribute('y')).toBe('131')
+
 
     // Update height of panel
     myPanel.height(100).update()
 
-    // Verify that yScale is updated
+    // Verify that yScale is updated according to new height
     expect(myPanel._yScale(0)).toBe(171)
     expect(myPanel._yScale(1)).toBe(151)
     expect(myPanel._yScale(2)).toBe(131)
+
+    // Verify that y coordinated in DOM are updated when panel height is updated
+    expect(topRectangleOfCategory0.getAttribute('y')).toBe('171')
+    expect(topRectangleOfCategory1.getAttribute('y')).toBe('151')
+    expect(topRectangleOfCategory2.getAttribute('y')).toBe('131')
+
 
 })
 
 
 //// BASIC GETTER AND SETTER METHODS ////
-test ('Should get and set X and Y coordinates of the panel correctly', () => {
+test ('Get and set X and Y coordinates of the panel correctly', () => {
 
     // Clear JEST's DOM to prevent leftovers from previous tests
     document.body.innerHTML = ''
 
     // Create svg
     const svg = new container.Svg()
+        .width(1000)
+        .height(1500)
 
     // Create panel
     const myPanel = new navigator.Panel()
         .id('my-panel')
-        .update()
+        .update(0)
 
-    // Get live selection of panel on DOM
-    const panelElement = document.getElementById('my-panel')
-
+    // Select panel and its elements on DOM
+    const panelElement = document.querySelector('#my-panel')
+    const chartElementsInPanel = document.querySelectorAll('#my-panel .chart')
+    const backgroundRectangleElementInPanel = document.querySelector('#my-panel .background rect')
+    const topRectangleOfCategory0 = chartElementsInPanel[0].querySelectorAll('rect')[1]
+    const topRectangleOfCategory1 = chartElementsInPanel[1].querySelectorAll('rect')[2]
+    const topRectangleOfCategory2 = chartElementsInPanel[2].querySelectorAll('rect')[1]
+    const maleRectangleElement = document.querySelector('.chart#gender .category#male rect')
+    const femaleRectangleElement= document.querySelector('.chart#gender .category#female rect')
 
     // Check initial x and y values
     expect(myPanel.x()).toBe(25)
-    // expect(myPanel.y()).toBe(100)  // TODO
+    expect(myPanel.y()).toBe(25)
+    expect(backgroundRectangleElementInPanel.getAttribute('x')).toBe('25')
+    expect(backgroundRectangleElementInPanel.getAttribute('y')).toBe('25')
 
-    // Change variables coordinate
+    // Change variable coordinates
     myPanel
         .x(100)
         .width(200)
-        .y(300)
-        .height(400)
-        .class('my-class')
-        .id('my-id')
+        .y(100)
+        .height(200)
         .update()
 
     expect(myPanel.x()).toBe(100)
+    expect(myPanel.y()).toBe(100)
     expect(myPanel.width()).toBe(200)
+    expect(myPanel.height()).toBe(200)
+    expect(myPanel._chartHeights()).toBe(51)
 
-    expect(myPanel.y()).toBe(300)
     expect(
         myPanel.objects('gender')
             .objects('male')
             .objects('rectangle')
             .y()
-    ).toBe(615)
+    ).toBe(256)
+    expect(maleRectangleElement.getAttribute('y')).toBe('256')
 
     expect(
         myPanel.objects('gender')
             .objects('female')
             .objects('rectangle')
             .y()
-    ).toBe(574)
-
-    expect(myPanel.height()).toBe(400)
-    expect(myPanel._chartHeights()).toBe(114)
-
-    expect(myPanel.class()).toBe('my-class')
-    expect(myPanel.id()).toBe('my-id')
-
-    // TODO: DOM testing for coordinates fail on Node, even the methods work OK on web browsers. The update() method of many objects in CPC do not seem to work in Node
-    // expect(d3.selectAll('rect').attr('x')).toBe(311)
-    // expect(d3.selectAll('rect').attr('width')).toBe(411)
-    // expect(d3.selectAll('rect').attr('class')).toBe('my-class')
-
-    // xCoordinateOfFirstRectangleInPanel = panelElement
-    //     .getElementsByClassName('chart')[0]
-    //     .getElementsByClassName('category')[0]
-    //     .getElementsByTagName('rect')[0]
-    //     .getAttribute('x')
-    // expect(xCoordinateOfFirstRectangleInPanel).toBe(311)
-
+    ).toBe(238)
+    expect(femaleRectangleElement.getAttribute('y')).toBe('238')
 
 })
 
 
 //// GET/QUERY/SET DATA ////
 
-test ('Should get the stacks in Panel', () => {
+test ('Get the stacks in Panel', () => {
 
     const myPanel = new navigator.Panel()
 
@@ -636,7 +666,7 @@ test ('Should get the stacks in Panel', () => {
 })
 
 
-test ('Should bring the specified stack from the stacks', () => {
+test ('Bring the specified stack from the stacks', () => {
 
     const myPanel = new navigator.Panel()
 
@@ -651,7 +681,7 @@ test ('Should bring the specified stack from the stacks', () => {
 })
 
 
-test ('Should update panel stacks, and also the related instance variables', () => {
+test ('Update panel stacks, and also the related instance variables', () => {
 
     const myPanel = new navigator.Panel()
 
@@ -722,5 +752,129 @@ test ('Should update panel stacks, and also the related instance variables', () 
 
     // Check if other stacks-related variables are currectly updated after change of stacks
     // TODO: When more stacks-related variables are added to the class, they MUST be tested here.
+
+})
+
+
+
+
+//// SPAWN LOCATION /////
+
+test ('Instantiate panel with a spawn location', () => {
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+
+
+    // Create SVG
+    const mySvg = new container.Svg()
+    mySvg.select()
+        .attr('id', 'top-svg')
+
+    // Create parent panel
+    const parentPanel = new navigator.Panel(mySvg)
+    parentPanel.id('parent-panel').update()
+
+    // Create panel with spawn location
+    objectToSpawnFrom = parentPanel.objects('gender').objects('male')
+    const childPanel = new navigator.Panel(parentPanel, objectToSpawnFrom)
+    childPanel.id('child-panel').update()
+
+    // Child panel should refer to a category as its spawn source
+    const objectToSpawnFromPropertyClass = childPanel._objectToSpawnFrom.constructor.name
+    expect(objectToSpawnFromPropertyClass).toBe('Category')
+
+    // There must be two panels after creating a child panel
+    const numberOfPanels = document.querySelectorAll('.panel').length
+    expect(numberOfPanels).toBe(2)
+
+    // A bridge object should be created
+    const bridgeElements = document.querySelectorAll('.bridge')
+    expect(bridgeElements.length).toBe(1)
+
+
+    // Bridge should be at the correct end position
+    const bridgeRectangleElement = document.querySelector('.bridge')
+    const categoryObjectBeingSpawnedFrom = childPanel._objectToSpawnFrom
+        , categoryRectangleElementBeingSpawnedFrom = categoryObjectBeingSpawnedFrom.objects('rectangle').select()
+
+    yCoordinateOfBridgeRectangleElement = bridgeRectangleElement.getAttribute('y')
+    yCoordinateOfCategoryRectangleBeingSpawnedFrom = categoryRectangleElementBeingSpawnedFrom.node().getAttribute('y')
+
+    expect(yCoordinateOfBridgeRectangleElement === yCoordinateOfCategoryRectangleBeingSpawnedFrom).toBeTruthy()
+
+})
+
+
+//// Y AXIS LABELS  ////  // TODO: This test MUST be completed
+
+test ('Should put category labels on y axis', () => {
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+
+    // Create SVG
+    const mySvg = new container.Svg()
+        .height(1280)
+
+    // Create panel
+    const myPanel = new navigator.Panel()
+        .x(150)
+        .update()
+
+    // There should be no label objects in Panel instance
+    expect(myPanel._yAxisLabelsObject.get('categories').size).toBe(0)
+
+    // There should be no labels on y axis on initiation
+    let labelsOnYAxis = document.querySelectorAll('.category-label')
+    expect(labelsOnYAxis).toHaveLength(0)
+
+
+    // Add labels
+    myPanel.drawYAxisLabels()
+
+    // Labels should be created on DOM
+    labelsOnYAxis = document.querySelectorAll('.category-label')
+    expect(labelsOnYAxis).toHaveLength(7)
+
+    // Labels should have a parent group
+    const yAxisCategoryLabelsContainer = document.querySelector('.category-label').parentNode
+    expect(yAxisCategoryLabelsContainer.getAttribute('class')).toBe('category-labels')
+
+    const yAxisAllLabelsContainer = document.querySelector('.category-label').parentNode.parentNode
+    expect(yAxisAllLabelsContainer.getAttribute('class')).toBe('y-axis-labels')
+
+    // Label objects should be added to instance registry
+    expect(myPanel._yAxisLabelsObject.get('categories').size).toBe(7)
+
+    // Verify object properties and element attributes of a category //
+    // Object
+    const maleLabelObject = myPanel._yAxisLabelsObject.get('categories').get('male');
+    expect(maleLabelObject.text()).toBe('male')
+    expect(maleLabelObject.x()).toBe(140)
+    expect(maleLabelObject.y()).toBe(471)
+    // Elements
+    const maleLabelElement = document.querySelector('.category-label#male')
+    expect(maleLabelElement.textContent).toBe('male')
+    expect(maleLabelElement.getAttribute('x')).toBe("140")
+    expect(maleLabelElement.getAttribute('y')).toBe("471")
+
+})
+
+
+// TODO: Test MUST be completed
+test ('Update label positions when panel position or height is changed', () => {
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+
+    // Create SVG
+    const mySvg = new container.Svg()
+    mySvg.select()
+        .attr('id', 'top-svg')
+
+    // Create panel
+    const myPanel = new navigator.Panel()
+
 
 })

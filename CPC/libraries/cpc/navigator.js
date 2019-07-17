@@ -17,9 +17,6 @@
     const version = "3.0"
 
 
-
-
-
     /**
      * NOTE: For this class to be instantiated, there must be <b>at least</b> a SVG element existing in DOM.
      * This is true even if the class is initiated with default parameters.
@@ -33,111 +30,56 @@
                 .class('navigator')
                 .update()
 
+
+            // Public Parameters //
             this.datasetObject = null
+
+
+            // Private Variables //
             this._awaitingDomUpdateAfterDataChange = false
 
 
             this._currentPanelDepth = -1  // `-1`, so that the first panel can be labeled as `panel-0`
 
             this._lastClickedCategoryName = null
-            this._lastClickedColumnName = null
+            this._lastClickedChartName = null
+            this._lastClickedPanelName = null
+            this._lastClickedPanelDepth = null
 
-            this._currentDrilldownPathParameter = []
+            this._lastClickedCategoryObject = null
+            this._lastClickedPanelObject = null
 
-            // this._datasetSurveyResults = surveyData(dataset, this._ignoredColumns)
-            // this._lastQuery = surveyData(dataset, this._ignoredColumns)
-            //
-            // this.xScale = d3.linear()
-            //
-            // this._lastClickedColumnSelector = ''
-            // this._lastClickedCategorySelector = ''
-            // this._lastClickedCategoryLabel = ''
-            //
-            // this._lastClickedPanelDepth = 0
-            //
-            // this._frontColorScale = d3.scaleOrdinal(d3.schemeCategory10)
-            // this._rectangleColorRegistry = new Map()
+            this._lastCreatedPanelName = null
 
-            // const panel0_ranges = this._calculateRangesForGivenNumberOfPanels(this._deepestPanelDepth + 1) // +1, because depth count starts from zero
+            this._currentDrilldownPathParameter = []  // stores the drilldown path that generated whatever is being visualized in the navigator at a point in time
+
+            this._frontColorScale = d3.scaleOrdinal(d3.schemeCategory10)
+            this._categoryColorRegistry = new Map()
 
 
-
-            this._whenACategoryIsClicked(()=>{
-
-                try {
-
-                    console.log('Clicked on a category')
-                    console.log('Column: ' + this._lastClickedColumnName)
-                    console.log('Category: ' + this._lastClickedCategoryName)
-                    console.log('------------')
-
-
-                    const column = this._lastClickedColumnName
-                    const category = this._lastClickedCategoryName
-
-                    // Prepare the DRILLDOWN+SUMMARIZE query
-
-                    // Modify last query based on clicked panel depth
-                    this._currentDrilldownPathParameter = this._currentDrilldownPathParameter.slice(0, this._lastClickedPanelDepth)
-
-                    this._currentDrilldownPathParameter.push( {[column]:category} )
-                    // this._currentDrilldownPathParameter =  {[column]:category}
-                    console.log(this._currentDrilldownPathParameter)
-
-
-                    // Make a DRILLDOWN+SUMMARIZE query
-
-                    let drilldownResult
-
-                    drilldownResult = this.datasetObject.drilldownAndSummarize(this._currentDrilldownPathParameter)
-                    console.log(drilldownResult)
-
-                    const drilldownResultStacks = new data.Stacks()
-                    drilldownResultStacks.fromNestedMap(drilldownResult)
-
-
-
-                    // Create a new child panel based on query results
-
-                    const lastClickedPanelObject = this.objects(this._lastClickedPanelName)
-
-                    this._currentPanelDepth += 1
-                    const childPanelName = `panel-${this._currentPanelDepth}`
-
-                    const childPanelObject = new Panel(lastClickedPanelObject)
-                        .stacks(drilldownResultStacks)
-                        .id(childPanelName)
-                        .update()
-
-                    childPanelObject.select()
-                        .attr('depth', this._currentPanelDepth)   // TODO: Panel.depth() method MUST be implemented and used here instead
-
-
-                    // Add panel to objects registry
-                    this.objects(childPanelName, childPanelObject)
-
-
-
-                } catch (e) {
-                    console.warn(`No data is available for category "${this._lastClickedCategoryName}" for drilldown.`)
-                    throw (e)
-                }
-
-
-
-
-            })
+            // Initialize //
+            this._addListenerToFirstPanel()
 
         }
 
 
+        _addListenerToFirstPanel(){
+            this._whenACategoryIsClicked(
+                ()=> this._queryDataAndUpdateVisualization()
+            )
+
+        }
+
+
+        /**
+         * Collects information on what is clicked, and then runs the callback function, if one is provided.
+         * @param callback {function}
+         * @private
+         */
         _whenACategoryIsClicked(callback){
 
-
-            // this.select()  // this first select is not a D3 method
-            // d3.select('svg').selectAll('.category')
-            // d3.select(document.getElementsByClassName('navigator')[0]).selectAll('.category')
-            d3.selectAll(".category")  // TODO: This selection should be made more specific. However, no d3-based specific chain selection method work in this method, while they work in JS console.
+            this.select() // this first select is not a D3 method
+                .selectAll('.category')
                 .on('click', (d, i, g) => {
 
                     const clickedCategory = g[i]
@@ -147,9 +89,15 @@
                     if (clickedPanelElement.getAttribute('class') === 'panel') {   // TODO: This if block is a workaround to prevent non-panel .category class objects from being processed. When the d3.selection issue is fixed, this block should not be in an if statement.
 
                         this._lastClickedCategoryName = clickedCategory.getAttribute('id')
-                        this._lastClickedColumnName = clickedChart.getAttribute('id')
+                        this._lastClickedChartName = clickedChart.getAttribute('id')
                         this._lastClickedPanelName = clickedPanelElement.getAttribute('id')
                         this._lastClickedPanelDepth = Number(clickedPanelElement.getAttribute('depth'))
+
+                        this._lastClickedCategoryObject = this
+                            .objects(this._lastClickedPanelName)
+                            .objects(this._lastClickedChartName)
+                            .objects(this._lastClickedCategoryName)
+                        this._lastClickedPanelObject = this.objects(this._lastClickedPanelName)
 
                         // this._goingDeeper = clickedPanelDepth === this._currentPanelDepth
                         // this._stayingAtSameLevel = clickedPanelDepth === this._currentPanelDepth - 1
@@ -165,6 +113,172 @@
         }
 
 
+        _queryDataAndUpdateVisualization() {
+
+            // Remove any panels if necessary
+            this._removeAnyOutdatedPanels()
+
+            // Query the data based on the clicked category
+            this._updateCurrentDrillDownPathParameterBasedOnLastClickedCategory()
+            let drilldownResult = this.datasetObject.drilldownAndSummarize(this._currentDrilldownPathParameter)
+
+            // Sort drilldown results so that categories always appear in the same order as in panel-0
+            drilldownResult.forEach( (columnObject, columnName) => {
+                const columnObjectInDatasetSummary = this.datasetObject.summary.get(columnName)
+                const sortedColumnObject = columnObject.sortAccordingTo(columnObjectInDatasetSummary)
+                drilldownResult.set(columnName, sortedColumnObject)
+            })
+
+            // Convert query resuts to Stacks
+            const drilldownResultStacks = new data.Stacks()
+                .fromNestedMap(drilldownResult)
+
+
+
+            // Create a new child panel based on query results
+            this._createChildPanelBasedOnStacks(drilldownResultStacks)
+
+            // Shrink all previous panels so that they fit the inner height of the new child panel
+            this._compressInnerHeightOfPanelsToFitLastPanel()
+
+
+        }
+
+
+        _updateCurrentDrillDownPathParameterBasedOnLastClickedCategory() {
+
+            const column = this._lastClickedChartName
+            const category = this._lastClickedCategoryName
+
+            // Modify last query based on clicked panel depth
+            this._currentDrilldownPathParameter = this._currentDrilldownPathParameter.slice(0, this._lastClickedPanelDepth)
+            this._currentDrilldownPathParameter.push({[column]: category})
+
+            // Update panel depth according to the new query
+            this._currentPanelDepth = this._currentDrilldownPathParameter.length -1
+
+        }
+
+
+        _createChildPanelBasedOnStacks(drilldownResultStacks) {
+
+            // Update instance registry
+            this._currentPanelDepth += 1
+            this._lastCreatedPanelName = `panel-${this._currentPanelDepth}`
+
+
+
+            // Pick a color for the new child panel's background
+
+
+            // Create the new child panel as the child of the last clicked panel
+            const childPanelObject = new Panel(this._lastClickedPanelObject, this._lastClickedCategoryObject)
+            const totalDurationOfChildPanelInitializationAnimations = childPanelObject.animationDuration.extendBridge + childPanelObject.animationDuration.maximizePanelCover;
+
+            childPanelObject.stacks(drilldownResultStacks)
+                .id(this._lastCreatedPanelName)
+                .bgText(this._lastClickedCategoryName)
+                .bgTextFill('white')
+                .update(totalDurationOfChildPanelInitializationAnimations)  // If too short, update duration cuts off animation times in Panel object.
+
+
+            // Add depth property to child panel element in DOM
+            childPanelObject.select()
+                .attr('depth', this._currentPanelDepth)   // TODO: Panel.depth() method MUST be implemented and used here instead
+
+
+            // Add the newly related child panel to objects registry
+            this.objects(this._lastCreatedPanelName, childPanelObject)
+
+
+            // Remove categories of the child panel that are already represented by the child panel's background
+            this._currentDrilldownPathParameter.forEach((step) => {
+
+                Object.entries(step).forEach(([columnName, categoryName]) => {
+
+                    childPanelObject
+                        .objects(columnName)
+                        .remove(categoryName)
+                })
+
+            })
+
+            // Colorize
+            this._assignColorsToAnyNewCategoriesInNavigator()
+
+            return this
+
+        }
+
+
+        /* Adjusts vertical inner space of all panels to fit the vertical inner space of the last panel, so that all charts start and end at same vertical positions between panels)
+         */
+        _compressInnerHeightOfPanelsToFitLastPanel() {
+
+            const lastCreatedPanelObject = this.objects(this._lastCreatedPanelName)
+
+            const innerPaddingTopIncrement = lastCreatedPanelObject.innerPaddingTop() + this._lastClickedPanelObject._paddingBetweenCharts + lastCreatedPanelObject.innerPaddingTop()
+            const innerPaddingBottomIncrement = lastCreatedPanelObject.innerPaddingBottom() + this._lastClickedPanelObject._paddingBetweenCharts + lastCreatedPanelObject.innerPaddingBottom()
+
+            // Shrink previous panel(s)
+            this.objects().forEach((panelObject, panelName) => {
+
+                if (panelName !== this._lastCreatedPanelName) {  // do not shrink the newly created panel
+
+                    panelObject.innerPaddingTop(innerPaddingTopIncrement * 0.75)
+                        .innerPaddingBottom(innerPaddingBottomIncrement)
+                        .update()
+                }
+            })
+
+        }
+
+
+        _assignColorsToAnyNewCategoriesInNavigator(){  // TODO: MUST BE TESTED
+
+            let i = 0
+
+            this.objects().forEach( (panelObject, panelId) => {
+                panelObject.objects().forEach( (chartObject) => {
+
+                    chartObject.objects().forEach( (categoryObject, categoryName) => {
+
+
+                        let categoryAlreadyAssignedColor = false
+                        if (this._categoryColorRegistry.has(categoryName)){
+                            categoryAlreadyAssignedColor = true
+                        }
+
+                        if (!categoryAlreadyAssignedColor){
+                            const assignedColor = this._frontColorScale(i)
+                            categoryObject.fill(assignedColor).update()
+                            this._categoryColorRegistry.set(categoryName, assignedColor)
+                        }
+
+                        if(categoryAlreadyAssignedColor){
+                            const existingColor = this._categoryColorRegistry.get(categoryName)
+                            categoryObject.fill(existingColor).update()
+                        }
+
+                        i++
+                    })
+                })
+            })
+        }
+
+
+        _removeAnyOutdatedPanels(){
+
+            const numberOfPanelsThatWillRemainUnchangedAfterClick = this._lastClickedPanelDepth + 1
+
+            if (this.objects().size >= numberOfPanelsThatWillRemainUnchangedAfterClick){
+
+                const numberOfExtraPanels = this.objects().size - numberOfPanelsThatWillRemainUnchangedAfterClick
+                this.removeLast(numberOfExtraPanels)
+            }
+        }
+
+
         update(transitionDuration){
 
             this._updateDomIfStacksDataHasChanged()
@@ -174,6 +288,7 @@
             return this
 
         }
+
 
         _updateDomIfStacksDataHasChanged(){
 
@@ -201,6 +316,9 @@
             const panelObject = new Panel(this.select())
                 .stacks(summaryStacks)
                 .id(panelId)
+                .bgText('Dataset')
+                .bgTextFill('white')
+                .height(600)   // TODO: Magic number removed
                 .update()
 
             panelObject.select()
@@ -208,7 +326,13 @@
 
             this.objects(panelId, panelObject)
 
+            this._assignColorsToAnyNewCategoriesInNavigator()
+
+            this._addListenerToFirstPanel()
+
         }
+
+
 
 
         async loadDataset(path, omitColumns){
@@ -240,32 +364,65 @@
     class Panel extends container.Group {
 
 
-        constructor(parentContainerSelectionOrObject){
+        constructor(parentContainerSelectionOrObject, objectToSpawnFrom, animationDuration=300){
 
             // Superclass Init //
             super(parentContainerSelectionOrObject)
 
+
+            this.class('panel')
+                .update()
+
+            // Private Parameters //
             let thisPanelIsBeingEmbeddedInAnotherPanel =
                 arguments.length ?
                     classUtils.isInstanceOf(parentContainerSelectionOrObject, 'Panel') :
                     false
 
-            this.class('panel')
-                .update()
+            if (thisPanelIsBeingEmbeddedInAnotherPanel && !objectToSpawnFrom){
+                throw Error('The panel is a child of another panel, but no object to spawn from is specified.')
+            }
 
 
-            // Private Parameters //
-            this.parentObject = thisPanelIsBeingEmbeddedInAnotherPanel ? parentContainerSelectionOrObject : null
+            this.parentObject = thisPanelIsBeingEmbeddedInAnotherPanel
+                ? parentContainerSelectionOrObject
+                : null
+
+            this.childObject = null
+
+            this.thisPanelIsBeingSpawnedFromACategoryOfParentPanel = !!objectToSpawnFrom
+
+            this._objectToSpawnFrom = objectToSpawnFrom
+
 
             this._bgExtension = 0
-            this._bgFill = 'lightgray'
+
+            this._bgFill = thisPanelIsBeingEmbeddedInAnotherPanel
+                ? this._objectToSpawnFrom.fill()
+                : 'lightgray'
+
             this._bgText = 'Panel label'
             this._bgTextFill = 'darkgray'
 
-            this._x = 25
+
+            if (thisPanelIsBeingEmbeddedInAnotherPanel){
+                this.propertiesAtTheEndOfEmbedAnimation = {
+                    x: this.parentObject.x() + 100,
+                    y: this.parentObject.y() + 15,
+                    width: this.parentObject.width(),
+                    height: this.parentObject.height() - 38
+                }
+            }
+
+            this._x = thisPanelIsBeingEmbeddedInAnotherPanel
+                ? 0 - this.propertiesAtTheEndOfEmbedAnimation.x  // start off-canvas
+                : 25
             this._y = 25
-            this._width = 100
+            this._width = thisPanelIsBeingEmbeddedInAnotherPanel
+                ? 0
+                : 100
             this._height = 500
+
 
             this._innerPadding = {  // pixels
                 top: 30,
@@ -287,18 +444,30 @@
 
             this._awaitingDomUpdateAfterDataChange = false
 
-            // Initialize //
+            this.animationDuration = {
+                extendBridge: animationDuration,
+                maximizePanelCover: animationDuration,
+                parentBgExtension: animationDuration  // longer durations are cut off, probably by animations that follow
+            }
 
-            // this.objects('background', this._backgroundObject)
-            // TODO: Adding _backgroundObject to objects() throws error. For consistency, this should be accomplished.
+            // Initialize //
+            // TODO: Container.objects() implementation SHOULD be changed so that _backgroundObject and _bridgeObject would also be included in objects()
+            this._backgroundObject = null
             this._createBackgroundObject()
+
+            this._bridgeObject = null
+
+            this._yAxisLabelsObject = new Map()
+            this._yAxisLabelsObject.set('columns', new Map())
+            this._yAxisLabelsObject.set('categories', new Map())
+
 
             this._createChartsBasedOnStacksData()
 
-            this.update()
+            this.update(0)
 
             if (thisPanelIsBeingEmbeddedInAnotherPanel){
-                this._updateParametersToBeAChildPanel()
+                this._embedAsChildPanel()
             }
 
         }
@@ -308,6 +477,10 @@
 
             if (this._backgroundObject){
                 this._backgroundObject.update(transitionDuration)
+            }
+
+            if (this._bridgeObject){
+                this._bridgeObject.update(transitionDuration)
             }
 
             this._updateDomIfStacksDataHasChanged()
@@ -331,40 +504,136 @@
 
         }
 
-        _updateParametersToBeAChildPanel(transitionTime){
 
+        _embedAsChildPanel(){
 
-            // Make room in parent panel
-            this.parentObject.bgExtension(120).update(transitionTime)
+            this._extendParentPanelBackground()
+            this._createBridgeFromSpawnRoot()
+            this._verticallyMaximizeFromBridgeAsChildPanel()
 
-            // Modify current panel's properties to fit it to the room created in parent panel
-            this.x(this.parentObject.x() + 100)
-                .height(this.parentObject.height() - 30)
-                .y(this.parentObject.y() + 15)
-                .update(transitionTime)
+            // Register the current object as a child of its parent panel
+            this.parentObject.childObject = this
+
 
             // TODO: This is a temporary solution to get parent and grandparent objects, until a recursive version is implemented
             // TODO: A possible solution is to implement a try-while loop
 
             try{
-
                 const grandParentObject = this.parentObject.parentObject
-                grandParentObject.bgExtension(230).update(transitionTime)  // TODO: MUST remove magic number --- What is this 230?
-
+                grandParentObject.bgExtension(230).update()  // TODO: MUST remove magic number --- What is this 230?
             }
-            catch (e) {}
+            catch (e) {console.warn(e)}
 
         }
+
+
+        _verticallyMaximizeFromBridgeAsChildPanel() {
+
+            const bridgeWidth = this.parentObject._innerPadding.right
+
+            // Create a cover (initiate invisible)
+            const childPanelCover = new shape.Rectangle()
+                .width(0)
+                .fill(this._objectToSpawnFrom.fill())
+                .height(0)
+                .update(0)
+
+
+            // Move the newly created cover to its initial position. Also set the bridge width to its final value
+            setTimeout(() => {
+
+                childPanelCover
+                    .x(this.propertiesAtTheEndOfEmbedAnimation.x)
+                    .y(this._bridgeObject.y())
+                    .width(this.propertiesAtTheEndOfEmbedAnimation.width)
+                    .height(this._bridgeObject.height())
+                    .update(0)
+
+                this._bridgeObject
+                    .width(bridgeWidth)
+                    .update(0)
+
+            }, this.animationDuration.extendBridge)
+
+
+            // Vertically maximize the cover
+            setTimeout(() => {
+                childPanelCover
+                    .x(this.propertiesAtTheEndOfEmbedAnimation.x)
+                    .y(this.propertiesAtTheEndOfEmbedAnimation.y)
+                    .height(this.propertiesAtTheEndOfEmbedAnimation.height)
+                    .width(this.propertiesAtTheEndOfEmbedAnimation.width)
+                    .update(this.animationDuration.maximizePanelCover)
+            }, this.animationDuration.extendBridge)
+
+
+            // Remove the child panel's cover and move child panel to its final position
+            setTimeout(() => {
+
+                childPanelCover.remove()
+
+                // Modify current panel's properties to fit it to the room created in parent panel
+                this.x(this.propertiesAtTheEndOfEmbedAnimation.x)
+                    .y(this.propertiesAtTheEndOfEmbedAnimation.y)
+                    .width(this.propertiesAtTheEndOfEmbedAnimation.width)
+                    .height(this.propertiesAtTheEndOfEmbedAnimation.height)
+                    .update(0)
+
+            }, this.animationDuration.extendBridge + this.animationDuration.maximizePanelCover)
+        }
+
+        _extendParentPanelBackground() {
+
+            // Make room in parent panel
+            const totalHorizontalPaddingInParentPanel = this.parentObject._innerPadding.right + this.parentObject._innerPadding.left
+            const parentBgExtensionValue = this.propertiesAtTheEndOfEmbedAnimation.width + totalHorizontalPaddingInParentPanel
+
+            this.parentObject
+                .bgExtension(parentBgExtensionValue)
+                .update(this.animationDuration.parentBgExtension)
+        }
+
+
+        _createBridgeFromSpawnRoot() {
+
+            const parentBgExtensionValue = this.parentObject.bgExtension()
+
+            const bridgeId = `${this._objectToSpawnFrom.id()}-bridge`
+
+            const temporaryMaximumBridgeWidthDuringAnimation = parentBgExtensionValue - this.parentObject._innerPadding.right
+
+            // Create a bridge (with 0 width at the right edge of the element to spawn from)
+            this._bridgeObject = new shape.Rectangle(this.select())
+                .class('bridge')
+                .id(bridgeId)
+                .fill(this._objectToSpawnFrom.fill())
+                .x(this._objectToSpawnFrom.x() + this._objectToSpawnFrom.width())
+                .y(this._objectToSpawnFrom.y())
+                .height(this._objectToSpawnFrom.height())
+                .width(0)
+                .update(0)
+
+
+            // Expand the width of the bridge to its temporary maximum
+            this._bridgeObject
+                .width(temporaryMaximumBridgeWidthDuringAnimation)
+                .update(this.animationDuration.extendBridge)
+        }
+
 
         _chartCount(){
             return this.stacks().size
         }
 
+
         _chartHeights(){
 
             const totalPaddingBetweenCharts = this._innerHeight() * this._paddingBetweenCharts
 
-            return  (this._innerHeight() - totalPaddingBetweenCharts) / this._chartCount()
+            const chartHeights = (this._innerHeight() - totalPaddingBetweenCharts) / this._chartCount()
+            const roundedChartHeights = Math.round(chartHeights)
+
+            return roundedChartHeights
         }
 
 
@@ -413,8 +682,7 @@
                         .y(this._yScale(i))
                         .height(this._chartHeights())
                         .width(this._innerWidth())
-                        .update()
-
+                        .update(0)
 
                     this.objects(eachStackId, chart)
 
@@ -422,6 +690,60 @@
 
                 }
             )
+        }
+
+
+        drawYAxisLabels() {  // TODO: Proper testing is necessary
+            // TODO: When panel height etc is changed, label position does not update.
+
+            // Create the overall container for y axis labels
+            const yAxisAllLabels_group = new container.Group()
+            yAxisAllLabels_group
+                .class('y-axis-labels')
+                .update()
+
+            // Create the container for category labels
+            const yAxisCategoryLabels_group = new container.Group(yAxisAllLabels_group)
+                .class('category-labels')
+                .update()
+
+            this._drawYAxisCategoryLabels(yAxisCategoryLabels_group.select())
+
+            return self
+
+        }
+
+
+        _drawYAxisCategoryLabels(parentSelection) {
+
+            this.objects().forEach((chartObject, chartObjectName) => {
+                chartObject.objects().forEach((categoryObject, categoryObjectName) => {
+
+                    const verticalMidPointOfCategory = categoryObject.y() + categoryObject.height() / 1.8
+
+                    const yCoordinateOfLabel = Math.round(verticalMidPointOfCategory)  // TODO: Magic number should be elimiated
+                    const xCoordinateOfLabel = this.x() - this._innerPadding.left
+
+
+
+                    const categoryTextObject = new shape.Text(parentSelection)
+                    categoryTextObject
+                        .x(xCoordinateOfLabel)
+                        .y(yCoordinateOfLabel)
+                        .dominantBaseline('bottom')
+                        .text(categoryObjectName)
+                        .textAnchor('end')
+                        .fill('gray')
+                        .class('category-label')
+                        .id(categoryObjectName)
+                        .update()
+
+                    // Add to registry
+                    this._yAxisLabelsObject.get('categories').set(categoryObjectName, categoryTextObject)
+
+                })
+
+            })
         }
 
 
@@ -699,6 +1021,129 @@
 
         }
 
+
+
+        innerPaddingBottom(value){   // TODO: NOT TESTED
+
+            // Getter
+            if (!arguments.length) {
+                return this._innerPadding.bottom
+            }
+
+            // Setter
+            else {
+
+                this._innerPadding.bottom = value
+
+                // Update charts
+                let i = 0
+                this.objects().forEach(
+                    (eachChartObject, eachChartId) => {
+
+                        eachChartObject
+                            .y(this._yScale(i))
+                            .height(this._chartHeights())
+
+                        i ++
+
+                    }
+                )
+
+
+                // Set bridge position
+                if (this.childObject){
+                    this.childObject._bridgeObject
+                        .y(this.childObject._objectToSpawnFrom.y())
+                        .height(this.childObject._objectToSpawnFrom.height())
+                }
+
+                return this
+            }
+
+        }
+
+
+
+        innerPaddingTop(value){   // TODO: NOT TESTED
+
+            // Getter
+            if (!arguments.length) {
+                return this._innerPadding.top
+            }
+
+            // Setter
+            else {
+
+                this._innerPadding.top = value
+
+                // Update charts
+                // loop //
+                let i = 0
+                this.objects().forEach(
+                    (eachChartObject, eachChartId) => {
+
+                        eachChartObject
+                            .y(this._yScale(i))
+                            .height(this._chartHeights())
+
+                        i ++
+
+                    }
+                )
+
+
+                // Set bridge position
+                if (this.childObject){
+                    this.childObject._bridgeObject
+                        .y(this.childObject._objectToSpawnFrom.y())
+                        .height(this.childObject._objectToSpawnFrom.height())
+                }
+
+                return this
+            }
+
+        }
+
+
+        innerPaddingTop(value){   // TODO: NOT TESTED
+
+            // Getter
+            if (!arguments.length) {
+                return this._innerPadding.top
+            }
+
+            // Setter
+            else {
+
+                this._innerPadding.top = value
+
+                // Update charts
+                // loop //
+                let i = 0
+                this.objects().forEach(
+                    (eachChartObject, eachChartId) => {
+
+                        eachChartObject
+                            .y(this._yScale(i))
+                            .height(this._chartHeights())
+
+                        i ++
+
+                    }
+                )
+
+
+                // Set bridge position
+                if (this.childObject){
+                    this.childObject._bridgeObject
+                        .y(this.childObject._objectToSpawnFrom.y())
+                        .height(this.childObject._objectToSpawnFrom.height())
+                }
+
+                return this
+            }
+
+        }
 
 
         _populateWithExampleData(){

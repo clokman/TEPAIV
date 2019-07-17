@@ -23,24 +23,14 @@
     class Shape {
 
         constructor(parentContainerSelection=d3.select('body').select('svg')){
-
-            // Public Parameters //
             this._parentContainerSelection = parentContainerSelection  // gets first existing SVG on DOM
-
-            // Private Parameters //
             this._x = 0
             this._y = 0
             this._fill = 'gray'
-
             this._htmlClass = null
             this._htmlId = null
-
             this._data = [null]
-
-            // Private Variables //
             this._selection = null  // gets updated later as a d3 selection by _draw method
-
-            // Initialize //
         }
 
 
@@ -59,19 +49,16 @@
                 return this._fill
             } else {
                 this._fill = value
-
                 return this
             }
         }
 
 
         x(value) {
-
             if (!arguments.length) {
                 return this._x
             } else {
                 this._x = value
-
                 return this
             }
         }
@@ -161,16 +148,33 @@
 
         update(transitionDuration=500) {
 
-            this._selection
-            // .data(this._data)
-                .transition().duration(transitionDuration)
-                .attr('class', this._htmlClass)
-                .attr('id', this._htmlId)
-                .attr('x', this._x)
-                .attr('y', this._y)
-                .attr('width', this._width)
-                .attr('height', this._height)
-                .attr('fill', this._fill)
+            // let isNodeEnvironment = false
+            // if (typeof exports === 'object' && typeof module !== 'undefined'){
+            //     isNodeEnvironment = true
+            // }
+
+            // if (!isNodeEnvironment){
+                this._selection
+                    .transition().duration(transitionDuration)
+                    .attr('class', this._htmlClass)
+                    .attr('id', this._htmlId)
+                    .attr('x', this._x)
+                    .attr('y', this._y)
+                    .attr('width', this._width)
+                    .attr('height', this._height)
+                    .attr('fill', this._fill)
+            // }
+
+            // if (isNodeEnvironment){
+            //     this._selection
+            //         .attr('class', this._htmlClass)
+            //         .attr('id', this._htmlId)
+            //         .attr('x', this._x)
+            //         .attr('y', this._y)
+            //         .attr('width', this._width)
+            //         .attr('height', this._height)
+            //         .attr('fill', this._fill)
+            // }
 
             return this
         }
@@ -199,6 +203,7 @@
         }
 
     }
+
 
 
 
@@ -456,51 +461,31 @@
 
 
         width(value) {
-
-            // Getter
             if (!arguments.length) {
                 return this._width
             }
-            // Setter
             else {
-
-                // Update width value of category
                 this._width = value
-
-                // Update width value of rectangle
                 this._rectangleObject.width(value)
-
-                // Recalculate percentage text position based on new rectangle parameters
                 this._calculateAndUpdateTextPositionProperties()
-
                 return this
             }
-
         }
+
 
 
         height(value) {
-
-            // Getter
             if (!arguments.length) {
                 return this._height
             }
-            // Setter
             else {
-
-                // Update width value of category
                 this._height = value
-
-                // Update width value of rectangle
                 this._rectangleObject.height(value)
-
-                // Recalculate percentage text position based on new rectangle parameters
                 this._calculateAndUpdateTextPositionProperties()
-
                 return this
             }
-
         }
+
 
 
         fill(value) {
@@ -509,19 +494,16 @@
             }
             else {
                 this._rectangleObject.fill(value)
-
                 return this
             }
         }
 
 
-        textFill(value) {
 
-            // Getter
+        textFill(value) {
             if (!arguments.length){
                 return this._textObject.fill()
             }
-            // Setter
             else{
                 this._textObject.fill(value)
                 return this
@@ -530,8 +512,6 @@
 
 
         textAlignment(value){
-
-            // Getter
             if (!arguments.length){
                 return this._textAlignment
             }

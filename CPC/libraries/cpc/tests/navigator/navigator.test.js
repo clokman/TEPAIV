@@ -18,17 +18,23 @@ require('../../../../../JestUtils/jest-console')
 
 
 //// UMD DEPENDENCIES ////
+global.$ = require('../../../external/jquery-3.1.1.min')
 
 global.d3 = {
     ...require("../../../external/d3/d3"),
     ...require("../../../external/d3/d3-array")
 }
+// Disable d3 transitions
+d3.selection.prototype.duration = jest.fn( function(){return this} )
+d3.selection.prototype.transition = jest.fn( function(){return this} )
 
 global._ = require("../../../external/lodash")
 
 global.classUtils = require("../../../utils/classUtils")
 global.arrayUtils = require("../../../utils/arrayUtils")
 global.stringUtils = require("../../../utils/stringUtils")
+global.domUtils = require("../../../utils/domUtils")
+require('../../../utils/mapUtils')  // does not need to be required into a variable
 global.data = require("../../data")
 global.dataset = require("../../dataset")
 global.container = require("../../container")
@@ -359,6 +365,7 @@ test ('Update DOM after new data is loaded', async () => {
 
 test ('Clicking on a category must make a query and visualize query results with a new panel', async () => {
 
+
     //// PREPARE DOM AND PARENT ELEMENT ////
 
     // Clear JEST's DOM to prevent leftovers from previous tests
@@ -371,13 +378,11 @@ test ('Clicking on a category must make a query and visualize query results with
 
 
 
-
     //// CREATE A NAVIGATOR OBJECT ////
 
     // Create Navigator object and tag it for later selectability
     const myNavigator = new navigator.Navigator()
     myNavigator.id('my-navigator').update()
-
 
 
 
@@ -391,10 +396,55 @@ test ('Clicking on a category must make a query and visualize query results with
         'http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv',
         ['Name']
     )
+    myNavigator.update()
 
 
-    //// GET CLICKED CATEGORY NAME ////
-    // TODO: CLICKS MUST BE MOCKED AND VISUAL QUERY FUNCTIONALTY MUST BE TESTED
+    //// LISTEN FOR CLICKS ////
+
+    let clickDetected = false   // variable for diagnostics
+    document.addEventListener('click', function(event){
+
+        let clickedOnRectangle = event.target.matches('rect')
+            , clickedOnText = event.target.matches('text')
+            , clickedOnCategory = event.target.parentNode.matches('.category')
+
+        if (clickedOnCategory && (clickedOnRectangle || clickedOnText) ){
+            clickDetected = true
+        }
+
+    })
+
+
+
+    //// TEST CLICKS ////
+
+    const numberOfPanelsBeforeClicking = document.querySelectorAll('.panel').length
+    expect(numberOfPanelsBeforeClicking).toBe(1)
+    const numberOfCategoriesBeforeClicking = document.querySelectorAll('.category').length
+    expect(numberOfCategoriesBeforeClicking).toBe(7)
+
+
+    // Go forward: Click a category in panel 0
+    domUtils.simulateClickOn('#panel-0 #Male')
+    const numberOfPanelsAfterFirstClick = document.querySelectorAll('.panel').length
+    expect(numberOfPanelsAfterFirstClick).toBe(2)
+    const numberOfCategoriesAfterFirstClick = document.querySelectorAll('.category').length
+    expect(numberOfCategoriesAfterFirstClick).toBe(12)
+
+
+    // Go forward: Click a category in panel 1
+    domUtils.simulateClickOn('#panel-1 #Survived')
+    const numberOfPanelsAfterSecondClick = document.querySelectorAll('.panel').length
+    expect(numberOfPanelsAfterSecondClick).toBe(3)
+    const numberOfCategoriesAfterSecondClick = document.querySelectorAll('.category').length
+    expect(numberOfCategoriesAfterSecondClick).toBe(15)
+
+    // Go backward: Click a category in panel 0 (should replace panel 2 and remove panel 3)
+    domUtils.simulateClickOn('#panel-0 #Female')
+    const numberOfPanelsAfterThirdClick = document.querySelectorAll('.panel').length
+    expect(numberOfPanelsAfterThirdClick).toBe(2)
+    const numberOfCategoriesAfterThirdClick = document.querySelectorAll('.category').length
+    expect(numberOfCategoriesAfterThirdClick).toBe(12)
 
 
 })

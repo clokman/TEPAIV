@@ -66,44 +66,66 @@ mySvg = new container.Svg(1600, 1280)
 // // myCaptionedRectangleTopLeft.x(350).y(350).fill('blue').width('300').height('200').text('Hello').textAlignment('center').update()
 //
 //
-// //// CHART  ////
+// CHART  ////
 //
 // const parentElementForChart = d3.select('body').select('svg')
 //
 // myChart = new navigator.Chart(parentElementForChart)
-// myChart.x(280).update()
+// myChart.x(400).update()
 //
 // // Update data of chart
 // const tempStack = new data.Stack()
 //     .populateWithExampleData('gender')
 // myChart.stack(tempStack)
+
+//
+// // Update data of chart
+// const tempStack = new data.Stack()
+//     .populateWithExampleData('gender')
+// myChart.stack(tempStack)
+
 //
 //
 //
 // //// PANEL ////
 //
-// // const parentElementForPanel = d3.select('body').select('svg')
-// myPanel = new navigator.Panel()
-//     .bgFill('#deebf7')
-//     .update()
+const parentElementForPanel = d3.select('body').select('svg')
+myPanel = new navigator.Panel()
+    .bgFill('#deebf7')
+    .x(400)
+    .update()
 //
+//
+//
+myParentPanel = new navigator.Panel()
+    .bgFill('#deebf7')
+    .x(550)
+    .update()
+
+// //
 // // Demo Code //
 // // myPanel.objects('gender').x(300).y(25).height(100).width(100).update()
 // // myPanel.objects('status').x(300).y(135).height(100).width(100).update()
 // // myPanel.objects('class').x(300).y(245).height(100).width(100).update()
 // // myPanel.objects('class').objects('first-class').fill('blue').update()
 //
-// myChildPanel1 = new navigator.Panel(myPanel)
-//     .bgFill('#9ecae1')
-//     .update()
-//
-// myChildPanel2 = new navigator.Panel(myChildPanel1)
-//     .bgFill('#3182bd')
-//     .update()
-//
-//
-//
-//
+
+
+spawnObjectForChild1 = myParentPanel.objects('gender').objects('female')
+spawnObjectForChild1.fill('salmon')
+
+myChildPanel1 = new navigator.Panel(myParentPanel, spawnObjectForChild1, 0)
+
+spawnObjectForChild2 = myChildPanel1.objects('gender').objects('male')
+spawnObjectForChild2.fill('lightblue')
+
+setTimeout(() => {
+    myChildPanel2 = new navigator.Panel(myChildPanel1, spawnObjectForChild2, 0)
+},500)
+
+
+
+
 // //// DATASET  ////
 //
 // let mySummaryPanel = new navigator.Panel()
@@ -126,36 +148,69 @@ mySvg = new container.Svg(1600, 1280)
 
 
 
+
+
+
+
+// // BG CHART  ////  TODO: THIS INVISIBLE BACKGROUND CHART MUST BE REMOVED
+//
+// const parentElementForChart = d3.select('body').select('svg')
+//
+// myChart = new navigator.Chart(parentElementForChart)
+// myChart
+//     .x(400)
+//     .update()
+//
+// myChart.objects().forEach( (chartObject, chartName) => {
+//     chartObject
+//         .fill('white')
+//         .text('')
+//         .x(0)
+//         .y(0)
+//         .height(500)
+//         .width(1280)
+//         .update()
+// })
+
+
 //// NAVIGATOR ////
 
 const myNavigator = new navigator.Navigator()
 
 myNavigator.loadDataset(
-    'http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv',
-    'Name'
-).then(value => {
-    value.update()
+    'http://localhost:3000/data/titanic.csv',
+    ['Name']
+).then(that => {
+    that.update()
+
+    that.x(100).update()
+
+    // myNavigator.objects('panel-0').height(1500).update()
+    myNavigator.objects('panel-0').drawYAxisLabels()
+
+
 })
 
+// Alternative Dataset paths //
+// http://localhost:3000/data/titanic.csv
+// http://localhost:3000/data/titanic-embark-partial.csv
+// http://clokman.com/hosting/tepaiv/datasets/titanic/titanic-embark-partial.csv
+
+// 'http://localhost:3000/data/mushrooms/mushrooms.csv',
+// 'http://localhost:3000/data/mushrooms/mushrooms-8columns.csv',
+// 'http://localhost:3000/data/mushrooms/mushrooms-4columns.csv',
+
+// http://localhost:3000/data/sophia.csv
 
 
-
-// loadDataToMyNavigator = async () => {
-//
-//         await myNavigator.loadDataset(
-//             'http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv',
-//             'Name'
-//         )
-//
-// }
-// myNavigator.update()
-// loadDataToMyNavigator()
+// Exploration possibilities //
+// - Who survived?
+// - Who died?
 
 
+// - Composition of Males and Females
+    // - Distribution of males and females to classes
+    // - Distribution to survival
 
-
-
-
-
-
+// - Survival rate of first class females
 

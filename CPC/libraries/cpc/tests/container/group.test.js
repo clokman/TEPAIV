@@ -175,7 +175,7 @@ test ("Should remove group's corresponding element in DOM", () => {
 
 //// REMOVE CHILD OBJECTS/ELEMENTS ////
 
-test ('Should remove the last item, and then all items from group registry and from DOM', () => {
+test ('Should remove the n last items, and then all items from group registry and from DOM', () => {
 
     // Clear JEST's DOM to prevent leftovers from previous tests
     document.body.innerHTML = ''
