@@ -28,7 +28,10 @@ global._ = require("../external/lodash")
 
 //// TESTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-test ('Table output', () => {
+
+//// EXPECT-TABLE() ////
+
+test ('Tabulate variable and compare with expected output using a function', () => {
 
     const titanicDataset = [
         {name: "John",   status: "Survived",   gender: "Male", ticket: '1st class'},
@@ -88,7 +91,51 @@ test ('Truncate table output', () => {
 
 
 
-test ('Line output', () => {
+//// TO-TABULATE-AS() ////
+
+test('Tabulate and compare using JEST matcher', () => {
+
+    // Tabulate array
+    expect([1,2,3]).toTabulateAs(`\
+┌─────────┬────────┐
+│ (index) │ Values │
+├─────────┼────────┤
+│    0    │   1    │
+│    1    │   2    │
+│    2    │   3    │
+└─────────┴────────┘`)
+
+    // Tabulate object
+    expect({'a':'first', 'b':'second'}).toTabulateAs(`\
+┌─────────┬──────────┐
+│ (index) │  Values  │
+├─────────┼──────────┤
+│    a    │ 'first'  │
+│    b    │ 'second' │
+└─────────┴──────────┘`)
+
+})
+
+
+//// TO-LOG-AS() ////
+
+test('Log and compare using JEST matcher', () => {
+
+    // Single-line log
+    expect([1,2,3]).toLogAs(`[1,2,3]`)
+
+
+    // Pretty log
+    expect([1,2,3]).toLogAs(`\
+[
+  1,
+  2,
+  3
+]`, 'pretty')
+})
+
+
+test ('expectLog()', () => {
 
     const titanicDataset = [
         {name: "John",   status: "Survived",   gender: "Male", ticket: '1st class'},
@@ -104,12 +151,12 @@ test ('Line output', () => {
   "status": "Survived",
   "gender": "Male",
   "ticket": "1st class"
-}`)
+}`, 'pretty')
 
 })
 
 
-test ('Clear console history', () => {
+test ('clearConsoleHistory()', () => {
 
     consoleHistory = ''
 
@@ -125,7 +172,7 @@ test ('Clear console history', () => {
 })
 
 
-test ('Compare console history with expected', () => {
+test ('expectConsoleHistory()', () => {
 
     clearConsoleHistory()
 
