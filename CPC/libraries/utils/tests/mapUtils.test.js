@@ -34,6 +34,20 @@ require("../mapUtils")
 
 
 
+test ('Convert map keys to string', () => {
+
+    const myMap = new Map([
+        [ 'Warm', ['Red', 'Yellow'] ],
+        [ 'Cold', ['Blue', 'Green'] ]
+    ])
+
+    expect(myMap.convertKeysToString()).toBe(
+        "Warm, Cold"
+    )
+
+})
+
+
 test ('Sort keys of one map to match the order of keys in another map (map size: 2)', () => {
 
     templateMap = new Map([ ['Male', '0'],['Female', '1' ] ])

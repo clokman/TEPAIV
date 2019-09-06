@@ -17,6 +17,19 @@
 const version = "1.0"
 
 
+Array.prototype.convertToString = function () {
+
+    let arrayAsString = ''
+
+    this.forEach( e => {
+        arrayAsString = arrayAsString + `${e}, `
+    })
+
+    arrayAsString = arrayAsString.slice(0,-2)  // for the ', ' at the end
+
+    return arrayAsString
+}
+
 
 
 

@@ -19,7 +19,7 @@ require('../../../../JestUtils/jest-console')
 
 //// REQUIREMENTS ////
 global._ = require("../../../../JestUtils/external/lodash")
-
+global.container = require("../../cpc/container")
 
 
 //// MODULES BEING TESTED ////
@@ -29,8 +29,19 @@ const arrayUtils = require("../arrayUtils")
 
 
 
-
 //// UNIT TESTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//// TO STRING ////
+test ('Convert array to string', () => {
+
+    class myClass{constructor(){}} // for testing a custom class
+
+    const myArray = ['a', 'b', 1, 0.1, true, new Map(), new myClass()]
+
+    expect( myArray.convertToString() )
+        .toBe("a, b, 1, 0.1, true, [object Map], [object Object]")
+
+})
 
 
 //// TO PERCENTAGES ////

@@ -17,6 +17,17 @@
 const version = "1.0"
 
 
+Map.prototype.convertKeysToString = function(){
+
+        let keysAsString = ''
+
+        this.forEach( (value, key) => {
+            keysAsString = keysAsString + `${key}, `
+        })
+        keysAsString = keysAsString.slice(0,-2)
+
+        return keysAsString
+}
 
 
 Map.prototype.sortAccordingTo = function(templateMap){
