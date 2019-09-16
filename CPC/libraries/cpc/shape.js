@@ -228,7 +228,7 @@
             this._fontSize = '14px'
             this._fontStyle = 'normal'
             this._fontWeight = 'normal'
-            this._rotation = 0
+            this._rotate = 0
             this._textAnchor = 'start'
             this._dominantBaseline = 'hanging'
 
@@ -274,7 +274,7 @@
                 .attr('font-size', this._fontSize)
                 .attr('font-style', this._fontStyle)
                 .attr('font-weight', this._fontWeight)
-                .attr('transform', `rotate( ${this._rotation}, ${this._x}, ${this._y} )`)
+                .attr('transform', `rotate( ${this._rotate}, ${this._x}, ${this._y} )`)
                 .attr('text-anchor', this._textAnchor)
                 .attr('dominant-baseline', this._dominantBaseline)
 
@@ -382,14 +382,14 @@
          * @param value {number}
          * @return {Text|number}
          */
-        rotation(value) {
+        rotate(value) {
 
             if (!arguments.length) {
-                return this._rotation
+                return this._rotate
             }
             else {
 
-                this._rotation = value
+                this._rotate = value
 
                 return this
             }

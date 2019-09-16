@@ -1525,7 +1525,7 @@
                     .textAnchor('middle')
                     .dominantBaseline('auto')
                     .fill(this._labelFill)
-                    .rotation(270)
+                    .rotate(270)
 
                 return this
 

@@ -475,16 +475,16 @@ test ('Rotation', () => {
 
 
     // Getter (and default rotation value)
-    expect( myText.rotation() ).toBe(0)
+    expect( myText.rotate() ).toBe(0)
 
     // Check DOM for default values
     expect( document.querySelector('text').getAttribute('transform') ).toBe(null)
 
     // Setter
-    myText.rotation(270).update(0)
+    myText.rotate(270).update(0)
 
     // Check rotation property
-    expect( myText.rotation() ).toBe(270)
+    expect( myText.rotate() ).toBe(270)
     // Check rotation attribute
     expect( document.querySelector('text').getAttribute('transform') )
         .toBe( "rotate( 270, 25, 25 )" )
