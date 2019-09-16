@@ -331,6 +331,23 @@
 
 
         /**
+         * Returns text width in pixels.
+         * @return {number}
+         */
+        width() {
+
+            const text = this.text()
+            const font = this._fontFamily
+            const size = this.fontSize()
+
+            const textWidth = text.width(`${size} ${font}`)
+
+            return textWidth
+
+        }
+
+
+        /**
          *
          * @param value {string} - Options: 'start', 'middle', 'end'
          * @return {Text|string}

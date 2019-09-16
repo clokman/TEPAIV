@@ -290,7 +290,7 @@ test ('Should set Text class and ID with single and chain syntax', () => {
 })
 
 
-// Text rotation
+//// TEXT ROTATION ///
 
 test ('Rotation', () => {
 
@@ -318,5 +318,24 @@ test ('Rotation', () => {
     // Check rotation attribute
     expect( document.querySelector('text').getAttribute('transform') )
         .toBe( "rotate( 270, 25, 25 )" )
+
+})
+
+
+
+
+//// TEXT WIDTH IN PIXELS ///
+
+test ('WIDTH: Get text width in pixels', () => {
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+    // Create svg container
+    const svg = new container.Svg()
+    // Create Text object
+    const myText = new shape.Text()
+
+    // Get text width in pixels  (this test can't be more specific due to canvas being mocked)
+    expect( myText.width() ).not.toBeNull()
 
 })
