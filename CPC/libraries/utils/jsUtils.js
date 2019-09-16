@@ -18,7 +18,17 @@ const version = "1.0"
 
 Object.prototype.hasType = function (value) {
 
-    return this.constructor.name
+    const typeOfObject = this.constructor.name
+
+    if(!arguments.length){
+        return typeOfObject
+    }
+    else{
+
+        const comparison = value === typeOfObject
+        return comparison
+
+    }
 
 }
 
