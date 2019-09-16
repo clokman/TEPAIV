@@ -29,6 +29,7 @@ global.classUtils = require("../../../utils/classUtils")
 global.container = require("../../container")
 global.shape = require("../../shape")
 global.stringUtils = require("../../../utils/stringUtils")
+global.jsUtils = require("../../../utils/jsUtils")
 global.data = require("../../../cpc/data")
 
 //// MODULES BEING TESTED ////
@@ -233,7 +234,7 @@ test ('Should get and set anchor using single and chain syntax', () => {
 })
 
 
-//// FONT SIZE ///
+//// FONT FILL COLOR ///
 
 test ('Should get and set fill color using single and chain syntax', () => {
 
@@ -246,6 +247,177 @@ test ('Should get and set fill color using single and chain syntax', () => {
     // Chain syntax
     expect(myText.x(111).textAnchor('red').textAnchor()).toBe('red')
     expect(myText.textAnchor('blue').y(222).textAnchor()).toBe('blue')
+
+})
+
+
+
+
+
+
+//// FONT SIZE ///
+
+test ('FONT SIZE: Setter and getter', () => {
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+    // Create svg container
+    const svg = new container.Svg()
+    // Create Text object
+    const myText = new shape.Text()
+
+
+
+    // Get font size (default value)
+    expect( myText.fontSize() ).toBe('14px')
+    // Check the changed element attribute
+    let myTextElement = document.querySelector('text')
+    expect( myTextElement.getAttribute('font-size') ).toBe('14px')
+
+
+
+    // Set font size in PIXELS
+    myText.fontSize( '25px' ).update()
+
+    // Check the changed object property
+    expect( myText.fontSize() ).toBe('25px')
+    // Check the changed element attribute
+    myTextElement = document.querySelector('text')
+    expect( myTextElement.getAttribute('font-size') ).toBe('25px')
+
+
+
+    // Set font size in POINTS
+    myText.fontSize( '25pt' ).update()
+
+    // Check the changed object property
+    expect( myText.fontSize() ).toBe('25pt')
+    // Check the changed element attribute
+    myTextElement = document.querySelector('text')
+    expect( myTextElement.getAttribute('font-size') ).toBe('25pt')
+
+
+
+    // Set font size in pixels using a NUMBER as parameter
+    myText.fontSize( 25 ).update()
+
+    // Check the changed object property
+    expect( myText.fontSize() ).toBe('25px')
+    // Check the changed element attribute
+    myTextElement = document.querySelector('text')
+    expect( myTextElement.getAttribute('font-size') ).toBe('25px')
+
+
+})
+
+
+
+
+
+
+//// FONT FAMILY ///
+
+test ('FONT FAMILY: Setter and getter', () => {
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+    // Create svg container
+    const svg = new container.Svg()
+    // Create Text object
+    const myText = new shape.Text()
+
+
+
+    // Get font family (default value)
+    expect( myText.fontFamily() ).toBe('sans-serif')
+    // Check the changed element attribute
+    let myTextElement = document.querySelector('text')
+    expect( myTextElement.getAttribute('font-family') ).toBe('sans-serif')
+
+
+
+    // Set font family
+    myText.fontFamily( 'arial' ).update()
+
+    // Check the changed object property
+    expect( myText.fontFamily() ).toBe('arial')
+    // Check the changed element attribute
+    myTextElement = document.querySelector('text')
+    expect( myTextElement.getAttribute('font-family') ).toBe('arial')
+
+})
+
+
+
+
+
+//// FONT STYLE ///
+
+test ('FONT STYLE: Italic vs. normal', () => {
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+    // Create svg container
+    const svg = new container.Svg()
+    // Create Text object
+    const myText = new shape.Text()
+
+    // Get font style (default value)
+    expect( myText.fontStyle() ).toBe('normal')
+
+    // Set font style
+    myText.fontStyle( 'italic' ).update()
+
+    // Check the changed object property
+    expect( myText.fontStyle() ).toBe('italic')
+    // Check the changed element attribute
+    myTextElement = document.querySelector('text')
+    expect( myTextElement.getAttribute('font-style') ).toBe('italic')
+
+})
+
+
+
+
+
+
+//// FONT WEIGHT ///
+
+test ('FONT WEIGHT: Bold vs. normal vs. numeric value', () => {
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+    // Create svg container
+    const svg = new container.Svg()
+    // Create Text object
+    const myText = new shape.Text()
+
+
+
+    // Get font weight (default value)
+    expect( myText.fontWeight() ).toBe('normal')
+
+
+
+    // Set font weight to BOLD
+    myText.fontWeight( 'bold' ).update()
+
+    // Check the changed object property
+    expect( myText.fontWeight() ).toBe('bold')
+    // Check the changed element attribute
+    myTextElement = document.querySelector('text')
+    expect( myTextElement.getAttribute('font-weight') ).toBe('bold')
+
+
+
+    // Set font weight to a numeric value
+    myText.fontWeight( 900 ).update()
+
+    // Check the changed object property
+    expect( myText.fontWeight() ).toBe('900')
+    // Check the changed element attribute
+    myTextElement = document.querySelector('text')
+    expect( myTextElement.getAttribute('font-weight') ).toBe('900')
 
 })
 
@@ -294,15 +466,13 @@ test ('Should set Text class and ID with single and chain syntax', () => {
 
 test ('Rotation', () => {
 
-
     // Clear JEST's DOM to prevent leftovers from previous tests
     document.body.innerHTML = ''
-
     // Create svg container
     const svg = new container.Svg()
-
     // Create Text object
     const myText = new shape.Text()
+
 
     // Getter (and default rotation value)
     expect( myText.rotation() ).toBe(0)

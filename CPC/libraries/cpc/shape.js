@@ -226,6 +226,8 @@
 
             this._fontFamily = 'sans-serif'
             this._fontSize = '14px'
+            this._fontStyle = 'normal'
+            this._fontWeight = 'normal'
             this._rotation = 0
             this._textAnchor = 'start'
             this._dominantBaseline = 'hanging'
@@ -250,6 +252,8 @@
                 .attr('fill', this._fill)
                 .attr('font-family', this._fontFamily)
                 .attr('font-size', this._fontSize)
+                .attr('font-style', this._fontStyle)
+                .attr('font-weight', this._fontWeight)
                 .attr('text-anchor', this._textAnchor)
                 .attr('dominant-baseline', this._dominantBaseline)
 
@@ -268,9 +272,13 @@
                 .attr('fill', this._fill)
                 .attr('font-family', this._fontFamily)
                 .attr('font-size', this._fontSize)
+                .attr('font-style', this._fontStyle)
+                .attr('font-weight', this._fontWeight)
                 .attr('transform', `rotate( ${this._rotation}, ${this._x}, ${this._y} )`)
                 .attr('text-anchor', this._textAnchor)
                 .attr('dominant-baseline', this._dominantBaseline)
+
+            return this
 
         }
 
@@ -299,11 +307,70 @@
          */
         fontSize(value) {
 
+
             if (!arguments.length) {
                 return this._fontSize
             }
             else {
-                this._fontSize = value
+                this._fontSize = value.hasType('Number')
+                    ? `${value}px`  // If no unit is specified in argument, treat it as pixels
+                    : value
+
+                return this
+            }
+        }
+
+
+        /**
+         *
+         * @param value {string} : e.g.,: 'arial'
+         * @return {Text|string}
+         */
+        fontFamily(value) {
+
+            if (!arguments.length) {
+                return this._fontFamily
+            }
+            else {
+                this._fontFamily = value
+
+                return this
+            }
+        }
+
+
+        /**
+         *
+         * @param value {string} : Should be either 'italic' or 'normal'.
+         * @return {Text|string}
+         */
+        fontStyle(value) {
+
+            if (!arguments.length) {
+                return this._fontStyle
+            }
+            else {
+                this._fontStyle = value
+
+                return this
+            }
+        }
+
+
+        /**
+         *
+         * @param value {string} : Should be either 'bold', 'normal', or take a value.
+         * @return {Text|string}
+         */
+        fontWeight(value) {
+
+            if (!arguments.length) {
+                return this._fontWeight
+            }
+            else {
+                this._fontWeight = value.hasType('Number')
+                    ? `${value}`
+                    : value
 
                 return this
             }
@@ -337,10 +404,12 @@
         width() {
 
             const text = this.text()
-            const font = this._fontFamily
+            const font = this.fontFamily()
             const size = this.fontSize()
+            const weight = this.fontWeight()
+            // 'this.fontStyle()' is not included because style does not have an effect as a .width() method parameter.
 
-            const textWidth = text.width(`${size} ${font}`)
+            const textWidth = text.width(`${weight} ${size} ${font}`)
 
             return textWidth
 
