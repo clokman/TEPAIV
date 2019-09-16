@@ -34,7 +34,10 @@ global.classUtils = require("../../../utils/classUtils")
 global.arrayUtils = require("../../../utils/arrayUtils")
 global.stringUtils = require("../../../utils/stringUtils")
 global.domUtils = require("../../../utils/domUtils")
+require('../../../utils/errorUtils')
 require('../../../utils/mapUtils')  // does not need to be required into a variable
+
+
 global.data = require("../../data")
 global.dataset = require("../../dataset")
 global.container = require("../../container")
@@ -448,3 +451,139 @@ test ('Clicking on a category must make a query and visualize query results with
 
 
 })
+
+
+
+
+
+
+//// COLOR SETS  //////////////////////////////////////////////////////////////////////////
+
+
+test ('COLOR SCHEME SET: Set and get', async () => {
+
+    //// PREPARE DOM AND PARENT ELEMENT ////
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+
+    // Create svg container
+    const svg = new container.Svg()
+
+    // Create Navigator object
+    const myNavigator = new navigator.Navigator()
+
+    //// Load a dataset into navigator
+
+    // Load a dataset
+    await myNavigator.loadDataset(
+        'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
+        ['Name']
+    )
+    myNavigator.update()
+
+
+
+
+    //// GET COLOR SET ////
+
+    // Get initial color-related values
+    expect( myNavigator.colorSet() ).toBe('Single-Hue')
+    actualInitialColorsOnCanvasForGenderCategory = myNavigator.objects('panel-0').objects('Gender').actualColors()
+    expect( actualInitialColorsOnCanvasForGenderCategory ).toEqual([
+        "rgb(34, 139, 69)", "rgb(115, 195, 120)"
+    ])
+
+    //// CHANGE COLOR SET ////
+    myNavigator.colorSet( 'Greys' ).update()
+
+    // Check if the new color set is set in one of the chart objects within the navigator
+    expect( myNavigator.colorSet() ).toBe('Greys')
+    expect ( myNavigator.objects('panel-0').objects('Gender').colorScheme() )
+        .toBe( 'Greys')
+    // Check the color of a category on DOM
+    const actualColorsOnCanvasForGenderCategory = myNavigator.objects('panel-0').objects('Gender').actualColors()
+    expect ( actualColorsOnCanvasForGenderCategory )
+        .toEqual(["rgb(80, 80, 80)", "rgb(151, 151, 151)"])
+
+
+
+
+    //// ENSURE THAT CATEGORIES IN CHILD PANELS HAVE THE SAME COLORS WITH THEIR COUNTERPARTS IN PARENT PANELS ////
+
+    // Check the number of panels before click
+    const numberOfPanelsBeforeClick = document.querySelectorAll('.panel').length
+    expect(numberOfPanelsBeforeClick).toBe(1)
+
+    // Go deeper in Navigator: Click a category in panel 0
+    domUtils.simulateClickOn('#panel-0 #Male')
+
+    // Check the number of panels before click
+    const numberOfPanelsAfterFirstClick = document.querySelectorAll('.panel').length
+    expect(numberOfPanelsAfterFirstClick).toBe(2)
+
+
+    // After the click: Check the color of an arbitrary category of PANEL-0 on DOM
+    const actualColorsOnDomForGenderCategoryInPanelZeroAfterClick = myNavigator.objects('panel-0').objects('Gender').actualColors()
+    expect ( actualColorsOnDomForGenderCategoryInPanelZeroAfterClick )
+        .toEqual(["rgb(80, 80, 80)", "rgb(151, 151, 151)"])
+
+
+    // After the click: Check the color of an arbitrary category of PANEL-1 on DOM
+    const actualColorsOnDomForGenderCategoryInPanelOneAfterClick = myNavigator.objects('panel-0').objects('Gender').actualColors()
+    expect ( actualColorsOnDomForGenderCategoryInPanelZeroAfterClick )
+        .toEqual(["rgb(80, 80, 80)", "rgb(151, 151, 151)"])
+
+
+
+
+    //// CHANGE COLOR SET WHILE A CHILD PANELS EXIST ////
+
+    // Confirm that a child panel is open
+    const numberOfOpenPanels = myNavigator.objects().size
+    expect( numberOfOpenPanels ).toBe( 2 )
+
+    // Change color set
+    myNavigator.colorSet('Reds').update()
+
+    // After the click: Confirm that the child panel's background and bridge colors matches the color of the category this child panel is spawned from
+    const bgColorOfChildPanelAfterColorSetChange = myNavigator.objects('panel-1')._backgroundObject.fill()
+    const bgColorOfBridgeAfterColorSetChange = myNavigator.objects('panel-1')._bridgeObject.fill()
+    const colorOfCategoryThatChildPanelSpawnedFrom = myNavigator.objects('panel-1')._objectToSpawnFrom.fill()
+
+    expect( bgColorOfChildPanelAfterColorSetChange )
+        .toBe( colorOfCategoryThatChildPanelSpawnedFrom )
+
+    expect( bgColorOfBridgeAfterColorSetChange )
+        .toBe( colorOfCategoryThatChildPanelSpawnedFrom )
+})
+
+
+
+
+
+//// LABELS ////////////////////////////////////////////////////////////////////////
+
+
+// TODO: Navigator panels tested (if necessary)
+// test ('Clicking on a category must make a query and visualize query results with a new panel', async () => {
+//
+//     // Clear JEST's DOM to prevent leftovers from previous tests
+//     document.body.innerHTML = ''
+//     // Create svg container
+//     const svg = new container.Svg()
+//
+//     //// CREATE A NAVIGATOR OBJECT ////
+//     // Create Navigator object and tag it for later selectability
+//     const myNavigator = new navigator.Navigator()
+//     myNavigator.id('my-navigator').update()
+//
+//     // Load a dataset into Navigator
+//     await myNavigator.loadDataset(
+//         'http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv',
+//         ['Name']
+//     )
+//     myNavigator.update()
+//
+//
+// })

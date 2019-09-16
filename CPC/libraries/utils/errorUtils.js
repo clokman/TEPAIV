@@ -10,10 +10,7 @@
 
 
 
-
-
-               
-// Module content goes here. 
+// Module content goes here.
 const version = "1.0"
 
 
@@ -52,7 +49,7 @@ Object.prototype.mustBeAnElementIn = function(array){
 
         let arrayAsString = array.convertToString()
 
-        throw Error(`'${this}' is not a valid value. Possible values are: '${arrayAsString}'.`)
+        throw Error(`'${this}' is not a valid value. Expected values are: '${arrayAsString}'.`)
     }
 
 }
@@ -72,7 +69,7 @@ Object.prototype.mustBeAKeyIn = function(map){
 
         let mapKeysAsString = map.convertKeysToString()
 
-        throw Error(`'${this}' is not as valid value. Possible values are: '${mapKeysAsString}'.`)
+        throw Error(`'${this}' is not as valid value. Expected values are: '${mapKeysAsString}'.`)
     }
 }
 

@@ -12,6 +12,9 @@ if (typeof Object.fromEntries !== 'function') {
     Object.fromEntries = require('object.fromentries')
 }
 
+//// PURE NODE DEPENDENCIES ////
+require('../../../../../JestUtils/jest-console')
+require('../../../../../JestUtils/jest-dom')
 
 //// REQUIREMENTS ////
 
@@ -20,6 +23,8 @@ global.d3 = {
     ...require("../../../external/d3/d3"),
     ...require("../../../external/d3/d3-array")
 }
+d3.selection.prototype.duration = jest.fn( function(){return this} )
+d3.selection.prototype.transition = jest.fn( function(){return this} )
 
 
 // Lodash //
@@ -43,12 +48,13 @@ const navigator = require("../../navigator")
 
 
 
-//// CATEGORY /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//// UNIT TESTS ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-//// INSTANTIATE ///
+//// INSTANTIATE ///////////////////////////////////////////////////////////////
 
-test ('Should instantiate a Category class object', () => {
+test ('Instantiate Category', () => {
 
     const myCategory = new navigator.Category()
 
@@ -57,34 +63,140 @@ test ('Should instantiate a Category class object', () => {
 })
 
 
-//// COORDINATES ///
+//// COORDINATES ///////////////////////////////////////////////////////////////
 
-test ('Should get and set coordinates', () => {
+test ('Get and set coordinates (and positions of objects in category)', () => {
 
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+    // Create svg
+    const mySvg = new container.Svg()
+    // Create category
     const myCategory = new navigator.Category()
 
-    // SINGLE METHOD //
+    // Also create a label, so that it can be moved as well
+    myCategory.label('My label').update()
 
-    // x()
-    expect(myCategory.x(11).x()).toBe(11)
-    // y()
-    expect(myCategory.y(22).y()).toBe(22)
 
+    // SELECTIONS //
+    const categoryElement = document.querySelector('.category')
+    const rectangleElement = document.querySelector('.category rect')
+    const labelObject = myCategory.objects('label')
+        , labelElement = document.querySelector('.category-label')
+    const percentageObject = myCategory.objects('text')
+        , percentageElement = document.querySelector('.rectangle-caption')
+
+
+    // X() ///////////////
+
+    const initialX = myCategory.x()
+        , initialXForPercentage = percentageObject.x()
+        , initialXForLabel = labelObject.x()
+    const newX = initialX + 50
+        , newXForPercentage = initialXForPercentage + 50
+        , newXForLabel = initialXForLabel + 50
+
+    // Update x coordinate
+    myCategory.x(newX).update()
+
+    // Properties and attributes of all objects/elements should be updated
+    expect(myCategory.x()).toBe(newX)
+    expect(rectangleElement.getAttribute('x')).toBe(String(newX))
+    expect(percentageElement.getAttribute('x')).toBe(String(newXForPercentage))
+    expect(labelElement.getAttribute('x')).toBe(String(newXForLabel))
+
+
+
+    // Y() ///////////////
+
+    const initialY = myCategory.y()
+        , initialYForPercentage = percentageObject.y()
+        , initialYForLabel = labelObject.y()
+    const newY = initialY + 50
+        , newYForPercentage = initialYForPercentage + 50
+        , newYForLabel = initialYForLabel + 50
+
+    // Update y coordinate
+    myCategory.y(newY).update()
+
+    // Properties and attributes of all objects/elements should be updated
+    expect(myCategory.y()).toBe(newY)
+    expect(rectangleElement.getAttribute('y')).toBe(String(newY))
+    expect(percentageElement.getAttribute('y')).toBe(String(newYForPercentage))
+    expect(labelElement.getAttribute('y')).toBe(String(newYForLabel))
+
+
+})
+
+
+test ('Chain syntax', () => {
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+    // Create svg
+    const mySvg = new container.Svg()
+    // Create category
+    const myCategory = new navigator.Category()
+
+
+    // CHAIN SYNTAX //
     // x().y()
-    myCategory.x(33).y(44)
-    expect(myCategory.x()).toBe(33)
-    expect(myCategory.y()).toBe(44)
+    myCategory.x(11).y(11)
+    expect(myCategory.x()).toBe(11)
+    expect(myCategory.y()).toBe(11)
 
     // y().x()
-    myCategory.y(55).x(66)
-    expect(myCategory.y()).toBe(55)
-    expect(myCategory.x()).toBe(66)
+    myCategory.y(22).x(22)
+    expect(myCategory.y()).toBe(22)
+    expect(myCategory.x()).toBe(22)
 
 })
 
 
 
-//// FILL ///
+//// HEIGHT ///////////////////////////////////////////////////////////////
+
+test ('Get and set height (and positions of objects in category)', () => {
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+    // Create svg
+    const mySvg = new container.Svg()
+    // Create category
+    const myCategory = new navigator.Category()
+
+    // Also create a label, so that it can be moved as well
+    myCategory.label('My label').update()
+
+
+    // SELECTIONS //
+    const categoryElement = document.querySelector('.category')
+    const rectangleElement = document.querySelector('.category rect')
+    const labelObject = myCategory.objects('label')
+        , labelElement = document.querySelector('.category-label')
+    const percentageObject = myCategory.objects('text')
+        , percentageElement = document.querySelector('.rectangle-caption')
+
+
+    // HEIGHT() ////////////////
+
+    // Update height
+    myCategory.height(111).update()
+
+    // Object property and element attribute should be updated
+    expect(myCategory.height()).toBe(111)
+    expect(rectangleElement.getAttribute('height')).toBe(String(111))
+
+    // Properties and attributes of all objects/elements in category should be updated
+    expect(percentageElement.getAttribute('y')).toBe("83.5")
+    expect(labelElement.getAttribute('y')).toBe("83.5")
+
+
+})
+
+
+
+//// FILL ///////////////////////////////////////////////////////////////
 
 test ('Should get and set fill color using single and chain syntax', () => {
 
@@ -102,7 +214,7 @@ test ('Should get and set fill color using single and chain syntax', () => {
 })
 
 
-//// PERCENTAGE VALUE & PERCENTAGE TEXT ///
+//// PERCENTAGE VALUE & PERCENTAGE TEXT ///////////////////////////////////////////////////////////////
 
 test ('Should get and set percentage using single and chain syntax', () => {
 
@@ -129,7 +241,7 @@ test ('Should get and set percentage using single and chain syntax', () => {
 
 
 
-//// PERCENTAGE TEXT COLOR ///
+//// PERCENTAGE TEXT COLOR ///////////////////////////////////////////////////////////////
 
 test ('Should get and set percentage text fill color using single and chain syntax', () => {
 
@@ -146,7 +258,7 @@ test ('Should get and set percentage text fill color using single and chain synt
 })
 
 
-//// CLASS ///
+//// CLASS ///////////////////////////////////////////////////////////////
 
 test ('Should get and set parent group class of the category using single and chain syntax', () => {
 
@@ -156,7 +268,7 @@ test ('Should get and set parent group class of the category using single and ch
     // SINGLE METHOD //
 
     // Class
-    expect(myCategory.class()).toBe(null)
+    expect(myCategory.class()).toBe('category')
     // expect(myCategory.class('class-1').class()).toBe('class-1')
 
     // ID
@@ -179,5 +291,234 @@ test ('Should get and set parent group class of the category using single and ch
     expect(myCategory.id()).toBe('Vulcan')
     expect(myCategory.x()).toBe(8888)
     expect(myCategory.y()).toBe(9999)
+
+})
+
+
+
+//// LABEL ///////////////////////////////////////////////////////////////
+
+test ('Get label', () => {
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+    // Create svg
+    const mySvg = new container.Svg()
+    // Create category
+    const myCategory = new navigator.Category()
+
+
+    // Get label before setting it
+    expect(myCategory.label()).toBeNull()
+
+    // Set label
+    myCategory.label('My label').update()
+
+    // Get label after setting it
+    expect(myCategory.label()).toBe('My label')
+
+})
+
+
+
+
+test ('Set label', () => {
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+    // Create svg
+    const mySvg = new container.Svg()
+    // Create category
+    const myCategory = new navigator.Category()
+
+    // Check that there are no label objects or elements already
+    // property
+    expect(myCategory.label()).toBe(null)
+    // object
+    expect(myCategory.objects('label')).toBeUndefined()
+    // element
+    expect(document.querySelectorAll('.category-label')).toHaveLength(0)
+
+
+    // Set label
+    myCategory
+        .label('My label')
+        .update()
+
+    // Select label and percentage objects and elements
+    const labelObject = myCategory.objects('label')
+        , percentageObject = myCategory.objects('text')
+    const labelElement = document.querySelector('.category-label')
+        , percentageElement = document.querySelector('.rectangle-caption')
+
+    // Label property should be set and an object and element should have been created
+    expect(myCategory.label()).toBe('My label')
+    expect(labelElement.textContent).toBe('My label')
+    expect(labelObject).toBeDefined()
+    expect(labelElement).not.toBeNull()
+
+    // Label element should be a child of category element (which is a group)
+    expect(labelElement.parentElement.className.baseVal).toBe('category')
+
+
+
+    // Y coordinate of the label object should be equal to that of percentage object
+    expect(labelObject.y()).toBe(percentageObject.y())
+
+    // Check the Y coordinates of label and percentage also on the DOM
+    expect(labelElement.getAttribute('y')).toBe(percentageElement.getAttribute('y'))
+
+
+    // Check other object properties and element attributes of label //
+
+    // x
+    const expectedLabelPosition = myCategory.x() - myCategory.labelDistance();
+    expect(labelObject.x()).toBe(expectedLabelPosition)
+    expect(labelElement.getAttribute('x')).toBe(String(expectedLabelPosition))
+
+    // Fill
+    expect(labelObject.fill()).toBe('gray')
+    expect(labelElement.getAttribute('fill')).toBe('gray')
+
+    // Text anchor
+    expect(labelObject.textAnchor()).toBe('end')
+    expect(labelElement.getAttribute('text-anchor')).toBe('end')
+
+    // Dominant baseline
+    expect(labelObject.dominantBaseline()).toBe(percentageObject.dominantBaseline())
+    expect(labelElement.getAttribute('dominant-baseline')).toBe(percentageElement.getAttribute('dominant-baseline'))
+
+    // Class
+    expect(labelObject.class()).toBe('category-label')
+
+})
+
+
+
+
+test ('Turn label off', () => {
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+    // Create svg
+    const mySvg = new container.Svg()
+    // Create category
+    const myCategory = new navigator.Category()
+
+    // Set label
+    myCategory
+        .label('My label')
+        .update()
+
+    // Select label and percentage objects and elements
+    const labelObject = myCategory.objects('label')
+    const labelElement = document.querySelector('.category-label')
+
+    // Label property should be set and an object and element should have been created
+    expect(myCategory.label()).toBe('My label')
+    expect(labelObject).toBeDefined()
+    expect(labelElement).not.toBeNull()
+
+    myCategory
+        .label(false)
+        .update()
+
+    // Label property should be set to null, and an object and element should have been created
+    const labelObjectAfterRemoval = myCategory.objects('label')
+    const labelElementAfterRemoval = document.querySelector('.category-label')
+    expect(myCategory.label()).toBe(null)
+    expect(labelObjectAfterRemoval).toBeUndefined()
+    expect(labelElementAfterRemoval).toBeNull()
+})
+
+
+
+test ('Get/set label distance', () => {
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+    // Create svg
+    const mySvg = new container.Svg()
+    // Create category
+    const myCategory = new navigator.Category()
+
+
+    // Save initial label distance for later comparison
+    const initialLabelDistance = myCategory.labelDistance()
+
+    // Verify that using labelDistance as a getter worked
+    expect(initialLabelDistance.constructor.name).toBe('Number')
+
+    // Set label
+    myCategory
+        .label('My label')
+        .update()
+
+    const labelObject = myCategory.objects('label')
+    const labelElement = document.querySelector('.category-label')
+
+    // Check initial X coordinates of label //
+    const expectedXCoordinateOfLabel = myCategory.x() - myCategory.labelDistance()
+    // property
+    expect(labelObject.x()).toBe(expectedXCoordinateOfLabel)
+    // attribute
+    expect(labelElement.getAttribute('x')).toBe(String(expectedXCoordinateOfLabel))
+
+
+    // Set new label distance
+    const newLabelDistance = initialLabelDistance + 25
+    myCategory
+        .labelDistance(newLabelDistance)
+        .update()
+
+
+    // X coordinate of label should be updated //
+    const newExpectedXCoordinateOfLabel = myCategory.x() - myCategory.labelDistance()
+    // property
+    expect(labelObject.x()).toBe(newExpectedXCoordinateOfLabel)
+    // attribute
+    expect(labelElement.getAttribute('x')).toBe(String(newExpectedXCoordinateOfLabel))
+
+
+})
+
+
+
+test ('Get/set label color', () => {
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+    // Create svg
+    const mySvg = new container.Svg()
+    // Create category
+    const myCategory = new navigator.Category()
+    // Toggle label
+    myCategory.label('My label').update()
+
+
+    // Selections
+    const labelObject = myCategory.objects('label')
+    const labelElement = document.querySelector('.category-label')
+
+
+    // Save initial label color for later comparison
+    const initialFill = myCategory.labelFill()
+
+    // Verify that using labelFill as a getter worked
+    expect(initialFill.constructor.name).toBe('String')
+
+    // Set new label fill
+    expect('salmon').not.toBe(initialFill)
+
+    myCategory
+        .labelFill('salmon')
+        .update()
+
+    // Verify that object properties and element attributes are updated
+    // properties
+    expect(myCategory.labelFill()).toBe('salmon')  // category object's property
+    expect(labelObject.fill()).toBe('salmon')  // text object's property
+    // attributes
+    expect(labelElement.getAttribute('fill')).toBe('salmon')
 
 })

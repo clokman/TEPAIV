@@ -16,18 +16,17 @@
 // Module content goes here. 
 const version = "1.0"
 
+Object.prototype.hasType = function (value) {
 
-function type(value){
-    return value.constructor.name
+    return this.constructor.name
+
 }
-
-
 
                                                 
 //// UMD FOOT ////////////////////////////////////////////////////////////////////////
                              
     //// MODULE.EXPORTS ////
-    exports.type = type;
+    exports.version = version;
 
 
 	Object.defineProperty(exports, '__esModule', { value: true });

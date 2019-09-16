@@ -62,7 +62,7 @@ test ('VALIDATION: Value must be an element in an array', () => {
     // Invalid value
     expect( () => {
         'x'.mustBeAnElementIn(acceptableParameters_array)
-    }).toThrow("'x' is not a valid value. Possible values are: 'a, b, c'.")
+    }).toThrow("'x' is not a valid value. Expected values are: 'a, b, c'.")
 
 })
 
@@ -83,7 +83,7 @@ test ('VALIDATION: Value must be an key in a map', () => {
     // Invalid value
     expect( () => {
         'hot'.mustBeAKeyIn(acceptableParameters_map)
-    }).toThrow("'hot' is not as valid value. Possible values are: 'cold, warm'.")
+    }).toThrow("'hot' is not as valid value. Expected values are: 'cold, warm'.")
 
 })
 

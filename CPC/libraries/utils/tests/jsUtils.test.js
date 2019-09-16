@@ -51,19 +51,13 @@ global.__ = {
 
 test ('Return the type of an object', () => {
 
-    const typeOfAnArray = __.type(['a', 'b', 'c'])
-    const typeOfAMap = __.type(new Map())
-    const typeOfAString = __.type('my string')
-    const typeOfANumber = __.type(5)
-    const typeOfABoolean = __.type(false)
+    const myNumber = 5
 
-    const typeOfACustomClass = __.type(new container.Svg()) // a custom class
-
-    expect(typeOfAnArray).toBe('Array')
-    expect(typeOfAMap).toBe('Map')
-    expect(typeOfAString).toBe('String')
-    expect(typeOfANumber).toBe('Number')
-    expect(typeOfABoolean).toBe('Boolean')
-    expect(typeOfACustomClass).toBe('Svg')
+    expect( ['a', 'b', 'c'].hasType() ).toBe('Array')
+    expect( new Map().hasType() ).toBe('Map')
+    expect('a'.hasType()).toBe('String')
+    expect( myNumber.hasType() ).toBe('Number')
+    expect( false.hasType()).toBe('Boolean')
+    expect( new container.Svg().hasType() ).toBe('Svg')
 
 })

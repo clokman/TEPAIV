@@ -6,7 +6,7 @@
 
 //// SVG  ////
 
-mySvg = new container.Svg(1600, 1280)
+mySvg = new container.Svg(5000, 15000)
 
 
 // //// RECTANGLE  ////
@@ -22,13 +22,21 @@ mySvg = new container.Svg(1600, 1280)
 // myText.x(450).fill('red').update()
 //
 //
-//
-// // //// CATEGORY  ////
-// // const parentElementForCategory = d3.select('body').select('svg')
-// //
-// // myCategory = new navigator.Category(parentElementForCategory)
-// // myCategory.x(400).y(100).fill('dodgerblue').update()
-//
+
+
+
+//// CATEGORY  ////
+const parentElementForCategory = d3.select('body').select('svg')
+
+myCategory = new navigator.Category(parentElementForCategory)
+myCategory
+    .x(85)
+    .y(700)
+    .fill('dodgerblue')
+    .label('A label')
+    .update()
+
+
 //
 // //// CAPTIONED RECTANGLE ////
 //
@@ -67,61 +75,88 @@ mySvg = new container.Svg(1600, 1280)
 //
 //
 // CHART  ////
-//
-// const parentElementForChart = d3.select('body').select('svg')
-//
-// myChart = new navigator.Chart(parentElementForChart)
-// myChart.x(400).update()
-//
+
+// Without labels
+const parentElementForChart = d3.select('body').select('svg')
+myChart = new navigator.Chart(parentElementForChart)
+myChart.x(450).y(650).update()
+
 // // Update data of chart
-// const tempStack = new data.Stack()
+// tempStack = new data.Stack()
 //     .populateWithExampleData('gender')
 // myChart.stack(tempStack)
 
-//
-// // Update data of chart
-// const tempStack = new data.Stack()
-//     .populateWithExampleData('gender')
-// myChart.stack(tempStack)
 
-//
-//
-//
+// Chart with labels
+myChart = new navigator.Chart()
+myChart.x(325).y(650).categoryLabels(true).update()
+myChart.label('MY CHART LABEL').update()
+
 // //// PANEL ////
-//
+
 const parentElementForPanel = d3.select('body').select('svg')
 myPanel = new navigator.Panel()
     .bgFill('#deebf7')
-    .x(400)
-    .update()
-//
-//
-//
-myParentPanel = new navigator.Panel()
-    .bgFill('#deebf7')
-    .x(550)
+    .x(650).y(650)
     .update()
 
-// //
+myPanel.yAxisLabels()
+
+
+myPanel2 = new navigator.Panel()
+    .bgFill('#deebf7')
+    .x(800).y(650)
+    .update()
+myPanel2.objects('gender').colorScheme('Blues').update()
+myPanel2.objects('class').colorScheme('RdPu').update()
+myPanel2.objects('status').colorScheme('Oranges').update()
+
+
+myPanel3 = new navigator.Panel()
+    .bgFill('#deebf7')
+    .x(950).y(650)
+    .update()
+myPanel3.objects('gender').colorScheme('YlGn').update()
+myPanel3.objects('class').colorScheme('YlGnBu').update()
+myPanel3.objects('status').colorScheme('BuPu').update()
+
+
+myPanel4 = new navigator.Panel()
+    .bgFill('#deebf7')
+    .x(1100).y(650)
+    .update()
+myPanel4.objects('gender').colorScheme('Greys').update()
+myPanel4.objects('class').colorScheme('Greys').update()
+myPanel4.objects('status').colorScheme('Greys').update()
+
+
+
+//// NESTED PANEL ////
+//
+// myParentPanel = new navigator.Panel()
+//     .bgFill('#deebf7')
+//     .x(800).y(650)
+//     .update()
+
+
 // // Demo Code //
 // // myPanel.objects('gender').x(300).y(25).height(100).width(100).update()
 // // myPanel.objects('status').x(300).y(135).height(100).width(100).update()
 // // myPanel.objects('class').x(300).y(245).height(100).width(100).update()
 // // myPanel.objects('class').objects('first-class').fill('blue').update()
+
 //
-
-
-spawnObjectForChild1 = myParentPanel.objects('gender').objects('female')
-spawnObjectForChild1.fill('salmon')
-
-myChildPanel1 = new navigator.Panel(myParentPanel, spawnObjectForChild1, 0)
-
-spawnObjectForChild2 = myChildPanel1.objects('gender').objects('male')
-spawnObjectForChild2.fill('lightblue')
-
-setTimeout(() => {
-    myChildPanel2 = new navigator.Panel(myChildPanel1, spawnObjectForChild2, 0)
-},500)
+// spawnObjectForChild1 = myParentPanel.objects('gender').objects('female')
+// spawnObjectForChild1.fill('salmon')
+//
+// myChildPanel1 = new navigator.Panel(myParentPanel, spawnObjectForChild1, 0)
+//
+// spawnObjectForChild2 = myChildPanel1.objects('gender').objects('male')
+// spawnObjectForChild2.fill('lightblue')
+//
+// setTimeout(() => {
+//     myChildPanel2 = new navigator.Panel(myChildPanel1, spawnObjectForChild2, 0)
+// },500)
 
 
 
@@ -175,9 +210,11 @@ setTimeout(() => {
 
 //// NAVIGATOR ////
 
-const myNavigator = new navigator.Navigator()
+// Navigator 1
 
-myNavigator.loadDataset(
+const navigator1 = new navigator.Navigator()
+
+navigator1.loadDataset(
     'http://localhost:3000/data/titanic.csv',
     ['Name']
 ).then(that => {
@@ -185,11 +222,109 @@ myNavigator.loadDataset(
 
     that.x(100).update()
 
-    // myNavigator.objects('panel-0').height(1500).update()
-    myNavigator.objects('panel-0').drawYAxisLabels()
-
+    // navigator1.objects('panel-0').height(1500).update()
+    navigator1.objects('panel-0').yAxisLabels()
 
 })
+
+
+// Navigator 2
+
+const navigator2 = new navigator.Navigator()
+
+navigator2.loadDataset(
+    'http://localhost:3000/data/titanic-embark-partial.csv',
+    ['Name']
+).then(that => {
+    that.update()
+
+    that.x(600).update()
+
+    // navigator2.objects('panel-0').height(1500).update()
+    navigator2.objects('panel-0').yAxisLabels()
+})
+
+
+
+// Navigator 3
+
+const navigator3 = new navigator.Navigator()
+
+navigator3.loadDataset(
+    'http://localhost:3000/data/sophia.csv',
+    ['Name']
+).then(that => {
+    that.update()
+
+    that.x(1200).update()
+
+    // navigator3.objects('panel-0').height(1500).update()
+    navigator3.objects('panel-0').yAxisLabels()
+
+})
+
+
+// Navigator 4
+
+const navigator4 = new navigator.Navigator()
+
+navigator4.loadDataset(
+    'http://localhost:3000/data/mushrooms/mushrooms-4columns.csv',
+    ['Name']
+).then(that => {
+    that.update()
+
+    that
+        .x(1800)
+        .update()
+
+    navigator4.objects('panel-0').yAxisLabels()
+})
+
+
+// Navigator 5
+
+const navigator5 = new navigator.Navigator()
+
+navigator5.loadDataset(
+    'http://localhost:3000/data/mushrooms/mushrooms-8columns.csv',
+    ['Name']
+).then(that => {
+    that.update()
+
+    that
+        .x(2400)
+        .update()
+
+    navigator5.objects('panel-0').height(1000).update()
+    navigator5.objects('panel-0').yAxisLabels()
+})
+
+
+// Navigator 6
+
+const navigator6 = new navigator.Navigator()
+
+navigator6.loadDataset(
+    'http://localhost:3000/data/mushrooms/mushrooms.csv',
+    ['Name']
+).then(that => {
+    that.update()
+
+    that
+        .x(3000)
+        .update()
+
+    navigator6.objects('panel-0').height(10000).update()
+    navigator6.objects('panel-0').yAxisLabels()
+})
+
+
+
+
+    // myNavigator.objects('panel-0').objects('Ticket').colorScheme('Purples').update()
+    // myNavigator.objects('panel-0').objects('Status').colorScheme('Blues').update()
+    // myNavigator.objects('panel-0').objects('Gender').colorScheme('Greens').update()
 
 // Alternative Dataset paths //
 // http://localhost:3000/data/titanic.csv
@@ -213,4 +348,3 @@ myNavigator.loadDataset(
     // - Distribution to survival
 
 // - Survival rate of first class females
-

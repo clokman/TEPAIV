@@ -20,6 +20,11 @@ global.d3 = {
     ...require("../../../external/d3/d3-array")
 }
 
+// Disable d3 transitions
+d3.selection.prototype.transition = jest.fn( function(){return this} )
+d3.selection.prototype.duration = jest.fn( function(){return this} )
+
+
 global.classUtils = require("../../../utils/classUtils")
 global.container = require("../../container")
 global.shape = require("../../shape")
@@ -281,5 +286,37 @@ test ('Should set Text class and ID with single and chain syntax', () => {
     expect(myText.x()).toBe(8888)
     expect(myText.y()).toBe(9999)
 
+
+})
+
+
+// Text rotation
+
+test ('Rotation', () => {
+
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+
+    // Create svg container
+    const svg = new container.Svg()
+
+    // Create Text object
+    const myText = new shape.Text()
+
+    // Getter (and default rotation value)
+    expect( myText.rotation() ).toBe(0)
+
+    // Check DOM for default values
+    expect( document.querySelector('text').getAttribute('transform') ).toBe(null)
+
+    // Setter
+    myText.rotation(270).update(0)
+
+    // Check rotation property
+    expect( myText.rotation() ).toBe(270)
+    // Check rotation attribute
+    expect( document.querySelector('text').getAttribute('transform') )
+        .toBe( "rotate( 270, 25, 25 )" )
 
 })

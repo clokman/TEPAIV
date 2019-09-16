@@ -1,4 +1,4 @@
-//// IMPORTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//// DEPENDENCIES /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //// POLYFILLS ////
 
@@ -13,13 +13,19 @@ if (typeof Object.fromEntries !== 'function') {
 }
 
 
-//// REQUIREMENTS ////
+//// PURE NODE DEPENDENCIES ////
+require('../../../../../JestUtils/jest-console')
+require('../../../../../JestUtils/jest-dom')
+
 
 // D3 //
 global.d3 = {
     ...require("../../../external/d3/d3"),
     ...require("../../../external/d3/d3-array")
 }
+d3.selection.prototype.duration = jest.fn( function(){return this} )
+d3.selection.prototype.transition = jest.fn( function(){return this} )
+
 
 
 // Lodash //
@@ -305,5 +311,197 @@ test ('Should update stack data and also the related instance variables', () => 
     // Check if range stack is updated
     expect(myChart._rangeStack.data('female').get('label')).toBe('Female')
 
+
+})
+
+
+//// CATEGORY LABELS ////
+
+test ('Get/TurnOn/TurnOff category labels', () => {
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+    // Create svg
+    const mySvg = new container.Svg()
+    // Create chart
+    const myChart = new navigator.Chart()
+
+    // Check that there are no label objects and elements already
+    expect(document.querySelectorAll('.category-label')).toHaveLength(0)
+
+
+    // Get initial category labels
+    expect(myChart.categoryLabels()).toTabulateAs(`\
+┌─────────┬────────┐
+│ (index) │ Values │
+├─────────┼────────┤
+│    0    │  null  │
+│    1    │  null  │
+│    2    │  null  │
+└─────────┴────────┘`)
+
+
+    //// TOGGLE LABELS ON ////
+
+    // Toggle category labels on
+    myChart.categoryLabels(true).update()
+
+    // Get now-created category labels
+    expect(myChart.categoryLabels()).toTabulateAs(`\
+┌─────────┬──────────────┐
+│ (index) │    Values    │
+├─────────┼──────────────┤
+│    0    │ 'category-1' │
+│    1    │ 'category-2' │
+│    2    │ 'category-3' │
+└─────────┴──────────────┘`)
+
+    // New label elements should be created
+    const categoryLabelElements = document.querySelectorAll('.category-label')
+    expect(categoryLabelElements).toHaveLength(3)
+
+    // Label object properties and texts of label elements should match each other
+    categoryLabelElements.forEach((categoryLabelElement) => {
+        const categoryObject = myChart.objects(categoryLabelElement.textContent)
+        expect(categoryObject.label()).toBe(categoryLabelElement.textContent)
+    })
+
+
+    //// TOGGLE LABELS ON (ALTERNATIVE UNDERLYING DATA WITH SPACES) ////
+
+    // Using data with spaces in category names should not lead to problems //
+    // Replace data with one that has spaces in category names
+    const stackWithSpacedNames = new data.Stack()
+        .populateWithExampleData('generic with spaces in category names')
+    myChart.stack(stackWithSpacedNames)
+    expect(myChart.categoryLabels()).toTabulateAs(`\
+┌─────────┬────────┐
+│ (index) │ Values │
+├─────────┼────────┤
+│    0    │  null  │
+│    1    │  null  │
+│    2    │  null  │
+└─────────┴────────┘`)
+
+    myChart.categoryLabels(true)  // loading new data resets the labels, so they should be toggled on again
+    expect(myChart.categoryLabels()).toTabulateAs(`\
+┌─────────┬──────────────┐
+│ (index) │    Values    │
+├─────────┼──────────────┤
+│    0    │ 'category 1' │
+│    1    │ 'category 2' │
+│    2    │ 'category 3' │
+└─────────┴──────────────┘`)
+
+    // Select the newly created labels
+    const newCategoryLabelElements = document.querySelectorAll('.category-label')
+
+    // Label object properties and texts of label elements should match each other
+    newCategoryLabelElements.forEach((categoryLabelElement) => {
+        const categoryObject = myChart.objects(categoryLabelElement.textContent)
+        expect(categoryObject.label()).toBe(categoryLabelElement.textContent)
+    })
+
+
+
+    //// TOGGLE LABELS OFF ////
+    myChart.categoryLabels(false).update()
+
+    const categoryLabelElementsAfterToggleOff = document.querySelectorAll('.category-label')
+
+    expect(categoryLabelElementsAfterToggleOff).toHaveLength(0)
+    expect(myChart.categoryLabels()).toTabulateAs(`\
+┌─────────┬────────┐
+│ (index) │ Values │
+├─────────┼────────┤
+│    0    │  null  │
+│    1    │  null  │
+│    2    │  null  │
+└─────────┴────────┘`)
+
+})
+
+
+
+
+//// CHART LABEL ////
+
+test ('Get/Set/TurnOff chart label', () => {
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+    // Create svg
+    const mySvg = new container.Svg()
+    // Create chart
+    const myChart = new navigator.Chart()
+
+    // Check that there are no chart label objects and elements already
+    expect(document.querySelectorAll('.chart-label')).toHaveLength(0)
+
+
+    // Get chart label
+    expect( myChart.label() ).toBe( myChart._label )
+
+    // Set chart label
+    myChart.label('My label').update()
+
+    // Check that the chart label is correctly created on DOM
+    expect( document.querySelectorAll('.chart-label') ).toHaveLength(1)
+    expect( document.querySelector('.chart-label').textContent ).toBe('My label')
+
+
+
+})
+
+
+
+//// COLOR SCHEME ////
+
+test ('Color scheme', () => {
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+    // Create svg
+    const mySvg = new container.Svg()
+    // Create chart
+    const myChart = new navigator.Chart()
+
+
+    // Get color scheme
+    expect( myChart.colorScheme() ).toBe('Greys')  // the default color scheme
+    expect( myChart.actualColors() ).toTabulateAs(`\
+┌─────────┬────────┐
+│ (index) │ Values │
+├─────────┼────────┤
+│    0    │ 'gray' │
+│    1    │ 'gray' │
+│    2    │ 'gray' │
+└─────────┴────────┘`)
+
+
+    // Set color scheme
+    myChart.colorScheme('Blues').update()
+    expect( myChart.colorScheme() ).toBe('Blues')
+    expect( myChart.actualColors() ).toTabulateAs(`\
+┌─────────┬──────────────────────┐
+│ (index) │        Values        │
+├─────────┼──────────────────────┤
+│    0    │ 'rgb(24, 100, 170)'  │
+│    1    │ 'rgb(75, 151, 201)'  │
+│    2    │ 'rgb(147, 195, 223)' │
+└─────────┴──────────────────────┘`)
+
+
+    // Set color scheme
+    myChart.colorScheme('Reds').update()
+    expect( myChart.colorScheme() ).toBe('Reds')
+    expect( myChart.actualColors() ).toTabulateAs(`\
+┌─────────┬──────────────────────┐
+│ (index) │        Values        │
+├─────────┼──────────────────────┤
+│    0    │  'rgb(187, 21, 26)'  │
+│    1    │  'rgb(239, 69, 51)'  │
+│    2    │ 'rgb(252, 138, 107)' │
+└─────────┴──────────────────────┘`)
 
 })

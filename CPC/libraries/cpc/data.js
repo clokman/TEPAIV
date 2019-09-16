@@ -288,6 +288,30 @@ class Stack {
                     .set('percentage', 33)
         }
 
+        if (variant === 'generic with spaces in category names'){
+
+            exampleData.set('category 1', new Map())
+                .get('category 1')
+                    .set('label', 'Category One')
+                    .set('start', 0)
+                    .set('end', 10)
+                    .set('percentage', 33)
+
+            exampleData.set('category 2', new Map())
+                .get('category 2')
+                    .set('label', 'Category Two')
+                    .set('start', 10)
+                    .set('end', 20)
+                    .set('percentage', 33)
+
+            exampleData.set('category 3', new Map())
+                .get('category 3')
+                    .set('label', 'Category Three')
+                    .set('start', 20)
+                    .set('end', 30)
+                    .set('percentage', 33)
+        }
+
 
         if (variant === 'gender'){
 

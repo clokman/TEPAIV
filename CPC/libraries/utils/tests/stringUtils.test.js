@@ -1,5 +1,13 @@
 const stringUtils = require('../stringUtils')
 
+//// Width ////
+test ('WIDTH: Calculate string width in pixels', () => {
+
+    // Cannot test more precisely than these tests, because canvas is problematic in JEST,
+    expect( 'my string'.width() ).not.toBeNull()
+    expect( 'my string'.width('arial') ).not.toBeNull()
+
+})
 
 //// formatAsCssSelector() ////
 

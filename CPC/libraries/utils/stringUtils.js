@@ -16,6 +16,33 @@
 // Module content goes here.
 const version = "2.0"
 
+
+
+
+    /**
+     * Uses canvas.measureText to compute and return the width of the given text of given font in pixels.
+     *
+     * @param {String} text The text to be rendered.
+     * @param {String} font The css font descriptor that text is to be rendered with (e.g. "bold 14px verdana").
+     *
+     * @see Adapted from: https://stackoverflow.com/questions/118241/calculate-text-width-with-javascript/21015393#21015393
+     */
+    String.prototype.width = function(font='bold 12pt arial') {
+
+        // Re-use canvas object for better performance
+        const canvas = String.prototype.width.canvas || (String.prototype.width.canvas = document.createElement("canvas"))
+        const context = canvas.getContext("2d")
+        context.font = font
+
+        const metrics = context.measureText(this)
+
+        return metrics.width
+    }
+
+
+
+
+
     /**
      *
      * @param input {string}

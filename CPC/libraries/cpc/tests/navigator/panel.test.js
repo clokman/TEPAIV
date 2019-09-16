@@ -36,12 +36,17 @@ global._ = require("../../../external/lodash")
 global.$ = require("../../../external/jquery-3.1.1.min")
 
 
-// Internal //
-global.classUtils = require("../../../utils/classUtils")
+// EXTENSIONS //
+require("../../../utils/errorUtils")
+
+
+// FUNCTIONAL UTILS //
 global.arrayUtils = require("../../../utils/arrayUtils")
+global.classUtils = require("../../../utils/classUtils")
+global.stringUtils = require("../../../utils/stringUtils")
+
 global.container = require("../../container")
 global.shape = require("../../shape")
-global.stringUtils = require("../../../utils/stringUtils")
 global.data = require("../../../cpc/data")
 global.dataset = require("../../../cpc/dataset")
 
@@ -758,7 +763,7 @@ test ('Update panel stacks, and also the related instance variables', () => {
 
 
 
-//// SPAWN LOCATION /////
+//// NESTED PANEL AND SPAWN SOURCE /////
 
 test ('Instantiate panel with a spawn location', () => {
 
@@ -775,14 +780,14 @@ test ('Instantiate panel with a spawn location', () => {
     const parentPanel = new navigator.Panel(mySvg)
     parentPanel.id('parent-panel').update()
 
-    // Create panel with spawn location
+    // Create a child panel that spawns from a category in parent panel
     objectToSpawnFrom = parentPanel.objects('gender').objects('male')
     const childPanel = new navigator.Panel(parentPanel, objectToSpawnFrom)
     childPanel.id('child-panel').update()
 
     // Child panel should refer to a category as its spawn source
-    const objectToSpawnFromPropertyClass = childPanel._objectToSpawnFrom.constructor.name
-    expect(objectToSpawnFromPropertyClass).toBe('Category')
+    const classOfObjectToSpawnFrom = childPanel._objectToSpawnFrom.constructor.name
+    expect(classOfObjectToSpawnFrom).toBe('Category')
 
     // There must be two panels after creating a child panel
     const numberOfPanels = document.querySelectorAll('.panel').length
@@ -806,58 +811,54 @@ test ('Instantiate panel with a spawn location', () => {
 })
 
 
-//// Y AXIS LABELS  ////  // TODO: This test MUST be completed
 
-test ('Should put category labels on y axis', () => {
+
+
+//// Y AXIS LABELS ////////////////////////////////////////////////////////////////////////
+
+
+test ('Toggle labels on y axis on/off', () => {
 
     // Clear JEST's DOM to prevent leftovers from previous tests
     document.body.innerHTML = ''
-
     // Create SVG
     const mySvg = new container.Svg()
         .height(1280)
-
     // Create panel
     const myPanel = new navigator.Panel()
         .x(150)
         .update()
 
-    // There should be no label objects in Panel instance
-    expect(myPanel._yAxisLabelsObject.get('categories').size).toBe(0)
 
-    // There should be no labels on y axis on initiation
+    //// INITIAL STATE CHECK ////
+
+    // Initially, there should be no labels on y axis
     let labelsOnYAxis = document.querySelectorAll('.category-label')
     expect(labelsOnYAxis).toHaveLength(0)
 
 
+    //// TOGGLE LABELS ON ////
+
     // Add labels
-    myPanel.drawYAxisLabels()
+    myPanel.yAxisLabels(true)
+
 
     // Labels should be created on DOM
     labelsOnYAxis = document.querySelectorAll('.category-label')
     expect(labelsOnYAxis).toHaveLength(7)
 
-    // Labels should have a parent group
-    const yAxisCategoryLabelsContainer = document.querySelector('.category-label').parentNode
-    expect(yAxisCategoryLabelsContainer.getAttribute('class')).toBe('category-labels')
-
-    const yAxisAllLabelsContainer = document.querySelector('.category-label').parentNode.parentNode
-    expect(yAxisAllLabelsContainer.getAttribute('class')).toBe('y-axis-labels')
-
-    // Label objects should be added to instance registry
-    expect(myPanel._yAxisLabelsObject.get('categories').size).toBe(7)
-
-    // Verify object properties and element attributes of a category //
-    // Object
-    const maleLabelObject = myPanel._yAxisLabelsObject.get('categories').get('male');
-    expect(maleLabelObject.text()).toBe('male')
-    expect(maleLabelObject.x()).toBe(140)
-    expect(maleLabelObject.y()).toBe(471)
-    // Elements
-    const maleLabelElement = document.querySelector('.category-label#male')
+    const maleLabelElement = document.querySelector('.category#male .category-label')
     expect(maleLabelElement.textContent).toBe('male')
     expect(maleLabelElement.getAttribute('x')).toBe("140")
-    expect(maleLabelElement.getAttribute('y')).toBe("471")
+    expect(maleLabelElement.getAttribute('y')).toBe("468.5")
+
+
+    //// TOGGLE LABELS OFF ////
+    myPanel.yAxisLabels(false)
+
+    // No label elements should be on DOM after toggle off
+    labelsOnYAxisAfterToggleOff = document.querySelectorAll('.category-label')
+    expect(labelsOnYAxisAfterToggleOff).toHaveLength(0)
 
 })
 
@@ -876,5 +877,174 @@ test ('Update label positions when panel position or height is changed', () => {
     // Create panel
     const myPanel = new navigator.Panel()
 
+})
+
+
+//// COLOR ////////////////////////////////////////////////////////////////////////
+
+test ('Assign color themes to charts in panel', () => {
+
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+    // Create SVG
+    const mySvg = new container.Svg()
+
+    // Create panel
+    const myPanel = new navigator.Panel()
+
+    // View the charts in panel
+    expect( myPanel.objects() ).toTabulateAs(`\
+┌───────────────────┬──────────┬─────────┐
+│ (iteration index) │   Key    │ Values  │
+├───────────────────┼──────────┼─────────┤
+│         0         │ 'gender' │ [Chart] │
+│         1         │ 'class'  │ [Chart] │
+│         2         │ 'status' │ [Chart] │
+└───────────────────┴──────────┴─────────┘`)
+
+
+    // View the rectangle colors in the 1st chart
+    expect( myPanel.objects('gender').actualColors() ).toTabulateAs(`\
+┌─────────┬──────────────────────┐
+│ (index) │        Values        │
+├─────────┼──────────────────────┤
+│    0    │ 'rgb(106, 81, 164)'  │
+│    1    │ 'rgb(158, 155, 201)' │
+└─────────┴──────────────────────┘`)
+
+    // myPanel.objects('class').colorScheme('Blues').update()
+
+
+    // View the rectangle colors in the 2nd chart
+    expect( myPanel.objects('class').actualColors() ).toTabulateAs(`\
+┌─────────┬──────────────────────┐
+│ (index) │        Values        │
+├─────────┼──────────────────────┤
+│    0    │ 'rgb(24, 100, 170)'  │
+│    1    │ 'rgb(75, 151, 201)'  │
+│    2    │ 'rgb(147, 195, 223)' │
+└─────────┴──────────────────────┘`)
+
+    // View the rectangle colors in the 3rd chart
+    expect( myPanel.objects('class').actualColors() ).toTabulateAs(`\
+┌─────────┬──────────────────────┐
+│ (index) │        Values        │
+├─────────┼──────────────────────┤
+│    0    │ 'rgb(24, 100, 170)'  │
+│    1    │ 'rgb(75, 151, 201)'  │
+│    2    │ 'rgb(147, 195, 223)' │
+└─────────┴──────────────────────┘`)
+
+})
+
+
+
+test ('Throw error if no spawn source is specified', () => {
+
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+
+
+    // Create SVG
+    const mySvg = new container.Svg()
+    mySvg.select()
+        .attr('id', 'top-svg')
+
+    // Create parent panel
+    const parentPanel = new navigator.Panel(mySvg)  // no need to specify a spawn source if no parent is specified
+    parentPanel.id('parent-panel').update()
+
+    // Create a child panel that spawns from a category in parent panel
+    objectToSpawnFrom = parentPanel.objects('gender').objects('male')
+    const legitimateChildPanel = new navigator.Panel(parentPanel, objectToSpawnFrom)  // spawn source must be specified if a parent panel is specified
+    legitimateChildPanel.id('child-panel').update()
+
+
+    // Try to create a child panel without specifying a spawn source (expect error)
+    expect( () => {
+        const parentPanel2 = new navigator.Panel(mySvg)  // no need to specify a spawn source if no parent is specified
+        const illegitimateChildPanel = new navigator.Panel(parentPanel2)   // cannot specify a parent panel without spawn source
+    } ).toThrow("The panel is specified to be a child of another panel, but no object is specified as spawn source (missing argument).")
+
+
+})
+
+
+test ('COLOR_THEME: Get and Set color theme', () => {
+
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+
+    // Create SVG
+    const mySvg = new container.Svg()
+
+    // Create parent panel
+    const myPanel = new navigator.Panel(mySvg)  // no need to specify a spawn source if no parent is specified
+
+
+    // Check initial colors
+
+    expect(myPanel.objects('gender').actualColors()).toTabulateAs(`\
+┌─────────┬──────────────────────┐
+│ (index) │        Values        │
+├─────────┼──────────────────────┤
+│    0    │ 'rgb(106, 81, 164)'  │
+│    1    │ 'rgb(158, 155, 201)' │
+└─────────┴──────────────────────┘`)  // Gender: Purples
+
+    expect(myPanel.objects('class').actualColors()).toTabulateAs(`\
+┌─────────┬──────────────────────┐
+│ (index) │        Values        │
+├─────────┼──────────────────────┤
+│    0    │ 'rgb(24, 100, 170)'  │
+│    1    │ 'rgb(75, 151, 201)'  │
+│    2    │ 'rgb(147, 195, 223)' │
+└─────────┴──────────────────────┘`)  // Class: Blues
+
+    expect(myPanel.objects('status').actualColors()).toTabulateAs(`\
+┌─────────┬──────────────────────┐
+│ (index) │        Values        │
+├─────────┼──────────────────────┤
+│    0    │  'rgb(34, 139, 69)'  │
+│    1    │ 'rgb(115, 195, 120)' │
+└─────────┴──────────────────────┘`)  // Status: Greens
+
+
+
+    // Get the current color theme
+    expect( myPanel.colorSet() ).toBe('Single-Hue')
+
+    // Change color theme
+    myPanel.colorSet('Greys').update()
+
+
+    // Check the changed colors
+    expect(myPanel.objects('gender').actualColors()).toTabulateAs(`\
+┌─────────┬──────────────────────┐
+│ (index) │        Values        │
+├─────────┼──────────────────────┤
+│    0    │  'rgb(80, 80, 80)'   │
+│    1    │ 'rgb(151, 151, 151)' │
+└─────────┴──────────────────────┘`)  // Gender: Grays
+
+    expect(myPanel.objects('class').actualColors()).toTabulateAs(`\
+┌─────────┬──────────────────────┐
+│ (index) │        Values        │
+├─────────┼──────────────────────┤
+│    0    │  'rgb(64, 64, 64)'   │
+│    1    │ 'rgb(122, 122, 122)' │
+│    2    │ 'rgb(180, 180, 180)' │
+└─────────┴──────────────────────┘`)  // Class: Blues
+
+    expect(myPanel.objects('status').actualColors()).toTabulateAs(`\
+┌─────────┬──────────────────────┐
+│ (index) │        Values        │
+├─────────┼──────────────────────┤
+│    0    │  'rgb(80, 80, 80)'   │
+│    1    │ 'rgb(151, 151, 151)' │
+└─────────┴──────────────────────┘`)  // Status: Greens
 
 })

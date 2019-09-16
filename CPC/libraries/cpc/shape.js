@@ -30,7 +30,7 @@
             this._htmlClass = null
             this._htmlId = null
             this._data = [null]
-            this._selection = null  // gets updated later as a d3 selection by _draw method
+            this._selection = null  // gets updated later as a d3 selection by _draw methods in e.g., Rectangle
         }
 
 
@@ -226,6 +226,7 @@
 
             this._fontFamily = 'sans-serif'
             this._fontSize = '14px'
+            this._rotation = 0
             this._textAnchor = 'start'
             this._dominantBaseline = 'hanging'
 
@@ -267,12 +268,17 @@
                 .attr('fill', this._fill)
                 .attr('font-family', this._fontFamily)
                 .attr('font-size', this._fontSize)
+                .attr('transform', `rotate( ${this._rotation}, ${this._x}, ${this._y} )`)
                 .attr('text-anchor', this._textAnchor)
                 .attr('dominant-baseline', this._dominantBaseline)
 
         }
 
-
+        /**
+         *
+         * @param value {string}
+         * @return {Text|string}
+         */
         text (value) {
 
             if (!arguments.length) {
@@ -286,6 +292,11 @@
         }
 
 
+        /**
+         *
+         * @param value {string} : e.g.,: '14px'
+         * @return {Text|string}
+         */
         fontSize(value) {
 
             if (!arguments.length) {
@@ -297,6 +308,27 @@
                 return this
             }
         }
+
+
+        /**
+         *
+         * @param value {number}
+         * @return {Text|number}
+         */
+        rotation(value) {
+
+            if (!arguments.length) {
+                return this._rotation
+            }
+            else {
+
+                this._rotation = value
+
+                return this
+            }
+
+        }
+
 
         /**
          *
@@ -314,6 +346,7 @@
                 return this
             }
         }
+
 
         /**
          *
@@ -370,15 +403,15 @@
             this._textObject = new shape.Text(this._selection)
             this.objects('text', this._textObject)  // add object to container registry
 
-            this.initializeRectangle()
-            this.initializeText()
+            this._initializeRectangle()
+            this._initializeText()
 
             this.update()
 
         }
 
 
-        initializeRectangle() {
+        _initializeRectangle() {
             this.x(this._x)
             this.y(this._y)
             this.width(this._width)
@@ -386,11 +419,11 @@
         }
 
 
-        initializeText(){
+        _initializeText(){
 
             this._calculateAndUpdateTextPositionProperties()
 
-            this._textObject.fill(this._textFill)
+            this._textObject.fill(this._textFill).class('rectangle-caption')
 
         }
 
