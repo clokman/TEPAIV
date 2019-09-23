@@ -139,10 +139,10 @@ myPanel4.objects('status').colorScheme('Greys').update()
 
 //// NESTED PANEL ////
 //
-// myParentPanel = new navigator.Panel()
-//     .bgFill('#deebf7')
-//     .x(800).y(650)
-//     .update()
+myParentPanel = new navigator.Panel()
+    .bgFill('#deebf7')
+    .x(1350).y(650)
+    .update()
 
 
 // // Demo Code //
@@ -152,17 +152,17 @@ myPanel4.objects('status').colorScheme('Greys').update()
 // // myPanel.objects('class').objects('first-class').fill('blue').update()
 
 //
-// spawnObjectForChild1 = myParentPanel.objects('gender').objects('female')
-// spawnObjectForChild1.fill('salmon')
-//
-// myChildPanel1 = new navigator.Panel(myParentPanel, spawnObjectForChild1, 0)
-//
-// spawnObjectForChild2 = myChildPanel1.objects('gender').objects('male')
-// spawnObjectForChild2.fill('lightblue')
-//
-// setTimeout(() => {
-//     myChildPanel2 = new navigator.Panel(myChildPanel1, spawnObjectForChild2, 0)
-// },500)
+spawnObjectForChild1 = myParentPanel.objects('gender').objects('female')
+spawnObjectForChild1.fill('salmon')
+
+myChildPanel1 = new navigator.Panel(myParentPanel, spawnObjectForChild1, 0)
+
+spawnObjectForChild2 = myChildPanel1.objects('gender').objects('male')
+spawnObjectForChild2.fill('lightblue')
+
+setTimeout(() => {
+    myChildPanel2 = new navigator.Panel(myChildPanel1, spawnObjectForChild2, 0)
+},500)
 
 
 
