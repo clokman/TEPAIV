@@ -1062,7 +1062,7 @@ test ('Depth index: Get and set', () => {
     //// GET DEPTH INDEX ////
 
     // GET default depth index value
-    expect( myPanel.depthIndex() ).toBe( 0 )
+    expect( myPanel._depthIndex() ).toBe( 0 )
 
     // Check things from DOM perspective
     let depthIndexOfPanel = document.querySelector('.panel').getAttribute('depthIndex')
@@ -1073,8 +1073,8 @@ test ('Depth index: Get and set', () => {
     //// SET DEPTH INDEX ////
 
     // Set a new depthIndex value
-    myPanel.depthIndex(1).update()
-    expect( myPanel.depthIndex() ).toBe( 1 )
+    myPanel._depthIndex(1).update()
+    expect( myPanel._depthIndex() ).toBe( 1 )
 
     // Check things from DOM perspective
     depthIndexOfPanel = document.querySelector('.panel').getAttribute('depthIndex')
@@ -1100,7 +1100,7 @@ test ('Depth index: Check automatic incrementation upon adding new panels', () =
     //// AUTO DEPTH INDEX: NO CHILD PANELS ////
 
     // Check the depth index in a one-panel setup
-    expect( parentPanel.depthIndex() ).toBe( 0 )
+    expect( parentPanel._depthIndex() ).toBe( 0 )
 
     // Check things from DOM perspective
     expect( document.querySelectorAll('.panel') ).toHaveLength(1)
@@ -1117,8 +1117,8 @@ test ('Depth index: Check automatic incrementation upon adding new panels', () =
     childPanel.id('child-panel').update()
 
     // Check the depth indexes
-    expect( parentPanel.depthIndex() ).toBe( 0 )
-    expect( childPanel.depthIndex() ).toBe( 1 )
+    expect( parentPanel._depthIndex() ).toBe( 0 )
+    expect( childPanel._depthIndex() ).toBe( 1 )
 
     // Check things from DOM perspective
     expect( document.querySelectorAll('.panel') ).toHaveLength(2)
@@ -1135,9 +1135,9 @@ test ('Depth index: Check automatic incrementation upon adding new panels', () =
     grandChildPanel.id('grandchild-panel').update()
 
     // Check the depth indexes
-    expect( parentPanel.depthIndex() ).toBe( 0 )
-    expect( childPanel.depthIndex() ).toBe( 1 )
-    expect( grandChildPanel.depthIndex() ).toBe( 2 )
+    expect( parentPanel._depthIndex() ).toBe( 0 )
+    expect( childPanel._depthIndex() ).toBe( 1 )
+    expect( grandChildPanel._depthIndex() ).toBe( 2 )
 
     // Check things from DOM perspective
     expect( document.querySelectorAll('.panel') ).toHaveLength(3)
@@ -1153,9 +1153,9 @@ test ('Depth index: Check automatic incrementation upon adding new panels', () =
     grandChildPanel.remove()
 
     // The variables are not deleted, so its ok for these to still exist
-    expect( parentPanel.depthIndex() ).toBe( 0 )
-    expect( childPanel.depthIndex() ).toBe( 1 )
-    expect( grandChildPanel.depthIndex() ).toBe( 2 )
+    expect( parentPanel._depthIndex() ).toBe( 0 )
+    expect( childPanel._depthIndex() ).toBe( 1 )
+    expect( grandChildPanel._depthIndex() ).toBe( 2 )
 
     // But on DOM, there should NOT be any child or grandchild panels or their depthIndexes.
     expect( document.querySelectorAll('.panel') ).toHaveLength(1)
@@ -1166,8 +1166,8 @@ test ('Depth index: Check automatic incrementation upon adding new panels', () =
     childPanel2.id('child-panel2').update()
 
     // Check depth indexes
-    expect( parentPanel.depthIndex() ).toBe( 0 )
-    expect( childPanel2.depthIndex() ).toBe( 1 )
+    expect( parentPanel._depthIndex() ).toBe( 0 )
+    expect( childPanel2._depthIndex() ).toBe( 1 )
 
     // Check things from DOM perspective
     expect( document.querySelectorAll('.panel') ).toHaveLength(2)

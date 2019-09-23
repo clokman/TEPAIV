@@ -265,27 +265,43 @@
          */
         _compressInnerHeightOfPanelsToFitLastPanel() {
 
-            const lastCreatedPanelObject = this.objects(this._lastCreatedPanelName)
-
-            const innerPaddingTopIncrement = lastCreatedPanelObject.innerPaddingTop() + this._lastClickedPanelObject._paddingBetweenCharts + lastCreatedPanelObject.innerPaddingTop()
-            const innerPaddingBottomIncrement = lastCreatedPanelObject.innerPaddingBottom() + this._lastClickedPanelObject._paddingBetweenCharts + lastCreatedPanelObject.innerPaddingBottom()
-
-
-            // Shrink previous panel(s)
-            this.objects().forEach((panelObject, panelName) => {
-
-                if (panelName !== this._lastCreatedPanelName) {  // do not shrink the newly created panel
-
-                    const depestPanelDepth = this._currentPanelDepth
-                    const currentPanelDepth = panelObject.depthIndex()
-
-                    const shrinkFactor = depestPanelDepth - currentPanelDepth
-
-                    panelObject.innerPaddingTop(shrinkFactor * innerPaddingTopIncrement * 0.75)
-                        .innerPaddingBottom(shrinkFactor * innerPaddingBottomIncrement * 1.5)
-                        .update()
-                }
+            // Make an array of objects (so it can be reversed)
+            const panelObjects = []
+            this.objects().forEach( (panelObject, panelName) => {
+                panelObjects.push(panelObject)
             })
+            const panelObjectsReversed = _.reverse(panelObjects)
+
+
+            panelObjectsReversed.forEach( panelObject  => {
+
+                if ( panelObject.parentObject ){
+
+                    // Get related variables for calculation
+                    const thisPanel = panelObject
+                    const parentPanel = panelObject.parentObject
+
+                    const selfInnerPaddingTop = thisPanel.innerPaddingTop()
+                    const selfInnerPaddingBottom = thisPanel.innerPaddingBottom()
+
+                    const selfOuterPaddingTop = thisPanel._outerPadding.top
+                    const selfOuterPaddingBottom = thisPanel._outerPadding.bottom
+
+                    // Shrink previous panel(s)
+                    parentPanel
+                        .innerPaddingTop( selfInnerPaddingTop + selfOuterPaddingTop )
+                        .innerPaddingBottom( selfInnerPaddingBottom + selfOuterPaddingBottom - selfOuterPaddingTop)
+                        .update()
+
+                    thisPanel._bridgeObject.update()
+                }
+
+
+            })
+
+
+
+
 
         }
 
@@ -405,7 +421,7 @@
 
             this._objectToSpawnFrom = objectToSpawnFrom
 
-            this._depthIndex = 0
+            this._depthIndexValue = 0   // 'value' added to name to separate the variable from the method of the otherwise same name
 
 
             this._bgExtension = 0
@@ -418,12 +434,19 @@
             this._bgTextFill = 'darkgray'
 
 
+            this._outerPadding = {  // distance between parent and child panel in pixels
+                top: 15,
+                bottom: 38,
+                left: 100,
+                right: 0
+            }
+
             if (thisPanelIsBeingEmbeddedInAnotherPanel) {
                 this.propertiesAtTheEndOfEmbedAnimation = {
-                    x: this.parentObject.x() + 100,
-                    y: this.parentObject.y() + 15,
-                    width: this.parentObject.width(),
-                    height: this.parentObject.height() - 38
+                    x: this.parentObject.x() + this._outerPadding.left,
+                    y: this.parentObject.y() + this._outerPadding.top,
+                    width: this.parentObject.width() + this._outerPadding.right,
+                    height: this.parentObject.height() - this._outerPadding.bottom
                 }
             }
 
@@ -437,7 +460,7 @@
             this._height = 500
 
 
-            this._innerPadding = {  // pixels
+            this._innerPadding = {  // distance between the panel borders and charts inside the panel in pixels
                 top: 30,
                 bottom: 10,
                 left: 10,
@@ -499,7 +522,7 @@
             }
 
             this.select()
-                .attr( 'depthIndex', this.depthIndex() )
+                .attr( 'depthIndex', this._depthIndex() )
 
             this._updateDomIfStacksDataHasChanged()
 
@@ -629,8 +652,8 @@
             this.parentObject.childObject = this
 
             // Update depth index of the current panel (an indicator of how deep it is located in panel hierarchy)
-            const depthOfParent = this.parentObject.depthIndex()
-            this.depthIndex(depthOfParent + 1)
+            const depthOfParent = this.parentObject._depthIndex()
+            this._depthIndex(depthOfParent + 1)
 
             // TODO: This is a temporary solution to get parent and grandparent objects, until a recursive version is implemented
             // TODO: A possible solution is to implement a try-while loop
@@ -1223,18 +1246,18 @@
         }
 
 
-        depthIndex(value) {
+        _depthIndex(value) {
 
             // Getter
             if( !arguments.length ){
-                return this._depthIndex
+                return this._depthIndexValue
             }
             // Setter
             else {
 
                 value.mustBeOfType('Number')
 
-                this._depthIndex = value
+                this._depthIndexValue = value
 
                 return this
             }

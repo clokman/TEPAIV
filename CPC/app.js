@@ -138,7 +138,7 @@ myPanel4.objects('status').colorScheme('Greys').update()
 
 
 //// NESTED PANEL ////
-//
+
 myParentPanel = new navigator.Panel()
     .bgFill('#deebf7')
     .x(1350).y(650)
@@ -151,7 +151,7 @@ myParentPanel = new navigator.Panel()
 // // myPanel.objects('class').x(300).y(245).height(100).width(100).update()
 // // myPanel.objects('class').objects('first-class').fill('blue').update()
 
-//
+
 spawnObjectForChild1 = myParentPanel.objects('gender').objects('female')
 spawnObjectForChild1.fill('salmon')
 
