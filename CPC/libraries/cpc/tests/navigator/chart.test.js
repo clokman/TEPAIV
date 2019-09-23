@@ -34,6 +34,8 @@ global._ = require("../../../external/lodash")
 
 // Internal //
 global.classUtils = require("../../../utils/classUtils")
+require("../../../utils/jsUtils")
+require("../../../utils/errorUtils")
 global.container = require("../../container")
 global.shape = require("../../shape")
 global.stringUtils = require("../../../utils/stringUtils")
@@ -331,7 +333,7 @@ test ('Get/TurnOn/TurnOff category labels', () => {
 
 
     // Get initial category labels
-    expect(myChart.categoryLabels()).toTabulateAs(`\
+    expect( myChart.categoryLabels() ).toTabulateAs(`\
 ┌─────────┬────────┐
 │ (index) │ Values │
 ├─────────┼────────┤
@@ -367,24 +369,27 @@ test ('Get/TurnOn/TurnOff category labels', () => {
     })
 
 
-    //// TOGGLE LABELS ON (ALTERNATIVE UNDERLYING DATA WITH SPACES) ////
+    //// HOT-SWAP LABELS (SWAP DATASET WHILE LABELS ARE TOGGLED ON) ////
+    //// ALSO: TEST LABELS WITH DATA THAT HAS SPACES ////
 
     // Using data with spaces in category names should not lead to problems //
     // Replace data with one that has spaces in category names
     const stackWithSpacedNames = new data.Stack()
         .populateWithExampleData('generic with spaces in category names')
-    myChart.stack(stackWithSpacedNames)
-    expect(myChart.categoryLabels()).toTabulateAs(`\
-┌─────────┬────────┐
-│ (index) │ Values │
-├─────────┼────────┤
-│    0    │  null  │
-│    1    │  null  │
-│    2    │  null  │
-└─────────┴────────┘`)
+
+
+    myChart.stack(stackWithSpacedNames).update()
+    expect( myChart.categoryLabels() ).toTabulateAs(`\
+┌─────────┬──────────────┐
+│ (index) │    Values    │
+├─────────┼──────────────┤
+│    0    │ 'category 1' │
+│    1    │ 'category 2' │
+│    2    │ 'category 3' │
+└─────────┴──────────────┘`)
 
     myChart.categoryLabels(true)  // loading new data resets the labels, so they should be toggled on again
-    expect(myChart.categoryLabels()).toTabulateAs(`\
+    expect( myChart.categoryLabels() ).toTabulateAs(`\
 ┌─────────┬──────────────┐
 │ (index) │    Values    │
 ├─────────┼──────────────┤
@@ -407,7 +412,7 @@ test ('Get/TurnOn/TurnOff category labels', () => {
     //// TOGGLE LABELS OFF ////
     myChart.categoryLabels(false).update()
 
-    const categoryLabelElementsAfterToggleOff = document.querySelectorAll('.category-label')
+    let categoryLabelElementsAfterToggleOff = document.querySelectorAll('.category-label')
 
     expect(categoryLabelElementsAfterToggleOff).toHaveLength(0)
     expect(myChart.categoryLabels()).toTabulateAs(`\
@@ -419,6 +424,30 @@ test ('Get/TurnOn/TurnOff category labels', () => {
 │    2    │  null  │
 └─────────┴────────┘`)
 
+
+    //// TOGGLE LABELS ON 2 TIMES, OFF 1 TIME ////
+    myChart.categoryLabels(true).update()
+    myChart.categoryLabels(true).update()
+
+    let categoryLabelElementsAfterToggleOn = document.querySelectorAll('.category-label')
+    expect(categoryLabelElementsAfterToggleOn).toHaveLength(3)
+
+
+
+//     myChart.categoryLabels(false).update()
+//
+//     categoryLabelElementsAfterToggleOff = document.querySelectorAll('.category-label')
+//
+//     expect(categoryLabelElementsAfterToggleOff).toHaveLength(0)
+//     expect(myChart.categoryLabels()).toTabulateAs(`\
+// ┌─────────┬────────┐
+// │ (index) │ Values │
+// ├─────────┼────────┤
+// │    0    │  null  │
+// │    1    │  null  │
+// │    2    │  null  │
+// └─────────┴────────┘`)
+
 })
 
 
@@ -426,7 +455,7 @@ test ('Get/TurnOn/TurnOff category labels', () => {
 
 //// CHART LABEL ////
 
-test ('Get/Set/TurnOff chart label', () => {
+test ('Get/Set/Toggle chart label', () => {
 
     // Clear JEST's DOM to prevent leftovers from previous tests
     document.body.innerHTML = ''
@@ -435,21 +464,84 @@ test ('Get/Set/TurnOff chart label', () => {
     // Create chart
     const myChart = new navigator.Chart()
 
+
+
     // Check that there are no chart label objects and elements already
     expect(document.querySelectorAll('.chart-label')).toHaveLength(0)
 
-
     // Get chart label
-    expect( myChart.label() ).toBe( myChart._label )
+    expect( myChart.chartLabel() ).toBe( myChart._chartLabel.text )
 
-    // Set chart label
-    myChart.label('My label').update()
+    // Turn on chart label (with default, placeholder value)
+    myChart.chartLabel(true).update()
+    expect( document.querySelectorAll('.chart-label') ).toHaveLength(1)
+    expect( document.querySelector('.chart-label').textContent ).toBe('Chart label')
+
+    // Set chart label (while its already toggled on)
+    myChart.chartLabel('My label').update()
 
     // Check that the chart label is correctly created on DOM
     expect( document.querySelectorAll('.chart-label') ).toHaveLength(1)
     expect( document.querySelector('.chart-label').textContent ).toBe('My label')
 
+    // Check that chart label position is OK
+    myChart.categoryLabels(true).update()
+    const xCoordinate_leftEdgeOfCategoryLabelsArea = myChart._categoryLabelsArea.leftEdgeXCoordinate
 
+    const chartLabelPosition = myChart._chartLabelObject.x()
+    const xCoordinate_chartLabelObject = myChart._chartLabelObject.x()
+    const xCoordinate_chartLabelElement = Number(
+            document
+                .querySelector('.chart-label')
+                .getAttribute('x')
+    )
+
+    // Chart label object and element positions should match
+    expect(xCoordinate_chartLabelObject).toBe(xCoordinate_chartLabelElement)
+    // Chart
+    expect( xCoordinate_chartLabelElement )
+        .toBeLessThanOrEqual( xCoordinate_leftEdgeOfCategoryLabelsArea )
+
+
+
+    // Turn off chart label
+    expect( document.querySelectorAll('.chart-label') ).toHaveLength(1)
+
+    myChart.chartLabel(false).update()
+
+    expect( document.querySelectorAll('.chart-label') ).toHaveLength(0)
+    expect( myChart._chartLabelObject ).toBe( null )
+    expect ( myChart._chartLabel.text ).toBe( 'My label')
+
+    // Toggle chart label off multiple times
+    myChart.chartLabel(false).update()
+    expect( document.querySelectorAll('.chart-label') ).toHaveLength(0)
+    expect( myChart._chartLabelObject ).toBe( null )
+
+    myChart.chartLabel(false).update()
+    expect( document.querySelectorAll('.chart-label') ).toHaveLength(0)
+    expect( myChart._chartLabelObject ).toBe( null )
+
+
+    // Set the chart label multiple times (when the chart label is toggled on)
+    myChart.chartLabel(true).update()
+    myChart.chartLabel('Label 1').update()
+    expect( document.querySelectorAll('.chart-label') ).toHaveLength(1)
+    expect( document.querySelector('.chart-label').textContent ).toBe('Label 1')
+
+    myChart.chartLabel('Label 2').update()
+    expect( document.querySelectorAll('.chart-label') ).toHaveLength(1)
+    expect( document.querySelector('.chart-label').textContent ).toBe('Label 2')
+
+    // Set the chart label multiple times (when the chart label is toggled off)
+    myChart.chartLabel(false).update()
+    myChart.chartLabel('Label 3').update()
+    expect ( myChart.chartLabel() ).toBe('Label 3')
+    expect( document.querySelectorAll('.chart-label') ).toHaveLength(0)
+
+    myChart.chartLabel('Label 4').update()
+    expect ( myChart.chartLabel() ).toBe('Label 4')
+    expect( document.querySelectorAll('.chart-label') ).toHaveLength(0)
 
 })
 
@@ -503,5 +595,68 @@ test ('Color scheme', () => {
 │    1    │  'rgb(239, 69, 51)'  │
 │    2    │ 'rgb(252, 138, 107)' │
 └─────────┴──────────────────────┘`)
+
+})
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////
+//// WHITE BOX TESTS //////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+
+test ('Get widest category label width: Get the width of the widest category label in the chart', () => {
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+    // Create svg
+    const mySvg = new container.Svg()
+    // Create chart
+    const myChart = new navigator.Chart()
+
+
+    // Toggle labels on for the first time and measure
+    myChart.categoryLabels(true).update()
+    expect( myChart._getWidestCategoryLabelWidth() ).toBe(10)  // mocked value as length of the string
+
+
+    // Can't measure widths if category labels are not toggled on
+    myChart.categoryLabels(false).update()
+    expect( () => {
+        myChart._getWidestCategoryLabelWidth()
+    }).toThrow(
+        'Cannot measure the widths of the category labels because the category labels are NOT toggled on.'
+    )
+
+    // Toggle labels back on from off state and measure again
+    myChart.categoryLabels(true).update()
+    expect( myChart._getWidestCategoryLabelWidth() ).toBe(10)  // mocked value
+
+
+    // Toggle labels back on from the already on state and measure again
+    myChart.categoryLabels(true).update()
+    expect( myChart._getWidestCategoryLabelWidth() ).toBe(10)  // mocked value
+
+
+
+})
+
+
+
+
+test ('Calculate chart label position', () => {
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+    // Create svg
+    const mySvg = new container.Svg()
+    // Create chart
+    const myChart = new navigator.Chart()
+
+
+    // Calculate chart label position (chart label is the only label)
+    let {x, y} = myChart._calculateChartLabelPosition()
+    expect(x).toBe(-10)
+    expect(y).toBe(175)
+
 
 })

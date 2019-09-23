@@ -48,7 +48,7 @@
             this._currentDrilldownPathParameter = []  // stores the drilldown path that generated whatever is being visualized in the navigator at a point in time
 
             this._colorSet = 'Single-Hue'
-            this.categoryColorRegistry = new Map()
+            this._categoryColorRegistry = new Map()
 
             // Initialize //
             this._addListenerToFirstPanel()
@@ -313,7 +313,7 @@
                 panelObject.objects().forEach( chartObject => {
                     chartObject.objects().forEach( (categoryObject, categoryName) => {
 
-                        const categoryColorInRegistry = this.categoryColorRegistry.get(categoryName)
+                        const categoryColorInRegistry = this._categoryColorRegistry.get(categoryName)
                         categoryObject.fill(categoryColorInRegistry).update()
 
                     })
@@ -346,7 +346,7 @@
                         chartObject.objects().forEach( (categoryObject, categoryName) => {
 
                             const newColorOfCategory = categoryObject.fill()
-                            this.categoryColorRegistry.set(categoryName, newColorOfCategory)
+                            this._categoryColorRegistry.set(categoryName, newColorOfCategory)
 
                         })
                     })
@@ -769,14 +769,20 @@
         yAxisLabels(value) {
 
             if (value === true) {
-                this.objects().forEach((chartObject, chartObjectName) => {
-                    chartObject.categoryLabels(true)
+                this.objects().forEach( (chartObject, chartObjectName) => {
+                    chartObject
+                        .categoryLabels(true)
+                        .chartLabel(true)
+                        .chartLabel(chartObjectName)
                 })
             }
 
             if (value === false) (
                 this.objects().forEach((chartObject, chartObjectName) => {
-                    chartObject.categoryLabels(false)
+                    chartObject
+                        .categoryLabels(false)
+                        .chartLabel(false)
+
                 })
             )
 
@@ -1231,9 +1237,28 @@
 
 
             // Private parameters //
-            this._label = null
-            this._labelFill = 'gray'
-            this._labelObject = null
+
+            // Initial values for chart label
+            this._chartLabel = {
+
+                // Dyamic:
+                x: null,
+                y: null,
+                text: 'Chart label',
+
+                // Static:
+                paddingRight: 35,
+                fill: 'gray'
+            }
+            this._chartLabelObject = null
+
+
+            this._categoryLabelsArea = {
+                isVisible: false,
+                width: null,
+                leftEdgeXCoordinate: null
+            }
+            // category label objects are part of navigator.Category class, and not included at this level of the navigator hierarchy
 
             this._x = 25
             this._y = 25
@@ -1269,6 +1294,47 @@
 
 
         /**
+         * Iteratively initializes Category instances
+         * @private
+         */
+        _draw() {
+
+            this._createCategoryObjectsFromRangeStack()
+
+            this._updatePropertiesOfCategoryObjects()
+
+            // Update the DOM
+            this.update()
+
+        }
+
+
+        _createCategoryObjectsFromRangeStack() {
+
+            // LOOP //
+            this._rangeStack.data().forEach(
+                (eachCategoryData, eachCategoryId) => {
+
+                    // Instantiate a Category object for each category in Stack
+                    const categoryObject = new Category(this._container)
+
+                    // Add the created objects to container registry
+                    this.objects(eachCategoryId, categoryObject)
+                }
+            )
+        }
+
+
+        update(transitionDuration){
+
+            this._updateChartLabel(transitionDuration)
+            super.update(transitionDuration)
+            return this
+
+        }
+
+
+        /**
          * Provides access to domain stack data of the chart.
          * @param value
          * @return {Chart|*|Map<any, any>|Map}
@@ -1299,6 +1365,7 @@
                 this._domainStack = value  // value is a Stack object in this case
 
                 this._updateData()
+
                 this.update()
 
                 return this
@@ -1306,28 +1373,133 @@
 
         }
 
+        _updateData() {
 
-        y(value) {
+            // Check if labels are on while changing dataset
+            // const changingDataWhileLabelsAreOn = (this._categoryLabelsArea && this._categoryLabelsArea.isVisible)
+            //
+            // Toggle category labels off
+            // if (changingDataWhileLabelsAreOn){this.categoryLabels(false)}
 
-            if (!arguments.length) {
-                return this._y
-            } else {
+            this._calculateVariablesDependentOnDomainStack()
+            this._replaceOldCategoriesWithNewOnes()
+            this._updatePropertiesOfCategoryObjects()
+            this._updateCategoryLabelsAndPropertiesOfCategoryLabelsArea()
 
-                this._y = value
+            // Toggle category labels back on (and thus, update them according to the new data)
+            // if (changingDataWhileLabelsAreOn){this.categoryLabels(true)}
 
-                // Height is calculated on the spot here instead of using this._height, in order to prevent dependency to this._height.
-                // Such a dependency is problematic, because range method modifies both y and height by calling related setter methods
-                // (which, in turn, also calls range()). The issue is the this._y or this._height may not have been updated by their
-                // setter methods at the time the y() method needs the new values.
-                // Because this._rangeStart and this._rangeEnd are updated with new values the first thing
-                // when the range() is called, referring to this._rangeStart and this._rangeEnd variables is used as the standard method
-                // to calculate height and y throughout this class.
-                const currentChartHeight = this._rangeStart - this._rangeEnd  // e.g., 400-0
+        }
 
-                const newRangeStart = this._y + currentChartHeight
-                const newRangeEnd = this._y
 
-                this.range([newRangeStart, newRangeEnd])
+        /**
+         * (Re-)calculates the values for domain stack related variables
+         * @return {Chart}
+         * @private
+         */
+        _calculateVariablesDependentOnDomainStack() {
+
+            //// CALCULATE VARIABLES THAT DEPEND ON DATA ////
+            // This is necessary both for inital data and for setting new data
+
+            // Recalculate stats for the new data
+            this._domainMin = this._domainStack.min()
+            this._domainMax = this._domainStack.max()
+
+            // Update scale function
+            this._scaleFunction
+                .domain([this._domainMin, this._domainMax])
+                .rangeRound([this._rangeStart, this._rangeEnd])
+
+            // Update range stack
+            this._rangeStack = this._domainStack.copy()
+            this._rangeStack.scale(this._scaleFunction)
+
+            return this
+        }
+
+
+        _replaceOldCategoriesWithNewOnes() {
+
+            // TODO: This can be achieved more gracefully by using Group.removeLast(), etc. The current method simply removes the old categories and creates new ones without transitions.
+
+            // Remove old category objects in chart
+            this.removeAll()
+
+            // Re-create new category objects to chart
+            this._createCategoryObjectsFromRangeStack()
+        }
+
+
+        _updatePropertiesOfCategoryObjects() {
+
+            // LOOP //
+            this.objects().forEach(
+                (eachCategoryObject, eachCategoryId) => {
+
+                    const start = this._rangeStack.data(eachCategoryId).get('start')
+                    const end = this._rangeStack.data(eachCategoryId).get('end')
+                    const percentage = this._rangeStack.data(eachCategoryId).get('percentage')
+
+                    eachCategoryObject
+                        .x(this._x)
+                        .y(end)
+                        .height(start - end)
+                        .width(this._width)
+                        .id(eachCategoryId)
+                        .percentage(percentage)
+
+                }
+            )
+
+        }
+
+
+        chartLabel(value) {
+
+            // Establish conditions
+            const querying = !arguments.length
+            const settingNewLabel = ( arguments.length && value.hasType('String') )
+            const togglingOn = ( arguments.length && value.hasType('Boolean') && value === true )
+            const togglingOff = ( arguments.length && value.hasType('Boolean') && value === false )
+
+
+            // Getter
+            if (querying) {
+                return this._chartLabel.text
+            }
+
+            // Setter: Set label
+            if (settingNewLabel)  {
+
+                // TODO: Must play well with category labels. (Ensure they are on, etc.)
+                this._chartLabel.text = value
+
+                return this
+
+            }
+
+
+            // Setter: Toggle on
+            if (togglingOn) {
+
+                this._chartLabel.text.mustBeOfType(String)
+
+                if (!this._chartLabelObject) {
+                    this._chartLabelObject = new shape.Text( this.select() )
+                }
+
+                return this
+
+            }
+
+            // Setter: Toggle off and remove label
+            if (togglingOff) {
+
+                if (this._chartLabelObject){
+                    this._chartLabelObject.remove()
+                    this._chartLabelObject = null
+                }
 
                 return this
             }
@@ -1335,22 +1507,206 @@
         }
 
 
-        height(value) {
+        _updateChartLabel(transitionDuration) {
 
-            if (!arguments.length) {
-                return this._height
-            } else {
+            if (this._chartLabelObject) {
 
-                this._height = value
+                this._updateChartLabelPosition()
 
-                // Add height on it to calculate the new end point
-                const currentRangeEnd = this._rangeEnd  // e.g., 0, which is the coordinate of left upper corner of the chart
-                    , newRangeStart = currentRangeEnd + this._height  // e.g., rangeEnd+height=rangeStart could be equivalent to 0+400=400
+                this._chartLabelObject
+                    .text(this._chartLabel.text)
+                    .x(this._chartLabel.x)
+                    .y(this._chartLabel.y)
+                    .fill(this._chartLabel.fill)
+                    .class('chart-label')
+                    .textAnchor('middle')
+                    .dominantBaseline('auto')
+                    .rotate(270)
+                    .update(transitionDuration)
 
-                this.range([newRangeStart, currentRangeEnd])
+            }
+        }
+
+
+        _updateChartLabelPosition() {
+
+            // Update coordinates (and other properties) of the category labels area
+            this._updateCategoryLabelsAndPropertiesOfCategoryLabelsArea()
+
+            // Update chart label position
+            const {x, y} = this._calculateChartLabelPosition()
+            this._chartLabel.x = x
+            this._chartLabel.y = y
+
+        }
+
+
+        /**
+         *
+         * @param value {boolean}
+         * @return {Chart|[]}
+         */
+        categoryLabels(value) {
+
+            // Establish conditions
+            const gettingCurrentLabels = (!arguments.length)
+            const togglingOn = ( value === true )
+            const togglingOff = ( value === false )
+
+
+            // Getter (calculates)
+            if (gettingCurrentLabels) {
+
+                const categoryLabels = []
+
+                this.objects().forEach( (categoryObject, categoryName) => {
+                    const categoryLabel = categoryObject.label()
+                    categoryLabels.push(categoryLabel)
+                })
+
+                return categoryLabels
+            }
+
+
+            // Setter: Toggle on from off state
+            if (togglingOn){
+
+                // Register status and update the properties of the CATEGORY labels area (necessary for positioning CHART label)
+                this._categoryLabelsArea.isVisible = true
+                this._updateCategoryLabelsAndPropertiesOfCategoryLabelsArea()
 
                 return this
             }
+
+
+            // Setter: Toggle off
+            if (togglingOff) {
+
+                // Register status and update related variables
+                this._categoryLabelsArea.isVisible = false
+                this._updateCategoryLabelsAndPropertiesOfCategoryLabelsArea()
+
+                return this
+            }
+
+        }
+
+
+        _updateCategoryLabelsAndPropertiesOfCategoryLabelsArea() {
+
+            // If category labels area has been turned off
+            if( !this._categoryLabelsArea.isVisible ){
+
+                this.objects().forEach( (categoryObject, categoryName) => {
+
+                    // If any category has a label, turn it off
+                    if (categoryObject.label()) {
+                        categoryObject
+                            .label(false)
+                    }
+                })
+
+                // Clear variables related to category labels area
+                this._categoryLabelsArea.width = null
+                this._categoryLabelsArea.leftEdgeXCoordinate = null
+
+            }
+
+
+            // If category labels area is on, make sure that labels are toggled on
+            if( this._categoryLabelsArea.isVisible ){
+
+                this.objects().forEach( (categoryObject, categoryName) => {
+
+                    // If any category object does not have a label, turn it on
+                    if (!categoryObject.label()){
+                        categoryObject
+                            .label(categoryName)
+                    }
+
+                })
+
+                // Measure values of the category labels area and record them to relevant instance variables
+                const widestCategoryLabelWidth = this._getWidestCategoryLabelWidth()
+
+                // Get the category label object that has the largest width, and register its properties as instance properties
+                this.objects().forEach( (categoryObject, categoryName) => {
+
+                    const categoryLabelObject = categoryObject.objects('label')
+                    const categoryLabelWidth = categoryLabelObject.width()
+
+                    if ( categoryLabelWidth === widestCategoryLabelWidth ){
+
+                        const firstWidestCategoryLabelObject = categoryLabelObject   // 'first' because there can multiple labels that has the same length. We need only one.
+
+                        this._categoryLabelsArea.width = firstWidestCategoryLabelObject.width()
+                        this._categoryLabelsArea.leftEdgeXCoordinate = firstWidestCategoryLabelObject.x() - firstWidestCategoryLabelObject.width()  // because text is right-anchored, .x() would return the coordinate of the right edge
+
+                        // WARNING: y coordinate of the object should not be requested, as it can be unstable if there are
+                        // more than one 'widest' object (e.g., two label objects with the width of 50px). In such cases,
+                        // both objects would have the same width and x coordinate, but not the same y coordinate.
+
+                    }
+                })
+            }
+
+            return this
+
+        }
+
+        /**
+         *
+         * @return {{x: *, y: *}}
+         * @private
+         */
+        _calculateChartLabelPosition() {
+
+            // Establish conditions
+            const chartLabelOnly = ( !this._categoryLabelsArea.isVisible )
+            const chartLabelTogetherWithCategoryLabels = ( this._categoryLabelsArea.isVisible )
+
+            const padding = this._chartLabel.paddingRight
+
+            const y = this.y() + this.height() / 2
+            let x
+
+            if (chartLabelOnly) {
+                x = this.x() - padding
+            }
+
+            if ( chartLabelTogetherWithCategoryLabels ) {
+
+                const leftEdgeOfChartLabelsArea = this._categoryLabelsArea.leftEdgeXCoordinate
+
+                x = leftEdgeOfChartLabelsArea - padding
+            }
+
+
+            return {x, y}
+        }
+
+
+        _getWidestCategoryLabelWidth() {
+
+            // Don't continue if category labels are not toggled on
+            this._categoryLabelsArea.isVisible.mustBe(
+                true,
+                `Cannot measure the widths of the category labels because the category labels are NOT toggled on.`)
+
+            // Get width of every category label
+            const categoryWidths = []
+            this.objects().forEach( (categoryObject, categoryName) => {
+
+                const categoryLabelObject = categoryObject.objects('label')
+                const categoryLabelWidth = categoryLabelObject.width()
+
+                categoryWidths.push(categoryLabelWidth)
+
+            })
+
+            // Get the largest category label width
+            const widestCategoryLabelWidth = Math.max(...categoryWidths)
+            return widestCategoryLabelWidth
 
         }
 
@@ -1432,6 +1788,54 @@
         }
 
 
+        y(value) {
+
+            if (!arguments.length) {
+                return this._y
+            } else {
+
+                this._y = value
+
+                // Height is calculated on the spot here instead of using this._height, in order to prevent dependency to this._height.
+                // Such a dependency is problematic, because range method modifies both y and height by calling related setter methods
+                // (which, in turn, also calls range()). The issue is the this._y or this._height may not have been updated by their
+                // setter methods at the time the y() method needs the new values.
+                // Because this._rangeStart and this._rangeEnd are updated with new values the first thing
+                // when the range() is called, referring to this._rangeStart and this._rangeEnd variables is used as the standard method
+                // to calculate height and y throughout this class.
+                const currentChartHeight = this._rangeStart - this._rangeEnd  // e.g., 400-0
+
+                const newRangeStart = this._y + currentChartHeight
+                const newRangeEnd = this._y
+
+                this.range([newRangeStart, newRangeEnd])
+
+                return this
+            }
+
+        }
+
+
+        height(value) {
+
+            if (!arguments.length) {
+                return this._height
+            } else {
+
+                this._height = value
+
+                // Add height on it to calculate the new end point
+                const currentRangeEnd = this._rangeEnd  // e.g., 0, which is the coordinate of left upper corner of the chart
+                    , newRangeStart = currentRangeEnd + this._height  // e.g., rangeEnd+height=rangeStart could be equivalent to 0+400=400
+
+                this.range([newRangeStart, currentRangeEnd])
+
+                return this
+            }
+
+        }
+
+
         /**
          * @param value: A D3 color scheme name. A list can be found at 'https://observablehq.com/@d3/color-schemes'.
          */
@@ -1491,199 +1895,6 @@
             return fillColors
         }
 
-
-        update(){
-
-            if (this._labelObject){
-                this._labelObject.update()
-            }
-
-            super.update()
-
-            return this
-        }
-
-
-        label(value) {
-
-            // Getter
-            if (!arguments.length) {
-
-                return this._label
-
-            }
-
-            // Setter: Set label
-            if ( arguments.length && value !== false )  {
-
-                this._labelObject = new shape.Text( this.select() )
-
-                this._labelObject.class('chart-label')
-                    .text(value)
-                    .x( this.x() - 125 )
-                    .y( this.y() + this.height()/2 )
-                    .textAnchor('middle')
-                    .dominantBaseline('auto')
-                    .fill(this._labelFill)
-                    .rotate(270)
-
-                return this
-
-            }
-
-            // // Setter: Toggle off and remove label
-            // if (value === false) {
-            //
-            //
-            //     return this
-            // }
-
-        }
-
-
-        categoryLabels(value) {
-
-            // Getter (calculates)
-            if (!arguments.length) {
-
-                const categoryLabels = []
-
-                this.objects().forEach( (categoryObject, categoryName) => {
-                    const categoryLabel = categoryObject.label()
-                    categoryLabels.push(categoryLabel)
-                })
-                return categoryLabels
-            }
-
-            // Setter: Toggle on
-            if (value === true) {
-
-                this.objects().forEach( (categoryObject, categoryName) => {
-
-                    categoryObject
-                        .label(categoryName)
-                        .update()  // TODO: This should be part of Chart.update()
-
-                })
-
-                return this
-            }
-
-            // Setter: Toggle off
-            if (value === false) {
-
-                this.objects().forEach((categoryObject, categoryName) => {
-
-                    categoryObject
-                        .label(false)
-                        .update()  // TODO: This should be part of Chart.update()
-
-                })
-
-                return this
-            }
-
-        }
-
-        /**
-         * Iteratively initializes Category instances
-         * @private
-         */
-        _draw() {
-
-            this._createCategoryObjectsFromRangeStack()
-
-            this._updatePropertiesOfCategoryObjects()
-
-            // Update the DOM
-            this.update()
-
-        }
-
-        _updateData() {
-            this._calculateVariablesDependentOnDomainStack()
-            this._replaceOldCategoriesWithNewOnes()
-            this._updatePropertiesOfCategoryObjects()
-        }
-
-
-        /**
-         * (Re-)calculates the values for domain stack related variables
-         * @return {Chart}
-         * @private
-         */
-        _calculateVariablesDependentOnDomainStack() {
-
-            //// CALCULATE VARIABLES THAT DEPEND ON DATA ////
-            // This is necessary both for inital data and for setting new data
-
-            // Recalculate stats for the new data
-            this._domainMin = this._domainStack.min()
-            this._domainMax = this._domainStack.max()
-
-            // Update scale function
-            this._scaleFunction
-                .domain([this._domainMin, this._domainMax])
-                .rangeRound([this._rangeStart, this._rangeEnd])
-
-            // Update range stack
-            this._rangeStack = this._domainStack.copy()
-            this._rangeStack.scale(this._scaleFunction)
-
-            return this
-        }
-
-
-        _replaceOldCategoriesWithNewOnes() {
-
-            // TODO: This can be achieved more gracefully by using Group.removeLast(), etc. The current method simply removes the old categories and creates new ones without transitions.
-
-            // Remove old category objects in chart
-            this.removeAll()
-
-            // Re-create new category objects to chart
-            this._createCategoryObjectsFromRangeStack()
-        }
-
-
-        _createCategoryObjectsFromRangeStack() {
-
-            // LOOP //
-            this._rangeStack.data().forEach(
-                (eachCategoryData, eachCategoryId) => {
-
-                    // Instantiate a Category object for each category in Stack
-                    const categoryObject = new Category(this._container)
-
-                    // Add the created objects to container registry
-                    this.objects(eachCategoryId, categoryObject)
-                }
-            )
-        }
-
-
-        _updatePropertiesOfCategoryObjects() {
-
-            // LOOP //
-            this.objects().forEach(
-                (eachCategoryObject, eachCategoryId) => {
-
-                    const start = this._rangeStack.data(eachCategoryId).get('start')
-                    const end = this._rangeStack.data(eachCategoryId).get('end')
-                    const percentage = this._rangeStack.data(eachCategoryId).get('percentage')
-
-                    eachCategoryObject
-                        .x(this._x)
-                        .y(end)
-                        .height(start - end)
-                        .width(this._width)
-                        .id(eachCategoryId)
-                        .percentage(percentage)
-
-                }
-            )
-
-        }
 
     }
 

@@ -36,15 +36,14 @@ global._ = require("../../../external/lodash")
 global.$ = require("../../../external/jquery-3.1.1.min")
 
 
-// EXTENSIONS //
+// JS EXTENSIONS //
 require("../../../utils/errorUtils")
-
-
-// FUNCTIONAL UTILS //
+require("../../../utils/jsUtils")
 global.arrayUtils = require("../../../utils/arrayUtils")
 global.classUtils = require("../../../utils/classUtils")
 global.stringUtils = require("../../../utils/stringUtils")
 
+// CPC CLASSES
 global.container = require("../../container")
 global.shape = require("../../shape")
 global.data = require("../../../cpc/data")
@@ -840,7 +839,7 @@ test ('Toggle labels on y axis on/off', () => {
     //// TOGGLE LABELS ON ////
 
     // Add labels
-    myPanel.yAxisLabels(true)
+    myPanel.yAxisLabels(true).update()
 
 
     // Labels should be created on DOM
@@ -854,7 +853,7 @@ test ('Toggle labels on y axis on/off', () => {
 
 
     //// TOGGLE LABELS OFF ////
-    myPanel.yAxisLabels(false)
+    myPanel.yAxisLabels(false).update()
 
     // No label elements should be on DOM after toggle off
     labelsOnYAxisAfterToggleOff = document.querySelectorAll('.category-label')
