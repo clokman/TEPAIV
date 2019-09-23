@@ -49,6 +49,29 @@ global.__ = {
 
 
 
+
+test ('EQUIVALENCY: Value must be equal to the specified value', () => {
+
+    // Validate against a value
+    a = 2
+    a.mustBe(2)
+
+
+    // Error with default error message
+    expect( () => {
+        a.mustBe(3)
+    }).toThrow('The value of the variable "a" must be "3" but is "2".')
+
+
+    // Error with custom error message
+    expect( () => {
+        a.mustBe(3, `${a} is smaller than 3.`)
+    }).toThrow("2 is smaller than 3.")
+
+
+})
+
+
 test ('VALIDATION: Value must be an element in an array', () => {
 
     // VALIDATE AGAINST AN ARRAY

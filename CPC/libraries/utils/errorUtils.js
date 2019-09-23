@@ -15,6 +15,37 @@ const version = "1.0"
 
 
 
+Object.prototype.mustBe = function(value, customErrorMessage) {
+
+    // Validate the value
+    let valueIsAMatch = false
+
+    if( this === value  ){
+        valueIsAMatch = true
+    }
+
+
+
+    // If value is not a match, throw error
+    if (!valueIsAMatch){
+
+        if(customErrorMessage){
+            throw Error(customErrorMessage)
+        }
+
+        // The standard error message
+        else{
+
+            // Get the name of the object as string
+            let nameOfThisVariable = this.hasName()
+
+            throw Error(`The value of the variable "${nameOfThisVariable}" must be "${value}" but is "${this}".`)
+        }
+
+    }
+}
+
+
 Object.prototype.mustBeOfType = function(acceptableType) {
 
     // If user enters the object instance directly as an acceptable type, get the class of the object

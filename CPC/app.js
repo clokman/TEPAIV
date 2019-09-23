@@ -37,16 +37,16 @@ myCategory
     .update()
 
 
-//
+
 // //// CAPTIONED RECTANGLE ////
-//
+
 // // CAPTION AT CENTER
 // const parentElementForCaptionedRectangle = d3
 //     .select('body')
 //     .select('svg')
 //     .append('g')
 //       .attr('id', 'parent-container-of-captioned-rectangle')
-//
+
 // myCaptionedRectangleCenter = new shape.CaptionedRectangle(parentElementForCaptionedRectangle)
 // myCaptionedRectangleCenter
 //     .x(400)
@@ -56,7 +56,7 @@ myCategory
 //     .fill('green')
 //     .text('Caption')
 //     .update()
-//
+
 // // CAPTION AT TOP LEFT
 // myCaptionedRectangleTopLeft = new shape.CaptionedRectangle()
 // myCaptionedRectangleTopLeft
@@ -72,8 +72,11 @@ myCategory
 //
 // // DEMO
 // // myCaptionedRectangleTopLeft.x(350).y(350).fill('blue').width('300').height('200').text('Hello').textAlignment('center').update()
-//
-//
+
+
+
+
+
 // CHART  ////
 
 // Without labels
@@ -81,7 +84,7 @@ const parentElementForChart = d3.select('body').select('svg')
 myChart = new navigator.Chart(parentElementForChart)
 myChart.x(450).y(650).update()
 
-// // Update data of chart
+// Update data of chart
 // tempStack = new data.Stack()
 //     .populateWithExampleData('gender')
 // myChart.stack(tempStack)
@@ -90,9 +93,12 @@ myChart.x(450).y(650).update()
 // Chart with labels
 myChart = new navigator.Chart()
 myChart.x(325).y(650).categoryLabels(true).update()
-myChart.label('MY CHART LABEL').update()
+myChart.chartLabel('MY CHART LABEL').update()
 
-// //// PANEL ////
+
+
+
+//// PANEL ////
 
 const parentElementForPanel = d3.select('body').select('svg')
 myPanel = new navigator.Panel()
@@ -220,7 +226,7 @@ navigator1.loadDataset(
 ).then(that => {
     that.update()
 
-    that.x(100).update()
+    that.x(125).update()
 
     // navigator1.objects('panel-0').height(1500).update()
     navigator1.objects('panel-0').yAxisLabels()
