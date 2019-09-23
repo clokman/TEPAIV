@@ -32,6 +32,33 @@ Object.prototype.hasType = function (value) {
 
 }
 
+
+Object.prototype.hasName = function (value) {
+
+    let nameOfObject
+
+    // A convoluted way of getting the name of the parent object of the method. Inspired from https://stackoverflow.com/a/4602375/3102060).
+    // Minimalistic methods such as `Object.keys({myOject})[0]` does not allow methods to get the variable name of their parent object.
+    var that = this
+    for(that in window){
+        if(window[that] === this){
+            nameOfObject = that
+        }
+    }
+
+
+    if(!arguments.length){
+        return nameOfObject
+    }
+    else{
+
+        const comparison = value === nameOfObject
+        return comparison
+
+    }
+
+}
+
                                                 
 //// UMD FOOT ////////////////////////////////////////////////////////////////////////
                              

@@ -49,6 +49,21 @@ global.__ = {
 
 //// TESTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+test ('HAS NAME: Return the name of the object as string', () => {
+
+    a = 5
+
+    // Get variable name
+    expect( a.hasName() ).toBe('a')
+
+    // Compare variable name
+    expect ( a.hasName('a') ).toBe(true)
+    expect ( a.hasName('b') ).toBe(false)
+
+})
+
+
 test ('HAS TYPE: Return the type of an object', () => {
 
     const myNumber = 5
