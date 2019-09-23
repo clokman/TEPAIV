@@ -945,7 +945,6 @@ test ('Throw error if no spawn source is specified', () => {
     // Clear JEST's DOM to prevent leftovers from previous tests
     document.body.innerHTML = ''
 
-
     // Create SVG
     const mySvg = new container.Svg()
     mySvg.select()
@@ -1045,5 +1044,135 @@ test ('COLOR_THEME: Get and Set color theme', () => {
 │    0    │  'rgb(80, 80, 80)'   │
 │    1    │ 'rgb(151, 151, 151)' │
 └─────────┴──────────────────────┘`)  // Status: Greens
+
+})
+
+
+test ('Depth index: Get and set', () => {
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+    // Create SVG
+    const mySvg = new container.Svg()
+    // Create panel
+    const myPanel = new navigator.Panel()
+
+
+
+    //// GET DEPTH INDEX ////
+
+    // GET default depth index value
+    expect( myPanel.depthIndex() ).toBe( 0 )
+
+    // Check things from DOM perspective
+    let depthIndexOfPanel = document.querySelector('.panel').getAttribute('depthIndex')
+    expect (depthIndexOfPanel ).toBe( '0' )
+
+
+
+    //// SET DEPTH INDEX ////
+
+    // Set a new depthIndex value
+    myPanel.depthIndex(1).update()
+    expect( myPanel.depthIndex() ).toBe( 1 )
+
+    // Check things from DOM perspective
+    depthIndexOfPanel = document.querySelector('.panel').getAttribute('depthIndex')
+    expect (depthIndexOfPanel ).toBe( '1' )
+
+
+
+
+})
+
+test ('Depth index: Check automatic incrementation upon adding new panels', () => {
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+    // Create SVG
+    const mySvg = new container.Svg()
+    // Create panel
+    const parentPanel = new navigator.Panel()
+    parentPanel.id('parent-panel').update()
+
+
+
+    //// AUTO DEPTH INDEX: NO CHILD PANELS ////
+
+    // Check the depth index in a one-panel setup
+    expect( parentPanel.depthIndex() ).toBe( 0 )
+
+    // Check things from DOM perspective
+    expect( document.querySelectorAll('.panel') ).toHaveLength(1)
+    const depthIndexOfParentPanel = document.querySelector('#parent-panel').getAttribute('depthIndex')
+    expect (depthIndexOfParentPanel ).toBe( '0' )
+
+
+
+    //// AUTO DEPTH INDEX: ONE CHILD PANEL ////
+
+    // Create a child panel
+    let objectToSpawnFrom = parentPanel.objects('gender').objects('male')
+    const childPanel = new navigator.Panel(parentPanel, objectToSpawnFrom)  // spawn source must be specified if a parent panel is specified
+    childPanel.id('child-panel').update()
+
+    // Check the depth indexes
+    expect( parentPanel.depthIndex() ).toBe( 0 )
+    expect( childPanel.depthIndex() ).toBe( 1 )
+
+    // Check things from DOM perspective
+    expect( document.querySelectorAll('.panel') ).toHaveLength(2)
+    const depthIndexOfChildPanel = document.querySelector('#child-panel').getAttribute('depthIndex')
+    expect (depthIndexOfChildPanel ).toBe( '1' )
+
+
+
+    //// AUTO DEPTH INDEX: TWO CHILD PANELS ////
+
+    // Create a grandchild panel
+    objectToSpawnFrom = childPanel.objects('status').objects('survived')
+    const grandChildPanel = new navigator.Panel(childPanel, objectToSpawnFrom)  // spawn source must be specified if a parent panel is specified
+    grandChildPanel.id('grandchild-panel').update()
+
+    // Check the depth indexes
+    expect( parentPanel.depthIndex() ).toBe( 0 )
+    expect( childPanel.depthIndex() ).toBe( 1 )
+    expect( grandChildPanel.depthIndex() ).toBe( 2 )
+
+    // Check things from DOM perspective
+    expect( document.querySelectorAll('.panel') ).toHaveLength(3)
+    const depthIndexOfGrandChildPanel = document.querySelector('#grandchild-panel').getAttribute('depthIndex')
+    expect (depthIndexOfGrandChildPanel ).toBe( '2' )
+
+
+
+    //// AUTO DEPTH INDEX: AFTER REMOVING AND RE-ADDING CHILD PANELS  ////
+
+    // Remove child and grandchild panels
+    childPanel.remove()
+    grandChildPanel.remove()
+
+    // The variables are not deleted, so its ok for these to still exist
+    expect( parentPanel.depthIndex() ).toBe( 0 )
+    expect( childPanel.depthIndex() ).toBe( 1 )
+    expect( grandChildPanel.depthIndex() ).toBe( 2 )
+
+    // But on DOM, there should NOT be any child or grandchild panels or their depthIndexes.
+    expect( document.querySelectorAll('.panel') ).toHaveLength(1)
+
+    // Add a child panel
+    objectToSpawnFrom = parentPanel.objects('gender').objects('female')
+    const childPanel2 = new navigator.Panel(parentPanel, objectToSpawnFrom)  // spawn source must be specified if a parent panel is specified
+    childPanel2.id('child-panel2').update()
+
+    // Check depth indexes
+    expect( parentPanel.depthIndex() ).toBe( 0 )
+    expect( childPanel2.depthIndex() ).toBe( 1 )
+
+    // Check things from DOM perspective
+    expect( document.querySelectorAll('.panel') ).toHaveLength(2)
+    const depthIndexOfChildPanel2 = document.querySelector('#child-panel2').getAttribute('depthIndex')
+    expect (depthIndexOfChildPanel2 ).toBe( '1' )
+
 
 })

@@ -35,6 +35,7 @@ global.arrayUtils = require("../../../utils/arrayUtils")
 global.stringUtils = require("../../../utils/stringUtils")
 global.domUtils = require("../../../utils/domUtils")
 require('../../../utils/errorUtils')
+require('../../../utils/jsUtils')  // does not need to be required into a variable
 require('../../../utils/mapUtils')  // does not need to be required into a variable
 
 

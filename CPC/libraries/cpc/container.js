@@ -168,6 +168,10 @@ class Group {
     }
 
 
+    /**
+     * Returns D3 selection. Statement can be continued with D3's .attr() method.
+     * @return {d3.Selection}
+     */
     select(){
         return this._selection
     }

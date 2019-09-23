@@ -76,10 +76,6 @@
 
             panelObject.yAxisLabels(true) // TODO: Why is this not chainable with the setters above?
 
-            panelObject.select()
-                .attr('depth', this._currentPanelDepth)   // TODO: Panel.depth() method MUST be implemented and used here instead
-
-
             this.objects(panelId, panelObject)
 
             this.colorSet(this._colorSet)
@@ -130,7 +126,7 @@
                         this._lastClickedCategoryName = clickedCategory.getAttribute('id')
                         this._lastClickedChartName = clickedChart.getAttribute('id')
                         this._lastClickedPanelName = clickedPanelElement.getAttribute('id')
-                        this._lastClickedPanelDepth = Number(clickedPanelElement.getAttribute('depth'))
+                        this._lastClickedPanelDepth = Number(clickedPanelElement.getAttribute('depthIndex'))
 
                         this._lastClickedCategoryObject = this
                             .objects(this._lastClickedPanelName)
@@ -241,12 +237,6 @@
                 .bgTextFill('white')
                 .update(totalDurationOfChildPanelInitializationAnimations)  // If too short, update duration cuts off animation times in Panel object.
 
-
-            // Add depth property to child panel element in DOM
-            childPanelObject.select()
-                .attr('depth', this._currentPanelDepth)   // TODO: Panel.depth() method MUST be implemented and used here instead
-
-
             // Add the newly related child panel to objects registry
             this.objects(this._lastCreatedPanelName, childPanelObject)
 
@@ -280,13 +270,19 @@
             const innerPaddingTopIncrement = lastCreatedPanelObject.innerPaddingTop() + this._lastClickedPanelObject._paddingBetweenCharts + lastCreatedPanelObject.innerPaddingTop()
             const innerPaddingBottomIncrement = lastCreatedPanelObject.innerPaddingBottom() + this._lastClickedPanelObject._paddingBetweenCharts + lastCreatedPanelObject.innerPaddingBottom()
 
+
             // Shrink previous panel(s)
             this.objects().forEach((panelObject, panelName) => {
 
                 if (panelName !== this._lastCreatedPanelName) {  // do not shrink the newly created panel
 
-                    panelObject.innerPaddingTop(innerPaddingTopIncrement * 0.75)
-                        .innerPaddingBottom(innerPaddingBottomIncrement)
+                    const depestPanelDepth = this._currentPanelDepth
+                    const currentPanelDepth = panelObject.depthIndex()
+
+                    const shrinkFactor = depestPanelDepth - currentPanelDepth
+
+                    panelObject.innerPaddingTop(shrinkFactor * innerPaddingTopIncrement * 0.75)
+                        .innerPaddingBottom(shrinkFactor * innerPaddingBottomIncrement * 1.5)
                         .update()
                 }
             })
@@ -409,6 +405,8 @@
 
             this._objectToSpawnFrom = objectToSpawnFrom
 
+            this._depthIndex = 0
+
 
             this._bgExtension = 0
 
@@ -499,6 +497,9 @@
             if (this._bridgeObject) {
                 this._bridgeObject.update(transitionDuration)
             }
+
+            this.select()
+                .attr( 'depthIndex', this.depthIndex() )
 
             this._updateDomIfStacksDataHasChanged()
 
@@ -627,6 +628,9 @@
             // Register the current object as a child of its parent panel
             this.parentObject.childObject = this
 
+            // Update depth index of the current panel (an indicator of how deep it is located in panel hierarchy)
+            const depthOfParent = this.parentObject.depthIndex()
+            this.depthIndex(depthOfParent + 1)
 
             // TODO: This is a temporary solution to get parent and grandparent objects, until a recursive version is implemented
             // TODO: A possible solution is to implement a try-while loop
@@ -1215,6 +1219,29 @@
 
                 return this
             }
+
+        }
+
+
+        depthIndex(value) {
+
+            // Getter
+            if( !arguments.length ){
+                return this._depthIndex
+            }
+            // Setter
+            else {
+
+                value.mustBeOfType('Number')
+
+                this._depthIndex = value
+
+                return this
+            }
+
+
+
+
 
         }
     }
