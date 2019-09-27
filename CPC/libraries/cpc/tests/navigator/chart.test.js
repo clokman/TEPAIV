@@ -549,7 +549,7 @@ test ('Get/Set/Toggle chart label', () => {
 
 //// COLOR SCHEME ////
 
-test ('Color scheme', () => {
+test ('COLOR SCHEME: Get/Set', () => {
 
     // Clear JEST's DOM to prevent leftovers from previous tests
     document.body.innerHTML = ''
@@ -604,7 +604,7 @@ test ('Color scheme', () => {
 //// WHITE BOX TESTS //////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-test ('Get widest category label width: Get the width of the widest category label in the chart', () => {
+test ('CATEGORY LABELS: Get widest category label width: Get the width of the widest category label in the chart', () => {
 
     // Clear JEST's DOM to prevent leftovers from previous tests
     document.body.innerHTML = ''
@@ -643,7 +643,7 @@ test ('Get widest category label width: Get the width of the widest category lab
 
 
 
-test ('Calculate chart label position', () => {
+test ('CHART LABEL: Calculate chart label position', () => {
 
     // Clear JEST's DOM to prevent leftovers from previous tests
     document.body.innerHTML = ''
@@ -657,6 +657,64 @@ test ('Calculate chart label position', () => {
     let {x, y} = myChart._calculateChartLabelPosition()
     expect(x).toBe(-10)
     expect(y).toBe(175)
+
+
+})
+
+
+test ('CHART LABEL: Set right padding', () => {
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+    // Create svg
+    const mySvg = new container.Svg()
+    // Create chart
+    const myChart = new navigator.Chart()
+    // Turn on chart label
+    myChart.chartLabel(true).update()
+
+
+    // Calculate default chart label position (chart label is the only label)
+    let {x, y} = myChart._calculateChartLabelPosition()
+    expect(x).toBe(-10)
+    expect(y).toBe(175)
+
+    // Get initial values for later comparisons
+    const initialRightPaddingForChartLabel = myChart._chartLabel.paddingRight
+    const initialXCoordinateForChartLabel = myChart._chartLabelObject.x()
+    const initialXCoordinateOfChartLabelOnDom = Number( document.querySelector('.chart-label').getAttribute('x') )
+
+    // Get current chart label right padding
+    expect ( myChart.chartLabelPaddingRight() )
+        .toBe( initialRightPaddingForChartLabel )
+
+    // Set chart label right padding
+    const paddingIncrement = 100
+    let newRightPadding = myChart.chartLabelPaddingRight() + paddingIncrement
+    myChart
+        .chartLabelPaddingRight( newRightPadding )
+        .update()
+
+    // Check if the update is done correctly in JS environment
+    expect ( myChart.chartLabelPaddingRight() )
+        .toBe( newRightPadding )
+
+    expect ( myChart._chartLabelObject.x() )
+        .toBe( initialXCoordinateForChartLabel - paddingIncrement )
+
+    // Check if the update is done correctly on DOM environment
+    const newXCoordinateOfChartLabelOnDom = Number( document.querySelector('.chart-label').getAttribute('x') )
+    expect( newXCoordinateOfChartLabelOnDom )
+        .toBe( initialXCoordinateOfChartLabelOnDom - paddingIncrement )
+
+
+    // Error checking: Method should accept only numbers
+    expect(() => {
+        myChart.chartLabelPaddingRight('-10')
+    }).toThrow()
+    expect(() => {
+        myChart.chartLabelPaddingRight(true)
+    }).toThrow()
 
 
 })

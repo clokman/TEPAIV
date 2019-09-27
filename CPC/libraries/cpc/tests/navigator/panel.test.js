@@ -811,12 +811,148 @@ test ('Instantiate panel with a spawn location', () => {
 
 
 
+test ('Throw error if no spawn source is specified', () => {
+
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+
+    // Create SVG
+    const mySvg = new container.Svg()
+    mySvg.select()
+        .attr('id', 'top-svg')
+
+    // Create parent panel
+    const parentPanel = new navigator.Panel(mySvg)  // no need to specify a spawn source if no parent is specified
+    parentPanel.id('parent-panel').update()
+
+    // Create a child panel that spawns from a category in parent panel
+    objectToSpawnFrom = parentPanel.objects('gender').objects('male')
+    const legitimateChildPanel = new navigator.Panel(parentPanel, objectToSpawnFrom)  // spawn source must be specified if a parent panel is specified
+    legitimateChildPanel.id('child-panel').update()
+
+
+    // Try to create a child panel without specifying a spawn source (expect error)
+    expect( () => {
+        const parentPanel2 = new navigator.Panel(mySvg)  // no need to specify a spawn source if no parent is specified
+        const illegitimateChildPanel = new navigator.Panel(parentPanel2)   // cannot specify a parent panel without spawn source
+    } ).toThrow("The panel is specified to be a child of another panel, but no object is specified as spawn source (missing argument).")
+
+
+})
+
+
+
+//// BG EXTENSION ////////////////////////////////////////////////////////////////////////
+
+
+test ('BG EXTENSION: Extend panel background leftward', () => {
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+    // Create SVG
+    const mySvg = new container.Svg()
+        .height(1280)
+    // Create panel
+    const myPanel = new navigator.Panel()
+        .x(300)
+        .update()
+
+
+    // Get left background extension value
+    expect( myPanel.bgExtensionLeft() )
+        .toBe( myPanel._bgExtension.left )
+
+
+    // Record initial background related variables
+    const initialBgExtensionLeft = myPanel.bgExtensionLeft()
+    const initialBgX = myPanel._backgroundObject.x()
+    const initialBgWidth = myPanel._backgroundObject.width()
+
+
+
+    //// EXTEND ////
+
+    // Extend panel background leftward
+    const extensionValue = 100
+    myPanel.bgExtensionLeft(extensionValue).update()
+
+    // Record new background related variables
+    const newBgExtensionLeft = myPanel.bgExtensionLeft()
+    const newBgX = myPanel._backgroundObject.x()
+    const newBgWidth = myPanel._backgroundObject.width()
+
+    // Check new background-related values that should be updated
+    expect ( newBgExtensionLeft ).toBe( extensionValue )
+    expect ( newBgX ).toBe( initialBgX - extensionValue )
+    expect ( newBgWidth ).toBe( initialBgWidth + extensionValue )
+
+
+    // Check if final values are reflected to DOM
+    const newBgXOnDom = Number( document.querySelector('.background .rectangle').getAttribute('x') )
+    const newBgWidthOnDom = Number( document.querySelector('.background .rectangle').getAttribute('width') )
+    expect( newBgXOnDom ).toBe( newBgX )
+    expect( newBgWidthOnDom ).toBe( newBgWidth )
+
+
+
+
+    //// RETRACT ////
+
+    // Retract the background extension
+    const newExtensionValue = 50
+    myPanel.bgExtensionLeft( newExtensionValue ).update()
+
+    // Record new background related variables
+    const retractedBgExtensionLeft = myPanel.bgExtensionLeft()
+    const retractedBgX = myPanel._backgroundObject.x()
+    const retractedBgWidth = myPanel._backgroundObject.width()
+
+    // Check new background-related values that should be updated
+    expect ( retractedBgExtensionLeft ).toBe( newExtensionValue )
+    expect ( retractedBgX ).toBe( initialBgX - newExtensionValue )
+    expect ( retractedBgWidth ).toBe( initialBgWidth + newExtensionValue )
+    
+
+})
+
+
+
+test ('BG EXTENSION: Left and right extension together', () => {
+
+    //// INITIALIZE ////
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+    // Create SVG
+    const mySvg = new container.Svg()
+        .height(1280)
+    // Create panel
+    const myPanel = new navigator.Panel()
+        .x(300)
+        .update()
+
+
+    myPanel.width(100).update()
+
+    backgroundObject = myPanel._backgroundObject
+    leftExtensionValue = 100
+    rightExtensionValue = 100
+
+    myPanel.bgExtensionLeft( leftExtensionValue ).update()
+    myPanel.bgExtensionRight( rightExtensionValue ).update()
+
+    expect( backgroundObject.width() )
+        .toBe( leftExtensionValue + myPanel.width() + rightExtensionValue)
+
+
+})
 
 
 //// Y AXIS LABELS ////////////////////////////////////////////////////////////////////////
 
 
-test ('Toggle labels on y axis on/off', () => {
+test ('LABELS: Toggle labels on y axis on/off', () => {
 
     // Clear JEST's DOM to prevent leftovers from previous tests
     document.body.innerHTML = ''
@@ -863,7 +999,7 @@ test ('Toggle labels on y axis on/off', () => {
 
 
 // TODO: Test MUST be completed
-test ('Update label positions when panel position or height is changed', () => {
+test ('LABELS: Update label positions when panel position or height is changed', () => {
 
     // Clear JEST's DOM to prevent leftovers from previous tests
     document.body.innerHTML = ''
@@ -879,9 +1015,73 @@ test ('Update label positions when panel position or height is changed', () => {
 })
 
 
+
+test ('LABELS: Ensure that chart labels on y axis are vertically aligned with each other', () => {
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+    // Create SVG
+    const mySvg = new container.Svg()
+    mySvg.select()
+        .attr('id', 'top-svg')
+    // Create panel
+    const myPanel = new navigator.Panel()
+    // Turn y axis labels on
+    myPanel.yAxisLabels(true).update()
+
+    const xCoordinateOfChart1Label = myPanel.objects('status')._chartLabelObject.x()
+    const xCoordinateOfChart2Label = myPanel.objects('class')._chartLabelObject.x()
+    const xCoordinateOfChart3Label = myPanel.objects('gender')._chartLabelObject.x()
+
+    expect( xCoordinateOfChart1Label === xCoordinateOfChart2Label )
+        .toBeTruthy()
+    expect( xCoordinateOfChart1Label === xCoordinateOfChart3Label )
+        .toBeTruthy()
+
+})
+
+
+test ('LABELS: Get the position of the farthest category label', () => {
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+    // Create SVG
+    const mySvg = new container.Svg()
+    mySvg.select()
+        .attr('id', 'top-svg')
+    // Create panel
+    const myPanel = new navigator.Panel()
+    // Turn y axis labels on
+    myPanel.yAxisLabels(true).update()
+
+    // Get the x coordinate of the farthest chart label
+    const automaticallyRetrievedInitialXCoordinate = myPanel._getXCoordinateOfFarthestChartLabel()
+    const manuallyRetrievedInitialXCoordinate = myPanel.objects('class')._chartLabelObject.x()
+    expect( automaticallyRetrievedInitialXCoordinate )
+        .toBe( manuallyRetrievedInitialXCoordinate )
+
+    // COMMENTED OUT TEST BLOCK IS NO MORE MEANINGFUL, AS ALL LABELS ARE AUTOMATICALLY ALIGNED UPON INITIATION (they share the same x coordinate)
+    // Ensure that the method only returns the farthest coordinate, which ...
+    // should be less (because it is leftmost) than other chart labels' x coordinates
+    // expect( automaticallyRetrievedInitialXCoordinate )
+    //     .toBeLessThan( myPanel.objects('gender')._chartLabelObject.x() )
+    // expect( automaticallyRetrievedInitialXCoordinate )
+    //     .toBeLessThan( myPanel.objects('status')._chartLabelObject.x() )
+
+
+    // Move the chart, and see if the position of the chart label is updated
+    const increment = 600
+    myPanel.x( myPanel.x()  + increment ).update()
+    const automaticallyRetrievedNewXCoordinate  = myPanel._getXCoordinateOfFarthestChartLabel()
+    expect( automaticallyRetrievedNewXCoordinate )
+        .toBe( manuallyRetrievedInitialXCoordinate + increment )
+
+})
+
+
 //// COLOR ////////////////////////////////////////////////////////////////////////
 
-test ('Assign color themes to charts in panel', () => {
+test ('COLOR THEME: Assign color themes to charts in panel', () => {
 
 
     // Clear JEST's DOM to prevent leftovers from previous tests
@@ -939,38 +1139,10 @@ test ('Assign color themes to charts in panel', () => {
 
 
 
-test ('Throw error if no spawn source is specified', () => {
 
 
-    // Clear JEST's DOM to prevent leftovers from previous tests
-    document.body.innerHTML = ''
 
-    // Create SVG
-    const mySvg = new container.Svg()
-    mySvg.select()
-        .attr('id', 'top-svg')
-
-    // Create parent panel
-    const parentPanel = new navigator.Panel(mySvg)  // no need to specify a spawn source if no parent is specified
-    parentPanel.id('parent-panel').update()
-
-    // Create a child panel that spawns from a category in parent panel
-    objectToSpawnFrom = parentPanel.objects('gender').objects('male')
-    const legitimateChildPanel = new navigator.Panel(parentPanel, objectToSpawnFrom)  // spawn source must be specified if a parent panel is specified
-    legitimateChildPanel.id('child-panel').update()
-
-
-    // Try to create a child panel without specifying a spawn source (expect error)
-    expect( () => {
-        const parentPanel2 = new navigator.Panel(mySvg)  // no need to specify a spawn source if no parent is specified
-        const illegitimateChildPanel = new navigator.Panel(parentPanel2)   // cannot specify a parent panel without spawn source
-    } ).toThrow("The panel is specified to be a child of another panel, but no object is specified as spawn source (missing argument).")
-
-
-})
-
-
-test ('COLOR_THEME: Get and Set color theme', () => {
+test ('COLOR THEME: Get and Set color theme', () => {
 
 
     // Clear JEST's DOM to prevent leftovers from previous tests
@@ -1048,7 +1220,7 @@ test ('COLOR_THEME: Get and Set color theme', () => {
 })
 
 
-test ('Depth index: Get and set', () => {
+test ('DEPTH INDEX: Get and set', () => {
 
     // Clear JEST's DOM to prevent leftovers from previous tests
     document.body.innerHTML = ''
@@ -1062,7 +1234,7 @@ test ('Depth index: Get and set', () => {
     //// GET DEPTH INDEX ////
 
     // GET default depth index value
-    expect( myPanel._depthIndex() ).toBe( 0 )
+    expect( myPanel.depthIndex() ).toBe( 0 )
 
     // Check things from DOM perspective
     let depthIndexOfPanel = document.querySelector('.panel').getAttribute('depthIndex')
@@ -1073,8 +1245,8 @@ test ('Depth index: Get and set', () => {
     //// SET DEPTH INDEX ////
 
     // Set a new depthIndex value
-    myPanel._depthIndex(1).update()
-    expect( myPanel._depthIndex() ).toBe( 1 )
+    myPanel.depthIndex(1).update()
+    expect( myPanel.depthIndex() ).toBe( 1 )
 
     // Check things from DOM perspective
     depthIndexOfPanel = document.querySelector('.panel').getAttribute('depthIndex')
@@ -1085,7 +1257,7 @@ test ('Depth index: Get and set', () => {
 
 })
 
-test ('Depth index: Check automatic incrementation upon adding new panels', () => {
+test ('DEPTH INDEX: Check automatic incrementation upon adding new panels', () => {
 
     // Clear JEST's DOM to prevent leftovers from previous tests
     document.body.innerHTML = ''
@@ -1100,7 +1272,7 @@ test ('Depth index: Check automatic incrementation upon adding new panels', () =
     //// AUTO DEPTH INDEX: NO CHILD PANELS ////
 
     // Check the depth index in a one-panel setup
-    expect( parentPanel._depthIndex() ).toBe( 0 )
+    expect( parentPanel.depthIndex() ).toBe( 0 )
 
     // Check things from DOM perspective
     expect( document.querySelectorAll('.panel') ).toHaveLength(1)
@@ -1117,8 +1289,8 @@ test ('Depth index: Check automatic incrementation upon adding new panels', () =
     childPanel.id('child-panel').update()
 
     // Check the depth indexes
-    expect( parentPanel._depthIndex() ).toBe( 0 )
-    expect( childPanel._depthIndex() ).toBe( 1 )
+    expect( parentPanel.depthIndex() ).toBe( 0 )
+    expect( childPanel.depthIndex() ).toBe( 1 )
 
     // Check things from DOM perspective
     expect( document.querySelectorAll('.panel') ).toHaveLength(2)
@@ -1135,9 +1307,9 @@ test ('Depth index: Check automatic incrementation upon adding new panels', () =
     grandChildPanel.id('grandchild-panel').update()
 
     // Check the depth indexes
-    expect( parentPanel._depthIndex() ).toBe( 0 )
-    expect( childPanel._depthIndex() ).toBe( 1 )
-    expect( grandChildPanel._depthIndex() ).toBe( 2 )
+    expect( parentPanel.depthIndex() ).toBe( 0 )
+    expect( childPanel.depthIndex() ).toBe( 1 )
+    expect( grandChildPanel.depthIndex() ).toBe( 2 )
 
     // Check things from DOM perspective
     expect( document.querySelectorAll('.panel') ).toHaveLength(3)
@@ -1153,9 +1325,9 @@ test ('Depth index: Check automatic incrementation upon adding new panels', () =
     grandChildPanel.remove()
 
     // The variables are not deleted, so its ok for these to still exist
-    expect( parentPanel._depthIndex() ).toBe( 0 )
-    expect( childPanel._depthIndex() ).toBe( 1 )
-    expect( grandChildPanel._depthIndex() ).toBe( 2 )
+    expect( parentPanel.depthIndex() ).toBe( 0 )
+    expect( childPanel.depthIndex() ).toBe( 1 )
+    expect( grandChildPanel.depthIndex() ).toBe( 2 )
 
     // But on DOM, there should NOT be any child or grandchild panels or their depthIndexes.
     expect( document.querySelectorAll('.panel') ).toHaveLength(1)
@@ -1166,8 +1338,8 @@ test ('Depth index: Check automatic incrementation upon adding new panels', () =
     childPanel2.id('child-panel2').update()
 
     // Check depth indexes
-    expect( parentPanel._depthIndex() ).toBe( 0 )
-    expect( childPanel2._depthIndex() ).toBe( 1 )
+    expect( parentPanel.depthIndex() ).toBe( 0 )
+    expect( childPanel2.depthIndex() ).toBe( 1 )
 
     // Check things from DOM perspective
     expect( document.querySelectorAll('.panel') ).toHaveLength(2)
@@ -1176,3 +1348,5 @@ test ('Depth index: Check automatic incrementation upon adding new panels', () =
 
 
 })
+
+

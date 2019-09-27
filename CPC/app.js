@@ -103,7 +103,8 @@ myChart.chartLabel('MY CHART LABEL').update()
 const parentElementForPanel = d3.select('body').select('svg')
 myPanel = new navigator.Panel()
     .bgFill('#deebf7')
-    .x(650).y(650)
+    .x(700).y(650)
+    .yAxisLabels(true)
     .update()
 
 myPanel.yAxisLabels()
@@ -111,7 +112,7 @@ myPanel.yAxisLabels()
 
 myPanel2 = new navigator.Panel()
     .bgFill('#deebf7')
-    .x(800).y(650)
+    .x(850).y(650)
     .update()
 myPanel2.objects('gender').colorScheme('Blues').update()
 myPanel2.objects('class').colorScheme('RdPu').update()
@@ -120,7 +121,7 @@ myPanel2.objects('status').colorScheme('Oranges').update()
 
 myPanel3 = new navigator.Panel()
     .bgFill('#deebf7')
-    .x(950).y(650)
+    .x(1000).y(650)
     .update()
 myPanel3.objects('gender').colorScheme('YlGn').update()
 myPanel3.objects('class').colorScheme('YlGnBu').update()
@@ -129,7 +130,7 @@ myPanel3.objects('status').colorScheme('BuPu').update()
 
 myPanel4 = new navigator.Panel()
     .bgFill('#deebf7')
-    .x(1100).y(650)
+    .x(1150).y(650)
     .update()
 myPanel4.objects('gender').colorScheme('Greys').update()
 myPanel4.objects('class').colorScheme('Greys').update()
@@ -141,7 +142,7 @@ myPanel4.objects('status').colorScheme('Greys').update()
 
 myParentPanel = new navigator.Panel()
     .bgFill('#deebf7')
-    .x(1350).y(650)
+    .x(1400).y(650)
     .update()
 
 
@@ -231,6 +232,10 @@ navigator1.loadDataset(
     // navigator1.objects('panel-0').height(1500).update()
     navigator1.objects('panel-0').yAxisLabels()
 
+    // CAPITALIZE CHART LABELS
+    navigator1.objects('panel-0').objects('Status')._chartLabelObject.text('STATUS').update()
+    navigator1.objects('panel-0').objects('Ticket')._chartLabelObject.text('TICKET').update()
+    navigator1.objects('panel-0').objects('Gender')._chartLabelObject.text('GENDER').update()
 })
 
 
@@ -248,6 +253,13 @@ navigator2.loadDataset(
 
     // navigator2.objects('panel-0').height(1500).update()
     navigator2.objects('panel-0').yAxisLabels()
+
+    // CAPITALIZE CHART LABELS
+    navigator2.objects('panel-0').objects('Survived')._chartLabelObject.text('SURVIVED').update()
+    navigator2.objects('panel-0').objects('Pclass')._chartLabelObject.text('PCLASS').update()
+    navigator2.objects('panel-0').objects('Sex')._chartLabelObject.text('SEX').update()
+    navigator2.objects('panel-0').objects('Embarked')._chartLabelObject.text('EMBARKED').update()
+
 })
 
 

@@ -302,11 +302,10 @@
 
         /**
          *
-         * @param value {string} : e.g.,: '14px'
+         * @param value {string|number} : e.g.,: '14px' or 14
          * @return {Text|string}
          */
         fontSize(value) {
-
 
             if (!arguments.length) {
                 return this._fontSize

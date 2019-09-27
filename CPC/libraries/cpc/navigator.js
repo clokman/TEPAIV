@@ -99,6 +99,7 @@
 
 
         _addListenerToFirstPanel() {
+
             this._whenACategoryIsClicked(
                 () => this._queryDataAndUpdateVisualization()
             )
@@ -112,6 +113,40 @@
          * @private
          */
         _whenACategoryIsClicked(callback) {
+
+            // d3.selectAll("*").on('click', (d, i, g) => {
+            //
+            //     const clickedElement = g[i]
+            //     const clickedElementClass = g[i].getAttribute('class')
+            //     // console.log(clickedElementClass)
+            //
+            //     if (clickedElementClass === 'category'){
+            //
+            //         const clickedCategory = g[i]
+            //         const clickedChart = g[i].parentNode
+            //         const clickedPanelElement = g[i].parentNode.parentNode
+            //
+            //         this._lastClickedCategoryName = clickedCategory.getAttribute('id')
+            //         this._lastClickedChartName = clickedChart.getAttribute('id')
+            //         this._lastClickedPanelName = clickedPanelElement.getAttribute('id')
+            //         this._lastClickedPanelDepth = Number(clickedPanelElement.getAttribute('depthIndex'))
+            //
+            //         this._lastClickedCategoryObject = this
+            //             .objects(this._lastClickedPanelName)
+            //             .objects(this._lastClickedChartName)
+            //             .objects(this._lastClickedCategoryName)
+            //         this._lastClickedPanelObject = this.objects(this._lastClickedPanelName)
+            //
+            //         // this._goingDeeper = clickedPanelDepth === this._currentPanelDepth
+            //         // this._stayingAtSameLevel = clickedPanelDepth === this._currentPanelDepth - 1
+            //         // this._goingUpward = clickedPanelDepth === this._currentPanelDepth - 2  // TODO: This MUST be changed from a magic number to a generalizable algorithm
+            //         callback.call(this)
+            //
+            //     }
+            //
+            //     this._whenACategoryIsClicked(callback)  // keep listening
+            //
+            // })
 
             this.select() // this first select is not a D3 method
                 .selectAll('.category')
@@ -137,11 +172,52 @@
                         // this._goingDeeper = clickedPanelDepth === this._currentPanelDepth
                         // this._stayingAtSameLevel = clickedPanelDepth === this._currentPanelDepth - 1
                         // this._goingUpward = clickedPanelDepth === this._currentPanelDepth - 2  // TODO: This MUST be changed from a magic number to a generalizable algorithm
-                        callback.call(this)
+                        callback.call(this)  // execute the callback statement
 
                     }
 
                     this._whenACategoryIsClicked(callback)  // keep listening
+
+                })
+
+        }
+
+
+        _whenABackgorundIsClicked(callback) {
+
+            this.select() // this first select is not a D3 method
+                .selectAll('.background')
+                .on('click', (d, i, g) => {
+
+                    const clickedBackgroundElement = g[i]
+                    const clickedPanelElement = g[i].parentNode
+                    const clickedOnAPanelBackground = clickedPanelElement.getAttribute('class') === 'panel'
+
+                    if ( clickedOnAPanelBackground ) {   // TODO: This if block is a workaround to prevent non-panel .category class objects from being processed. When the d3.selection issue is fixed, this block should NOT be in an if statement.
+
+                        this._lastClickedCategoryName = null
+                        // this._lastClickedCategoryName = clickedBackgroundElement.textContent // this is not a mistake; the id of a panel is the name of the category it is spawned from
+                        this._lastClickedPanelName = clickedPanelElement.getAttribute('id')
+
+                        // const clickedChart = this
+                        //     .objects( this._lastClickedPanelName )  // get panel
+                        //     ._objectToSpawnFrom
+                        //     .select().element.parentElement
+                        // this._lastClickedChartName = clickedChart.getAttribute('id')
+
+                        this._lastClickedPanelDepth = Number(clickedPanelElement.getAttribute('depthIndex'))
+
+                        // this._lastClickedCategoryObject = this
+                        //     .objects(this._lastClickedPanelName)
+                        //     .objects(this._lastClickedChartName)
+                        //     .objects(this._lastClickedCategoryName)
+                        this._lastClickedPanelObject = this.objects(this._lastClickedPanelName)
+
+                        callback.call(this)  // execute the callback statement
+
+                    }
+
+                    this._whenABackgorundIsClicked(callback)  // keep listening
 
                 })
 
@@ -174,7 +250,7 @@
         _queryDataAndUpdateVisualization() {
 
             // Remove any panels if necessary
-            this._removeAnyOutdatedPanels()
+            this._removeAnyPanelsDeeperThanTheClickedOne()
 
             // Query the data based on the clicked category
             this._updateCurrentDrillDownPathParameterBasedOnLastClickedCategory()
@@ -196,9 +272,23 @@
             this._createChildPanelBasedOnStacks(drilldownResultStacks)
 
             // Shrink all previous panels so that they fit the inner height of the new child panel
-            this._compressInnerHeightOfPanelsToFitLastPanel()
+            this._adjustInnerHeightOfPanelsToFitLastPanel()
 
 
+            this._listenForClicksOnPanelBackgroundsAndTreatClickedBackgroundsAsCollapsePoints();
+        }
+
+
+        _listenForClicksOnPanelBackgroundsAndTreatClickedBackgroundsAsCollapsePoints() {
+            this._whenABackgorundIsClicked(
+                () => {
+
+                    this._removeAnyPanelsDeeperThanTheClickedOne()
+                    this._maximizeInnerHeightOfLastPanel()
+                    this._adjustInnerHeightOfPanelsToFitLastPanel()
+                    this._adjustPanelBackgroundsAccordingToLastPanel()
+
+                })
         }
 
 
@@ -263,7 +353,7 @@
 
         /* Adjusts vertical inner space of all panels to fit the vertical inner space of the last panel, so that all charts start and end at same vertical positions between panels)
          */
-        _compressInnerHeightOfPanelsToFitLastPanel() {
+        _adjustInnerHeightOfPanelsToFitLastPanel() {
 
             // Make an array of objects (so it can be reversed)
             const panelObjects = []
@@ -275,7 +365,7 @@
 
             panelObjectsReversed.forEach( panelObject  => {
 
-                if ( panelObject.parentObject ){
+                if ( panelObject.parentObject && panelObject.constructor.name === 'Panel'){
 
                     // Get related variables for calculation
                     const thisPanel = panelObject
@@ -287,7 +377,7 @@
                     const selfOuterPaddingTop = thisPanel._outerPadding.top
                     const selfOuterPaddingBottom = thisPanel._outerPadding.bottom
 
-                    // Shrink previous panel(s)
+                    // Adjust padding values of previous panel(s)
                     parentPanel
                         .innerPaddingTop( selfInnerPaddingTop + selfOuterPaddingTop )
                         .innerPaddingBottom( selfInnerPaddingBottom + selfOuterPaddingBottom - selfOuterPaddingTop)
@@ -299,14 +389,76 @@
 
             })
 
-
-
+            return this
 
 
         }
 
 
-        _removeAnyOutdatedPanels() {
+        _adjustPanelBackgroundsAccordingToLastPanel(){
+
+            // Make an array of objects (so it can be reversed)
+            const panelObjects = []
+            this.objects().forEach( (panelObject, panelName) => {
+                panelObjects.push(panelObject)
+            })
+            const panelObjectsReversed = _.reverse(panelObjects)
+
+
+            panelObjectsReversed.forEach( panelObject  => {
+
+                if ( panelObject.parentObject && panelObject.constructor.name === 'Panel'){
+
+                    // Get related variables for calculation
+                    const thisPanel = panelObject
+                    const parentPanel = panelObject.parentObject
+
+                    const parentOuterPaddingRight = parentPanel._outerPadding.right
+                    const selfOuterPaddingRight = thisPanel._outerPadding.right
+
+                    // Adjust background extension of previous panel(s)
+                    parentPanel
+                        .bgExtensionRight(
+                              // thisPanel._outerPadding.left
+                            + thisPanel._innerPadding.left
+                            + thisPanel.width()
+                            + thisPanel.bgExtensionRight()
+                            + thisPanel._innerPadding.right
+                            // + thisPanel._outerPadding.right
+                        )
+                        .update()
+                }
+
+
+            })
+
+            return this
+        }
+
+
+        _maximizeInnerHeightOfLastPanel(){
+
+            // Get last panel
+            const panelObjects = Array.from(this.objects())
+            const lastPanelNameAndObject = panelObjects[panelObjects.length-1]  // last index
+            const lastPanelObject = lastPanelNameAndObject[1]
+
+            // Get maximum (i.e., original) padding values
+            const maximumInnerPaddingTop = lastPanelObject._innerPaddingOriginal.top
+            const maximumInnerPaddingBottom = lastPanelObject._innerPaddingOriginal.bottom
+
+            // Set padding values to max
+            lastPanelObject.innerPaddingTop( maximumInnerPaddingTop )
+            lastPanelObject.innerPaddingBottom ( maximumInnerPaddingBottom )
+            lastPanelObject.bgExtensionRight(0)
+            lastPanelObject.update()
+
+            return this
+
+        }
+
+
+        _removeAnyPanelsDeeperThanTheClickedOne() {
 
             const numberOfPanelsThatWillRemainUnchangedAfterClick = this._lastClickedPanelDepth + 1
 
@@ -423,8 +575,12 @@
 
             this._depthIndexValue = 0   // 'value' added to name to separate the variable from the method of the otherwise same name
 
+            this._backgroundObject = null
 
-            this._bgExtension = 0
+            this._bgExtension = {
+                left: 0,
+                right: 0
+            }
 
             this._bgFill = thisPanelIsBeingEmbeddedInAnotherPanel
                 ? this._objectToSpawnFrom.fill()
@@ -433,11 +589,16 @@
             this._bgText = 'Panel label'
             this._bgTextFill = 'darkgray'
 
+            this._backgroundObject = null
+
+
+            this._yAxisLabelsAreVisible = false
+
 
             this._outerPadding = {  // distance between parent and child panel in pixels
                 top: 15,
                 bottom: 38,
-                left: 100,
+                left: 10,
                 right: 0
             }
 
@@ -456,16 +617,26 @@
             this._y = 25
             this._width = thisPanelIsBeingEmbeddedInAnotherPanel
                 ? 0
-                : 100
+                : 120
             this._height = 500
 
 
-            this._innerPadding = {  // distance between the panel borders and charts inside the panel in pixels
+            this._innerPaddingOriginal = {  // distance between the panel borders and charts inside the panel in pixels
                 top: 30,
                 bottom: 10,
-                left: 10,
-                right: 10
+                left: 20,
+                right: 20,
+                extraPaddingForLeftEdgeOfPanel0Bg: 20
             }
+
+            this._innerPadding = {  // reflects current values in a given time
+                top: this._innerPaddingOriginal.top,
+                bottom: this._innerPaddingOriginal.bottom,
+                left: this._innerPaddingOriginal.left,
+                right: this._innerPaddingOriginal.right,
+                extraPaddingForLeftEdgeOfPanel0Bg: this._innerPaddingOriginal.extraPaddingForLeftEdgeOfPanel0Bg
+            }
+
             this._paddingBetweenCharts = 0.05  // proportion
 
 
@@ -488,9 +659,9 @@
                 parentBgExtension: animationDuration  // longer durations are cut off, probably by animations that follow
             }
 
+
             // Initialize //
             // TODO: Container.objects() implementation SHOULD be changed so that _backgroundObject and _bridgeObject would also be included in objects()
-            this._backgroundObject = null
             this._createBackgroundObject()
 
             this._bridgeObject = null
@@ -513,21 +684,33 @@
 
         update(transitionDuration) {
 
+            this._updateDomIfStacksDataHasChanged()
+
+            this._updateYAxisLabels()
+
             if (this._backgroundObject) {
                 this._backgroundObject.update(transitionDuration)
+
             }
+
 
             if (this._bridgeObject) {
                 this._bridgeObject.update(transitionDuration)
             }
 
             this.select()
-                .attr( 'depthIndex', this._depthIndex() )
+                .attr( 'depthIndex', this.depthIndex() )
 
-            this._updateDomIfStacksDataHasChanged()
+
+
 
             super.update(transitionDuration)
-            // this._updateYAxisLabels()
+
+            // Post-super update statements
+            this._verticallyAlignYAxisChartLabels()  // must come after super update; otherwise chart labels do not align (for Panel class only they are OK for Navigator class, even though Navigator uses Panel class too).
+
+
+
 
             return this
 
@@ -594,6 +777,7 @@
                 .fill(this._bgFill)
                 .text(this._bgText)
                 .textFill(this._bgTextFill)
+
         }
 
 
@@ -644,7 +828,7 @@
 
         _embedAsChildPanel() {
 
-            this._extendParentPanelBackground()
+            this._extendBackgroundsOfParentPanels(this)
             this._createBridgeFromSpawnRoot()
             this._verticallyMaximizeFromBridgeAsChildPanel()
 
@@ -652,37 +836,48 @@
             this.parentObject.childObject = this
 
             // Update depth index of the current panel (an indicator of how deep it is located in panel hierarchy)
-            const depthOfParent = this.parentObject._depthIndex()
-            this._depthIndex(depthOfParent + 1)
+            const depthOfParent = this.parentObject.depthIndex()
+            this.depthIndex(depthOfParent + 1)
 
-            // TODO: This is a temporary solution to get parent and grandparent objects, until a recursive version is implemented
-            // TODO: A possible solution is to implement a try-while loop
+        }
 
-            try {
-                const grandParentObject = this.parentObject.parentObject
-                grandParentObject.bgExtension(230).update()  // TODO: MUST remove magic number --- What is this 230?
-            } catch (e) {
-                console.warn(e)
+
+
+
+
+        _extendBackgroundsOfParentPanels(child) {
+
+            if (child.parentObject && child.parentObject.hasType('Panel')){
+
+                const totalHorizontalPaddingInParentPanel = child.parentObject._innerPadding.right + this.parentObject._innerPadding.left
+                const parentBgExtensionValue =
+                    + child._outerPadding.left
+                    + child._innerPadding.left
+                    + child._innerPadding.right
+                    + child._outerPadding.right
+                    + child.bgExtensionRight()
+
+
+
+                // Make room in parent panel
+                child.parentObject.bgExtensionRight(parentBgExtensionValue)
+                .update(this.animationDuration.parentBgExtension)
             }
 
+            try {
+
+                this._extendBackgroundsOfParentPanels(child.parentObject)
+            }
+            catch (e) {
+
+            }
         }
 
-
-        _extendParentPanelBackground() {
-
-            // Make room in parent panel
-            const totalHorizontalPaddingInParentPanel = this.parentObject._innerPadding.right + this.parentObject._innerPadding.left
-            const parentBgExtensionValue = this.propertiesAtTheEndOfEmbedAnimation.width + totalHorizontalPaddingInParentPanel
-
-            this.parentObject
-                .bgExtension(parentBgExtensionValue)
-                .update(this.animationDuration.parentBgExtension)
-        }
 
 
         _createBridgeFromSpawnRoot() {
 
-            const parentBgExtensionValue = this.parentObject.bgExtension()
+            const parentBgExtensionValue = this.parentObject.bgExtensionRight()
 
             const bridgeId = `${this._objectToSpawnFrom.id()}-bridge`
 
@@ -722,7 +917,7 @@
             // Move the newly created cover to its initial position (which is on top of the bridge).
             setTimeout(() => {
                 childPanelCover
-                    .x(this.propertiesAtTheEndOfEmbedAnimation.x)
+                    .x(this.propertiesAtTheEndOfEmbedAnimation.x + 15)
                     .y(this._bridgeObject.y())
                     .width(this.propertiesAtTheEndOfEmbedAnimation.width)
                     .height(this._bridgeObject.height())
@@ -739,7 +934,7 @@
             // Vertically maximize the cover
             setTimeout(() => {
                 childPanelCover
-                    .x(this.propertiesAtTheEndOfEmbedAnimation.x)
+                    .x(this.propertiesAtTheEndOfEmbedAnimation.x + 15)
                     .y(this.propertiesAtTheEndOfEmbedAnimation.y)
                     .height(this.propertiesAtTheEndOfEmbedAnimation.height)
                     .width(this.propertiesAtTheEndOfEmbedAnimation.width)
@@ -753,7 +948,7 @@
                 childPanelCover.remove()
 
                 // Modify current panel's properties to fit it to the room created in parent panel
-                this.x(this.propertiesAtTheEndOfEmbedAnimation.x)
+                this.x(this.propertiesAtTheEndOfEmbedAnimation.x + 15)
                     .y(this.propertiesAtTheEndOfEmbedAnimation.y)
                     .width(this.propertiesAtTheEndOfEmbedAnimation.width)
                     .height(this.propertiesAtTheEndOfEmbedAnimation.height)
@@ -796,24 +991,114 @@
         yAxisLabels(value) {
 
             if (value === true) {
+                this._yAxisLabelsAreVisible = true
+            }
+
+            if (value === false) {
+                this._yAxisLabelsAreVisible = false
+            }
+
+            return this
+
+        }
+
+
+        _updateYAxisLabels () {
+
+            if ( this._yAxisLabelsAreVisible ) {
+
+
+                let chartLabelFontSize = 0
+
                 this.objects().forEach( (chartObject, chartObjectName) => {
+
                     chartObject
                         .categoryLabels(true)
                         .chartLabel(true)
                         .chartLabel(chartObjectName)
+                        .update()  // this update must be here or things may break
+
+                        const chartLabelFontSizeAsString = chartObject._chartLabelObject.fontSize()
+                        chartLabelFontSize = parseInt(chartLabelFontSizeAsString.match(/\d+/), 10)
+
                 })
+
+
+                const farthestLeftPointOfLabelsArea =
+                    this._getXCoordinateOfFarthestChartLabel()
+                    - chartLabelFontSize
+
+                const leftExtensionValue =
+                    Math.abs(
+                         Math.abs( this.x() )
+                          - Math.abs( farthestLeftPointOfLabelsArea )
+                    ) + this._innerPadding.left + this._innerPadding.extraPaddingForLeftEdgeOfPanel0Bg
+                this.bgExtensionLeft( leftExtensionValue )
+
+                // this.bgExtensionLeft(170)
+                // this.x( this.x() + 170 )
+
+
             }
 
-            if (value === false) (
+
+            if ( !this._yAxisLabelsAreVisible ) {
+
                 this.objects().forEach((chartObject, chartObjectName) => {
                     chartObject
                         .categoryLabels(false)
                         .chartLabel(false)
 
                 })
-            )
+
+            }
 
             return this
+
+        }
+
+
+        _verticallyAlignYAxisChartLabels () {
+
+            const targetXCoordinateForAllLabels = this._getXCoordinateOfFarthestChartLabel()
+
+            this.objects().forEach( (chartObject, chartName) => {
+
+                if ( chartObject._chartLabelObject ){
+
+                    const xCoordinateOfLabel = chartObject._chartLabelObject.x()
+                    const currentPadding = chartObject.chartLabelPaddingRight()
+                    const paddingToBeAdded = Math.abs( Math.abs(targetXCoordinateForAllLabels) - Math.abs(xCoordinateOfLabel) ) // absolute values, because coordinates may be negative
+                    chartObject
+                        .chartLabelPaddingRight( currentPadding + paddingToBeAdded)
+                        .update()
+
+                }
+            })
+
+        }
+
+
+        _getXCoordinateOfFarthestChartLabel () {  // 'farthest' is not a typo
+
+            // Collect all x coordinates of chart labels
+            let xCoordinatesOfAllChartLabels = []
+            this.objects().forEach( (chartObject, chartName) => {
+
+                if (chartObject._chartLabelObject){
+                    const xCoordinate = chartObject._chartLabelObject.x()
+                    xCoordinatesOfAllChartLabels.push(xCoordinate)
+                }
+            })
+
+            // If any x coordinates are found (i.e., labels are on/initialized),
+            // get the leftmost x coordinate in relation to the panel
+            let farthestXCoordinate
+            if (xCoordinatesOfAllChartLabels.length){
+                farthestXCoordinate = _.min(xCoordinatesOfAllChartLabels)
+            }
+
+            return farthestXCoordinate
 
         }
 
@@ -1101,26 +1386,65 @@
         }
 
 
-        bgExtension(value) {
+        /**
+         * @param value
+         * @return {number|Panel}
+         */
+        bgExtensionRight(value) {
 
             // Getter
             if (!arguments.length) {
-                return this._bgExtension
+                return this._bgExtension.right
             }
 
             // Setter
             else {
 
-                this._bgExtension = value
+                this._bgExtension.right = value
 
                 // Update background
-                this._backgroundObject
-                    .width(this._width + this._bgExtension)
-
+                if (this._backgroundObject){
+                    this._backgroundObject
+                        .width( this.bgExtensionLeft() + this.width() + this.bgExtensionRight() )
+                }
 
                 return this
             }
 
+        }
+
+
+        /**
+         * @param value
+         * @return {number|Panel}
+         */
+        bgExtensionLeft(value) {
+
+            // Getter
+            if (!arguments.length) {
+                return this._bgExtension.left
+            }
+
+            // Setter
+            else {
+
+                // Set new property
+                this._bgExtension.left = value
+
+
+                const backgroundObject = this._backgroundObject
+
+                const newXCoordinateOfBackground = this.x() - this.bgExtensionLeft()
+                const newWidthOfBackground =  this.bgExtensionLeft() + this.width() + this.bgExtensionRight()
+
+                // Update background
+                this._backgroundObject
+                    .x( newXCoordinateOfBackground  )
+                    .width( newWidthOfBackground )
+
+
+                return this
+            }
 
         }
 
@@ -1246,7 +1570,7 @@
         }
 
 
-        _depthIndex(value) {
+        depthIndex(value) {
 
             // Getter
             if( !arguments.length ){
@@ -1262,11 +1586,9 @@
                 return this
             }
 
-
-
-
-
         }
+
+
     }
 
 
@@ -1294,11 +1616,12 @@
                 // Dyamic:
                 x: null,
                 y: null,
+                fontSize: 16,
                 text: 'Chart label',
 
                 // Static:
                 paddingRight: 35,
-                fill: 'gray'
+                fill: 'darkgray'
             }
             this._chartLabelObject = null
 
@@ -1557,6 +1880,9 @@
         }
 
 
+
+
+
         _updateChartLabel(transitionDuration) {
 
             if (this._chartLabelObject) {
@@ -1565,6 +1891,7 @@
 
                 this._chartLabelObject
                     .text(this._chartLabel.text)
+                    .fontSize(this._chartLabel.fontSize)
                     .x(this._chartLabel.x)
                     .y(this._chartLabel.y)
                     .fill(this._chartLabel.fill)
@@ -1587,6 +1914,25 @@
             const {x, y} = this._calculateChartLabelPosition()
             this._chartLabel.x = x
             this._chartLabel.y = y
+
+        }
+
+
+        chartLabelPaddingRight(value){
+
+            // Getter
+            if (!arguments.length){
+                return this._chartLabel.paddingRight
+            }
+            // Setter
+            else {
+
+                value.mustBeOfType('Number')
+
+                this._chartLabel.paddingRight = value
+
+                return this
+            }
 
         }
 
