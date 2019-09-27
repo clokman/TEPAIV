@@ -598,7 +598,7 @@
             this._outerPadding = {  // distance between parent and child panel in pixels
                 top: 15,
                 bottom: 38,
-                left: 10,
+                left: 100,
                 right: 0
             }
 
@@ -617,15 +617,15 @@
             this._y = 25
             this._width = thisPanelIsBeingEmbeddedInAnotherPanel
                 ? 0
-                : 120
+                : 100
             this._height = 500
 
 
             this._innerPaddingOriginal = {  // distance between the panel borders and charts inside the panel in pixels
                 top: 30,
                 bottom: 10,
-                left: 20,
-                right: 20,
+                left: 10,
+                right: 10,
                 extraPaddingForLeftEdgeOfPanel0Bg: 20
             }
 
@@ -839,6 +839,16 @@
             const depthOfParent = this.parentObject.depthIndex()
             this.depthIndex(depthOfParent + 1)
 
+            // TODO: This is a temporary solution to get parent and grandparent objects, until a recursive version is implemented
+            // TODO: A possible solution is to implement a try-while loop
+            //
+            // try {
+            //     const grandParentObject = this.parentObject.parentObject
+            //     grandParentObject.bgExtension(230).update()  // TODO: MUST remove magic number --- What is this 230?
+            // } catch (e) {
+            //     console.warn(e)
+            // }
+
         }
 
 
@@ -917,7 +927,7 @@
             // Move the newly created cover to its initial position (which is on top of the bridge).
             setTimeout(() => {
                 childPanelCover
-                    .x(this.propertiesAtTheEndOfEmbedAnimation.x + 15)
+                    .x(this.propertiesAtTheEndOfEmbedAnimation.x)
                     .y(this._bridgeObject.y())
                     .width(this.propertiesAtTheEndOfEmbedAnimation.width)
                     .height(this._bridgeObject.height())
@@ -934,7 +944,7 @@
             // Vertically maximize the cover
             setTimeout(() => {
                 childPanelCover
-                    .x(this.propertiesAtTheEndOfEmbedAnimation.x + 15)
+                    .x(this.propertiesAtTheEndOfEmbedAnimation.x)
                     .y(this.propertiesAtTheEndOfEmbedAnimation.y)
                     .height(this.propertiesAtTheEndOfEmbedAnimation.height)
                     .width(this.propertiesAtTheEndOfEmbedAnimation.width)
@@ -948,7 +958,7 @@
                 childPanelCover.remove()
 
                 // Modify current panel's properties to fit it to the room created in parent panel
-                this.x(this.propertiesAtTheEndOfEmbedAnimation.x + 15)
+                this.x(this.propertiesAtTheEndOfEmbedAnimation.x)
                     .y(this.propertiesAtTheEndOfEmbedAnimation.y)
                     .width(this.propertiesAtTheEndOfEmbedAnimation.width)
                     .height(this.propertiesAtTheEndOfEmbedAnimation.height)
@@ -1035,7 +1045,6 @@
                     ) + this._innerPadding.left + this._innerPadding.extraPaddingForLeftEdgeOfPanel0Bg
                 this.bgExtensionLeft( leftExtensionValue )
 
-                // this.bgExtensionLeft(170)
                 // this.x( this.x() + 170 )
 
 
