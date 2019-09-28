@@ -21,18 +21,18 @@ const version = "1.0"
  * Convenience method for .simulateClick(). Takes a selector string and simulates a click on the specified element.
  * @param selectors {string}
  */
-function simulateClickOn(selectors){
+function simulateClickOn(selector){
 
     try{
 
-        const element = document.querySelector(selectors)
+        const element = document.querySelector(selector)
         simulateClick(element)
 
     }
     catch (e) {
 
         if (e.message === `An invalid element is likely provided for the 'element' parameter. The provided 'element' is "null".`) {
-            throw new Error(`An invalid selectors string is likely provided for the 'selectors' parameter. The provided selector(s) was "${selectors}".`)
+            throw new Error(`An invalid selectors string is likely provided for the 'selectors' parameter. The provided selector(s) was "${selector}".`)
         }
 
     }
