@@ -272,6 +272,7 @@ class Stack {
                     .set('start', 0)
                     .set('end', 10)
                     .set('percentage', 33)
+                    .set('count', 330)
 
             exampleData.set('category-2', new Map())
                 .get('category-2')
@@ -279,6 +280,7 @@ class Stack {
                     .set('start', 10)
                     .set('end', 20)
                     .set('percentage', 33)
+                    .set('count', 330)
 
             exampleData.set('category-3', new Map())
                 .get('category-3')
@@ -286,6 +288,8 @@ class Stack {
                     .set('start', 20)
                     .set('end', 30)
                     .set('percentage', 33)
+                    .set('count', 330)
+
         }
 
         if (variant === 'generic with spaces in category names'){
@@ -296,6 +300,7 @@ class Stack {
                     .set('start', 0)
                     .set('end', 10)
                     .set('percentage', 33)
+                    .set('count', 330)
 
             exampleData.set('category 2', new Map())
                 .get('category 2')
@@ -303,6 +308,7 @@ class Stack {
                     .set('start', 10)
                     .set('end', 20)
                     .set('percentage', 33)
+                    .set('count', 330)
 
             exampleData.set('category 3', new Map())
                 .get('category 3')
@@ -310,6 +316,7 @@ class Stack {
                     .set('start', 20)
                     .set('end', 30)
                     .set('percentage', 33)
+                    .set('count', 330)
         }
 
 
@@ -321,6 +328,7 @@ class Stack {
                 .set('start', 0)
                 .set('end', 64)
                 .set('percentage', 64)
+                .set('count', 843)
 
             exampleData.set('female', new Map())
                 .get('female')
@@ -328,6 +336,8 @@ class Stack {
                 .set('start', 64)
                 .set('end', 100)
                 .set('percentage', 36)
+                .set('count', 466)
+
         }
 
 
@@ -339,6 +349,8 @@ class Stack {
                 .set('start', 0)
                 .set('end', 25)
                 .set('percentage', 25)
+                .set('count', 323)
+
 
             exampleData.set('second-class', new Map())
                 .get('second-class')
@@ -346,6 +358,8 @@ class Stack {
                 .set('start', 25)
                 .set('end', 46)
                 .set('percentage', 21)
+                .set('count', 277)
+
 
             exampleData.set('third-class', new Map())
                 .get('third-class')
@@ -353,6 +367,8 @@ class Stack {
                 .set('start', 46)
                 .set('end', 100)
                 .set('percentage', 54)
+                .set('count', 709)
+
         }
 
 
@@ -364,6 +380,7 @@ class Stack {
                 .set('start', 0)
                 .set('end', 38)
                 .set('percentage', 38)
+                .set('count', 500)
 
             exampleData.set('died', new Map())
                 .get('died')
@@ -371,6 +388,7 @@ class Stack {
                 .set('start', 38)
                 .set('end', 100)
                 .set('percentage', 62)
+                .set('count', 809)
         }
 
 

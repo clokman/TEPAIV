@@ -65,6 +65,7 @@ test ('Should initiate with example data', () => {
 │         1         │   'start'    │       0        │
 │         2         │    'end'     │       10       │
 │         3         │ 'percentage' │       33       │
+│         4         │   'count'    │      330       │
 └───────────────────┴──────────────┴────────────────┘`)
     expectTable(myStack.data().get('category-2'), `\
 ┌───────────────────┬──────────────┬────────────────┐
@@ -74,7 +75,9 @@ test ('Should initiate with example data', () => {
 │         1         │   'start'    │       10       │
 │         2         │    'end'     │       20       │
 │         3         │ 'percentage' │       33       │
+│         4         │   'count'    │      330       │
 └───────────────────┴──────────────┴────────────────┘`)
+
     expectTable(myStack.data().get('category-3'), `\
 ┌───────────────────┬──────────────┬──────────────────┐
 │ (iteration index) │     Key      │      Values      │
@@ -83,6 +86,7 @@ test ('Should initiate with example data', () => {
 │         1         │   'start'    │        20        │
 │         2         │    'end'     │        30        │
 │         3         │ 'percentage' │        33        │
+│         4         │   'count'    │       330        │
 └───────────────────┴──────────────┴──────────────────┘`)
 
 
@@ -155,6 +159,7 @@ test ('Should generate various example data', () => {
 │         1         │   'start'    │       0        │
 │         2         │    'end'     │       10       │
 │         3         │ 'percentage' │       33       │
+│         4         │   'count'    │      330       │
 └───────────────────┴──────────────┴────────────────┘`)
     expectTable(myStack.data().get('category-2'), `\
 ┌───────────────────┬──────────────┬────────────────┐
@@ -164,6 +169,7 @@ test ('Should generate various example data', () => {
 │         1         │   'start'    │       10       │
 │         2         │    'end'     │       20       │
 │         3         │ 'percentage' │       33       │
+│         4         │   'count'    │      330       │
 └───────────────────┴──────────────┴────────────────┘`)
 
 
@@ -182,6 +188,7 @@ test ('Should generate various example data', () => {
 │         1         │   'start'    │   0    │
 │         2         │    'end'     │   64   │
 │         3         │ 'percentage' │   64   │
+│         4         │   'count'    │  843   │
 └───────────────────┴──────────────┴────────┘`)
     expectTable(exampleData2.get('female'), `\
 ┌───────────────────┬──────────────┬──────────┐
@@ -191,6 +198,7 @@ test ('Should generate various example data', () => {
 │         1         │   'start'    │    64    │
 │         2         │    'end'     │   100    │
 │         3         │ 'percentage' │    36    │
+│         4         │   'count'    │   466    │
 └───────────────────┴──────────────┴──────────┘`)
 
     // Probe the generated data
@@ -232,6 +240,7 @@ test ('Should generate various example data', () => {
 │         1         │   'start'    │       0       │
 │         2         │    'end'     │      25       │
 │         3         │ 'percentage' │      25       │
+│         4         │   'count'    │      323      │
 └───────────────────┴──────────────┴───────────────┘`)
     expectTable(exampleDataClass.get('second-class'), `\
 ┌───────────────────┬──────────────┬────────────────┐
@@ -241,6 +250,7 @@ test ('Should generate various example data', () => {
 │         1         │   'start'    │       25       │
 │         2         │    'end'     │       46       │
 │         3         │ 'percentage' │       21       │
+│         4         │   'count'    │      277       │
 └───────────────────┴──────────────┴────────────────┘`)
     expectTable(exampleDataClass.get('third-class'), `\
 ┌───────────────────┬──────────────┬───────────────┐
@@ -250,6 +260,7 @@ test ('Should generate various example data', () => {
 │         1         │   'start'    │      46       │
 │         2         │    'end'     │      100      │
 │         3         │ 'percentage' │      54       │
+│         4         │   'count'    │      709      │
 └───────────────────┴──────────────┴───────────────┘`)
 
 
@@ -291,6 +302,7 @@ test ('Should generate various example data', () => {
 │         1         │   'start'    │     0      │
 │         2         │    'end'     │     38     │
 │         3         │ 'percentage' │     38     │
+│         4         │   'count'    │    500     │
 └───────────────────┴──────────────┴────────────┘`)
     expectTable(exampleDataStatus.get('died'), `\
 ┌───────────────────┬──────────────┬────────┐
@@ -300,6 +312,7 @@ test ('Should generate various example data', () => {
 │         1         │   'start'    │   38   │
 │         2         │    'end'     │  100   │
 │         3         │ 'percentage' │   62   │
+│         4         │   'count'    │  809   │
 └───────────────────┴──────────────┴────────┘`)
 
 
@@ -443,6 +456,7 @@ test ('Should scale the data in stack' , () => {
 │         1         │   'start'    │       0        │
 │         2         │    'end'     │       10       │
 │         3         │ 'percentage' │       33       │
+│         4         │   'count'    │      330       │
 └───────────────────┴──────────────┴────────────────┘`)
 
 
@@ -461,6 +475,7 @@ test ('Should scale the data in stack' , () => {
 │         1         │   'start'    │       0        │
 │         2         │    'end'     │      333       │
 │         3         │ 'percentage' │       33       │
+│         4         │   'count'    │      330       │
 └───────────────────┴──────────────┴────────────────┘`)
 
     expect(myStack._data.size).toBe(3)

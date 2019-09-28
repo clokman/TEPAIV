@@ -80,6 +80,7 @@ test ('Generate sample data' , () => {
 │         1         │   'start'    │   0    │
 │         2         │    'end'     │   64   │
 │         3         │ 'percentage' │   64   │
+│         4         │   'count'    │  843   │
 └───────────────────┴──────────────┴────────┘`)
     expectTable(myStacks.data('class').data('first-class'), `\
 ┌───────────────────┬──────────────┬───────────────┐
@@ -89,6 +90,7 @@ test ('Generate sample data' , () => {
 │         1         │   'start'    │       0       │
 │         2         │    'end'     │      25       │
 │         3         │ 'percentage' │      25       │
+│         4         │   'count'    │      323      │
 └───────────────────┴──────────────┴───────────────┘`)
     expectTable(myStacks.data('status').data('survived'), `\
 ┌───────────────────┬──────────────┬────────────┐
@@ -98,6 +100,7 @@ test ('Generate sample data' , () => {
 │         1         │   'start'    │     0      │
 │         2         │    'end'     │     38     │
 │         3         │ 'percentage' │     38     │
+│         4         │   'count'    │    500     │
 └───────────────────┴──────────────┴────────────┘`)
 
 })
@@ -236,6 +239,7 @@ test ('Should query the data in Stacks', () => {
 │         1         │   'start'    │     0      │
 │         2         │    'end'     │     38     │
 │         3         │ 'percentage' │     38     │
+│         4         │   'count'    │    500     │
 └───────────────────┴──────────────┴────────────┘`)
 
 

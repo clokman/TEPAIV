@@ -263,6 +263,8 @@ test ('Should query the stack data', () => {
 })
 
 
+//// UPDATE STACK DATA  ///////////////////////////////////////////////////////////////
+
 test ('Should update stack data and also the related instance variables', () => {
 
     const myChart = new navigator.Chart()
@@ -316,8 +318,98 @@ test ('Should update stack data and also the related instance variables', () => 
 
 })
 
+//// ABSOLUTE VALUES ///////////////////////////////////////////////////////////////
 
-//// CATEGORY LABELS ////
+describe ('ABSOLUTE VALUES: Toggle absolute values', () => {
+
+    // PREP //
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+    // Create svg
+    const mySvg = new container.Svg()
+    // Create chart
+    const myChart = new navigator.Chart()
+
+
+    test('GET/SET', () => {
+
+        // Get
+        expect( myChart.showAbsoluteValues()).toBe( false )
+
+        // Set (On)
+        myChart.showAbsoluteValues(true).update()
+        expect( myChart.showAbsoluteValues() ).toBe( true )
+
+        // Set (Off)
+        myChart.showAbsoluteValues(false).update()
+        expect( myChart.showAbsoluteValues() ).toBe( false )
+
+    })
+
+
+    test('VALIDATE: If absolute values are on, only numbers should be present in category text', () => {
+
+        myChart.showAbsoluteValues(true).update()
+
+        const allCategoryTexts = getAllValueTextsAtTheCenterOfCategories()
+        const numberizedCategoryTexts = allCategoryTexts.map(Number)
+
+        // Digits in a string does not return NaN; if NaN, there must be a non-digit character in text
+        expect( numberizedCategoryTexts.includes(NaN) ).toBe( false )
+
+        // Double check that the text is made of digits only
+        expect( numberizedCategoryTexts[0].hasType('Number') ).toBe(true)
+        expect( numberizedCategoryTexts[1].hasType('Number') ).toBe(true)
+        expect( numberizedCategoryTexts[2].hasType('Number') ).toBe(true)
+
+    })
+
+    
+    test ('TOGGLE OFF: Toggling off absolute values should toggle on percentages', () => {
+            
+            myChart.showAbsoluteValues(false).update()
+
+            const allCategoryTexts = getAllValueTextsAtTheCenterOfCategories()
+            expect( String(allCategoryTexts).includes('%') ).toBe( true )
+
+    })
+
+
+    test ('N/A VALUES: If there is no absolute value data for a category, it should display as N/A', () => {
+
+        // Hack the data: Delete counts from data (counts are used to display absolute values)
+        myChart.stack('category-1').delete('count')
+        myChart.stack('category-2').delete('count')
+        myChart.stack('category-3').delete('count')
+        myChart._updateData()
+
+        // Turn on absolute values
+        myChart.showAbsoluteValues(true).update()
+
+        // Because the data that absolute values require is not available in some...
+        // or all categories, these categories should display 'N/A' as their text
+        const allCategoryTexts = getAllValueTextsAtTheCenterOfCategories()
+        expect( String(allCategoryTexts).includes('N/A') ).toBe( true )
+
+    })
+
+
+    // HELPER FUNCTIONS FOR TESTS //
+    function getAllValueTextsAtTheCenterOfCategories() {
+        let texts = []
+        myChart.objects().forEach( (categoryObject, categoryName) => {
+            texts.push(categoryObject._text)
+        })
+        return texts
+    }
+
+
+
+
+})
+
+
+//// CATEGORY LABELS ///////////////////////////////////////////////////////////////
 
 test ('Get/TurnOn/TurnOff category labels', () => {
 

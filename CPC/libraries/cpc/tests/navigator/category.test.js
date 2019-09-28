@@ -216,7 +216,7 @@ test ('Should get and set fill color using single and chain syntax', () => {
 
 //// PERCENTAGE VALUE & PERCENTAGE TEXT ///////////////////////////////////////////////////////////////
 
-test ('Should get and set percentage using single and chain syntax', () => {
+test ('PERCENTAGE: Should get and set percentage using single and chain syntax', () => {
 
     const myCategory = new navigator.Category()
 
@@ -240,10 +240,9 @@ test ('Should get and set percentage using single and chain syntax', () => {
 })
 
 
-
 //// PERCENTAGE TEXT COLOR ///////////////////////////////////////////////////////////////
 
-test ('Should get and set percentage text fill color using single and chain syntax', () => {
+test ('PERCENTAGE: Should get and set percentage text fill color using single and chain syntax', () => {
 
     const myCategory = new navigator.Category()
 

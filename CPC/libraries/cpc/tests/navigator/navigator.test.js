@@ -57,7 +57,6 @@ const navigator = require("../../navigator")
 
 //// INSTANTIATION ////////////////////////////////////////////////////////////////////////
 
-
 test ('Instantiate Navigator class (no parent object specified)', async () => {
 
     // Clear JEST's DOM to prevent leftovers from previous tests
@@ -455,6 +454,158 @@ test ('Clicking on a category must make a query and visualize query results with
 
 
 
+//// ABSOLUTE VALUES ///////////////////////////////////////////////////////////////
+
+describe ('ABSOLUTE VALUES: Toggle absolute values in category captions', () => {
+
+    //// PREPARE DOM AND NAVIGATOR ////
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+    // Create svg container
+    const svg = new container.Svg()
+
+
+
+    test('GET/SET', async () => {
+
+        // PREP //
+        // Create an prepare navigator
+        const myNavigator = new navigator.Navigator()
+        //// Load a dataset into navigator
+        // Load a dataset
+        await myNavigator.loadDataset(
+            'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
+            ['Name']
+        )
+        myNavigator.update()
+
+
+        // GET //
+        expect( myNavigator.showAbsoluteValues() ).toBe( false )
+
+        // SET (on) //
+        myNavigator.showAbsoluteValues( true ).update()
+        expect( myNavigator.showAbsoluteValues() ).toBe( true )
+
+        // SET (off) //
+        myNavigator.showAbsoluteValues( false ).update()
+        expect( myNavigator.showAbsoluteValues() ).toBe( false )
+
+    })
+
+
+    test ('DOM: Absolute values should toggle for all category captions on DOM', async () => {
+            
+            // PREP //
+
+        // PREP //
+        // Create an prepare navigator
+        const myNavigator = new navigator.Navigator()
+        //// Load a dataset into navigator
+        // Load a dataset
+        await myNavigator.loadDataset(
+            'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
+            ['Name']
+        )
+        myNavigator.update()
+
+
+        // Expand one panel
+        domUtils.simulateClickOn( '#Female' )
+        // Confirm the existence of two panels
+        expect( myNavigator.objects() ).toTabulateAs(`\
+┌───────────────────┬───────────┬─────────┐
+│ (iteration index) │    Key    │ Values  │
+├───────────────────┼───────────┼─────────┤
+│         0         │ 'panel-0' │ [Panel] │
+│         1         │ 'panel-1' │ [Panel] │
+└───────────────────┴───────────┴─────────┘`)
+            
+            
+        // Get initial caption texts on DOM
+        let captionTexts = getCaptionTextsOfCategoriesFromDom()
+        expect(captionTexts).toTabulateAs(`\
+┌─────────┬────────┐
+│ (index) │ Values │
+├─────────┼────────┤
+│    0    │ '100%' │
+│    1    │ '67%'  │
+│    2    │ '33%'  │
+│    3    │ '49%'  │
+│    4    │ '51%'  │
+│    5    │ '100%' │
+│    6    │ '96%'  │
+│    7    │  '4%'  │
+└─────────┴────────┘`)  // combined list of category captions from two panels
+
+
+
+        // TOGGLE ABSOLUTE VALUES ON
+        myNavigator.showAbsoluteValues(true).update()
+
+        // Get new caption texts on DOM
+        captionTexts = getCaptionTextsOfCategoriesFromDom()
+        expect(captionTexts).toTabulateAs(`\
+┌─────────┬────────┐
+│ (index) │ Values │
+├─────────┼────────┤
+│    0    │ '100'  │
+│    1    │  '67'  │
+│    2    │  '33'  │
+│    3    │  '49'  │
+│    4    │  '51'  │
+│    5    │  '49'  │
+│    6    │  '47'  │
+│    7    │  '2'   │
+└─────────┴────────┘`)  // combined list of category captions from two panels
+
+
+
+        // TOGGLE ABSOLUTE VALUES OFF
+        myNavigator.showAbsoluteValues(false).update()
+
+        // Get caption texts on DOM
+        captionTexts = getCaptionTextsOfCategoriesFromDom()
+        expect(captionTexts).toTabulateAs(`\
+┌─────────┬────────┐
+│ (index) │ Values │
+├─────────┼────────┤
+│    0    │ '100%' │
+│    1    │ '67%'  │
+│    2    │ '33%'  │
+│    3    │ '49%'  │
+│    4    │ '51%'  │
+│    5    │ '100%' │
+│    6    │ '96%'  │
+│    7    │  '4%'  │
+└─────────┴────────┘`)  // combined list of category captions from two panels
+
+
+
+            
+        // HELPER FUNCTION(S) FOR THIS TEST //
+        /**
+         * @return {[]}  - An array of string
+         */
+        function getCaptionTextsOfCategoriesFromDom() {
+            const allCaptions = document.querySelectorAll('.category .rectangle-caption')
+
+            const captionTexts = []
+            allCaptions.forEach(caption => {
+                captionTexts.push(caption.textContent)
+            })
+            return captionTexts
+        }
+
+
+    })
+
+
+
+
+
+})
 
 
 
@@ -586,3 +737,5 @@ test ('COLOR SCHEME SET: Set and get', async () => {
 //
 //
 // })
+
+

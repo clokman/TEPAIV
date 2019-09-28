@@ -181,6 +181,7 @@ test ('Initialize with example data', () => {
 │         1         │   'start'    │   0    │
 │         2         │    'end'     │   64   │
 │         3         │ 'percentage' │   64   │
+│         4         │   'count'    │  843   │
 └───────────────────┴──────────────┴────────┘`)
 
 })
@@ -1077,6 +1078,227 @@ test ('LABELS: Get the position of the farthest category label', () => {
         .toBe( manuallyRetrievedInitialXCoordinate + increment )
 
 })
+
+
+
+
+
+
+//// ABSOLUTE VALUES ///////////////////////////////////////////////////////////////
+
+describe ('ABSOLUTE VALUES: Toggling absolute values should show counts instead of percentages', () => {
+   
+    // PREP //
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+    // Create SVG
+    const mySvg = new container.Svg()
+
+    // Create panel
+    const myPanel = new navigator.Panel()
+    
+    
+    test('GET/SET', () => {
+        
+        // GET //
+        expect( myPanel.showAbsoluteValues() ).toBe( false )
+    
+        // SET (on) //
+        myPanel.showAbsoluteValues( true ).update()
+        expect( myPanel.showAbsoluteValues() ).toBe( true )
+
+
+        // SET (off) //
+        myPanel.showAbsoluteValues( false ).update()
+        expect( myPanel.showAbsoluteValues() ).toBe( false )
+    })
+
+
+
+
+
+
+    test('PROPAGATION TO CHARTS: Absolute value-related properties of category objects in panel should be set correctly after toggling absolute values', () => {
+
+        // Record & check the defaults for panel
+        expect( myPanel.showAbsoluteValues() ).toBe( false )
+        // Record defaults for the charts contained within the panel
+        let absoluteValuesStatusesInCharts = getStatusOfAbsoluteValuesInChartObjectsInPanel()
+        expect( absoluteValuesStatusesInCharts )
+            .toEqual( [false, false, false] )
+
+
+
+        // Toggle absolute values on //
+        myPanel.showAbsoluteValues( true ).update()
+
+        // Check if related properties are updated...
+        // ...in panel
+        expect( myPanel.showAbsoluteValues() ).toBe( true )
+        // ...in charts in panel
+        absoluteValuesStatusesInCharts = getStatusOfAbsoluteValuesInChartObjectsInPanel()
+        expect( absoluteValuesStatusesInCharts )
+            .toEqual( [true, true, true] )
+
+
+
+        // Toggle absolute values off //
+        myPanel.showAbsoluteValues( false ).update()
+
+        // Check if related properties are updated...
+        // ...in panel
+        expect( myPanel.showAbsoluteValues() ).toBe( false )
+        // ...in charts in panel
+        absoluteValuesStatusesInCharts = getStatusOfAbsoluteValuesInChartObjectsInPanel()
+        expect( absoluteValuesStatusesInCharts )
+            .toEqual( [false, false, false] )
+
+
+
+
+        // HELPER FUNCTION(S) FOR THIS TEST //
+
+        /**
+         * @return {[]|Array}s
+         */
+        function getStatusOfAbsoluteValuesInChartObjectsInPanel () {
+            values = []
+            myPanel.objects().forEach((categoryObject, categoryName) => {
+                const value = categoryObject.showAbsoluteValues()
+                values.push(value)
+            })
+            return values
+        }
+
+
+
+    })
+
+
+
+
+
+
+    test ('DOM AND PROPAGATION TO CHILD PANELS: Both parent and child panels should update on DOM properly after each toggle', () => {
+
+        // PREP //
+        // NOTE: DO NOT DELETE THIS BLOCK. DOM must be re-prepped for this test with this block. Otherwise, jest becomes flaky in some environments.
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+        // Create SVG
+        const mySvg = new container.Svg()
+
+        // Create panel
+        const myPanel = new navigator.Panel()
+
+
+        // Crete a child panel
+        const spawnSourceObjectForChild1 = myPanel.objects('gender').objects('female')
+        spawnSourceObjectForChild1.fill('salmon')
+        const childPanel = new navigator.Panel(myPanel, spawnSourceObjectForChild1, 0)
+
+
+
+        // Check initial captions of parent and child panel on DOM
+            let captionTexts = getCaptionTextsOfCategoriesFromDom()
+            expect( captionTexts ).toTabulateAs(`\
+┌─────────┬────────┐
+│ (index) │ Values │
+├─────────┼────────┤
+│    0    │ '64%'  │
+│    1    │ '36%'  │
+│    2    │ '25%'  │
+│    3    │ '21%'  │
+│    4    │ '54%'  │
+│    5    │ '38%'  │
+│    6    │ '62%'  │
+│    7    │ '64%'  │
+│    8    │ '36%'  │
+│    9    │ '25%'  │
+│   10    │ '21%'  │
+│   11    │ '54%'  │
+│   12    │ '38%'  │
+│   13    │ '62%'  │
+└─────────┴────────┘`)  // combined table of captions in parent and child panel
+
+
+            // Toggle absolute values on
+            myPanel.showAbsoluteValues(true).update()
+
+            // Check the new captions of parent and child panel on DOM
+            const captionTexts2 = getCaptionTextsOfCategoriesFromDom()
+            expect( captionTexts2 ).toTabulateAs(`\
+┌─────────┬────────┐
+│ (index) │ Values │
+├─────────┼────────┤
+│    0    │ '843'  │
+│    1    │ '466'  │
+│    2    │ '323'  │
+│    3    │ '277'  │
+│    4    │ '709'  │
+│    5    │ '500'  │
+│    6    │ '809'  │
+│    7    │ '843'  │
+│    8    │ '466'  │
+│    9    │ '323'  │
+│   10    │ '277'  │
+│   11    │ '709'  │
+│   12    │ '500'  │
+│   13    │ '809'  │
+└─────────┴────────┘`)  // combined table of captions in parent and child panel
+
+
+        // Toggle absolute values off
+        myPanel.showAbsoluteValues(false).update()
+
+        // Check the captions of parent and child panel on DOM
+        captionTexts = getCaptionTextsOfCategoriesFromDom()
+        expect( captionTexts ).toTabulateAs(`\
+┌─────────┬────────┐
+│ (index) │ Values │
+├─────────┼────────┤
+│    0    │ '64%'  │
+│    1    │ '36%'  │
+│    2    │ '25%'  │
+│    3    │ '21%'  │
+│    4    │ '54%'  │
+│    5    │ '38%'  │
+│    6    │ '62%'  │
+│    7    │ '64%'  │
+│    8    │ '36%'  │
+│    9    │ '25%'  │
+│   10    │ '21%'  │
+│   11    │ '54%'  │
+│   12    │ '38%'  │
+│   13    │ '62%'  │
+└─────────┴────────┘`)  // combined table of captions in parent and child panel
+
+
+
+
+        // HELPER FUNCTION(S) FOR THIS TEST //
+
+        /**
+         * @return {[]}  - An array of string
+         */
+        function getCaptionTextsOfCategoriesFromDom() {
+            const allCaptions = document.querySelectorAll('.category .rectangle-caption')
+
+            const captionTexts = []
+            allCaptions.forEach(caption => {
+                captionTexts.push(caption.textContent)
+            })
+            return captionTexts
+        }
+
+
+    })
+
+})
+    
+
+
+
 
 
 //// COLOR ////////////////////////////////////////////////////////////////////////

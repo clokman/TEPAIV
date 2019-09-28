@@ -50,6 +50,9 @@
             this._colorSet = 'Single-Hue'
             this._categoryColorRegistry = new Map()
 
+            this._showAbsoluteValues = false
+
+
             // Initialize //
             this._addListenerToFirstPanel()
 
@@ -227,6 +230,14 @@
         update(transitionDuration) {
 
             this._updateDomIfStacksDataHasChanged()
+
+
+            // Update properties of panel objects
+            this.objects().forEach( (panelObject, panelName) => {
+                panelObject
+                    .showAbsoluteValues( this.showAbsoluteValues() )
+            })
+
 
             super.update(transitionDuration)
 
@@ -486,6 +497,24 @@
         }
 
 
+        showAbsoluteValues(value) {
+        
+            // Getter
+            if (!arguments.length){
+                return this._showAbsoluteValues
+            }
+        
+            // Setter
+            else{
+                value.mustBeOfType('Boolean')
+                this._showAbsoluteValues = value
+                
+                return this
+            }
+            
+        }
+
+
         colorSet(value){
 
             // Getter
@@ -647,6 +676,8 @@
 
             this._colorTheme = 'Single-Hue'
 
+            this._showAbsoluteValues = false
+
 
             this._stacks = new data.Stacks()
             this._populateWithExampleData()
@@ -687,6 +718,7 @@
             this._updateDomIfStacksDataHasChanged()
 
             this._updateYAxisLabels()
+            this._updateCategoryCaptions()
 
             if (this._backgroundObject) {
                 this._backgroundObject.update(transitionDuration)
@@ -703,16 +735,33 @@
 
 
 
-
             super.update(transitionDuration)
+            this._updateChildrenPanelsRecursively(this, transitionDuration)
 
             // Post-super update statements
             this._verticallyAlignYAxisChartLabels()  // must come after super update; otherwise chart labels do not align (for Panel class only they are OK for Navigator class, even though Navigator uses Panel class too).
 
 
 
-
             return this
+
+        }
+
+
+        _updateChildrenPanelsRecursively(parentObject, transitionDuration){
+
+            // Recurse
+            try{
+
+                // Update the child panel
+                parentObject.childObject
+                    .showAbsoluteValues( this.showAbsoluteValues() )
+                    .update(transitionDuration)
+
+                // Call this function for child panel (so its child is subjected to this method)
+                this._updateCategoryCaptionsOfChildPanelsRecursively(parentObject.childObject)
+            }
+            catch(e) {}
 
         }
 
@@ -1321,6 +1370,36 @@
         }
 
 
+
+        showAbsoluteValues(value) {
+
+            // Getter
+            if (!arguments.length){
+                return this._showAbsoluteValues
+            }
+        
+            // Setter
+            else{
+                value.mustBeOfType('Boolean')
+                this._showAbsoluteValues = value
+
+
+                return this
+            }
+            
+        }
+
+
+        _updateCategoryCaptions() {
+
+            this.objects().forEach((categoryObject, categoryName) => {
+
+                categoryObject.showAbsoluteValues( this._showAbsoluteValues )
+
+            })
+        }
+
+
         bgText(value) {
 
             // Getter
@@ -1648,7 +1727,7 @@
             this._width = 100
             this._colorScheme = 'Greys'  // TODO: Should be replaced with dynamic statement (e.g., this.colorScheme('Greys'))
             this._colorScale = null  // Dynamically populated by .colorScheme()
-
+            this._showAbsoluteValues = false
 
             // Private variables //
             this._container = super.selectSelf()
@@ -1710,6 +1789,8 @@
         update(transitionDuration){
 
             this._updateChartLabel(transitionDuration)
+            this._updatePropertiesOfCategoryObjects()
+
             super.update(transitionDuration)
             return this
 
@@ -1822,6 +1903,9 @@
                     const start = this._rangeStack.data(eachCategoryId).get('start')
                     const end = this._rangeStack.data(eachCategoryId).get('end')
                     const percentage = this._rangeStack.data(eachCategoryId).get('percentage')
+                    const count = this._rangeStack.data(eachCategoryId).get('count')
+                        ? this._rangeStack.data(eachCategoryId).get('count')
+                        : 'N/A'
 
                     eachCategoryObject
                         .x(this._x)
@@ -1829,9 +1913,17 @@
                         .height(start - end)
                         .width(this._width)
                         .id(eachCategoryId)
-                        .percentage(percentage)
+
+                    if ( this._showAbsoluteValues ) {
+                        eachCategoryObject.text(count)
+                    }
+                    if ( !this._showAbsoluteValues ) {
+                        eachCategoryObject.percentage(percentage)
+                    }
 
                 }
+
+
             )
 
         }
@@ -2301,6 +2393,25 @@
         }
 
 
+     showAbsoluteValues(value) {
+     
+         // Getter
+         if (!arguments.length){
+             return this._showAbsoluteValues
+         }
+
+         // Setter
+         else{
+
+             value.mustBeOfType('Boolean')
+             this._showAbsoluteValues = value
+             
+             return this
+         }
+         
+     }
+
+
     }
 
 
@@ -2410,7 +2521,7 @@
                 this._percentage = value
 
                 const formattedPercentageString = stringUtils.formatNumberAsPercentage(this._percentage)
-                this._textObject.text(formattedPercentageString)
+                this.text(formattedPercentageString)
 
                 return this
             }
@@ -2419,11 +2530,15 @@
 
         text(value) {
 
-            console.warn(
-                '.text() method should not be used for Category class instances. ' +
-                'Instead, .percentage() method must be used modify percentage text.')
-
-            return super.text(value)
+            // Getter
+            if (!arguments.length){
+                return super.text()
+            }
+            // Setter
+            else{
+                super.text(value)
+                return this
+            }
 
         }
 
