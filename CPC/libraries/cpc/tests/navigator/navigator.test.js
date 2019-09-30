@@ -458,18 +458,18 @@ test ('Clicking on a category must make a query and visualize query results with
 
 describe ('ABSOLUTE VALUES: Toggle absolute values in category captions', () => {
 
-    //// PREPARE DOM AND NAVIGATOR ////
 
-    // Clear JEST's DOM to prevent leftovers from previous tests
-    document.body.innerHTML = ''
-    // Create svg container
-    const svg = new container.Svg()
+
 
 
 
     test('GET/SET', async () => {
 
-        // PREP //
+        //// PREPARE DOM AND NAVIGATOR ////
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+        // Create svg container
+        const svg = new container.Svg()
         // Create an prepare navigator
         const myNavigator = new navigator.Navigator()
         //// Load a dataset into navigator
@@ -496,10 +496,12 @@ describe ('ABSOLUTE VALUES: Toggle absolute values in category captions', () => 
 
 
     test ('DOM: Absolute values should toggle for all category captions on DOM', async () => {
-            
-            // PREP //
 
-        // PREP //
+        //// PREPARE DOM AND NAVIGATOR ////
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+        // Create svg container
+        const svg = new container.Svg()
         // Create an prepare navigator
         const myNavigator = new navigator.Navigator()
         //// Load a dataset into navigator

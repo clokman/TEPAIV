@@ -67,6 +67,7 @@ class Slider{
         this._comboGetterSetterMethodOfCalledInstance.call(this._instanceToCallOnUpdate, this._value)
     }
 
+
     _create(){
         const sliderDiv = document.createElement('DIV')
 
