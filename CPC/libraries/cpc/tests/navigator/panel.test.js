@@ -1572,3 +1572,63 @@ test ('DEPTH INDEX: Check automatic incrementation upon adding new panels', () =
 })
 
 
+
+//// QUICK SWITCH ANIMATION ///////////////////////////////////////////////////////////////
+
+describe ('ANIMATIONS: Switch to a panel on the same depth level using the quick switch animation', () => {
+   
+    // PREP //
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+    // Create SVG
+    const mySvg = new container.Svg()
+    // Create panel
+    const parentPanel = new navigator.Panel()
+    parentPanel.id('parent-panel').update()
+
+
+
+    test('EXTEND animation: Add panel ', () => {
+
+        // Create a child panel
+        let objectToSpawnFrom = parentPanel.objects('gender').objects('male')
+        const childPanel = new navigator.Panel( parentPanel, objectToSpawnFrom )  // spawn source must be specified if a parent panel is specified
+        childPanel.id('child-panel').update()
+
+        // Count the number of panels on DOM after the animation
+        const allPanels = document.querySelectorAll( '.panel' )
+        const numberOfPanels = allPanels.length
+        expect( (numberOfPanels) ).toBe( 2 )
+
+    })
+
+
+
+    test('SWITCH animation: Add panel ', () => {
+
+        // PREP //
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+        // Create SVG
+        const mySvg = new container.Svg()
+        // Create panel
+        const parentPanel = new navigator.Panel()
+        parentPanel.id('parent-panel').update()
+
+
+
+        // Create a child panel
+        let objectToSpawnFrom = parentPanel.objects('gender').objects('female')
+        const childPanel = new navigator.Panel( parentPanel, objectToSpawnFrom, 0 )  // spawn source must be specified if a parent panel is specified
+        childPanel.id('child-panel').update()
+
+        // Count the number of panels on DOM after the animation
+        const allPanels = document.querySelectorAll( '.panel' )
+        const numberOfPanels = allPanels.length
+        expect( (numberOfPanels) ).toBe( 2 )
+
+    })
+
+    
+})
+
