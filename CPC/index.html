@@ -90,7 +90,35 @@
 
 <!--    </script>-->
 
+    <!-- Checkbox -->
+    <input type="checkbox" id="myCheck" onclick="myFunction()">Show absolute values
 
+    <p id="text" style="display:none">Checkbox is CHECKED!</p>
+
+
+    <script>
+
+        function myFunction() {
+
+            // Get the checkbox
+            var checkBox = document.getElementById("myCheck");
+            // Get the output text
+            var text = document.getElementById("text");
+
+            // If the checkbox is checked, toggle labels
+            if (checkBox.checked == true){
+                navigator1.showAbsoluteValues(true)
+                navigator2.showAbsoluteValues(true)
+            } else {
+                navigator1.showAbsoluteValues(false)
+                navigator2.showAbsoluteValues(false)
+            }
+
+            navigator1.update()
+            navigator2.update()
+        }
+
+    </script>
 
     <!--======================== LATEST DEMO ========================-->
 <!--    <script type="text/javascript" src="demos/cpc-horizontal-static/demo.js"></script>-->
