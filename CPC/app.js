@@ -6,7 +6,7 @@
 
 //// SVG  ////
 
-mySvg = new container.Svg(5000, 15000)
+mySvg = new container.Svg(15000, 15000)
 
 
 // //// RECTANGLE  ////
@@ -31,7 +31,7 @@ const parentElementForCategory = d3.select('body').select('svg')
 myCategory = new navigator.Category(parentElementForCategory)
 myCategory
     .x(85)
-    .y(700)
+    .y(750)
     .fill('dodgerblue')
     .label('A label')
     .update()
@@ -82,7 +82,7 @@ myCategory
 // Without labels
 const parentElementForChart = d3.select('body').select('svg')
 myChart = new navigator.Chart(parentElementForChart)
-myChart.x(450).y(650).update()
+myChart.x(450).y(750).update()
 
 // Update data of chart
 // tempStack = new data.Stack()
@@ -92,7 +92,7 @@ myChart.x(450).y(650).update()
 
 // Chart with labels
 myChart = new navigator.Chart()
-myChart.x(325).y(650).categoryLabels(true).update()
+myChart.x(325).y(750).categoryLabels(true).update()
 myChart.chartLabel('MY CHART LABEL').update()
 
 
@@ -103,7 +103,7 @@ myChart.chartLabel('MY CHART LABEL').update()
 const parentElementForPanel = d3.select('body').select('svg')
 myPanel = new navigator.Panel()
     .bgFill('#deebf7')
-    .x(700).y(650)
+    .x(700).y(750)
     .yAxisLabels(true)
     .update()
 
@@ -112,7 +112,7 @@ myPanel.yAxisLabels()
 
 myPanel2 = new navigator.Panel()
     .bgFill('#deebf7')
-    .x(850).y(650)
+    .x(850).y(750)
     .update()
 myPanel2.objects('gender').colorScheme('Blues').update()
 myPanel2.objects('class').colorScheme('RdPu').update()
@@ -121,7 +121,7 @@ myPanel2.objects('status').colorScheme('Oranges').update()
 
 myPanel3 = new navigator.Panel()
     .bgFill('#deebf7')
-    .x(1000).y(650)
+    .x(750).y(750)
     .update()
 myPanel3.objects('gender').colorScheme('YlGn').update()
 myPanel3.objects('class').colorScheme('YlGnBu').update()
@@ -130,7 +130,7 @@ myPanel3.objects('status').colorScheme('BuPu').update()
 
 myPanel4 = new navigator.Panel()
     .bgFill('#deebf7')
-    .x(1150).y(650)
+    .x(1150).y(750)
     .update()
 myPanel4.objects('gender').colorScheme('Greys').update()
 myPanel4.objects('class').colorScheme('Greys').update()
@@ -142,7 +142,7 @@ myPanel4.objects('status').colorScheme('Greys').update()
 
 myNestedPanel = new navigator.Panel()
     .bgFill('#deebf7')
-    .x(1400).y(650)
+    .x(1400).y(750)
     .update()
 
 
@@ -216,6 +216,7 @@ setTimeout(() => {
 
 
 //// NAVIGATOR ////
+const distanceBetweenNavigators = 600
 
 // Navigator 1
 
@@ -223,11 +224,12 @@ const navigator1 = new navigator.Navigator()
 
 navigator1.loadDataset(
     'http://localhost:3000/data/titanic.csv',
-    ['Name']
+    ['NAME']
 ).then(that => {
     that.update()
 
-    that.x(125).update()
+    that.x( 200 )
+        .update()
 
     // navigator1.objects('panel-0').height(1500).update()
     navigator1.objects('panel-0').yAxisLabels()
@@ -249,7 +251,7 @@ navigator2.loadDataset(
 ).then(that => {
     that.update()
 
-    that.x(600).update()
+    that.x( navigator1.x()+ distanceBetweenNavigators ).update()
 
     // navigator2.objects('panel-0').height(1500).update()
     navigator2.objects('panel-0').yAxisLabels()
@@ -273,7 +275,7 @@ navigator3.loadDataset(
 ).then(that => {
     that.update()
 
-    that.x(1200).update()
+    that.x( navigator2.x()+ distanceBetweenNavigators ).update()
 
     // navigator3.objects('panel-0').height(1500).update()
     navigator3.objects('panel-0').yAxisLabels()
@@ -292,7 +294,7 @@ navigator4.loadDataset(
     that.update()
 
     that
-        .x(1800)
+        .x( navigator3.x()+ distanceBetweenNavigators )
         .update()
 
     navigator4.objects('panel-0').yAxisLabels()
@@ -310,10 +312,10 @@ navigator5.loadDataset(
     that.update()
 
     that
-        .x(2400)
+        .x( navigator4.x()+ distanceBetweenNavigators )
         .update()
 
-    navigator5.objects('panel-0').height(1000).update()
+    navigator5.objects('panel-0').height(750).update()
     navigator5.objects('panel-0').yAxisLabels()
 })
 
@@ -329,10 +331,10 @@ navigator6.loadDataset(
     that.update()
 
     that
-        .x(3000)
+        .x( navigator5.x()+ distanceBetweenNavigators )
         .update()
 
-    navigator6.objects('panel-0').height(10000).update()
+    navigator6.objects('panel-0').height(7500).update()
     navigator6.objects('panel-0').yAxisLabels()
 })
 
