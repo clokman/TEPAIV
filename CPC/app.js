@@ -138,10 +138,13 @@ myPanel4.objects('status').colorScheme('Greys').update()
 
 
 
+
 //// NESTED PANEL ////
 
-myNestedPanel = new navigator.Panel()
+nestedPanel = new navigator.Panel()
+    .id('parent-panel')
     .bgFill('#deebf7')
+    .colorSet('Viridis')
     .x(1400).y(750)
     .update()
 
@@ -153,17 +156,75 @@ myNestedPanel = new navigator.Panel()
 // // myPanel.objects('class').objects('first-class').fill('blue').update()
 
 
-spawnObjectForChild1 = myNestedPanel.objects('gender').objects('female')
-spawnObjectForChild1.fill('salmon')
+// Embed child panel a1
 
-myChildPanel1 = new navigator.Panel(myNestedPanel, spawnObjectForChild1, 0)
+spawnObjectForChild1 = nestedPanel.objects('gender').objects('female')
 
-spawnObjectForChild2 = myChildPanel1.objects('gender').objects('male')
-spawnObjectForChild2.fill('lightblue')
+childPanel1 = new navigator.Panel(nestedPanel, spawnObjectForChild1)
+childPanel1
+    .id('child-panel-1')
+    .update()
+
+
+// EMBED child panel 2
+
+spawnObjectForChild2 = childPanel1.objects('gender').objects('male')
 
 setTimeout(() => {
-    myChildPanel2 = new navigator.Panel(myChildPanel1, spawnObjectForChild2, 0)
-},500)
+    childPanel2 = new navigator.Panel(childPanel1, spawnObjectForChild2)
+    childPanel2.id('child-panel-2').update()
+
+},5000)
+
+
+// REPLACE child panel 2 child panel 3
+
+spawnObjectForChild3 = childPanel1.objects('class').objects('first-class')
+
+setTimeout(() => {
+    childPanel3 = new navigator.Panel(childPanel1, spawnObjectForChild3)
+    childPanel3.id('child-panel-3').update()
+
+},8000)
+
+
+// REMOVE child panel 3
+setTimeout( () => {
+
+    childPanel3.remove()
+
+}, 10000)
+
+
+// REMOVE child panel 1
+setTimeout( () => {
+
+    childPanel1.remove()
+
+}, 12000)
+
+
+// Embed child panel 4
+
+setTimeout( () => {
+    
+    spawnObjectForChild4 = nestedPanel.objects('status').objects('survived')
+    
+    childPanel4 = new navigator.Panel(nestedPanel, spawnObjectForChild4)
+    childPanel4
+        .id('child-panel-4')
+        .update()
+    
+}, 16000)
+
+setTimeout( () => {
+    
+    nestedPanel.colorSet('Magma').update()
+    
+}, 18000)
+
+
+
 
 
 
@@ -275,7 +336,10 @@ navigator3.loadDataset(
 ).then(that => {
     that.update()
 
-    that.x( navigator2.x()+ distanceBetweenNavigators ).update()
+    that
+        .colorSet('Plasma')
+        .x( navigator2.x()+ distanceBetweenNavigators )
+        .update()
 
     // navigator3.objects('panel-0').height(1500).update()
     navigator3.objects('panel-0').yAxisLabels()

@@ -844,6 +844,42 @@ test ('Throw error if no spawn source is specified', () => {
 
 
 
+
+//// TOP ANCESTOR ///////////////////////////////////////////////////////////////
+
+describe ('TOP ANCESTOR: Return selection of panel 0', () => {
+
+    // PREP //
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+    // Create SVG
+    const mySvg = new container.Svg()
+
+    // Add panel #0
+    const panel0 = new navigator.Panel()
+    panel0.id('panel-zero').update()
+    // Add child panel #1
+    const spawnObjectForChild1 = panel0.objects('gender').objects('female')
+    const childPanel1 = new navigator.Panel(panel0, spawnObjectForChild1)
+    // Add child panel #2
+    const spawnObjectForChild2 = childPanel1.objects('gender').objects('male')
+    const childPanel2 = new navigator.Panel(childPanel1, spawnObjectForChild2)
+
+
+
+    test('Get top ancestor (panel 0) via calling a method from deeper panels', () => {
+        
+        // Get panel zero
+        const panel0SelectedFromChildPanel1 = childPanel1.topmostAncestor()
+        const panel0SelectedFromChildPanel2 = childPanel2.topmostAncestor()
+
+        expect( panel0SelectedFromChildPanel1.id() ).toBe( 'panel-zero' )
+        expect( panel0SelectedFromChildPanel2.id() ).toBe( 'panel-zero' )
+    })
+    
+    
+})
+
 //// BG EXTENSION ////////////////////////////////////////////////////////////////////////
 
 
@@ -1298,24 +1334,191 @@ describe ('ABSOLUTE VALUES: Toggling absolute values should show counts instead 
     
 
 
+    //// ADD CHILD PANELS ///////////////////////////////////////////////////////////////
+    
+    describe ('ADD CHILD PANELS: Should add child panels correctly', () => {
+
+        test('ADD CHILD: Two children should exist', () => {
+
+            // PREP //
+            // Clear JEST's DOM to prevent leftovers from previous tests
+            document.body.innerHTML = ''
+            // Create SVG
+            const mySvg = new container.Svg()
+
+            // Add panel #0
+            myNestedPanel = new navigator.Panel()
+            // Add child panel #1
+            spawnObjectForChild1 = myNestedPanel.objects('gender').objects('female')
+            myChildPanel1 = new navigator.Panel(myNestedPanel, spawnObjectForChild1)
+            // Add child panel #2
+            spawnObjectForChild2 = myChildPanel1.objects('gender').objects('male')
+            myChildPanel2 = new navigator.Panel(myChildPanel1, spawnObjectForChild2)
+
+
+            // Check the number of panels on DOM
+            const allPanelObjects = document.querySelectorAll( '.panel' )
+            expect( (allPanelObjects) ).toHaveLength( 3 )
+
+        })
+
+
+        test ('RESET VERTICAL INNER PADDING: Restore top and bottom inner padding', () => {
+
+            // PREP //
+            // Clear JEST's DOM to prevent leftovers from previous tests
+            document.body.innerHTML = ''
+            // Create SVG
+            const mySvg = new container.Svg()
+
+            // Add panel #0
+            myPanel = new navigator.Panel()
+
+            // Change padding values
+            myPanel
+                .innerPaddingTop( myPanel.innerPaddingTop() + 50 )
+                .innerPaddingBottom( myPanel.innerPaddingBottom() + 25 )
+
+            // Confirm the change in relation to default values
+            expect(  myPanel.innerPaddingTop() )
+                .toBe( myPanel._defaults.innerPadding.top + 50 )
+            expect(  myPanel.innerPaddingBottom() )
+                .toBe( myPanel._defaults.innerPadding.bottom + 25 )
+
+
+            // Reset padding values
+            myPanel._resetVerticalInnerPadding()
+
+            // Padding values should be reset to their defaults
+            expect(  myPanel.innerPaddingTop() )
+                .toBe( myPanel._defaults.innerPadding.top )
+            expect(  myPanel.innerPaddingBottom() )
+                .toBe( myPanel._defaults.innerPadding.bottom )
+
+                
+
+        })
+
+        // ↓↓↓ IT WAS NOT POSSIBLE TO TEST ALIGNMENT BECAUSE OF ANIMATIONS.
+        // ↓↓↓ All charts look aligned at the test time, even if they may not be on DOM
+        // after the creation animations are finished.
+        // test('Charts in all panels should be horizontally aligned', () => {
+        // })
+
+    })
 
 
 
-//// COLOR ////////////////////////////////////////////////////////////////////////
-
-test ('COLOR THEME: Assign color themes to charts in panel', () => {
 
 
-    // Clear JEST's DOM to prevent leftovers from previous tests
-    document.body.innerHTML = ''
-    // Create SVG
-    const mySvg = new container.Svg()
+    //// REMOVE ///////////////////////////////////////////////////////////////
+    
+    describe ('REMOVE: Remove child panels and panel zero', () => {
 
-    // Create panel
-    const myPanel = new navigator.Panel()
+        test ('Remove children panels one by one', () => {
 
-    // View the charts in panel
-    expect( myPanel.objects() ).toTabulateAs(`\
+            // PREP //
+            // Clear JEST's DOM to prevent leftovers from previous tests
+            document.body.innerHTML = ''
+            // Create SVG
+            const mySvg = new container.Svg()
+
+            // Add panel #0
+            panelZero = new navigator.Panel()
+            // Add child panel #1
+            spawnObjectForChild1 = panelZero.objects('gender').objects('female')
+            childPanel1 = new navigator.Panel(panelZero, spawnObjectForChild1)
+            // Add child panel #2
+            spawnObjectForChild2 = childPanel1.objects('gender').objects('male')
+            childPanel2 = new navigator.Panel(childPanel1, spawnObjectForChild2)
+
+
+            // Get initial number of panels
+            let allPanelElements = document.querySelectorAll( '.panel' )
+            expect( allPanelElements ).toHaveLength( 3 )
+
+
+
+            // Remove child 2
+            childPanel2.remove()
+
+            // Parent object should no more have a child
+            expect( childPanel1.childObject ).not.toBe()
+
+            // Confirm removal on DOM
+            allPanelElements = document.querySelectorAll( '.panel' )
+            expect( allPanelElements ).toHaveLength( 2 )
+
+
+
+            // Remove child 1
+            childPanel1.remove()
+
+            // Parent object should no more have a child
+            expect( panelZero.childObject ).not.toBe()
+
+            // Confirm removal on DOM
+            allPanelElements = document.querySelectorAll( '.panel' )
+            expect( allPanelElements ).toHaveLength( 1 )
+
+        })
+
+
+
+        test ('Remove panel zero', () => {
+
+            // PREP //
+            // Clear JEST's DOM to prevent leftovers from previous tests
+            document.body.innerHTML = ''
+            // Create SVG
+            const mySvg = new container.Svg()
+
+            // Add panel #0
+            panelZero = new navigator.Panel()
+            // Add child panel #1
+            spawnObjectForChild1 = panelZero.objects('gender').objects('female')
+            childPanel1 = new navigator.Panel(panelZero, spawnObjectForChild1)
+            // Add child panel #2
+            spawnObjectForChild2 = childPanel1.objects('gender').objects('male')
+            childPanel2 = new navigator.Panel(childPanel1, spawnObjectForChild2)
+
+
+            // Get initial number of panels
+            let allPanelElements = document.querySelectorAll( '.panel' )
+            expect( allPanelElements ).toHaveLength( 3 )
+
+            // Remove panel zero
+            panelZero.remove()
+
+            // Confirm removal on DOM
+            allPanelElements = document.querySelectorAll( '.panel' )
+            expect( allPanelElements ).toHaveLength( 0 )
+
+        })
+
+        
+        
+        
+        
+    })
+
+
+
+//// COLOR ///////////////////////////////////////////////////////////////
+
+describe ('COLOR: Manage color themes', () => {
+
+    test ('Assign color themes to charts in panel', () => {
+
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+        // Create SVG
+        const mySvg = new container.Svg()
+        // Create panel
+        const myPanel = new navigator.Panel()
+
+        // View the charts in panel
+        expect( myPanel.objects() ).toTabulateAs(`\
 ┌───────────────────┬──────────┬─────────┐
 │ (iteration index) │   Key    │ Values  │
 ├───────────────────┼──────────┼─────────┤
@@ -1325,8 +1528,8 @@ test ('COLOR THEME: Assign color themes to charts in panel', () => {
 └───────────────────┴──────────┴─────────┘`)
 
 
-    // View the rectangle colors in the 1st chart
-    expect( myPanel.objects('gender').actualColors() ).toTabulateAs(`\
+        // View the rectangle colors in the 1st chart
+        expect( myPanel.objects('gender').actualColors() ).toTabulateAs(`\
 ┌─────────┬──────────────────────┐
 │ (index) │        Values        │
 ├─────────┼──────────────────────┤
@@ -1334,11 +1537,11 @@ test ('COLOR THEME: Assign color themes to charts in panel', () => {
 │    1    │ 'rgb(158, 155, 201)' │
 └─────────┴──────────────────────┘`)
 
-    // myPanel.objects('class').colorScheme('Blues').update()
+        // myPanel.objects('class').colorScheme('Blues').update()
 
 
-    // View the rectangle colors in the 2nd chart
-    expect( myPanel.objects('class').actualColors() ).toTabulateAs(`\
+        // View the rectangle colors in the 2nd chart
+        expect( myPanel.objects('class').actualColors() ).toTabulateAs(`\
 ┌─────────┬──────────────────────┐
 │ (index) │        Values        │
 ├─────────┼──────────────────────┤
@@ -1347,8 +1550,8 @@ test ('COLOR THEME: Assign color themes to charts in panel', () => {
 │    2    │ 'rgb(147, 195, 223)' │
 └─────────┴──────────────────────┘`)
 
-    // View the rectangle colors in the 3rd chart
-    expect( myPanel.objects('class').actualColors() ).toTabulateAs(`\
+        // View the rectangle colors in the 3rd chart
+        expect( myPanel.objects('class').actualColors() ).toTabulateAs(`\
 ┌─────────┬──────────────────────┐
 │ (index) │        Values        │
 ├─────────┼──────────────────────┤
@@ -1357,29 +1560,24 @@ test ('COLOR THEME: Assign color themes to charts in panel', () => {
 │    2    │ 'rgb(147, 195, 223)' │
 └─────────┴──────────────────────┘`)
 
-})
+    })
 
 
 
+    test ('Get and Set color theme', () => {
 
 
-
-test ('COLOR THEME: Get and Set color theme', () => {
-
-
-    // Clear JEST's DOM to prevent leftovers from previous tests
-    document.body.innerHTML = ''
-
-    // Create SVG
-    const mySvg = new container.Svg()
-
-    // Create parent panel
-    const myPanel = new navigator.Panel(mySvg)  // no need to specify a spawn source if no parent is specified
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+        // Create SVG
+        const mySvg = new container.Svg()
+        // Create parent panel
+        const myPanel = new navigator.Panel(mySvg)  // no need to specify a spawn source if no parent is specified
 
 
-    // Check initial colors
+        // Check initial colors
 
-    expect(myPanel.objects('gender').actualColors()).toTabulateAs(`\
+        expect(myPanel.objects('gender').actualColors()).toTabulateAs(`\
 ┌─────────┬──────────────────────┐
 │ (index) │        Values        │
 ├─────────┼──────────────────────┤
@@ -1387,7 +1585,7 @@ test ('COLOR THEME: Get and Set color theme', () => {
 │    1    │ 'rgb(158, 155, 201)' │
 └─────────┴──────────────────────┘`)  // Gender: Purples
 
-    expect(myPanel.objects('class').actualColors()).toTabulateAs(`\
+        expect(myPanel.objects('class').actualColors()).toTabulateAs(`\
 ┌─────────┬──────────────────────┐
 │ (index) │        Values        │
 ├─────────┼──────────────────────┤
@@ -1396,7 +1594,7 @@ test ('COLOR THEME: Get and Set color theme', () => {
 │    2    │ 'rgb(147, 195, 223)' │
 └─────────┴──────────────────────┘`)  // Class: Blues
 
-    expect(myPanel.objects('status').actualColors()).toTabulateAs(`\
+        expect(myPanel.objects('status').actualColors()).toTabulateAs(`\
 ┌─────────┬──────────────────────┐
 │ (index) │        Values        │
 ├─────────┼──────────────────────┤
@@ -1406,15 +1604,15 @@ test ('COLOR THEME: Get and Set color theme', () => {
 
 
 
-    // Get the current color theme
-    expect( myPanel.colorSet() ).toBe('Single-Hue')
+        // Get the current color theme
+        expect( myPanel.colorSet() ).toBe('Single-Hue')
 
-    // Change color theme
-    myPanel.colorSet('Greys').update()
+        // Change color theme
+        myPanel.colorSet('Greys').update()
 
 
-    // Check the changed colors
-    expect(myPanel.objects('gender').actualColors()).toTabulateAs(`\
+        // Check the changed colors
+        expect(myPanel.objects('gender').actualColors()).toTabulateAs(`\
 ┌─────────┬──────────────────────┐
 │ (index) │        Values        │
 ├─────────┼──────────────────────┤
@@ -1422,7 +1620,7 @@ test ('COLOR THEME: Get and Set color theme', () => {
 │    1    │ 'rgb(151, 151, 151)' │
 └─────────┴──────────────────────┘`)  // Gender: Grays
 
-    expect(myPanel.objects('class').actualColors()).toTabulateAs(`\
+        expect(myPanel.objects('class').actualColors()).toTabulateAs(`\
 ┌─────────┬──────────────────────┐
 │ (index) │        Values        │
 ├─────────┼──────────────────────┤
@@ -1431,7 +1629,7 @@ test ('COLOR THEME: Get and Set color theme', () => {
 │    2    │ 'rgb(180, 180, 180)' │
 └─────────┴──────────────────────┘`)  // Class: Blues
 
-    expect(myPanel.objects('status').actualColors()).toTabulateAs(`\
+        expect(myPanel.objects('status').actualColors()).toTabulateAs(`\
 ┌─────────┬──────────────────────┐
 │ (index) │        Values        │
 ├─────────┼──────────────────────┤
@@ -1439,8 +1637,52 @@ test ('COLOR THEME: Get and Set color theme', () => {
 │    1    │ 'rgb(151, 151, 151)' │
 └─────────┴──────────────────────┘`)  // Status: Greens
 
-})
+    })
 
+
+    test ('AUTO-SET COLOR SET in child panels based on parent', () => {
+
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+        // Create SVG
+        const mySvg = new container.Svg()
+        // Create parent panel
+        const panelZero = new navigator.Panel(mySvg)  // no need to specify a spawn source if no parent is specified
+        panelZero.colorSet('Viridis').update()
+
+        // Make a child panel
+        const spawnObjectForChild1 = panelZero.objects('gender').objects('female')
+        const childPanel1 = new navigator.Panel(panelZero, spawnObjectForChild1)
+
+        // Child should not have its own color scheme, but one based on parent
+        let panelZeroColorSet = panelZero.colorSet()
+        let childOneColorSet = childPanel1.colorSet()
+        expect( childOneColorSet ).toEqual( panelZeroColorSet )
+
+
+
+        // LIVE COLOR UPDATE //
+
+        // Color of child should change if parent's color is updated
+        panelZero.colorSet('Magma').update()
+
+        // Child panel color theme should match to that of parent's
+        panelZeroColorSet = panelZero.colorSet()
+        childOneColorSet = childPanel1.colorSet()
+        expect( panelZeroColorSet ).toEqual( childOneColorSet )
+
+
+        // Background and bridge color of child should match the color of spawn source
+        let bridgeColor = childPanel1._bridgeObject.fill()
+        let childBgColor = childPanel1._backgroundObject.fill()
+        let spawnSourceCategoryColor = childPanel1._objectToSpawnFrom.fill()
+        
+        expect( bridgeColor ).toBe( spawnSourceCategoryColor )
+        expect( childBgColor ).toBe( spawnSourceCategoryColor )
+
+    })
+
+})
 
 test ('DEPTH INDEX: Get and set', () => {
 
