@@ -323,11 +323,11 @@ test ('Update DOM after new data is loaded', async () => {
     const objectsInNavigator = myNavigator.objects()
 
     expectTable(objectsInNavigator, `\
-┌───────────────────┬───────────┬─────────┐
-│ (iteration index) │    Key    │ Values  │
-├───────────────────┼───────────┼─────────┤
-│         0         │ 'panel-0' │ [Panel] │
-└───────────────────┴───────────┴─────────┘`)
+┌───────────────────┬───────────┬───────────────┐
+│ (iteration index) │    Key    │    Values     │
+├───────────────────┼───────────┼───────────────┤
+│         0         │ 'panel-0' │ [NestedPanel] │
+└───────────────────┴───────────┴───────────────┘`)
 
 
 
@@ -517,12 +517,12 @@ describe ('ABSOLUTE VALUES: Toggle absolute values in category captions', () => 
         domUtils.simulateClickOn( '#Female' )
         // Confirm the existence of two panels
         expect( myNavigator.objects() ).toTabulateAs(`\
-┌───────────────────┬───────────┬─────────┐
-│ (iteration index) │    Key    │ Values  │
-├───────────────────┼───────────┼─────────┤
-│         0         │ 'panel-0' │ [Panel] │
-│         1         │ 'panel-1' │ [Panel] │
-└───────────────────┴───────────┴─────────┘`)
+┌───────────────────┬───────────┬───────────────┐
+│ (iteration index) │    Key    │    Values     │
+├───────────────────┼───────────┼───────────────┤
+│         0         │ 'panel-0' │ [NestedPanel] │
+│         1         │ 'panel-1' │ [NestedPanel] │
+└───────────────────┴───────────┴───────────────┘`)
             
             
         // Get initial caption texts on DOM

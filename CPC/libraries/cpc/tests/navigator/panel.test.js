@@ -111,7 +111,7 @@ test ('Instantiate panel as a child of specified parent element', () => {
 
 
     // Create panel as a child of the parent container
-    const myPanel = new navigator.Panel(parentContainerSelection)
+    const myPanel = new navigator.NestedPanel( parentContainerSelection )
     myPanel.id('child-panel').update()
 
 
@@ -777,12 +777,12 @@ test ('Instantiate panel with a spawn location', () => {
         .attr('id', 'top-svg')
 
     // Create parent panel
-    const parentPanel = new navigator.Panel(mySvg)
+    const parentPanel = new navigator.NestedPanel(mySvg)
     parentPanel.id('parent-panel').update()
 
     // Create a child panel that spawns from a category in parent panel
-    objectToSpawnFrom = parentPanel.objects('gender').objects('male')
-    const childPanel = new navigator.Panel(parentPanel, objectToSpawnFrom)
+    const objectToSpawnFrom = parentPanel.objects('gender').objects('male')
+    const childPanel = new navigator.NestedPanel(parentPanel, objectToSpawnFrom)
     childPanel.id('child-panel').update()
 
     // Child panel should refer to a category as its spawn source
@@ -824,19 +824,19 @@ test ('Throw error if no spawn source is specified', () => {
         .attr('id', 'top-svg')
 
     // Create parent panel
-    const parentPanel = new navigator.Panel(mySvg)  // no need to specify a spawn source if no parent is specified
+    const parentPanel = new navigator.NestedPanel(mySvg)  // no need to specify a spawn source if no parent is specified
     parentPanel.id('parent-panel').update()
 
     // Create a child panel that spawns from a category in parent panel
     objectToSpawnFrom = parentPanel.objects('gender').objects('male')
-    const legitimateChildPanel = new navigator.Panel(parentPanel, objectToSpawnFrom)  // spawn source must be specified if a parent panel is specified
+    const legitimateChildPanel = new navigator.NestedPanel(parentPanel, objectToSpawnFrom)  // spawn source must be specified if a parent panel is specified
     legitimateChildPanel.id('child-panel').update()
 
 
     // Try to create a child panel without specifying a spawn source (expect error)
     expect( () => {
-        const parentPanel2 = new navigator.Panel(mySvg)  // no need to specify a spawn source if no parent is specified
-        const illegitimateChildPanel = new navigator.Panel(parentPanel2)   // cannot specify a parent panel without spawn source
+        const parentPanel2 = new navigator.NestedPanel(mySvg)  // no need to specify a spawn source if no parent is specified
+        const illegitimateChildPanel = new navigator.NestedPanel(parentPanel2)   // cannot specify a parent panel without spawn source
     } ).toThrow("The panel is specified to be a child of another panel, but no object is specified as spawn source (missing argument).")
 
 
@@ -849,26 +849,29 @@ test ('Throw error if no spawn source is specified', () => {
 
 describe ('TOP ANCESTOR: Return selection of panel 0', () => {
 
-    // PREP //
-    // Clear JEST's DOM to prevent leftovers from previous tests
-    document.body.innerHTML = ''
-    // Create SVG
-    const mySvg = new container.Svg()
-
-    // Add panel #0
-    const panel0 = new navigator.Panel()
-    panel0.id('panel-zero').update()
-    // Add child panel #1
-    const spawnObjectForChild1 = panel0.objects('gender').objects('female')
-    const childPanel1 = new navigator.Panel(panel0, spawnObjectForChild1)
-    // Add child panel #2
-    const spawnObjectForChild2 = childPanel1.objects('gender').objects('male')
-    const childPanel2 = new navigator.Panel(childPanel1, spawnObjectForChild2)
-
 
 
     test('Get top ancestor (panel 0) via calling a method from deeper panels', () => {
-        
+
+        // PREP //
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+        // Create SVG
+        const mySvg = new container.Svg()
+
+        // Add panel #0
+        const panel0 = new navigator.NestedPanel()
+        panel0.id('panel-zero').update()
+        // Add child panel #1
+        const spawnObjectForChild1 = panel0.objects('gender').objects('female')
+        const childPanel1 = new navigator.NestedPanel(panel0, spawnObjectForChild1)
+        childPanel1.id('child-panel-1').update()
+        // Add child panel #2
+        const spawnObjectForChild2 = childPanel1.objects('gender').objects('male')
+        const childPanel2 = new navigator.NestedPanel(childPanel1, spawnObjectForChild2)
+        childPanel2.id('child-panel-2').update()
+
+
         // Get panel zero
         const panel0SelectedFromChildPanel1 = childPanel1.topmostAncestor()
         const panel0SelectedFromChildPanel2 = childPanel2.topmostAncestor()
@@ -1225,13 +1228,13 @@ describe ('ABSOLUTE VALUES: Toggling absolute values should show counts instead 
         const mySvg = new container.Svg()
 
         // Create panel
-        const myPanel = new navigator.Panel()
+        const myPanel = new navigator.NestedPanel()
 
 
         // Crete a child panel
         const spawnSourceObjectForChild1 = myPanel.objects('gender').objects('female')
         spawnSourceObjectForChild1.fill('salmon')
-        const childPanel = new navigator.Panel(myPanel, spawnSourceObjectForChild1, 0)
+        const childPanel = new navigator.NestedPanel(myPanel, spawnSourceObjectForChild1, 0)
 
 
 
@@ -1347,13 +1350,13 @@ describe ('ABSOLUTE VALUES: Toggling absolute values should show counts instead 
             const mySvg = new container.Svg()
 
             // Add panel #0
-            myNestedPanel = new navigator.Panel()
+            myNestedPanel = new navigator.NestedPanel()
             // Add child panel #1
             spawnObjectForChild1 = myNestedPanel.objects('gender').objects('female')
-            myChildPanel1 = new navigator.Panel(myNestedPanel, spawnObjectForChild1)
+            myChildPanel1 = new navigator.NestedPanel(myNestedPanel, spawnObjectForChild1)
             // Add child panel #2
             spawnObjectForChild2 = myChildPanel1.objects('gender').objects('male')
-            myChildPanel2 = new navigator.Panel(myChildPanel1, spawnObjectForChild2)
+            myChildPanel2 = new navigator.NestedPanel(myChildPanel1, spawnObjectForChild2)
 
 
             // Check the number of panels on DOM
@@ -1424,13 +1427,13 @@ describe ('ABSOLUTE VALUES: Toggling absolute values should show counts instead 
             const mySvg = new container.Svg()
 
             // Add panel #0
-            panelZero = new navigator.Panel()
+            panelZero = new navigator.NestedPanel()
             // Add child panel #1
             spawnObjectForChild1 = panelZero.objects('gender').objects('female')
-            childPanel1 = new navigator.Panel(panelZero, spawnObjectForChild1)
+            childPanel1 = new navigator.NestedPanel(panelZero, spawnObjectForChild1)
             // Add child panel #2
             spawnObjectForChild2 = childPanel1.objects('gender').objects('male')
-            childPanel2 = new navigator.Panel(childPanel1, spawnObjectForChild2)
+            childPanel2 = new navigator.NestedPanel(childPanel1, spawnObjectForChild2)
 
 
             // Get initial number of panels
@@ -1474,13 +1477,13 @@ describe ('ABSOLUTE VALUES: Toggling absolute values should show counts instead 
             const mySvg = new container.Svg()
 
             // Add panel #0
-            panelZero = new navigator.Panel()
+            panelZero = new navigator.NestedPanel()
             // Add child panel #1
             spawnObjectForChild1 = panelZero.objects('gender').objects('female')
-            childPanel1 = new navigator.Panel(panelZero, spawnObjectForChild1)
+            childPanel1 = new navigator.NestedPanel(panelZero, spawnObjectForChild1)
             // Add child panel #2
             spawnObjectForChild2 = childPanel1.objects('gender').objects('male')
-            childPanel2 = new navigator.Panel(childPanel1, spawnObjectForChild2)
+            childPanel2 = new navigator.NestedPanel(childPanel1, spawnObjectForChild2)
 
 
             // Get initial number of panels
@@ -1647,12 +1650,12 @@ describe ('COLOR: Manage color themes', () => {
         // Create SVG
         const mySvg = new container.Svg()
         // Create parent panel
-        const panelZero = new navigator.Panel(mySvg)  // no need to specify a spawn source if no parent is specified
+        const panelZero = new navigator.NestedPanel(mySvg)  // no need to specify a spawn source if no parent is specified
         panelZero.colorSet('Viridis').update()
 
         // Make a child panel
         const spawnObjectForChild1 = panelZero.objects('gender').objects('female')
-        const childPanel1 = new navigator.Panel(panelZero, spawnObjectForChild1)
+        const childPanel1 = new navigator.NestedPanel(panelZero, spawnObjectForChild1)
 
         // Child should not have its own color scheme, but one based on parent
         let panelZeroColorSet = panelZero.colorSet()
@@ -1691,7 +1694,7 @@ test ('DEPTH INDEX: Get and set', () => {
     // Create SVG
     const mySvg = new container.Svg()
     // Create panel
-    const myPanel = new navigator.Panel()
+    const myPanel = new navigator.NestedPanel()
 
 
 
@@ -1728,7 +1731,7 @@ test ('DEPTH INDEX: Check automatic incrementation upon adding new panels', () =
     // Create SVG
     const mySvg = new container.Svg()
     // Create panel
-    const parentPanel = new navigator.Panel()
+    const parentPanel = new navigator.NestedPanel()
     parentPanel.id('parent-panel').update()
 
 
@@ -1749,7 +1752,7 @@ test ('DEPTH INDEX: Check automatic incrementation upon adding new panels', () =
 
     // Create a child panel
     let objectToSpawnFrom = parentPanel.objects('gender').objects('male')
-    const childPanel = new navigator.Panel(parentPanel, objectToSpawnFrom)  // spawn source must be specified if a parent panel is specified
+    const childPanel = new navigator.NestedPanel(parentPanel, objectToSpawnFrom)  // spawn source must be specified if a parent panel is specified
     childPanel.id('child-panel').update()
 
     // Check the depth indexes
@@ -1767,7 +1770,7 @@ test ('DEPTH INDEX: Check automatic incrementation upon adding new panels', () =
 
     // Create a grandchild panel
     objectToSpawnFrom = childPanel.objects('status').objects('survived')
-    const grandChildPanel = new navigator.Panel(childPanel, objectToSpawnFrom)  // spawn source must be specified if a parent panel is specified
+    const grandChildPanel = new navigator.NestedPanel(childPanel, objectToSpawnFrom)  // spawn source must be specified if a parent panel is specified
     grandChildPanel.id('grandchild-panel').update()
 
     // Check the depth indexes
@@ -1798,7 +1801,7 @@ test ('DEPTH INDEX: Check automatic incrementation upon adding new panels', () =
 
     // Add a child panel
     objectToSpawnFrom = parentPanel.objects('gender').objects('female')
-    const childPanel2 = new navigator.Panel(parentPanel, objectToSpawnFrom)  // spawn source must be specified if a parent panel is specified
+    const childPanel2 = new navigator.NestedPanel(parentPanel, objectToSpawnFrom)  // spawn source must be specified if a parent panel is specified
     childPanel2.id('child-panel2').update()
 
     // Check depth indexes
@@ -1825,7 +1828,7 @@ describe ('ANIMATIONS: Switch to a panel on the same depth level using the quick
     // Create SVG
     const mySvg = new container.Svg()
     // Create panel
-    const parentPanel = new navigator.Panel()
+    const parentPanel = new navigator.NestedPanel()
     parentPanel.id('parent-panel').update()
 
 
@@ -1834,7 +1837,7 @@ describe ('ANIMATIONS: Switch to a panel on the same depth level using the quick
 
         // Create a child panel
         let objectToSpawnFrom = parentPanel.objects('gender').objects('male')
-        const childPanel = new navigator.Panel( parentPanel, objectToSpawnFrom )  // spawn source must be specified if a parent panel is specified
+        const childPanel = new navigator.NestedPanel( parentPanel, objectToSpawnFrom )  // spawn source must be specified if a parent panel is specified
         childPanel.id('child-panel').update()
 
         // Count the number of panels on DOM after the animation
@@ -1854,14 +1857,14 @@ describe ('ANIMATIONS: Switch to a panel on the same depth level using the quick
         // Create SVG
         const mySvg = new container.Svg()
         // Create panel
-        const parentPanel = new navigator.Panel()
+        const parentPanel = new navigator.NestedPanel()
         parentPanel.id('parent-panel').update()
 
 
 
         // Create a child panel
         let objectToSpawnFrom = parentPanel.objects('gender').objects('female')
-        const childPanel = new navigator.Panel( parentPanel, objectToSpawnFrom, 0 )  // spawn source must be specified if a parent panel is specified
+        const childPanel = new navigator.NestedPanel( parentPanel, objectToSpawnFrom, 0 )  // spawn source must be specified if a parent panel is specified
         childPanel.id('child-panel').update()
 
         // Count the number of panels on DOM after the animation

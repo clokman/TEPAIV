@@ -70,7 +70,7 @@
 
             this._currentPanelDepth += 1
             const panelId = `panel-${this._currentPanelDepth}`
-            const panelObject = new Panel(this.select())
+            const panelObject = new NestedPanel(this.select())
                 .stacks(summaryStacks)
                 .id(panelId)
                 .bgText('Dataset')
@@ -330,7 +330,7 @@
 
 
             // Create the new child panel as the child of the last clicked panel
-            const childPanelObject = new Panel(this._lastClickedPanelObject, this._lastClickedCategoryObject)
+            const childPanelObject = new NestedPanel(this._lastClickedPanelObject, this._lastClickedCategoryObject)
             const totalDurationOfChildPanelInitializationAnimations = childPanelObject.animation.duration.extendBridge + childPanelObject.animation.duration.maximizePanelCover;
 
             childPanelObject.stacks(drilldownResultStacks)
@@ -422,7 +422,6 @@
     }
 
 
-
     /**
      * Manages panel creation, modification, nesting, and removal
      *
@@ -441,29 +440,6 @@
             this.class('panel')
                 .update()
 
-            // Private Parameters //
-            let thisPanelIsBeingEmbeddedInAnotherPanel =
-                arguments.length ?
-                    classUtils.isInstanceOf(parentContainerSelectionOrObject, 'Panel') :
-                    false
-
-            if (thisPanelIsBeingEmbeddedInAnotherPanel && !objectToSpawnFrom) {
-                throw Error('The panel is specified to be a child of another panel, but no object is specified as spawn source (missing argument).')
-            }
-
-
-            this.parentObject = thisPanelIsBeingEmbeddedInAnotherPanel
-                ? parentContainerSelectionOrObject
-                : null
-
-            this.childObject = null
-
-            this.thisPanelIsBeingSpawnedFromACategoryOfParentPanel = !!objectToSpawnFrom
-
-            this._objectToSpawnFrom = objectToSpawnFrom
-
-            this._depthIndexValue = 0   // 'value' added to name to separate the variable from the method of the otherwise same name
-
             this._backgroundObject = null
 
             this._bgExtension = {
@@ -471,9 +447,29 @@
                 right: 0
             }
 
-            this._bgFill = thisPanelIsBeingEmbeddedInAnotherPanel
-                ? this._objectToSpawnFrom.fill()
-                : 'lightgray'
+
+            this._defaults = {
+                x: 25,
+                y: 25,
+                width: 100,
+                height: 500,
+
+                innerPadding: {
+                    top: 30,
+                    bottom: 10,
+                    left: 10,
+                    right: 10,
+                    extraPaddingForLeftEdgeOfPanel0Bg: 20
+                },
+
+                paddingBetweenCharts: 0.05,  // proportion
+
+                bgFill: 'lightgray'
+
+            }
+
+
+            this._bgFill = this._defaults.bgFill
 
             this._bgText = 'Panel label'
             this._bgTextFill = 'darkgray'
@@ -491,41 +487,13 @@
                 right: 0
             }
 
-            this._defaults = {
-                x: 25,
-                y: 25,
-                width: 100,
-                height: 500,
-
-                innerPadding: {
-                    top: 30,
-                    bottom: 10,
-                    left: 10,
-                    right: 10,
-                    extraPaddingForLeftEdgeOfPanel0Bg: 20
-                },
-
-                paddingBetweenCharts: 0.05  // proportion
-
-            }
 
 
-            if (thisPanelIsBeingEmbeddedInAnotherPanel) {
-                this.propertiesAtTheEndOfEmbedAnimation = {
-                    x: this.parentObject.x() + this._outerPadding.left,
-                    y: this.parentObject.y() + this._outerPadding.top,
-                    width: this.parentObject.width() + this._outerPadding.right,
-                    height: this.parentObject.height() - this._outerPadding.bottom
-                }
-            }
-
-            this._x = thisPanelIsBeingEmbeddedInAnotherPanel
-                ? 0 - this.propertiesAtTheEndOfEmbedAnimation.x  // start off-canvas
-                : this._defaults.x
+            this._x = this._defaults.x
             this._y = this._defaults.y
-            this._width = thisPanelIsBeingEmbeddedInAnotherPanel
-                ? 0
-                : this._defaults.width
+
+
+            this._width = this._defaults.width
             this._height = this._defaults.height
 
 
@@ -554,23 +522,10 @@
 
 
 
-            // if ( this.parentObject && this.parentObject.childObject ){
-            //     this.spawnAnimation.type = 'quickswitch'
-            // }
-            // if ( this.parentObject && !this.parentObject.childObject ) {
-            //     this.spawnAnimation.type = 'extend'
-            // }
-
-
             // Initialize //
             // TODO: Container.objects() implementation SHOULD be changed so that _backgroundObject and _bridgeObject would also be included in objects()
             this._createBackgroundObject()
 
-            this._bridgeObject = null
-
-            // this._yAxisLabelsObject = new Map()
-            // this._yAxisLabelsObject.set('columns', new Map())
-            // this._yAxisLabelsObject.set('categories', new Map())
 
 
             this._createChartsBasedOnStacksData()
@@ -579,155 +534,68 @@
 
 
 
-            this.animation = {
-                spawnStyle: null,
-                duration: {  // in milliseconds
-                    extendBridge: 300,
-                    retractAndExtend: 300,
-                    retract: 300,
-                    lateralSwitch: 200,
-                    maximizePanelCover: 300,
-                    backgroundAdjustment: 300,  // longer durations are cut off, probably by animations that follow
-                    alignCharts: 100
-                }
-            }
-
-            if (thisPanelIsBeingEmbeddedInAnotherPanel) {
-                this._inferSpawnAnimationType()
-                this._embedAsChildPanel()
-            }
 
         }
 
 
         remove(){
 
-            // Establish conditions
-            const thereIsAParentPanel = (
-                   this.parentObject
-                && this.parentObject.constructor.name === 'Panel'
-            )
-
-            if (thereIsAParentPanel){
-                // Prepare parent panels for removal of self
-                const parentPanel = this.parentObject
-
-                parentPanel._resetVerticalInnerPadding()
-                parentPanel._recursivelyAlignChartsInParentPanelsWithChartsInThisPanel()
-                parentPanel.bgExtensionRight(0)
-                parentPanel._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
-
-                parentPanel.childObject = null
-
-            }
-
             // Remove self
             super.remove()
-
-            this.updateTopAncestor()
 
         }
 
 
         update(transitionDuration) {
 
+
             this._updateDomIfStacksDataHasChanged()
+            this._adjustAll()
 
             this._updateYAxisLabels()
-            this._updateCategoryCaptions()
-
-            if (this._backgroundObject) {
+            if (this._backgroundObject){
                 this._backgroundObject.update(transitionDuration)
-
             }
 
+            super.update(transitionDuration)  // triggers chart updates
 
-            if (this._bridgeObject) {
-                this._bridgeObject.update(transitionDuration)
-            }
-
-            this.select()
-                .attr( 'depthIndex', this.depthIndex() )
-
-
-
-            super.update(transitionDuration)
-
-            this._recursivelyPropagateValuesFromThisPanelDOWNSTREAMandTriggerUpdates(this, transitionDuration)
             // Post-super update statements
             this._verticallyAlignYAxisChartLabels()  // must come after super update; otherwise chart labels do not align (for Panel class only they are OK for Navigator class, even though Navigator uses Panel class too).
-
-
 
             return this
 
         }
 
 
-        updateTopAncestor(transitionDuration) {
-
-            this.topmostAncestor().update(transitionDuration)
-
+        _adjustAll(){
+            if (this._backgroundObject){
+                this._adjustBackgroundProperties()
+            }
+            this._adjustCategoryCaptions()
+            this._adjustChartProperties()
         }
 
 
-        topmostAncestor(){
-
-            const selectParentPanel = (panel) => {return panel.parentObject}
-
-            let topmostAncestorSoFar = this
-            while (topmostAncestorSoFar.parentObject
-            && topmostAncestorSoFar.parentObject.constructor.name === 'Panel'){
-
-                topmostAncestorSoFar = selectParentPanel(topmostAncestorSoFar)
-
-            }
-
-            return topmostAncestorSoFar
-        }
+        _adjustChartProperties() {
 
 
-        _recursivelyPropagateValuesFromThisPanelDOWNSTREAMandTriggerUpdates(thisPanel=this, transitionDuration){
+            let i = 0
+            this.objects().forEach(
+                (chartObject, chartName) => {
 
-            const thereIsAChildPanel = ( thisPanel.childObject && thisPanel.childObject.constructor.name === 'Panel')
+                    const currentColorScheme = color.getChartSchemeBySchemeSetNameAndCircularIndex(this._colorTheme, i)
 
-            if( thereIsAChildPanel ){
+                    chartObject
+                        .x( this._innerX() )
+                        .y( this._yScale(i) )
+                        .width( this._innerWidth() )
+                        .height( this._chartHeights() )
+                        .colorScheme( currentColorScheme )
 
-                // Update the child panel
-                thisPanel.childObject
-                    .showAbsoluteValues( this.showAbsoluteValues() )  // use of 'this' is not a mistake here
-                    .colorSet( this.colorSet() )
-                    .update( transitionDuration )
+                    i++
 
-                // Call this function for child panel (so its child is subjected to this method)
-                this._recursivelyPropagateValuesFromThisPanelDOWNSTREAMandTriggerUpdates(thisPanel.childObject)
-
-            }
-
-        }
-
-
-        /**
-         * WARNING: DO NOT USE UNLESS ABSOLUTELY NECESSARY. Explanation:
-         *      Because the .update() method contains a downstream update method,
-         *      Using this upstream method will also trigger downstream updates
-         *      at each step up. This may result in undesired behavior.
-         */
-        _recursivelyTriggerUpdatesUPSTREAM(thisPanel=this, transitionDuration){
-
-            const thereIsAParentPanel = ( thisPanel.parentObject && thisPanel.parentObject.constructor.name === 'Panel')
-
-            if( thereIsAParentPanel ){
-
-                // Update the parent panel
-                thisPanel.parentObject
-                    .update( transitionDuration )
-
-                // Call this function for child panel (so its child is subjected to this method)
-                this._recursivelyTriggerUpdatesUPSTREAM(thisPanel.parentObject)
-
-            }
-
+                }
+            )
         }
 
 
@@ -746,18 +614,25 @@
 
         _createBackgroundObject() {
 
-            this._backgroundObject = new shape.CaptionedRectangle(this.select())
+            this._backgroundObject = new shape.CaptionedRectangle( this.select() )
+
+            this._adjustBackgroundProperties()
+
+        }
+
+
+        _adjustBackgroundProperties() {
 
             this._backgroundObject
                 .textAlignment('top-left')
                 .class('background')
-                .x(this.x())
-                .y(this.y())
-                .height(this.height())
-                .width(this.width())
-                .fill(this._bgFill)
-                .text(this._bgText)
-                .textFill(this._bgTextFill)
+                .x( this.x() - this.bgExtensionLeft() )
+                .y( this.y() )
+                .height( this.height() )
+                .width( this.bgExtensionLeft() + this.width() + this.bgExtensionRight() )
+                .fill( this._bgFill )
+                .text( this._bgText )
+                .textFill( this._bgTextFill )
 
         }
 
@@ -807,342 +682,6 @@
         }
 
 
-        _inferSpawnAnimationType(){
-
-            // Establish parent-child relationships
-            const parentHasNoChild =
-                !this.parentObject.childObject
-
-            const parentHasChildButNoGrandchilren =
-                this.parentObject.childObject &&
-                !this.parentObject.childObject.childObject
-
-            const parenHasGrandchild =
-                this.parentObject.childObject &&
-                this.parentObject.childObject.childObject
-
-            const existingChildIsIdenticalToThisPanel =
-                this.parentObject.childObject &&
-                this.parentObject.childObject._objectToSpawnFrom === this._objectToSpawnFrom
-
-
-            // Establish animation type from parent-child relationships
-            const lateralSwitch = parentHasChildButNoGrandchilren && !existingChildIsIdenticalToThisPanel
-            const extend = parentHasNoChild
-            const retractAndExtend = parenHasGrandchild && !existingChildIsIdenticalToThisPanel
-            const retract = parenHasGrandchild && existingChildIsIdenticalToThisPanel
-            const noAnimation = existingChildIsIdenticalToThisPanel && parentHasChildButNoGrandchilren
-
-            // Register animation type for panel
-            if (lateralSwitch) {this.animation.spawnStyle = 'lateralSwitch'}
-            if (extend) {this.animation.spawnStyle = 'extend'}
-            if (retractAndExtend) {this.animation.spawnStyle = 'retractAndExtend'}
-            if (retract) {this.animation.spawnStyle = 'retract'}
-            if (noAnimation) {this.animation.spawnStyle = 'none'}
-        }
-
-
-        _embedAsChildPanel() {
-
-            if ( this.animation.spawnStyle === 'extend'  ){
-                // console.log('extend')
-
-                this._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
-                this._recursivelyAlignChartsInParentPanelsWithChartsInThisPanel()
-                this._createBridgeFromSpawnRoot()
-                this._verticallyMaximizeFromBridgeAsChildPanel()
-                this.updateTopAncestor()
-            }
-
-
-            if ( this.animation.spawnStyle === 'lateralSwitch' ||
-                this.animation.spawnStyle === 'retract' ||
-                this.animation.spawnStyle === 'retractAndExtend'){
-
-                 // console.log('this.animation.spawnStyle')
-                    this._collapseAllPanelsDownstreamAndSpawnThisPanelLateralToSiblingBeingReplaced()
-
-            }
-
-            if ( this.animation.spawnStyle === 'none' ){
-                // console.log('none')
-
-                this.respawnInPlaceOfExistingSiblingPanel()
-                this._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
-                this._recursivelyAlignChartsInParentPanelsWithChartsInThisPanel()
-                this.updateTopAncestor()
-
-            }
-
-
-            // Register the current object as a child of its parent panel
-            this.parentObject.childObject = this
-
-            // Update depth index of the current panel (an indicator of how deep it is located in panel hierarchy)
-            const depthOfParent = this.parentObject.depthIndex()
-            this.depthIndex(depthOfParent + 1)
-
-            // Set color set to be inherited from parent
-            this.colorSet( this.parentObject.colorSet() )
-            this.showAbsoluteValues( this.parentObject.showAbsoluteValues() )
-
-            // this.update()
-        }
-
-
-        respawnInPlaceOfExistingSiblingPanel() {
-            this.removeExistingSiblingPanel()
-
-            this.animation.duration.extendBridge = 0
-            this.animation.duration.maximizePanelCover = 0
-
-
-            this._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
-            this._createBridgeFromSpawnRoot()
-            this._verticallyMaximizeFromBridgeAsChildPanel()
-        }
-
-        _collapseAllPanelsDownstreamAndSpawnThisPanelLateralToSiblingBeingReplaced() {
-
-
-            let duration
-            if( this.animation.spawnStyle === 'lateralSwitch' ){ duration = this.animation.duration.lateralSwitch }
-            if( this.animation.spawnStyle === 'retractAndExtend' ){ duration = this.animation.duration.retractAndExtend }
-            if( this.animation.spawnStyle === 'retract' ){ duration = this.animation.duration.retract }
-
-
-            // Create a copy of the existing bridge, immediately
-            const siblingBridgeObject = this.parentObject.childObject._bridgeObject
-
-            const siblingBridgeCover = new shape.Rectangle()
-            siblingBridgeCover
-                .x(siblingBridgeObject.x())
-                .y(siblingBridgeObject.y())
-                .width(siblingBridgeObject.width())
-                .height(siblingBridgeObject.height())
-                .fill(siblingBridgeObject.fill())
-                .update(0)
-
-            // Create a copy of the existing sibling background, immediately
-            const siblingBackgroundObject = this.parentObject.childObject._backgroundObject
-
-            const siblingBackgroundCover = new shape.Rectangle()
-            siblingBackgroundCover
-                .x(siblingBackgroundObject.x())
-                .y(siblingBackgroundObject.y())
-                .width(siblingBackgroundObject.width())
-                .height(siblingBackgroundObject.height())
-                .fill(siblingBackgroundObject.fill())
-                .update(0)
-
-
-            // Retract the bridge copy
-            const initialBridgeCoverWidth = this.animation.spawnStyle === 'retract'
-                ? siblingBridgeObject.width()  // if retracting, start the bridge at full width (no extension animation)
-                : 0
-
-            siblingBridgeCover
-                .width(initialBridgeCoverWidth)
-                .update(duration)
-
-
-            // Remove the existing sibling
-            this.removeExistingSiblingPanel()
-
-
-
-            // Alternative: Use this block for moving the bridge instead of closing it
-            // copyOfSiblingBridge
-            //     .y( this._objectToSpawnFrom.y() )
-            //     .height( this._objectToSpawnFrom.height() )
-            //     .fill( this._objectToSpawnFrom.fill() )
-            //     .update( this.spawnAnimation.duration.moveBridge )
-
-
-            // Change the color of the copy background
-            siblingBackgroundCover
-                .width(this.propertiesAtTheEndOfEmbedAnimation.width)
-                .fill(this._objectToSpawnFrom.fill())
-                .update(duration)
-
-
-            // Save default animation durations to be restored later
-            const defaultMaximizePanelCoverDuration = this.animation.duration.maximizePanelCover
-            const defaultExtendBridgeDuration = this.animation.duration.extendBridge
-
-            // Set temporary animation durations so that bridge creation and spawn
-            // animations can be reused here with new animation durations
-            this.animation.duration.maximizePanelCover = 0
-            this.animation.duration.extendBridge = duration
-
-            // Main procedure
-            this._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
-            this._recursivelyAlignChartsInParentPanelsWithChartsInThisPanel()
-            this._createBridgeFromSpawnRoot()
-            this._verticallyMaximizeFromBridgeAsChildPanel()
-            this.updateTopAncestor()
-
-            setTimeout(() => {
-                siblingBackgroundCover.remove()
-                siblingBridgeCover.remove()
-            }, duration)
-
-
-            // Reset the animation durations that were temporarily changed
-            this.animation.duration.maximizePanelCover = defaultMaximizePanelCoverDuration
-            this.animation.duration.extendBridge = defaultExtendBridgeDuration
-
-        }
-
-
-        removeExistingSiblingPanel() {
-            this.parentObject.childObject.remove()
-            this.parentObject.childObject = null
-        }
-
-
-        _createBridgeFromSpawnRoot() {
-
-            const parentBgExtensionValue = this.parentObject.bgExtensionRight()
-
-            const bridgeId = `${this._objectToSpawnFrom.id()}-bridge`
-
-            const temporaryMaximumBridgeWidthDuringAnimation = parentBgExtensionValue - this.parentObject._innerPadding.right
-
-            // Create a bridge (with 0 width at the right edge of the element to spawn from)
-            this._bridgeObject = new shape.Rectangle(this.select())
-                .class('bridge')
-                .id(bridgeId)
-                .fill(this._objectToSpawnFrom.fill())
-                .x(this._objectToSpawnFrom.x() + this._objectToSpawnFrom.width())
-                .y(this._objectToSpawnFrom.y())
-                .height(this._objectToSpawnFrom.height())
-                .width(0)
-                .update(0)
-
-            if (this.animation.spawnStyle === 'extend' || 'retract' || 'retractAndExtend' || 'none'){
-
-                // Expand the width of the bridge to its temporary maximum
-                this._bridgeObject
-                    .width(temporaryMaximumBridgeWidthDuringAnimation)
-                    .update(this.animation.duration.extendBridge)
-
-            }
-
-            if (this.animation.spawnStyle === 'lateralSwitch') {
-                this._bridgeObject
-                    .y( this._objectToSpawnFrom.y() )
-                    .height( this._objectToSpawnFrom.height() )
-                    .update(this.animation.duration.lateralSwitch)
-
-
-
-            }
-
-        }
-
-
-        _verticallyMaximizeFromBridgeAsChildPanel() {
-
-            const finalBridgeWidth = this.parentObject._innerPadding.right
-
-            // Create a cover (initiate invisible)
-            const childPanelCover = new shape.Rectangle()
-                .width(0)
-                .fill(this._objectToSpawnFrom.fill())
-                .height(0)
-                .update(0)
-
-
-            // Move the newly created cover to its initial position (which is on top of the bridge).
-            setTimeout(() => {
-                childPanelCover
-                    .x(this.propertiesAtTheEndOfEmbedAnimation.x)
-                    .y(this._bridgeObject.y())
-                    .width(this.propertiesAtTheEndOfEmbedAnimation.width)
-                    .height(this._bridgeObject.height())
-                    .update(0)
-
-                // Set the bridge width to its final value
-                this._bridgeObject
-                    .width(finalBridgeWidth)
-                    .update(0)
-
-            }, this.animation.duration.extendBridge)  // do after bridge is extended
-
-
-            // Vertically maximize the cover
-            setTimeout(() => {
-                childPanelCover
-                    .x(this.propertiesAtTheEndOfEmbedAnimation.x)
-                    .y(this.propertiesAtTheEndOfEmbedAnimation.y)
-                    .height(this.propertiesAtTheEndOfEmbedAnimation.height)
-                    .width(this.propertiesAtTheEndOfEmbedAnimation.width)
-                    .update(this.animation.duration.maximizePanelCover)
-            }, this.animation.duration.extendBridge)  // do after bridge is extended
-
-
-            // Remove the child panel's cover and teleport child panel to its final position
-            setTimeout(() => {
-
-                childPanelCover.remove()
-
-                // Modify current panel's properties to fit it to the room created in parent panel
-                this.x(this.propertiesAtTheEndOfEmbedAnimation.x)
-                    .y(this.propertiesAtTheEndOfEmbedAnimation.y)
-                    .width(this.propertiesAtTheEndOfEmbedAnimation.width)
-                    .height(this.propertiesAtTheEndOfEmbedAnimation.height)
-                    .update(0)
-
-            }, this.animation.duration.extendBridge + this.animation.duration.maximizePanelCover)  // do after bridge extended and cover is maximized
-        }
-
-
-        _recursivelyAlignChartsInParentPanelsWithChartsInThisPanel(thisPanel=this) {
-
-            // Establish conditions
-
-            const thereIsAParentPanel = (
-                   thisPanel.parentObject
-                && thisPanel.parentObject.constructor.name === 'Panel'
-            )
-            const thereIsAGrandParentPanel = (
-                   thereIsAParentPanel
-                && thisPanel.parentObject.parentObject
-                && thisPanel.parentObject.parentObject.constructor.name === 'Panel'
-            )
-
-            if (thereIsAParentPanel){
-
-                // Infer parent during recursion
-                const parentPanel = arguments.length
-                    ? thisPanel.parentObject
-                    : this.parentObject
-
-                // Get padding values
-                const selfInnerPaddingTop = thisPanel.innerPaddingTop()
-                const selfInnerPaddingBottom = thisPanel.innerPaddingBottom()
-
-                const selfOuterPaddingTop = thisPanel._outerPadding.top
-                const selfOuterPaddingBottom = thisPanel._outerPadding.bottom
-
-                // Adjust padding values of previous panel(s)
-                parentPanel
-                    .innerPaddingTop( selfInnerPaddingTop + selfOuterPaddingTop )
-                    .innerPaddingBottom(selfInnerPaddingBottom + selfOuterPaddingBottom - selfOuterPaddingTop)
-
-                // Bubble up if parent also has a parent
-                if (thereIsAGrandParentPanel){
-                    this._recursivelyAlignChartsInParentPanelsWithChartsInThisPanel(parentPanel)
-                }
-
-            }
-
-            return this
-
-        }
-
-
         _resetVerticalInnerPadding(){
 
             // Set padding values to their default values
@@ -1150,49 +689,6 @@
             this.innerPaddingBottom ( this._defaults.innerPadding.bottom )
 
             return this
-        }
-
-        _recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel(thisPanel=this) {
-
-            // Establish conditions
-            const thereIsAParentPanel = (
-                thisPanel.parentObject
-                && thisPanel.constructor.name === 'Panel'
-            )
-            const thereIsAGrandParentPanel = (
-                thereIsAParentPanel
-                && thisPanel.parentObject.parentObject
-                && thisPanel.parentObject.parentObject.constructor.name === 'Panel'
-            )
-
-            if ( thereIsAParentPanel ) {
-
-                // Infer parent during recursion
-                const parentPanel = arguments.length
-                    ? thisPanel.parentObject
-                    : this.parentObject
-
-
-                // Calculate the rightward bg extension value
-                const rightBgExtensionValueOfParent =
-                            + thisPanel.propertiesAtTheEndOfEmbedAnimation.width
-                            + parentPanel._innerPadding.right
-                            + thisPanel.bgExtensionRight()
-
-                // Set bg extension of parent
-                parentPanel
-                    .bgExtensionRight( rightBgExtensionValueOfParent )
-
-
-                // Bubble up if parent also has a parent
-                if ( thereIsAGrandParentPanel ){
-                    this._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel(parentPanel)
-                }
-
-            }
-
-            return this
-
         }
 
 
@@ -1272,8 +768,6 @@
                           - Math.abs( farthestLeftPointOfLabelsArea )
                     ) + this._innerPadding.left + this._innerPadding.extraPaddingForLeftEdgeOfPanel0Bg
                 this.bgExtensionLeft( leftExtensionValue )
-
-                // this.x( this.x() + 170 )
 
 
             }
@@ -1389,20 +883,7 @@
 
                 this._x = value
 
-                // Update background object
-                this._backgroundObject
-                    .x(this._x)
-
-
-                // Update charts
-                // LOOP //
-                this.objects().forEach(
-                    (eachObjectInGroup, eachObjectId) => {
-
-                        eachObjectInGroup.x(this._innerX())
-
-                    }
-                )
+                this._adjustAll()
 
                 return this
             }
@@ -1421,27 +902,8 @@
             else {
 
                 this._y = value
-                // range of this._yScale is not recalculated in this method as it is a live variable
 
-
-                // Update background object
-                this._backgroundObject
-                    .y(this._y)
-
-
-                // Update charts
-                // loop //
-                let i = 0
-                this.objects().forEach(
-                    (eachChartObject, eachChartId) => {
-
-                        eachChartObject
-                            .y(this._yScale(i))
-
-                        i++
-
-                    }
-                )
+                this._adjustAll()
 
                 return this
             }
@@ -1461,21 +923,7 @@
 
                 this._width = value
 
-
-                // Update background object
-                this._backgroundObject
-                    .width(this._width)
-
-
-                // Update charts
-                // LOOP //
-                this.objects().forEach(
-                    (eachObjectInGroup, eachObjectId) => {
-
-                        eachObjectInGroup.width(this._innerWidth())
-
-                    }
-                )
+                this._adjustAll()
 
                 return this
             }
@@ -1494,26 +942,7 @@
             else {
                 this._height = value
 
-
-                // Update background
-                this._backgroundObject
-                    .height(this._height)
-
-
-                // Update charts
-                // loop //
-                let i = 0
-                this.objects().forEach(
-                    (eachChartObject, eachChartId) => {
-
-                        eachChartObject
-                            .y(this._yScale(i))
-                            .height(this._chartHeights())
-
-                        i++
-
-                    }
-                )
+                this._adjustAll()
 
                 return this
             }
@@ -1533,29 +962,7 @@
 
                 this._colorTheme = value
 
-                // Set color scheme of charts
-                let i = 0
-                this.objects().forEach( (chartObject, chartName ) => {
-
-                    const currentScheme = color.getChartSchemeBySchemeSetNameAndCircularIndex(this._colorTheme, i)
-
-                    chartObject.colorScheme(currentScheme)
-
-                    i++
-
-                })
-
-                // Set color of background and bridge
-                if (this._objectToSpawnFrom){
-
-                    const spawnSourceColor = this._objectToSpawnFrom.fill()
-
-                    this._bridgeObject.fill( spawnSourceColor  )
-                    this._backgroundObject.fill( spawnSourceColor  )
-
-                }
-
-
+                this._adjustAll()
 
                 return this
             }
@@ -1574,8 +981,10 @@
             // Setter
             else{
                 value.mustBeOfType('Boolean')
+
                 this._showAbsoluteValues = value
 
+                this._adjustAll()
 
                 return this
             }
@@ -1583,7 +992,7 @@
         }
 
 
-        _updateCategoryCaptions() {
+        _adjustCategoryCaptions() {
 
             this.objects().forEach( (categoryObject, categoryName) => {
 
@@ -1605,10 +1014,7 @@
 
                 this._bgText = value
 
-                // Update background
-                this._backgroundObject
-                    .text(this._bgText)
-
+                this._adjustAll()
 
                 return this
             }
@@ -1628,10 +1034,7 @@
 
                 this._bgTextFill = value
 
-                // Update background
-                this._backgroundObject
-                    .textFill(this._bgTextFill)
-
+                this._adjustAll()
 
                 return this
             }
@@ -1651,15 +1054,7 @@
 
                 this._bgFill = value
 
-                // Update panel background fill color
-                this._backgroundObject
-                    .fill(this._bgFill)
-
-                // Update panel bridge fill color
-                if(this._bridgeObject){
-                    this._bridgeObject.fill(this._bgFill)
-                }
-
+                this._adjustAll()
 
                 return this
             }
@@ -1683,11 +1078,7 @@
 
                 this._bgExtension.right = value
 
-                // Update background
-                if (this._backgroundObject){
-                    this._backgroundObject
-                        .width( this.bgExtensionLeft() + this.width() + this.bgExtensionRight() )
-                }
+                this._adjustAll()
 
                 return this
             }
@@ -1712,17 +1103,27 @@
                 // Set new property
                 this._bgExtension.left = value
 
+                this._adjustAll()
 
-                const backgroundObject = this._backgroundObject
+                return this
+            }
 
-                const newXCoordinateOfBackground = this.x() - this.bgExtensionLeft()
-                const newWidthOfBackground =  this.bgExtensionLeft() + this.width() + this.bgExtensionRight()
+        }
 
-                // Update background
-                this._backgroundObject
-                    .x( newXCoordinateOfBackground  )
-                    .width( newWidthOfBackground )
 
+        innerPaddingTop(value) {   // TODO: NOT TESTED
+
+            // Getter
+            if (!arguments.length) {
+                return this._innerPadding.top
+            }
+
+            // Setter
+            else {
+
+                this._innerPadding.top = value
+
+                this._adjustAll()
 
                 return this
             }
@@ -1742,22 +1143,675 @@
 
                 this._innerPadding.bottom = value
 
-                // Update charts
-                let i = 0
-                this.objects().forEach(
-                    (eachChartObject, eachChartId) => {
+                this._adjustAll()
 
-                        eachChartObject
-                            .y(this._yScale(i))
-                            .height(this._chartHeights())
+                return this
+            }
 
-                        i++
+        }
 
+
+    }
+
+
+    class NestedPanel extends Panel {
+
+
+        constructor(parentContainerSelectionOrObject, objectToSpawnFrom) {
+
+            // Superclass Init //
+            super(...arguments)
+
+            this.class('panel')
+                .update()
+
+            this.animation = {
+
+                spawnStyle: null,
+
+                duration: {  // in milliseconds
+                    extendBridge: 300,
+                    retractAndExtend: 300,
+                    retract: 300,
+                    lateralSwitch: 200,
+                    maximizePanelCover: 300,
+                    backgroundAdjustment: 300,  // longer durations are cut off, probably by animations that follow
+                    collapseBackground: 300
+                }
+            }
+
+
+            // Private Parameters //
+            this._objectToSpawnFrom = objectToSpawnFrom
+
+            let thisPanelIsBeingEmbeddedInAnotherPanel = arguments.length
+                ?  parentContainerSelectionOrObject.hasType( this.hasType() )
+                : false
+
+            if (thisPanelIsBeingEmbeddedInAnotherPanel && !objectToSpawnFrom) {
+                throw Error('The panel is specified to be a child of another panel, but no object is specified as spawn source (missing argument).')
+            }
+
+            this.childObject = null
+
+            this.parentObject = thisPanelIsBeingEmbeddedInAnotherPanel
+                ? parentContainerSelectionOrObject
+                : null
+
+
+            this._bridgeObject = null
+
+
+            this._depthIndexValue = 0   // 'value' added to name to separate the variable from the method of the otherwise same name
+
+
+            this._bgFill = thisPanelIsBeingEmbeddedInAnotherPanel
+                ? this._objectToSpawnFrom.fill()
+                : this._defaults.bgFill
+
+
+
+            if (thisPanelIsBeingEmbeddedInAnotherPanel) {
+
+                this.x(  0 - this.width() - this.x() )
+                    .update(0)  // start off-screen
+
+
+                if (this._objectToSpawnFrom){
+
+                    this.preAnimationProperties = {
+                        objectToSpawnFrom: {
+                            height: this._objectToSpawnFrom.height(),
+                            y: this._objectToSpawnFrom.y()
+                        }
                     }
+                }
+
+                this.postAnimationProperties = {
+                    x: this.parentObject.x() + this._outerPadding.left,
+                    y: this.parentObject.y() + this._outerPadding.top,
+                    width: this.parentObject.width() + this._outerPadding.right,
+                    height: this.parentObject.height() - this._outerPadding.bottom
+                }
+            }
+
+
+            if (thisPanelIsBeingEmbeddedInAnotherPanel) {
+                this._inferSpawnAnimationType()
+                this._embedAsChildPanel()
+            }
+
+        }
+
+
+        remove(){
+
+            // Establish conditions
+            const thereIsAParentPanel = (
+                this.parentObject
+                && this.parentObject.hasType( this.hasType() )
+
+            )
+
+            if (thereIsAParentPanel){
+                // Prepare parent panels for removal of self
+                const parentPanel = this.parentObject
+
+                parentPanel._resetVerticalInnerPadding()
+                parentPanel._recursivelyAlignChartsInParentPanelsWithChartsInThisPanel()
+                parentPanel.bgExtensionRight(0)
+                parentPanel._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
+
+                parentPanel.childObject = null
+
+            }
+
+            // Remove self
+            super.remove()
+
+            this.updateTopAncestor()
+
+        }
+
+
+        _embedAsChildPanel() {
+
+            this.preAnimationProperties.objectToSpawnFrom.y = this._objectToSpawnFrom.y()
+            this.preAnimationProperties.objectToSpawnFrom.height = this._objectToSpawnFrom.height()
+
+            if ( this.animation.spawnStyle === 'extend'  ){
+                // console.log('extend')
+
+                this._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
+                this._recursivelyAlignChartsInParentPanelsWithChartsInThisPanel()
+                this._createBridgeFromSpawnRoot()
+                this._verticallyMaximizeFromBridgeAsChildPanel()
+                this.updateTopAncestor( this.animation.duration.extendBridge )
+            }
+
+
+            if ( this.animation.spawnStyle === 'lateralSwitch' ||
+                this.animation.spawnStyle === 'retract' ||
+                this.animation.spawnStyle === 'retractAndExtend'){
+
+                // console.log('this.animation.spawnStyle')
+                this._collapseAllPanelsDownstreamAndSpawnThisPanelLateralToSiblingBeingReplaced()
+
+            }
+
+            if ( this.animation.spawnStyle === 'none' ){
+                // console.log('none')
+
+                this._respawnInPlaceOfExistingSiblingPanel()
+                this._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
+                this._recursivelyAlignChartsInParentPanelsWithChartsInThisPanel()
+                this.updateTopAncestor(0)
+
+            }
+
+
+            // Register the current object as a child of its parent panel
+            this.parentObject.childObject = this
+
+            // Update depth index of the current panel (an indicator of how deep it is located in panel hierarchy)
+            const depthOfParent = this.parentObject.depthIndex()
+            this.depthIndex(depthOfParent + 1)
+
+            // Set color set to be inherited from parent
+            this.colorSet( this.parentObject.colorSet() )
+            this.showAbsoluteValues( this.parentObject.showAbsoluteValues() )
+
+        }
+
+
+        update(transitionDuration) {
+
+            this.select()
+                .attr( 'depthIndex', this.depthIndex() )
+
+            super.update(transitionDuration)
+
+            if (this._objectToSpawnFrom) {
+                this._backgroundObject
+                    .fill( this._objectToSpawnFrom.fill()  )
+                    .update()
+            }
+
+
+            this._recursivelyPropagateValuesFromThisPanelDOWNSTREAMandTriggerUpdates(this, transitionDuration)
+
+
+            return this
+
+        }
+
+
+        _adjustAll() {
+            super._adjustAll()
+            if( this._bridgeObject ){
+                this._adjustBridgeProperties()
+            }
+        }
+
+
+
+        _adjustBridgeProperties() {
+
+            const verticalCutPreventionOffset = 1  // for preventing vertical cuts that appear during zoom in some browsers
+
+            // Formulas
+            const id = `${this._objectToSpawnFrom.id()}-bridge`
+                , className = 'bridge'
+                , fill = this._objectToSpawnFrom.fill()
+                , x = this._objectToSpawnFrom.x() + this._objectToSpawnFrom.width() - verticalCutPreventionOffset
+                , y = this._objectToSpawnFrom.y()
+                , width = this.parentObject._innerPadding.right + (verticalCutPreventionOffset * 2)
+                , height = this._objectToSpawnFrom.height()
+
+            // Create a bridge (with 0 width at the right edge of the element to spawn from)
+            this._bridgeObject
+                .class( className )
+                .id( id )
+                .fill( fill )
+                .x( x )
+                .y( y )
+                .width( width )
+                .height( height )
+
+        }
+
+
+        updateTopAncestor(transitionDuration) {
+
+            this.topmostAncestor().update(transitionDuration)
+
+        }
+
+
+        topmostAncestor(){
+
+            const selectParentPanel = (panel) => {return panel.parentObject}
+
+            let topmostAncestorSoFar = this
+            while (topmostAncestorSoFar.parentObject
+            && topmostAncestorSoFar.parentObject.hasType( this.hasType() ) )
+            {
+                topmostAncestorSoFar = selectParentPanel(topmostAncestorSoFar)
+            }
+
+            return topmostAncestorSoFar
+        }
+
+
+
+        _createBridgeFromSpawnRoot() {
+
+            // Create a bridge (with 0 width at the right edge of the element to spawn from)
+            this._bridgeObject = new shape.Rectangle( this.select() )
+
+            this._adjustBridgeProperties()
+
+            this._bridgeObject
+                .height( this.preAnimationProperties.objectToSpawnFrom.height )
+                .y( this.preAnimationProperties.objectToSpawnFrom.y )
+                .width( 0 )
+                .update( 0 )
+
+
+            if (this.animation.spawnStyle === 'extend' || 'retract' || 'retractAndExtend' || 'none') {
+
+                const parentBgExtensionValue = this.parentObject.bgExtensionRight()
+                const temporaryMaximumBridgeWidthDuringAnimation = parentBgExtensionValue - this.parentObject._innerPadding.right
+
+                this._adjustBridgeProperties()
+                // Expand the width of the bridge to its temporary maximum
+                this._bridgeObject
+                    .width( temporaryMaximumBridgeWidthDuringAnimation )
+                    .update( this.animation.duration.extendBridge )
+
+            }
+
+            if (this.animation.spawnStyle === 'lateralSwitch') {
+
+                this._adjustBridgeProperties()
+                this._bridgeObject
+                    .update( this.animation.duration.lateralSwitch )
+
+            }
+
+        }
+
+
+        _verticallyMaximizeFromBridgeAsChildPanel() {
+
+            // Create a cover (initiate invisible)
+            const childPanelCover = new shape.Rectangle()
+                .width(0)
+                .fill(this._objectToSpawnFrom.fill())
+                .height(0)
+                .update(0)
+
+
+            // Move the newly created cover to its initial position (which is on top of the bridge).
+            setTimeout(() => {
+
+                // Set the bridge width to its final value
+                this._adjustBridgeProperties()
+                this._bridgeObject
+                    .update( 0 )
+
+                // Move child panel cover on top of bridge
+                childPanelCover
+                    .x( this.postAnimationProperties.x )
+                    .y( this._bridgeObject.y() )
+                    .width( this.postAnimationProperties.width )
+                    .height( this._bridgeObject.height() )
+                    .update( 0 )
+
+
+            }, this.animation.duration.extendBridge)  // do after bridge is extended
+
+
+
+            // Vertically maximize the cover
+            setTimeout(() => {
+
+                childPanelCover
+                    .x( this.postAnimationProperties.x )
+                    .y( this.postAnimationProperties.y )
+                    .height( this.postAnimationProperties.height )
+                    .width( this.postAnimationProperties.width )
+                    .update( this.animation.duration.maximizePanelCover )
+
+            }, this.animation.duration.extendBridge)  // do after bridge is extended
+
+
+            // Remove the child panel's cover and teleport child panel to its final position
+            setTimeout(() => {
+
+                childPanelCover.remove()
+
+                // Modify current panel's properties to fit it to the room created in parent panel
+                this.x( this.postAnimationProperties.x )
+                    .y( this.postAnimationProperties.y )
+                    .width( this.postAnimationProperties.width )
+                    .height( this.postAnimationProperties.height )
+                    .update( 0 )
+
+            }, this.animation.duration.extendBridge + this.animation.duration.maximizePanelCover)  // do after bridge extended and cover is maximized
+        }
+
+
+        _recursivelyPropagateValuesFromThisPanelDOWNSTREAMandTriggerUpdates(thisPanel=this, transitionDuration){
+
+            const thereIsAChildPanel = (
+                thisPanel.childObject
+                && thisPanel.childObject.hasType( this.hasType() )
+            )
+
+            if( thereIsAChildPanel ){
+
+                // Update the child panel
+                thisPanel.childObject
+                    .showAbsoluteValues( this.showAbsoluteValues() )  // use of 'this' is not a mistake here
+                    .colorSet( this.colorSet() )
+                    .update( transitionDuration )
+
+                thisPanel.childObject._adjustBridgeProperties()
+                thisPanel.childObject._bridgeObject.update( transitionDuration )
+
+
+                // Call this function for child panel (so its child is subjected to this method)
+                this._recursivelyPropagateValuesFromThisPanelDOWNSTREAMandTriggerUpdates(thisPanel.childObject)
+
+            }
+
+        }
+
+
+        /**
+         * WARNING: DO NOT USE UNLESS ABSOLUTELY NECESSARY. Explanation:
+         *      Because the .update() method contains a downstream update method,
+         *      Using this upstream method will also trigger downstream updates
+         *      at each step up. This may result in undesired behavior.
+         */
+        _recursivelyTriggerUpdatesUPSTREAM(thisPanel=this, transitionDuration){
+
+            const thereIsAParentPanel = (
+                thisPanel.parentObject
+                && thisPanel.parentObject.hasType( thisPanel.hasType() ) )
+
+            if( thereIsAParentPanel ){
+
+                // Update the parent panel
+                thisPanel.parentObject
+                    .update( transitionDuration )
+
+                // Call this function for child panel (so its child is subjected to this method)
+                this._recursivelyTriggerUpdatesUPSTREAM(thisPanel.parentObject)
+
+            }
+
+        }
+
+
+
+        _recursivelyAlignChartsInParentPanelsWithChartsInThisPanel(thisPanel=this) {
+
+            // Establish conditions
+
+            const thereIsAParentPanel = (
+                thisPanel.parentObject
+                && thisPanel.parentObject.hasType( this.hasType() )
+            )
+            const thereIsAGrandParentPanel = (
+                thereIsAParentPanel
+                && thisPanel.parentObject.parentObject
+                && thisPanel.parentObject.parentObject.hasType( this.hasType() )
+            )
+
+
+
+            if (thereIsAParentPanel){
+
+                // Infer parent during recursion
+                const parentPanel = arguments.length
+                    ? thisPanel.parentObject
+                    : this.parentObject
+
+                // Get padding values
+                const selfInnerPaddingTop = thisPanel.innerPaddingTop()
+                const selfInnerPaddingBottom = thisPanel.innerPaddingBottom()
+
+                const selfOuterPaddingTop = thisPanel._outerPadding.top
+                const selfOuterPaddingBottom = thisPanel._outerPadding.bottom
+
+                // Adjust padding values of previous panel(s)
+                parentPanel
+                    .innerPaddingTop( selfInnerPaddingTop + selfOuterPaddingTop )
+                    .innerPaddingBottom(selfInnerPaddingBottom + selfOuterPaddingBottom - selfOuterPaddingTop)
+
+                // Bubble up if parent also has a parent
+                if (thereIsAGrandParentPanel){
+                    this._recursivelyAlignChartsInParentPanelsWithChartsInThisPanel(parentPanel)
+                }
+
+            }
+
+
+
+            return this
+
+        }
+
+        _recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel(thisPanel=this) {
+
+            // Establish conditions
+            const thereIsAParentPanel = (
+                thisPanel.parentObject
+                && (  thisPanel.hasType( 'Panel' )
+                    || thisPanel.hasType( 'NestedPanel' )
                 )
+            )
+            const thereIsAGrandParentPanel = (
+                thereIsAParentPanel
+                && thisPanel.parentObject.parentObject
+                && (   thisPanel.parentObject.parentObject.hasType( 'Panel' )
+                    || thisPanel.parentObject.parentObject.hasType( 'NestedPanel' )
+                )
+            )
+
+            if ( thereIsAParentPanel ) {
+
+                // Infer parent during recursion
+                const parentPanel = arguments.length
+                    ? thisPanel.parentObject
+                    : this.parentObject
 
 
-                // Set bridge position
+                // Calculate the rightward bg extension value
+                const rightBgExtensionValueOfParent =
+                    + thisPanel.postAnimationProperties.width
+                    + parentPanel._innerPadding.right
+                    + thisPanel.bgExtensionRight()
+
+                // Set bg extension of parent
+                parentPanel
+                    .bgExtensionRight( rightBgExtensionValueOfParent )
+
+
+                // Bubble up if parent also has a parent
+                if ( thereIsAGrandParentPanel ){
+                    this._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel(parentPanel)
+                }
+
+            }
+
+            return this
+
+        }
+
+
+        _inferSpawnAnimationType(){
+
+            // Establish parent-child relationships
+            const parentHasNoChild =
+                !this.parentObject.childObject
+
+            const parentHasChildButNoGrandchilren =
+                this.parentObject.childObject &&
+                !this.parentObject.childObject.childObject
+
+            const parenHasGrandchild =
+                this.parentObject.childObject &&
+                this.parentObject.childObject.childObject
+
+            const existingChildIsIdenticalToThisPanel =
+                this.parentObject.childObject &&
+                this.parentObject.childObject._objectToSpawnFrom === this._objectToSpawnFrom
+
+
+            // Infer animation type from parent-child relationships
+            const lateralSwitch = parentHasChildButNoGrandchilren && !existingChildIsIdenticalToThisPanel
+            const extend = parentHasNoChild
+            const retractAndExtend = parenHasGrandchild && !existingChildIsIdenticalToThisPanel
+            const retract = parenHasGrandchild && existingChildIsIdenticalToThisPanel
+            const noAnimation = existingChildIsIdenticalToThisPanel && parentHasChildButNoGrandchilren
+
+            // Register animation type for panel
+            if (lateralSwitch) {this.animation.spawnStyle = 'lateralSwitch'}
+            if (extend) {this.animation.spawnStyle = 'extend'}
+            if (retractAndExtend) {this.animation.spawnStyle = 'retractAndExtend'}
+            if (retract) {this.animation.spawnStyle = 'retract'}
+            if (noAnimation) {this.animation.spawnStyle = 'none'}
+        }
+
+
+        _respawnInPlaceOfExistingSiblingPanel() {
+            this._removeExistingSiblingPanel()
+
+            // Refresh the clicked panel (recreate it with no animations)
+            this.animation.duration.extendBridge = 0
+            this.animation.duration.maximizePanelCover = 0
+
+
+            this._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
+            this._createBridgeFromSpawnRoot()
+            this._verticallyMaximizeFromBridgeAsChildPanel()
+        }
+
+        _collapseAllPanelsDownstreamAndSpawnThisPanelLateralToSiblingBeingReplaced() {
+
+
+            let duration
+            if( this.animation.spawnStyle === 'lateralSwitch' ){ duration = this.animation.duration.lateralSwitch }
+            if( this.animation.spawnStyle === 'retractAndExtend' ){ duration = this.animation.duration.retractAndExtend }
+            if( this.animation.spawnStyle === 'retract' ){ duration = this.animation.duration.retract }
+
+
+            // Create a copy of the existing bridge, immediately
+            const siblingBridgeObject = this.parentObject.childObject._bridgeObject
+
+            const siblingBridgeCover = new shape.Rectangle()
+            siblingBridgeCover
+                .x(siblingBridgeObject.x())
+                .y(siblingBridgeObject.y())
+                .width(siblingBridgeObject.width())
+                .height(siblingBridgeObject.height())
+                .fill(siblingBridgeObject.fill())
+                .update(0)
+
+            // Create a copy of the existing sibling background, immediately
+            const siblingBackgroundObject = this.parentObject.childObject._backgroundObject
+
+            const siblingBackgroundCover = new shape.Rectangle()
+            siblingBackgroundCover
+                .x(siblingBackgroundObject.x())
+                .y(siblingBackgroundObject.y())
+                .width(siblingBackgroundObject.width())
+                .height(siblingBackgroundObject.height())
+                .fill(siblingBackgroundObject.fill())
+                .update(0)
+
+
+            // Retract the bridge copy
+            const initialBridgeCoverWidth = this.animation.spawnStyle === 'retract'
+                ? siblingBridgeObject.width()  // if retracting, start the bridge at full width (no extension animation)
+                : 0
+
+            siblingBridgeCover
+                .width(initialBridgeCoverWidth)
+                .update(duration)
+
+
+            // Remove the existing sibling
+            this._removeExistingSiblingPanel()
+
+
+
+            // Alternative: Use this block for moving the bridge instead of closing it
+            // copyOfSiblingBridge
+            //     .y( this._objectToSpawnFrom.y() )
+            //     .height( this._objectToSpawnFrom.height() )
+            //     .fill( this._objectToSpawnFrom.fill() )
+            //     .update( this.spawnAnimation.duration.moveBridge )
+
+
+            // Change the color of the copy background
+            siblingBackgroundCover
+                .width(this.postAnimationProperties.width)
+                .fill(this._objectToSpawnFrom.fill())
+                .update(duration)
+
+
+            // Save default animation durations to be restored later
+            const defaultMaximizePanelCoverDuration = this.animation.duration.maximizePanelCover
+            const defaultExtendBridgeDuration = this.animation.duration.extendBridge
+
+            // Set temporary animation durations so that bridge creation and spawn
+            // animations can be reused here with new animation durations
+            this.animation.duration.maximizePanelCover = 0
+            this.animation.duration.extendBridge = duration
+
+            // Main procedure
+            this._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
+
+            this._recursivelyAlignChartsInParentPanelsWithChartsInThisPanel()
+            this._createBridgeFromSpawnRoot()
+            this._verticallyMaximizeFromBridgeAsChildPanel()
+            this.updateTopAncestor( this.animation.duration.collapseBackground )
+
+            setTimeout(() => {
+                siblingBackgroundCover.remove()
+                siblingBridgeCover.remove()
+            }, duration)
+
+
+            // Reset the animation durations that were temporarily changed
+            this.animation.duration.maximizePanelCover = defaultMaximizePanelCoverDuration
+            this.animation.duration.extendBridge = defaultExtendBridgeDuration
+
+        }
+
+        _removeExistingSiblingPanel() {
+            this.parentObject.childObject.remove()
+            this.parentObject.childObject = null
+        }
+
+
+        innerPaddingTop(value) {   // TODO: NOT TESTED
+
+            // Getter
+            if (!arguments.length) {
+                return super.innerPaddingTop()
+            }
+
+            // Setter
+            else {
+
+                super.innerPaddingTop(value)
+
+                // Adjust bridge position
                 if (this.childObject) {
                     this.childObject._bridgeObject
                         .y(this.childObject._objectToSpawnFrom.y())
@@ -1770,35 +1824,19 @@
         }
 
 
-        innerPaddingTop(value) {   // TODO: NOT TESTED
+        innerPaddingBottom(value) {   // TODO: NOT TESTED
 
             // Getter
             if (!arguments.length) {
-                return this._innerPadding.top
+                return super.innerPaddingBottom()
             }
 
             // Setter
             else {
 
-                this._innerPadding.top = value
+                super.innerPaddingBottom(value)
 
-                // Update charts
-                // loop //
-                let i = 0
-                this.objects().forEach(
-                    (eachChartObject, eachChartId) => {
-
-                        eachChartObject
-                            .y(this._yScale(i))
-                            .height(this._chartHeights())
-
-                        i++
-
-                    }
-                )
-
-
-                // Set bridge position
+                // Adjust bridge position
                 if (this.childObject) {
                     this.childObject._bridgeObject
                         .y(this.childObject._objectToSpawnFrom.y())
@@ -1810,40 +1848,28 @@
 
         }
 
-        innerPaddingTop(value) {   // TODO: NOT TESTED
+
+        colorSet(value){
 
             // Getter
             if (!arguments.length) {
-                return this._innerPadding.top
+                return super.colorSet()
             }
 
             // Setter
             else {
 
-                this._innerPadding.top = value
+                super.colorSet(value)
 
-                // Update charts
-                // loop //
-                let i = 0
-                this.objects().forEach(
-                    (eachChartObject, eachChartId) => {
+                // Set color of background and bridge
+                if (this._objectToSpawnFrom){
 
-                        eachChartObject
-                            .y(this._yScale(i))
-                            .height(this._chartHeights())
+                    const spawnSourceColor = this._objectToSpawnFrom.fill()
 
-                        i++
+                    this._bridgeObject.fill( spawnSourceColor  )
 
-                    }
-                )
-
-
-                // Set bridge position
-                if (this.childObject) {
-                    this.childObject._bridgeObject
-                        .y(this.childObject._objectToSpawnFrom.y())
-                        .height(this.childObject._objectToSpawnFrom.height())
                 }
+
 
                 return this
             }
@@ -1864,11 +1890,12 @@
 
                 this._depthIndexValue = value
 
+                this._adjustAll()
+
                 return this
             }
 
         }
-
 
     }
 
@@ -2905,6 +2932,7 @@
     exports.version = version;
     exports.Navigator = Navigator;
     exports.Panel = Panel;
+    exports.NestedPanel = NestedPanel;
     exports.Chart = Chart;
     exports.Category = Category;
     exports.color = color;

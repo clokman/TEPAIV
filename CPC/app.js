@@ -141,12 +141,12 @@ myPanel4.objects('status').colorScheme('Greys').update()
 
 //// NESTED PANEL ////
 
-nestedPanel = new navigator.Panel()
+nestedPanel = new navigator.NestedPanel()
     .id('parent-panel')
     .bgFill('#deebf7')
     .colorSet('Viridis')
     .x(1400).y(750)
-    .update()
+    .update(0)
 
 
 // // Demo Code //
@@ -160,7 +160,7 @@ nestedPanel = new navigator.Panel()
 
 spawnObjectForChild1 = nestedPanel.objects('gender').objects('female')
 
-childPanel1 = new navigator.Panel(nestedPanel, spawnObjectForChild1)
+childPanel1 = new navigator.NestedPanel(nestedPanel, spawnObjectForChild1)
 childPanel1
     .id('child-panel-1')
     .update()
@@ -171,7 +171,7 @@ childPanel1
 spawnObjectForChild2 = childPanel1.objects('gender').objects('male')
 
 setTimeout(() => {
-    childPanel2 = new navigator.Panel(childPanel1, spawnObjectForChild2)
+    childPanel2 = new navigator.NestedPanel(childPanel1, spawnObjectForChild2)
     childPanel2.id('child-panel-2').update()
 
 },5000)
@@ -182,7 +182,7 @@ setTimeout(() => {
 spawnObjectForChild3 = childPanel1.objects('class').objects('first-class')
 
 setTimeout(() => {
-    childPanel3 = new navigator.Panel(childPanel1, spawnObjectForChild3)
+    childPanel3 = new navigator.NestedPanel(childPanel1, spawnObjectForChild3)
     childPanel3.id('child-panel-3').update()
 
 },8000)
@@ -210,7 +210,7 @@ setTimeout( () => {
     
     spawnObjectForChild4 = nestedPanel.objects('status').objects('survived')
     
-    childPanel4 = new navigator.Panel(nestedPanel, spawnObjectForChild4)
+    childPanel4 = new navigator.NestedPanel(nestedPanel, spawnObjectForChild4)
     childPanel4
         .id('child-panel-4')
         .update()
@@ -289,7 +289,7 @@ navigator1.loadDataset(
 ).then(that => {
     that.update()
 
-    that.x( 200 )
+    that.x( 400 )
         .update()
 
     // navigator1.objects('panel-0').height(1500).update()
