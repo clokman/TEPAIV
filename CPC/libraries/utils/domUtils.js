@@ -21,12 +21,12 @@ const version = "1.0"
  * Convenience method for .simulateClick(). Takes a selector string and simulates a click on the specified element.
  * @param selectors {string}
  */
-function simulateClickOn(selector){
+function simulateClickOn(selector, modifierKey){
 
     try{
 
         const element = document.querySelector(selector)
-        simulateClick(element)
+        simulateClick(element, modifierKey)
 
     }
     catch (e) {
@@ -45,7 +45,7 @@ function simulateClickOn(selector){
  * Adapted from ChrisFerdinandi's code at `https://gomakethings.com/how-to-simulate-a-click-event-with-javascript/`
  * @param {Element} element the element to simulate a click on
  */
-function simulateClick (element) {
+function simulateClick (element, modifierKey) {
 
     try{
 
@@ -53,6 +53,10 @@ function simulateClick (element) {
         const event = new MouseEvent('click', {
             bubbles: true,
             cancelable: true,
+            ctrlKey: modifierKey === 'ctrl',
+            altKey: modifierKey === 'alt',
+            shiftKey: modifierKey === 'shift',
+            metaKey: modifierKey === 'meta',
             view: window
         })
 
