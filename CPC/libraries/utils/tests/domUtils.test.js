@@ -29,7 +29,9 @@ global._ = require("../../external/lodash")
 
 //// MODULE BEING TESTED IN CURRENT FILE ////
 const domUtils = require("../domUtils")
-
+require("../../../../JestUtils/jest-dom")
+require("../errorUtils")
+require("../arrayUtils")
 
 
 
@@ -48,20 +50,19 @@ describe ('SIMULATE CLICK', () => {
 
         // PREPARATION //
         clearDomAndCreateSampleContainerWithTwoRectangles()
-        const lastClickProperties = listenForClicksAndRecordPropertiesOfLastClickToVariable()
-
+        document.listenForClicksAndRecordLastClickProperties()
 
         // Simulate click on link
         domUtils.simulateClick(document.querySelector('a'))
-        expect(lastClickProperties.clickedElementTagName).toBe('A')
+        expect(document.lastClick.wasOnTag).toBe('A')
 
         // Simulate click on SVG
         domUtils.simulateClick(document.querySelector('svg'))
-        expect(lastClickProperties.clickedElementTagName).toBe('svg')
+        expect(document.lastClick.wasOnTag).toBe('svg')
 
         // Simulate click on the first rectangle found in DOM
         domUtils.simulateClick(document.querySelector('rect'))
-        expect(lastClickProperties.clickedElementTagName).toBe('rect')
+        expect(document.lastClick.wasOnTag).toBe('rect')
 
     })
 
@@ -70,12 +71,12 @@ describe ('SIMULATE CLICK', () => {
 
         // PREPARATION //
         clearDomAndCreateSampleContainerWithTwoRectangles()
-        const lastClickProperties = listenForClicksAndRecordPropertiesOfLastClickToVariable()
+        document.listenForClicksAndRecordLastClickProperties()
 
 
         // Simulate click on the first '.my-rectangle' class element found in DOM
         domUtils.simulateClick(document.querySelector('.my-rectangle'))
-        expect(lastClickProperties.clickedElementClassName).toBe('my-rectangle')
+        expect(document.lastClick.wasOnClass).toBe('my-rectangle')
 
     })
 
@@ -86,14 +87,14 @@ describe ('SIMULATE CLICK', () => {
 
         // PREPARATION //
         clearDomAndCreateSampleContainerWithTwoRectangles()
-        const lastClickProperties = listenForClicksAndRecordPropertiesOfLastClickToVariable()
+        document.listenForClicksAndRecordLastClickProperties()
 
 
         domUtils.simulateClick(document.querySelector('#rectangle-1'))
-        expect(lastClickProperties.clickedElementId).toBe('rectangle-1')
+        expect(document.lastClick.wasOnId).toBe('rectangle-1')
 
         domUtils.simulateClick(document.querySelector('#rectangle-2'))
-        expect(lastClickProperties.clickedElementId).toBe('rectangle-2')
+        expect(document.lastClick.wasOnId).toBe('rectangle-2')
 
 
     })
@@ -103,11 +104,11 @@ describe ('SIMULATE CLICK', () => {
 
         // PREPARATION //
         clearDomAndCreateSampleContainerWithTwoRectangles()
-        const lastClickProperties = listenForClicksAndRecordPropertiesOfLastClickToVariable()
+        document.listenForClicksAndRecordLastClickProperties()
 
 
         domUtils.simulateClick(document.querySelector('.my-group rect'))
-        expect(lastClickProperties.clickedElementId).toBe('rectangle-1')
+        expect(document.lastClick.wasOnId).toBe('rectangle-1')
 
 
     })
@@ -117,7 +118,7 @@ describe ('SIMULATE CLICK', () => {
 
         // PREPARATION //
         const myGroup = clearDomAndCreateSampleContainerWithTwoRectangles()
-        const lastClickProperties = listenForClicksAndRecordPropertiesOfLastClickToVariable()
+        document.listenForClicksAndRecordLastClickProperties()
 
 
         // Prepare a listener specific to group
@@ -131,14 +132,14 @@ describe ('SIMULATE CLICK', () => {
 
         // Click on group
         domUtils.simulateClick(document.querySelector('#group-1'))
-        expect(lastClickProperties.clickedElementId).toBe('group-1')
+        expect(document.lastClick.wasOnId).toBe('group-1')
         expectConsoleHistory(`\
 Clicked on a group\
 `)
 
         // Click on a group element
         domUtils.simulateClick(document.querySelector('#rectangle-1'))
-        expect(lastClickProperties.clickedElementId).toBe('rectangle-1')
+        expect(document.lastClick.wasOnId).toBe('rectangle-1')
         expectConsoleHistory(`\
 Clicked on a group\
 Clicked on a group\
@@ -146,7 +147,7 @@ Clicked on a group\
 
         // Click on another group element
         domUtils.simulateClick(document.querySelector('#rectangle-2'))
-        expect(lastClickProperties.clickedElementId).toBe('rectangle-2')
+        expect(document.lastClick.wasOnId).toBe('rectangle-2')
         expectConsoleHistory(`\
 Clicked on a group\
 Clicked on a group\
@@ -155,7 +156,7 @@ Clicked on a group\
 
         // Click on a group element using a different selector (tag name)
         domUtils.simulateClick(document.querySelector('rect'))
-        expect(lastClickProperties.clickedElementTagName).toBe('rect')
+        expect(document.lastClick.wasOnTag).toBe('rect')
         expectConsoleHistory(`\
 Clicked on a group\
 Clicked on a group\
@@ -165,7 +166,7 @@ Clicked on a group\
 
         // Click on a an element outside the group
         domUtils.simulateClick(document.querySelector('svg'))
-        expect(lastClickProperties.clickedElementTagName).toBe('svg')
+        expect(document.lastClick.wasOnTag).toBe('svg')
         expectConsoleHistory(`\
 Clicked on a group\
 Clicked on a group\
@@ -181,45 +182,45 @@ Clicked on a group\
 
         // PREP //
         clearDomAndCreateSampleContainerWithTwoRectangles()
-        let lastClickProperties = listenForClicksAndRecordPropertiesOfLastClickToVariable()
+        document.listenForClicksAndRecordLastClickProperties()
 
 
         // CLICK WITH MODIFIER KEYS
 
         // Normal click
         domUtils.simulateClick(document.querySelector('rect'))
-        expect(lastClickProperties.pressedShiftKey).toBe(false)
+        expect(document.lastClick.wasWithShiftKey).toBe(false)
 
         // SHIFT + click
         domUtils.simulateClick(document.querySelector('rect'), 'shift')
-        expect(lastClickProperties.pressedShiftKey).toBe(true)
-        expect(lastClickProperties.pressedCtrlKey).toBe(false)
-        expect(lastClickProperties.pressedAltKey).toBe(false)
-        expect(lastClickProperties.pressedMetaKey).toBe(false)
+        expect(document.lastClick.wasWithShiftKey).toBe(true)
+        expect(document.lastClick.wasWithCtrlKey).toBe(false)
+        expect(document.lastClick.wasWithAltKey).toBe(false)
+        expect(document.lastClick.wasWithMetaKey).toBe(false)
 
 
         // CTRL + click
         domUtils.simulateClick(document.querySelector('rect'), 'ctrl')
-        expect(lastClickProperties.pressedCtrlKey).toBe(true)
-        expect(lastClickProperties.pressedShiftKey).toBe(false)
-        expect(lastClickProperties.pressedAltKey).toBe(false)
-        expect(lastClickProperties.pressedMetaKey).toBe(false)
+        expect(document.lastClick.wasWithCtrlKey).toBe(true)
+        expect(document.lastClick.wasWithShiftKey).toBe(false)
+        expect(document.lastClick.wasWithAltKey).toBe(false)
+        expect(document.lastClick.wasWithMetaKey).toBe(false)
 
 
         // ALT + click
         domUtils.simulateClick(document.querySelector('rect'), 'alt')
-        expect(lastClickProperties.pressedAltKey).toBe(true)
-        expect(lastClickProperties.pressedCtrlKey).toBe(false)
-        expect(lastClickProperties.pressedShiftKey).toBe(false)
-        expect(lastClickProperties.pressedMetaKey).toBe(false)
+        expect(document.lastClick.wasWithAltKey).toBe(true)
+        expect(document.lastClick.wasWithCtrlKey).toBe(false)
+        expect(document.lastClick.wasWithShiftKey).toBe(false)
+        expect(document.lastClick.wasWithMetaKey).toBe(false)
 
 
         // META + click
         domUtils.simulateClick(document.querySelector('rect'), 'meta')
-        expect(lastClickProperties.pressedMetaKey).toBe(true)
-        expect(lastClickProperties.pressedCtrlKey).toBe(false)
-        expect(lastClickProperties.pressedShiftKey).toBe(false)
-        expect(lastClickProperties.pressedAltKey).toBe(false)
+        expect(document.lastClick.wasWithMetaKey).toBe(true)
+        expect(document.lastClick.wasWithCtrlKey).toBe(false)
+        expect(document.lastClick.wasWithShiftKey).toBe(false)
+        expect(document.lastClick.wasWithAltKey).toBe(false)
 
 
 
@@ -234,20 +235,20 @@ Clicked on a group\
         document.body.innerHTML = `<a>my link text<\a>`
 
         // Listen for clicks and record the type of the element clicked on
-        let clickedElementTagName
-        let clickedElementClassName
-        let clickedElementId
+        let wasOnTag
+        let wasOnClass
+        let wasOnId
         document.addEventListener('click', (event) => {
-            clickedElementTagName = event.target.tagName
-            clickedElementClassName = event.target.className.baseVal
-            clickedElementId = event.target.id
+            wasOnTag = event.target.tagName
+            wasOnClass = event.target.className.baseVal
+            wasOnId = event.target.id
         })
 
 
 
         // TEST SUCCESSFUL CLICKING //
         domUtils.simulateClick(document.querySelector('a'))
-        expect(clickedElementTagName).toBe('A')
+        expect(wasOnTag).toBe('A')
 
 
         // UNSUCCESSFUL CLICK DUE TO BAD ELEMENT PARAMETER => ERROR //
@@ -258,7 +259,47 @@ Clicked on a group\
     })
 
 
+    test ('BAD MODIFIER KEY: Give error if a bad modifier name is provided as a parameter', () => {
 
+        // PREPARATION //
+        // Clear DOM and create elements in it
+        document.body.innerHTML = `<a>my link text<\a>`
+        document.listenForClicksAndRecordLastClickProperties()
+
+        expect( document.lastClick ).toTabulateAs(`\
+┌─────────────────┬────────┐
+│     (index)     │ Values │
+├─────────────────┼────────┤
+│    wasOnTag     │  null  │
+│   wasOnClass    │  null  │
+│     wasOnId     │  null  │
+│ wasWithShiftKey │ false  │
+│ wasWithCtrlKey  │ false  │
+│  wasWithAltKey  │ false  │
+│ wasWithMetaKey  │ false  │
+└─────────────────┴────────┘`)
+
+
+        // Select element on DOM
+        const element = document.querySelector( 'a' )
+
+        // Click on the element
+        domUtils.simulateClick(element)
+        expect( document.lastClick.wasOnTag ).toBe( 'A' )
+        expect( document.lastClick.wasWithShiftKey ).toBe( false )
+
+        // Click on the element with a valid modifier key
+        domUtils.simulateClick(element, 'shift')
+        expect( document.lastClick.wasOnTag ).toBe( 'A' )
+        expect( document.lastClick.wasWithShiftKey ).toBe( true )
+
+
+        // Try to click with an invalid modifier key and fail
+        expect( () => {
+            domUtils.simulateClick('a', 'cmd')
+        }).toThrow(`'cmd' is not a valid value. Expected values are: 'ctrl, alt, shift, meta'.`)
+
+    })
 
 
 })
@@ -272,19 +313,19 @@ describe ('SIMULATE CLICK ON', () => {
 
         // PREPARATION //
         clearDomAndCreateSampleContainerWithTwoRectangles()
-        const lastClickProperties = listenForClicksAndRecordPropertiesOfLastClickToVariable()
+        document.listenForClicksAndRecordLastClickProperties()
 
         // Simulate click on link
         domUtils.simulateClickOn('a')
-        expect(lastClickProperties.clickedElementTagName).toBe('A')
+        expect(document.lastClick.wasOnTag).toBe('A')
 
         // Simulate click on SVG
         domUtils.simulateClickOn('svg')
-        expect(lastClickProperties.clickedElementTagName).toBe('svg')
+        expect(document.lastClick.wasOnTag).toBe('svg')
 
         // Simulate click on the first rectangle found in DOM
         domUtils.simulateClickOn('rect')
-        expect(lastClickProperties.clickedElementTagName).toBe('rect')
+        expect(document.lastClick.wasOnTag).toBe('rect')
 
     })
 
@@ -292,24 +333,24 @@ describe ('SIMULATE CLICK ON', () => {
 
         // PREPARATION //
         clearDomAndCreateSampleContainerWithTwoRectangles()
-        const lastClickProperties = listenForClicksAndRecordPropertiesOfLastClickToVariable()
+        document.listenForClicksAndRecordLastClickProperties()
 
         // Simulate click on the first '.my-rectangle' class element found in DOM
         domUtils.simulateClickOn('.my-rectangle')
-        expect(lastClickProperties.clickedElementClassName).toBe('my-rectangle')
+        expect(document.lastClick.wasOnClass).toBe('my-rectangle')
     })
 
     test ('ID: Simulate click by ID', () => {
 
         // PREPARATION //
         clearDomAndCreateSampleContainerWithTwoRectangles()
-        const lastClickProperties = listenForClicksAndRecordPropertiesOfLastClickToVariable()
+        document.listenForClicksAndRecordLastClickProperties()
 
         domUtils.simulateClickOn('#rectangle-1')
-        expect(lastClickProperties.clickedElementId).toBe('rectangle-1')
+        expect(document.lastClick.wasOnId).toBe('rectangle-1')
 
         domUtils.simulateClickOn('#rectangle-2')
-        expect(lastClickProperties.clickedElementId).toBe('rectangle-2')
+        expect(document.lastClick.wasOnId).toBe('rectangle-2')
 
     })
 
@@ -317,10 +358,10 @@ describe ('SIMULATE CLICK ON', () => {
 
         // PREPARATION //
         clearDomAndCreateSampleContainerWithTwoRectangles()
-        const lastClickProperties = listenForClicksAndRecordPropertiesOfLastClickToVariable()
+        document.listenForClicksAndRecordLastClickProperties()
 
         domUtils.simulateClickOn('.my-group rect')
-        expect(lastClickProperties.clickedElementId).toBe('rectangle-1')
+        expect(document.lastClick.wasOnId).toBe('rectangle-1')
 
     })
 
@@ -328,8 +369,8 @@ describe ('SIMULATE CLICK ON', () => {
     test ('NESTED ELEMENTS AND CONTAINERS: Click on a group, then click on a group element; both should produce the same effect', () => {
 
         // PREPARATION //
-        myGroup = clearDomAndCreateSampleContainerWithTwoRectangles()
-        const lastClickProperties = listenForClicksAndRecordPropertiesOfLastClickToVariable()
+        let myGroup = clearDomAndCreateSampleContainerWithTwoRectangles()
+        document.listenForClicksAndRecordLastClickProperties()
 
         // Prepare a listener specific to group
         myGroup.on('click', () => {
@@ -342,14 +383,14 @@ describe ('SIMULATE CLICK ON', () => {
 
         // Click on group
         domUtils.simulateClickOn('#group-1')
-        expect(lastClickProperties.clickedElementId).toBe('group-1')
+        expect(document.lastClick.wasOnId).toBe('group-1')
         expectConsoleHistory(`\
 Clicked on a group\
 `)
 
         // Click on a group element
         domUtils.simulateClickOn('#rectangle-1')
-        expect(lastClickProperties.clickedElementId).toBe('rectangle-1')
+        expect(document.lastClick.wasOnId).toBe('rectangle-1')
         expectConsoleHistory(`\
 Clicked on a group\
 Clicked on a group\
@@ -357,7 +398,7 @@ Clicked on a group\
 
         // Click on another group element
         domUtils.simulateClickOn('#rectangle-2')
-        expect(lastClickProperties.clickedElementId).toBe('rectangle-2')
+        expect(document.lastClick.wasOnId).toBe('rectangle-2')
         expectConsoleHistory(`\
 Clicked on a group\
 Clicked on a group\
@@ -366,7 +407,7 @@ Clicked on a group\
 
         // Click on a group element using a different selector (tag name)
         domUtils.simulateClickOn('rect')
-        expect(lastClickProperties.clickedElementTagName).toBe('rect')
+        expect(document.lastClick.wasOnTag).toBe('rect')
         expectConsoleHistory(`\
 Clicked on a group\
 Clicked on a group\
@@ -376,7 +417,7 @@ Clicked on a group\
 
         // Click on a an element outside the group
         domUtils.simulateClickOn('svg')
-        expect(lastClickProperties.clickedElementTagName).toBe('svg')
+        expect(document.lastClick.wasOnTag).toBe('svg')
         expectConsoleHistory(`\
 Clicked on a group\
 Clicked on a group\
@@ -392,46 +433,46 @@ Clicked on a group\
 
         // PREP //
         clearDomAndCreateSampleContainerWithTwoRectangles()
-        let lastClickProperties = listenForClicksAndRecordPropertiesOfLastClickToVariable()
+        document.listenForClicksAndRecordLastClickProperties()
 
 
         // CLICK WITH MODIFIER KEYS
 
         // Normal click
         domUtils.simulateClickOn('rect')
-        expect(lastClickProperties.pressedShiftKey).toBe(false)
+        expect(document.lastClick.wasWithShiftKey).toBe(false)
 
 
         // SHIFT + click
         domUtils.simulateClickOn('rect', 'shift')
-        expect(lastClickProperties.pressedShiftKey).toBe(true)
-        expect(lastClickProperties.pressedCtrlKey).toBe(false)
-        expect(lastClickProperties.pressedAltKey).toBe(false)
-        expect(lastClickProperties.pressedMetaKey).toBe(false)
+        expect(document.lastClick.wasWithShiftKey).toBe(true)
+        expect(document.lastClick.wasWithCtrlKey).toBe(false)
+        expect(document.lastClick.wasWithAltKey).toBe(false)
+        expect(document.lastClick.wasWithMetaKey).toBe(false)
 
 
         // CTRL + click
         domUtils.simulateClickOn('rect', 'ctrl')
-        expect(lastClickProperties.pressedCtrlKey).toBe(true)
-        expect(lastClickProperties.pressedShiftKey).toBe(false)
-        expect(lastClickProperties.pressedAltKey).toBe(false)
-        expect(lastClickProperties.pressedMetaKey).toBe(false)
+        expect(document.lastClick.wasWithCtrlKey).toBe(true)
+        expect(document.lastClick.wasWithShiftKey).toBe(false)
+        expect(document.lastClick.wasWithAltKey).toBe(false)
+        expect(document.lastClick.wasWithMetaKey).toBe(false)
 
 
         // ALT + click
         domUtils.simulateClickOn('rect', 'alt')
-        expect(lastClickProperties.pressedAltKey).toBe(true)
-        expect(lastClickProperties.pressedCtrlKey).toBe(false)
-        expect(lastClickProperties.pressedShiftKey).toBe(false)
-        expect(lastClickProperties.pressedMetaKey).toBe(false)
+        expect(document.lastClick.wasWithAltKey).toBe(true)
+        expect(document.lastClick.wasWithCtrlKey).toBe(false)
+        expect(document.lastClick.wasWithShiftKey).toBe(false)
+        expect(document.lastClick.wasWithMetaKey).toBe(false)
 
 
         // META + click
         domUtils.simulateClickOn('rect', 'meta')
-        expect(lastClickProperties.pressedMetaKey).toBe(true)
-        expect(lastClickProperties.pressedCtrlKey).toBe(false)
-        expect(lastClickProperties.pressedShiftKey).toBe(false)
-        expect(lastClickProperties.pressedAltKey).toBe(false)
+        expect(document.lastClick.wasWithMetaKey).toBe(true)
+        expect(document.lastClick.wasWithCtrlKey).toBe(false)
+        expect(document.lastClick.wasWithShiftKey).toBe(false)
+        expect(document.lastClick.wasWithAltKey).toBe(false)
 
 
 
@@ -441,24 +482,63 @@ Clicked on a group\
 
     test ('BAD SELECTOR: Catch error if a bad selector is given', () => {
 
-        // PREPARATION //
+        // PREPARATION
         // Clear DOM and create elements in it
         document.body.innerHTML = `<a>my link text<\a>`
-        const lastClickProperties = listenForClicksAndRecordPropertiesOfLastClickToVariable()
+        document.listenForClicksAndRecordLastClickProperties()
 
 
-        // TEST SUCCESSFUL CLICKING //
+        // Test successful clicking
         domUtils.simulateClickOn('a')
-        expect(lastClickProperties.clickedElementTagName).toBe('A')
+        expect(document.lastClick.wasOnTag).toBe('A')
 
 
-        // UNSUCCESSFUL CLICK DUE TO BAD ELEMENT PARAMETER => ERROR //
+        // Unsuccessful click due to bad element parameter => Error
         expect( () => {
             domUtils.simulateClickOn('b')
         }).toThrow(`An invalid selectors string is likely provided for the 'selectors' parameter. The provided selector(s) was "b".`)
 
     })
 
+
+    test ('BAD MODIFIER KEY: Give error if a bad modifier name is provided as a parameter', () => {
+
+        // PREPARATION //
+        // Clear DOM and create elements in it
+        document.body.innerHTML = `<a>my link text<\a>`
+        document.listenForClicksAndRecordLastClickProperties()
+
+        expect( document.lastClick ).toTabulateAs(`\
+┌─────────────────┬────────┐
+│     (index)     │ Values │
+├─────────────────┼────────┤
+│    wasOnTag     │  null  │
+│   wasOnClass    │  null  │
+│     wasOnId     │  null  │
+│ wasWithShiftKey │ false  │
+│ wasWithCtrlKey  │ false  │
+│  wasWithAltKey  │ false  │
+│ wasWithMetaKey  │ false  │
+└─────────────────┴────────┘`)
+        
+        
+        // Click on the element
+        domUtils.simulateClickOn('a')
+        expect( document.lastClick.wasOnTag ).toBe( 'A' )
+        expect( document.lastClick.wasWithShiftKey ).toBe( false )
+
+        // Click on the element with a valid modifier key
+        domUtils.simulateClickOn('a', 'shift')
+        expect( document.lastClick.wasOnTag ).toBe( 'A' )
+        expect( document.lastClick.wasWithShiftKey ).toBe( true )
+
+        // Try to click with an invalid modifier key and fail
+        expect( () => {
+            domUtils.simulateClickOn('a', 'cmd')
+        }).toThrow(`'cmd' is not a valid value. Expected values are: 'ctrl, alt, shift, meta'.`)
+
+
+    })
 
 
 })
@@ -481,27 +561,104 @@ function clearDomAndCreateSampleContainerWithTwoRectangles() {
     myGroup.append('rect')
         .attr('class', 'my-rectangle')
         .attr('id', 'rectangle-1')
+        .attr('fill', 'red')
+        .attr('width', 100)
+        .attr('height', 100)
 
     myGroup.append('rect')
         .attr('class', 'my-rectangle')
         .attr('id', 'rectangle-2')
+        .attr('width', 100)
+        .attr('height', 100)
+        .attr('x', 100)
 
     return myGroup
 }
 
 
-function listenForClicksAndRecordPropertiesOfLastClickToVariable() {
-    // Listen for clicks and record the type of the element clicked on
-    let lastClickProperties = {}
-    document.addEventListener('click', (event) => {
-        lastClickProperties.clickedElementTagName = event.target.tagName
-        lastClickProperties.clickedElementClassName = event.target.className.baseVal
-        lastClickProperties.clickedElementId = event.target.id
-        lastClickProperties.pressedShiftKey = event.shiftKey
-        lastClickProperties.pressedCtrlKey = event.ctrlKey
-        lastClickProperties.pressedAltKey = event.altKey
-        lastClickProperties.pressedMetaKey = event.metaKey
+//// LISTEN AND RECORD CLICKS ///////////////////////////////////////////////////////////////
+
+describe ('LISTEN AND RECORD CLICKS', () => {
+   
+    test ('CLICK AND INQUIRE: Get information about the last click', () => {
+
+        // PREPARATION //
+
+        // Clear DOM and create elements in it
+        clearDomAndCreateSampleContainerWithTwoRectangles()
+
+        writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/2.html')
+
+        document.listenForClicksAndRecordLastClickProperties()
+
+        // Check initial properties
+        expect( document.lastClick.wasOnTag ).toBe( null )
+        expect( document.lastClick.wasOnClass ).toBe( null )
+        expect( document.lastClick.wasOnId ).toBe( null )
+        expect( document.lastClick.wasWithShiftKey ).toBe( false )
+        expect( document.lastClick.wasWithCtrlKey ).toBe( false )
+        expect( document.lastClick.wasWithAltKey ).toBe( false )
+        expect( document.lastClick.wasWithMetaKey ).toBe( false )
+
+        // Simulate normal click
+        domUtils.simulateClickOn( '#rectangle-1')
+
+        expect( document.lastClick.wasOnTag ).toBe( 'rect' )
+        expect( document.lastClick.wasOnClass ).toBe( 'my-rectangle' )
+        expect( document.lastClick.wasOnId ).toBe( 'rectangle-1' )
+        expect( document.lastClick.wasWithShiftKey ).toBe( false )
+        expect( document.lastClick.wasWithCtrlKey ).toBe( false )
+        expect( document.lastClick.wasWithAltKey ).toBe( false )
+        expect( document.lastClick.wasWithMetaKey ).toBe( false )
+
+
+        // Simulate click with modifier: Shift
+        domUtils.simulateClickOn( '#rectangle-1', 'shift')
+        expect( document.lastClick.wasOnTag ).toBe( 'rect' )
+        expect( document.lastClick.wasOnClass ).toBe( 'my-rectangle' )
+        expect( document.lastClick.wasOnId ).toBe( 'rectangle-1' )
+        expect( document.lastClick.wasWithShiftKey ).toBe( true )
+        expect( document.lastClick.wasWithCtrlKey ).toBe( false )
+        expect( document.lastClick.wasWithAltKey ).toBe( false )
+        expect( document.lastClick.wasWithMetaKey ).toBe( false )
+
+
+        // Simulate click with modifier: Ctrl
+        domUtils.simulateClickOn( '#rectangle-1', 'ctrl')
+
+        expect( document.lastClick.wasOnTag ).toBe( 'rect' )
+        expect( document.lastClick.wasOnClass ).toBe( 'my-rectangle' )
+        expect( document.lastClick.wasOnId ).toBe( 'rectangle-1' )
+        expect( document.lastClick.wasWithShiftKey ).toBe( false )
+        expect( document.lastClick.wasWithCtrlKey ).toBe( true )
+        expect( document.lastClick.wasWithAltKey ).toBe( false )
+        expect( document.lastClick.wasWithMetaKey ).toBe( false )
+
+
+        // Simulate click with modifier: Alt
+        domUtils.simulateClickOn( '#rectangle-1', 'alt')
+
+        expect( document.lastClick.wasOnTag ).toBe( 'rect' )
+        expect( document.lastClick.wasOnClass ).toBe( 'my-rectangle' )
+        expect( document.lastClick.wasOnId ).toBe( 'rectangle-1' )
+        expect( document.lastClick.wasWithShiftKey ).toBe( false )
+        expect( document.lastClick.wasWithCtrlKey ).toBe( false )
+        expect( document.lastClick.wasWithAltKey ).toBe( true )
+        expect( document.lastClick.wasWithMetaKey ).toBe( false )
+
+
+        // Simulate click with modifier: Meta
+        domUtils.simulateClickOn( '#rectangle-1', 'meta')
+
+        expect( document.lastClick.wasOnTag ).toBe( 'rect' )
+        expect( document.lastClick.wasOnClass ).toBe( 'my-rectangle' )
+        expect( document.lastClick.wasOnId ).toBe( 'rectangle-1' )
+        expect( document.lastClick.wasWithShiftKey ).toBe( false )
+        expect( document.lastClick.wasWithCtrlKey ).toBe( false )
+        expect( document.lastClick.wasWithAltKey ).toBe( false )
+        expect( document.lastClick.wasWithMetaKey ).toBe( true )
 
     })
-    return lastClickProperties
-}
+    
+
+})
