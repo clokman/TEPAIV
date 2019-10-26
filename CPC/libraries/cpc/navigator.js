@@ -119,40 +119,6 @@
          */
         _whenACategoryIsClicked(callback) {
 
-            // d3.selectAll("*").on('click', (d, i, g) => {
-            //
-            //     const clickedElement = g[i]
-            //     const clickedElementClass = g[i].getAttribute('class')
-            //     // console.log(clickedElementClass)
-            //
-            //     if (clickedElementClass === 'category'){
-            //
-            //         const clickedCategory = g[i]
-            //         const clickedChart = g[i].parentNode
-            //         const clickedPanelElement = g[i].parentNode.parentNode
-            //
-            //         this._lastClickedCategoryName = clickedCategory.getAttribute('id')
-            //         this._lastClickedChartName = clickedChart.getAttribute('id')
-            //         this._lastClickedPanelName = clickedPanelElement.getAttribute('id')
-            //         this._lastClickedPanelDepth = Number(clickedPanelElement.getAttribute('depthIndex'))
-            //
-            //         this._lastClickedCategoryObject = this
-            //             .objects(this._lastClickedPanelName)
-            //             .objects(this._lastClickedChartName)
-            //             .objects(this._lastClickedCategoryName)
-            //         this._lastClickedPanelObject = this.objects(this._lastClickedPanelName)
-            //
-            //         // this._goingDeeper = clickedPanelDepth === this._currentPanelDepth
-            //         // this._stayingAtSameLevel = clickedPanelDepth === this._currentPanelDepth - 1
-            //         // this._goingUpward = clickedPanelDepth === this._currentPanelDepth - 2  // TODO: This MUST be changed from a magic number to a generalizable algorithm
-            //         callback.call(this)
-            //
-            //     }
-            //
-            //     this._whenACategoryIsClicked(callback)  // keep listening
-            //
-            // })
-
             this.select() // this first select is not a D3 method
                 .selectAll('.category')
                 .on('click', (d, i, g) => {
@@ -1235,7 +1201,11 @@
                 }
             }
 
+            // Update the single panel that is created by superclass so that the
+            // ... properties unique to NestedPanel are updated and reflected to DOM
+            this.update(0)
 
+            // Create as a child panel
             if (thisPanelIsBeingEmbeddedInAnotherPanel) {
                 this._inferSpawnAnimationType()
                 this._embedAsChildPanel()
@@ -1279,6 +1249,16 @@
             this.preAnimationProperties.objectToSpawnFrom.y = this._objectToSpawnFrom.y()
             this.preAnimationProperties.objectToSpawnFrom.height = this._objectToSpawnFrom.height()
 
+            if ( this.animation.spawnStyle === 'instant' ){
+                // console.log('instant')
+
+                this._respawnInPlaceOfExistingSiblingPanel()
+                this._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
+                this._recursivelyAlignChartsInParentPanelsWithChartsInThisPanel()
+                this.updateTopAncestor(0)
+
+            }
+
             if ( this.animation.spawnStyle === 'extend'  ){
                 // console.log('extend')
 
@@ -1299,16 +1279,6 @@
 
             }
 
-            if ( this.animation.spawnStyle === 'none' ){
-                // console.log('none')
-
-                this._respawnInPlaceOfExistingSiblingPanel()
-                this._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
-                this._recursivelyAlignChartsInParentPanelsWithChartsInThisPanel()
-                this.updateTopAncestor(0)
-
-            }
-
 
             // Register the current object as a child of its parent panel
             this.parentObject.childObject = this
@@ -1326,10 +1296,10 @@
 
         update(transitionDuration) {
 
+            super.update(transitionDuration)
+
             this.select()
                 .attr( 'depthIndex', this.depthIndex() )
-
-            super.update(transitionDuration)
 
             if (this._objectToSpawnFrom) {
                 this._backgroundObject
@@ -1337,9 +1307,7 @@
                     .update()
             }
 
-
             this._recursivelyPropagateValuesFromThisPanelDOWNSTREAMandTriggerUpdates(this, transitionDuration)
-
 
             return this
 
@@ -1418,7 +1386,7 @@
                 .update( 0 )
 
 
-            if (this.animation.spawnStyle === 'extend' || 'retract' || 'retractAndExtend' || 'none') {
+            if (this.animation.spawnStyle === 'extend' || 'retract' || 'retractAndExtend' || 'instant') {
 
                 const parentBgExtensionValue = this.parentObject.bgExtensionRight()
                 const temporaryMaximumBridgeWidthDuringAnimation = parentBgExtensionValue - this.parentObject._innerPadding.right
@@ -1654,8 +1622,9 @@
 
         _inferSpawnAnimationType(){
 
-            // Establish parent-child relationships
-            const parentHasNoChild =
+            // Establish parent-child relationships //
+
+            const parentHasNoChild =  // i.e., an existing child prior to this panel's addition as a child
                 !this.parentObject.childObject
 
             const parentHasChildButNoGrandchilren =
@@ -1671,19 +1640,19 @@
                 this.parentObject.childObject._objectToSpawnFrom === this._objectToSpawnFrom
 
 
-            // Infer animation type from parent-child relationships
+            // Infer animation type from parent-child relationships //
+            const instant = existingChildIsIdenticalToThisPanel && parentHasChildButNoGrandchilren
             const lateralSwitch = parentHasChildButNoGrandchilren && !existingChildIsIdenticalToThisPanel
             const extend = parentHasNoChild
             const retractAndExtend = parenHasGrandchild && !existingChildIsIdenticalToThisPanel
             const retract = parenHasGrandchild && existingChildIsIdenticalToThisPanel
-            const noAnimation = existingChildIsIdenticalToThisPanel && parentHasChildButNoGrandchilren
 
-            // Register animation type for panel
+            // Register animation type for panel //
+            if (instant) {this.animation.spawnStyle = 'instant'}
             if (lateralSwitch) {this.animation.spawnStyle = 'lateralSwitch'}
             if (extend) {this.animation.spawnStyle = 'extend'}
             if (retractAndExtend) {this.animation.spawnStyle = 'retractAndExtend'}
             if (retract) {this.animation.spawnStyle = 'retract'}
-            if (noAnimation) {this.animation.spawnStyle = 'none'}
         }
 
 
