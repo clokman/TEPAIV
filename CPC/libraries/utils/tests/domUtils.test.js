@@ -34,9 +34,6 @@ require("../errorUtils")
 require("../arrayUtils")
 
 
-
-
-
 //// UNIT TESTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -270,6 +267,7 @@ Clicked on a group\
 ┌─────────────────┬────────┐
 │     (index)     │ Values │
 ├─────────────────┼────────┤
+│  wasOnElement   │  null  │
 │    wasOnTag     │  null  │
 │   wasOnClass    │  null  │
 │     wasOnId     │  null  │
@@ -512,6 +510,7 @@ Clicked on a group\
 ┌─────────────────┬────────┐
 │     (index)     │ Values │
 ├─────────────────┼────────┤
+│  wasOnElement   │  null  │
 │    wasOnTag     │  null  │
 │   wasOnClass    │  null  │
 │     wasOnId     │  null  │
@@ -587,11 +586,10 @@ describe ('LISTEN AND RECORD CLICKS', () => {
         // Clear DOM and create elements in it
         clearDomAndCreateSampleContainerWithTwoRectangles()
 
-        writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/2.html')
-
         document.listenForClicksAndRecordLastClickProperties()
 
         // Check initial properties
+        expect( document.lastClick.wasOnElement ).toBe( null )
         expect( document.lastClick.wasOnTag ).toBe( null )
         expect( document.lastClick.wasOnClass ).toBe( null )
         expect( document.lastClick.wasOnId ).toBe( null )
@@ -603,6 +601,7 @@ describe ('LISTEN AND RECORD CLICKS', () => {
         // Simulate normal click
         domUtils.simulateClickOn( '#rectangle-1')
 
+        expect( String(document.lastClick.wasOnElement) ).toBe(`[object SVGElement]`)
         expect( document.lastClick.wasOnTag ).toBe( 'rect' )
         expect( document.lastClick.wasOnClass ).toBe( 'my-rectangle' )
         expect( document.lastClick.wasOnId ).toBe( 'rectangle-1' )
@@ -614,6 +613,8 @@ describe ('LISTEN AND RECORD CLICKS', () => {
 
         // Simulate click with modifier: Shift
         domUtils.simulateClickOn( '#rectangle-1', 'shift')
+
+        expect( String(document.lastClick.wasOnElement) ).toBe(`[object SVGElement]`)
         expect( document.lastClick.wasOnTag ).toBe( 'rect' )
         expect( document.lastClick.wasOnClass ).toBe( 'my-rectangle' )
         expect( document.lastClick.wasOnId ).toBe( 'rectangle-1' )
@@ -626,6 +627,7 @@ describe ('LISTEN AND RECORD CLICKS', () => {
         // Simulate click with modifier: Ctrl
         domUtils.simulateClickOn( '#rectangle-1', 'ctrl')
 
+        expect( String(document.lastClick.wasOnElement) ).toBe(`[object SVGElement]`)
         expect( document.lastClick.wasOnTag ).toBe( 'rect' )
         expect( document.lastClick.wasOnClass ).toBe( 'my-rectangle' )
         expect( document.lastClick.wasOnId ).toBe( 'rectangle-1' )
@@ -638,6 +640,7 @@ describe ('LISTEN AND RECORD CLICKS', () => {
         // Simulate click with modifier: Alt
         domUtils.simulateClickOn( '#rectangle-1', 'alt')
 
+        expect( String(document.lastClick.wasOnElement) ).toBe(`[object SVGElement]`)
         expect( document.lastClick.wasOnTag ).toBe( 'rect' )
         expect( document.lastClick.wasOnClass ).toBe( 'my-rectangle' )
         expect( document.lastClick.wasOnId ).toBe( 'rectangle-1' )
@@ -650,6 +653,7 @@ describe ('LISTEN AND RECORD CLICKS', () => {
         // Simulate click with modifier: Meta
         domUtils.simulateClickOn( '#rectangle-1', 'meta')
 
+        expect( String(document.lastClick.wasOnElement) ).toBe(`[object SVGElement]`)
         expect( document.lastClick.wasOnTag ).toBe( 'rect' )
         expect( document.lastClick.wasOnClass ).toBe( 'my-rectangle' )
         expect( document.lastClick.wasOnId ).toBe( 'rectangle-1' )
@@ -659,6 +663,32 @@ describe ('LISTEN AND RECORD CLICKS', () => {
         expect( document.lastClick.wasWithMetaKey ).toBe( true )
 
     })
-    
+
+
+    test ('NO DUPLICATE LISTENERS: Ensure that the same global click listener cannot be added multiple times', () => {
+
+        // PREPARATION //
+
+        // Clear DOM and create elements in it
+        clearDomAndCreateSampleContainerWithTwoRectangles()
+        document.clickListenerAdded = false
+
+        jest.spyOn(EventTarget.prototype, 'addEventListener')
+
+        // Add an event listener
+        document.listenForClicksAndRecordLastClickProperties()
+
+        expect ( EventTarget.prototype.addEventListener ).toHaveBeenCalledTimes(1)
+
+
+        // It should NOT be possible to add 2 more event listeners
+        document.listenForClicksAndRecordLastClickProperties()
+        document.listenForClicksAndRecordLastClickProperties()
+
+        expect ( EventTarget.prototype.addEventListener ).toHaveBeenCalledTimes(1)
+
+
+    })
 
 })
+

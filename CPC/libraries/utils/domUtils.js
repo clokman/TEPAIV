@@ -91,8 +91,11 @@ function _validateModifierKey(modifierKey) {
 
 Document.prototype.listenForClicksAndRecordLastClickProperties = function(){
 
-    // Add a property to Document object with default properties
-    Document.prototype.lastClick = {
+    // Add a property to EventTarget object with default properties
+    document.lastClick = {
+
+        wasOnElement: null,
+
         wasOnTag: null,
         wasOnClass: null,
         wasOnId: null,
@@ -100,20 +103,32 @@ Document.prototype.listenForClicksAndRecordLastClickProperties = function(){
         wasWithShiftKey: false,
         wasWithCtrlKey: false,
         wasWithAltKey: false,
-        wasWithMetaKey: false,
+        wasWithMetaKey: false
     }
 
-    this.addEventListener('click', (event) => {
+    if (!document.clickListenerAdded){
 
-        this.lastClick.wasOnTag = event.target.tagName
-        this.lastClick.wasOnClass = event.target.className.baseVal
-        this.lastClick.wasOnId = event.target.id
+        document.addEventListener('click', (event) => {
 
-        this.lastClick.wasWithShiftKey = event.shiftKey
-        this.lastClick.wasWithCtrlKey = event.ctrlKey
-        this.lastClick.wasWithAltKey = event.altKey
-        this.lastClick.wasWithMetaKey = event.metaKey
-    })
+            this.lastClick.wasOnElement = event.target
+
+            this.lastClick.wasOnTag = event.target.tagName
+            this.lastClick.wasOnClass = event.target.className.baseVal
+            this.lastClick.wasOnId = event.target.id
+
+            this.lastClick.wasWithShiftKey = event.shiftKey
+            this.lastClick.wasWithCtrlKey = event.ctrlKey
+            this.lastClick.wasWithAltKey = event.altKey
+            this.lastClick.wasWithMetaKey = event.metaKey
+
+            // console.log(`document event listener records click with shift key: ${document.lastClick.wasWithShiftKey} `)
+
+        })
+
+        document.clickListenerAdded = true
+
+    }
+
 
 }
 
