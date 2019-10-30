@@ -45,6 +45,8 @@
             this._lastClickedCategoryObject = null
             this._lastClickedPanelObject = null
 
+            this._modifierKeyPressedWithLastClick = null
+
             this._lastCreatedPanelName = null
 
             this._currentDrilldownPathParameter = []  // stores the drilldown path that generated whatever is being visualized in the navigator at a point in time
@@ -55,7 +57,12 @@
 
 
             // Initialize //
+
+
+            // document.removeEventListener('click', domUtils._assessAndRecordClickProperties, true)
+            document.listenForClicksAndRecordLastClickProperties()
             this._addListenerToFirstPanel()
+
 
         }
 
@@ -104,9 +111,13 @@
 
         _addListenerToFirstPanel() {
 
-            this._whenACategoryIsClicked(
+            // TODO: REF 1: THERE MAY BE NO NEED FOR _when a category is clicked method
+            // Here, simply document.listenForClicksAndRecordLastClickProperties can be used
+            // And as a callback to the listenForClicksAndRecordLastClickProperties method, the clicked categories, etc may be inferred.
 
-                () => this._queryDataAndUpdateVisualization()
+
+            this._whenACategoryIsClicked( () =>
+                this._queryDataAndUpdateVisualization()
             )
 
         }
@@ -119,9 +130,83 @@
          */
         _whenACategoryIsClicked(callback) {
 
+            // TODO: THIS FUNCTION IS NOT NEEDED. SEE REF-1.
+            // document.listenForClicksAndRecordLastClickProperties( () => {
+            //
+            //     // console.log(`navigator click event records last click with shift: ${document.lastClick.wasWithShiftKey}`)
+            //
+            //     const clickedElement = document.lastClick.wasOnElement
+            //
+            //     const aNavigatorCategoryIsClicked = (
+            //         clickedElement.parentElement // category
+            //         && clickedElement.parentElement.parentElement // chart
+            //         && clickedElement.parentElement.parentElement.parentElement // panel
+            //         && clickedElement.parentElement.parentElement.parentElement.parentElement // navigator
+            //
+            //         && clickedElement.parentElement.className.baseVal === 'category'
+            //         && clickedElement.parentElement.parentElement.parentElement.parentElement.className.baseVal === 'navigator'
+            //     )
+            //
+            //
+            //     if ( aNavigatorCategoryIsClicked ){
+            //
+            //         const clickedCategoryElement = clickedElement.parentElement
+            //         const clickedChartElement = clickedCategory.parentElement
+            //         const clickedPanelElement = clickedChartElement.parentElement
+            //
+            //         this._lastClickedCategoryName = clickedCategoryElement.getAttribute('id')
+            //         this._lastClickedChartName = clickedChartElement.getAttribute('id')
+            //         this._lastClickedPanelName = clickedPanelElement.getAttribute('id')
+            //         this._lastClickedPanelDepth = Number(clickedPanelElement.getAttribute('depthIndex'))
+            //
+            //         this._lastClickedCategoryObject = this
+            //             .objects( this._lastClickedPanelName )
+            //             .objects( this._lastClickedChartName )
+            //             .objects( this._lastClickedCategoryName )
+            //         this._lastClickedPanelObject = this.objects( this._lastClickedPanelName )
+            //
+            //
+            //         if ( document.lastClick.wasWithShiftKey ) {this._modifierKeyPressedWithLastClick = 'shift'}
+            //         if ( document.lastClick.wasWithCtrlKey ) {this._modifierKeyPressedWithLastClick = 'ctrl'}
+            //         if ( document.lastClick.wasWithAltKey ) {this._modifierKeyPressedWithLastClick = 'alt'}
+            //         if ( document.lastClick.wasWithMetaKey ) {this._modifierKeyPressedWithLastClick = 'meta'}
+            //         if (   !document.lastClick.wasWithShiftKey
+            //             && !document.lastClick.wasWithCtrlKey
+            //             && !document.lastClick.wasWithAltKey
+            //             && !document.lastClick.wasWithMetaKey ) {
+            //
+            //             this._modifierKeyPressedWithLastClick = null
+            //         }
+            //
+            //
+            //         callback.call(this)  // execute the callback statement
+            //
+            //         this._whenACategoryIsClicked(callback) // keep listening
+            //     }
+            //
+            //
+            //
+            // })
+
+
+
+
+                    // this._goingDeeper = clickedPanelDepth === this._currentPanelDepth
+                    // this._stayingAtSameLevel = clickedPanelDepth === this._currentPanelDepth - 1
+                    // this._goingUpward = clickedPanelDepth === this._currentPanelDepth - 2  // TODO: This MUST be changed from a magic number to a generalizable algorithm
+                    // callback.call(this)  // execute the callback statement
+
+
+            // this._whenACategoryIsClicked(callback)  // keep listening
+
+
             this.select() // this first select is not a D3 method
                 .selectAll('.category')
                 .on('click', (d, i, g) => {
+
+                    // console.log('local listener reporting')
+
+                    // console.log(`navigator click event records last click with shift: ${document.lastClick.wasWithShiftKey}`)
 
                     const clickedCategory = g[i]
                     const clickedChart = g[i].parentNode
@@ -140,6 +225,10 @@
                             .objects(this._lastClickedCategoryName)
                         this._lastClickedPanelObject = this.objects(this._lastClickedPanelName)
 
+
+                        this._registerLastClickedModifierKey()
+
+
                         // this._goingDeeper = clickedPanelDepth === this._currentPanelDepth
                         // this._stayingAtSameLevel = clickedPanelDepth === this._currentPanelDepth - 1
                         // this._goingUpward = clickedPanelDepth === this._currentPanelDepth - 2  // TODO: This MUST be changed from a magic number to a generalizable algorithm
@@ -149,8 +238,32 @@
 
                     this._whenACategoryIsClicked(callback)  // keep listening
 
-                })
+            })
 
+        }
+
+
+        _registerLastClickedModifierKey() {
+
+            if (document.lastClick.wasWithShiftKey) {
+                this._modifierKeyPressedWithLastClick = 'shift'
+            }
+            if (document.lastClick.wasWithCtrlKey) {
+                this._modifierKeyPressedWithLastClick = 'ctrl'
+            }
+            if (document.lastClick.wasWithAltKey) {
+                this._modifierKeyPressedWithLastClick = 'alt'
+            }
+            if (document.lastClick.wasWithMetaKey) {
+                this._modifierKeyPressedWithLastClick = 'meta'
+            }
+            if (!document.lastClick.wasWithShiftKey
+                && !document.lastClick.wasWithCtrlKey
+                && !document.lastClick.wasWithAltKey
+                && !document.lastClick.wasWithMetaKey) {
+
+                this._modifierKeyPressedWithLastClick = null
+            }
         }
 
 
@@ -291,13 +404,22 @@
             this._currentPanelDepth += 1
             this._lastCreatedPanelName = `panel-${this._currentPanelDepth}`
 
+            const childIsASibling = this._modifierKeyPressedWithLastClick === 'shift'
 
-            // Pick a color for the new child panel's background
+            let childPanelObject
 
+            if (!childIsASibling){
+                childPanelObject = new NestedPanel(this._lastClickedPanelObject, this._lastClickedCategoryObject)
+            }
+
+            if (childIsASibling){
+                childPanelObject = new NestedPanel(this._lastClickedPanelObject, this._lastClickedCategoryObject, 'sibling')
+            }
 
             // Create the new child panel as the child of the last clicked panel
-            const childPanelObject = new NestedPanel(this._lastClickedPanelObject, this._lastClickedCategoryObject)
-            const totalDurationOfChildPanelInitializationAnimations = childPanelObject.animation.duration.extendBridge + childPanelObject.animation.duration.maximizePanelCover;
+            const totalDurationOfChildPanelInitializationAnimations =
+                  childPanelObject.animation.duration.extendBridge
+                + childPanelObject.animation.duration.maximizePanelCover
 
             childPanelObject.stacks(drilldownResultStacks)
                 .id(this._lastCreatedPanelName)
@@ -346,7 +468,7 @@
                 // Clear object registry from the removed panels
                 this.removeLast(numberOfExtraPanels)
 
-                this._lastClickedPanelObject.childObject = null
+                this._lastClickedPanelObject.childrenObjects.clear()
             }
         }
 
@@ -397,7 +519,7 @@
     class Panel extends container.Group {
 
 
-        constructor(parentContainerSelectionOrObject, objectToSpawnFrom) {
+        constructor(parentContainerSelectionOrObject) {
 
             // Superclass Init //
             super(parentContainerSelectionOrObject)
@@ -1123,7 +1245,7 @@
     class NestedPanel extends Panel {
 
 
-        constructor(parentContainerSelectionOrObject, objectToSpawnFrom) {
+        constructor(parentContainerSelectionOrObject, objectToSpawnFrom, addAs='singleton') {
 
             // Superclass Init //
             super(...arguments)
@@ -1150,6 +1272,8 @@
             // Private Parameters //
             this._objectToSpawnFrom = objectToSpawnFrom
 
+            this._thisPanelIsBeingEmbeddedAsSiblingOfAnotherPanel = ( addAs === 'sibling' )
+
             let thisPanelIsBeingEmbeddedInAnotherPanel = arguments.length
                 ?  parentContainerSelectionOrObject.hasType( this.hasType() )
                 : false
@@ -1158,7 +1282,7 @@
                 throw Error('The panel is specified to be a child of another panel, but no object is specified as spawn source (missing argument).')
             }
 
-            this.childObject = null
+            this.childrenObjects = new Map()
 
             this.parentObject = thisPanelIsBeingEmbeddedInAnotherPanel
                 ? parentContainerSelectionOrObject
@@ -1175,7 +1299,11 @@
                 ? this._objectToSpawnFrom.fill()
                 : this._defaults.bgFill
 
-
+            // TODO: Uniqueness of panel ID MUST be guaranteed. This method is not enough if there are columns in the data with a duplicate name
+            const panelId = thisPanelIsBeingEmbeddedInAnotherPanel
+                ? this._objectToSpawnFrom.id()
+                : 'Dataset'
+            this.id(panelId).update(0)
 
             if (thisPanelIsBeingEmbeddedInAnotherPanel) {
 
@@ -1194,10 +1322,15 @@
                 }
 
                 this.postAnimationProperties = {
-                    x: this.parentObject.x() + this._outerPadding.left,
+
+                    x: this._thisPanelIsBeingEmbeddedAsSiblingOfAnotherPanel
+                        ? this.parentObject.x() + this._outerPadding.left
+                        : this.parentObject.x() + this._outerPadding.left,
+
                     y: this.parentObject.y() + this._outerPadding.top,
                     width: this.parentObject.width() + this._outerPadding.right,
                     height: this.parentObject.height() - this._outerPadding.bottom
+
                 }
             }
 
@@ -1232,7 +1365,7 @@
                 parentPanel.bgExtensionRight(0)
                 parentPanel._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
 
-                parentPanel.childObject = null
+                parentPanel.childrenObjects.clear()
 
             }
 
@@ -1279,9 +1412,21 @@
 
             }
 
+            if ( this.animation.spawnStyle === 'appendSibling' ) {
+
+                // Refresh the clicked panel (recreate it with no animations)
+                this.animation.duration.extendBridge = 0
+                this.animation.duration.maximizePanelCover = 0
+
+                this._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
+                this._createBridgeFromSpawnRoot()
+                this._verticallyMaximizeFromBridgeAsChildPanel()
+            }
+
 
             // Register the current object as a child of its parent panel
-            this.parentObject.childObject = this
+            const nameOfThisPanel = this.id()
+            this.parentObject.childrenObjects.set(nameOfThisPanel, this)
 
             // Update depth index of the current panel (an indicator of how deep it is located in panel hierarchy)
             const depthOfParent = this.parentObject.depthIndex()
@@ -1420,7 +1565,7 @@
                 .update(0)
 
 
-            // Move the newly created cover to its initial position (which is on top of the bridge).
+            // Move the newly created panel cover to its initial position (which is on top of the bridge).
             setTimeout(() => {
 
                 // Set the bridge width to its final value
@@ -1473,24 +1618,35 @@
         _recursivelyPropagateValuesFromThisPanelDOWNSTREAMandTriggerUpdates(thisPanel=this, transitionDuration){
 
             const thereIsAChildPanel = (
-                thisPanel.childObject
-                && thisPanel.childObject.hasType( this.hasType() )
+                thisPanel.childrenObjects
+                && thisPanel.childrenObjects.size
+                // && thisPanel.childObject.hasType( this.hasType() )
             )
 
             if( thereIsAChildPanel ){
 
-                // Update the child panel
-                thisPanel.childObject
-                    .showAbsoluteValues( this.showAbsoluteValues() )  // use of 'this' is not a mistake here
-                    .colorSet( this.colorSet() )
-                    .update( transitionDuration )
+                this.childrenObjects.forEach( (childPanelObject, childPanelName) => {
 
-                thisPanel.childObject._adjustBridgeProperties()
-                thisPanel.childObject._bridgeObject.update( transitionDuration )
+                    // Update the children panel
+                    childPanelObject
+                        .showAbsoluteValues( this.showAbsoluteValues() )  // use of 'this' is not a mistake here
+                        .colorSet( this.colorSet() )
+                        .update( transitionDuration )
+
+                    childPanelObject._adjustBridgeProperties()
+                    childPanelObject._bridgeObject.update( transitionDuration )
 
 
-                // Call this function for child panel (so its child is subjected to this method)
-                this._recursivelyPropagateValuesFromThisPanelDOWNSTREAMandTriggerUpdates(thisPanel.childObject)
+                    // Call this function for children panel (so their children are subjected to this method too)
+                    childPanelObject._recursivelyPropagateValuesFromThisPanelDOWNSTREAMandTriggerUpdates(childPanelObject)
+                    // TODO: Not a TODO but a WARNING: The previous version of the row above was:
+                    // this._recursivelyPropagateValuesFromThisPanelDOWNSTREAMandTriggerUpdates(childPanelObject)
+                    // TODO: Ctd: 'this' was replaced with 'childPanelObject' due to leading to an  infinite loop
+                    //       ...after switching from 'childObject' to 'childrenObjects' registry to accomodate
+                    //       comparison view. However, even though things work, this is logically different from the
+                    //       previous version change. An eye should be kept on this recursion in case of issues around
+                    //       this block.
+                })
 
             }
 
@@ -1623,41 +1779,65 @@
         _inferSpawnAnimationType(){
 
             // Establish parent-child relationships //
+            const parentAlreadyHasChild =
+                   this.parentObject.childrenObjects
+                && this.parentObject.childrenObjects.size
+            // i.e., an existing child prior to this panel's addition as a child
 
-            const parentHasNoChild =  // i.e., an existing child prior to this panel's addition as a child
-                !this.parentObject.childObject
 
-            const parentHasChildButNoGrandchilren =
-                this.parentObject.childObject &&
-                !this.parentObject.childObject.childObject
+            let parentHasGrandChild = false
+            if ( parentAlreadyHasChild ){
+                this.parentObject.childrenObjects.forEach( (childPanelObject, childPanelName) => {
 
-            const parenHasGrandchild =
-                this.parentObject.childObject &&
-                this.parentObject.childObject.childObject
+                    if ( childPanelObject.childrenObjects && childPanelObject.childrenObjects.size ) {
+                        parentHasGrandChild = true
+                    }
 
-            const existingChildIsIdenticalToThisPanel =
-                this.parentObject.childObject &&
-                this.parentObject.childObject._objectToSpawnFrom === this._objectToSpawnFrom
+                })
+            }
 
+            const parentHasChildButNoGrandchildren =
+                   parentAlreadyHasChild
+                && !parentHasGrandChild
+
+
+            let anExistingChildIsIdenticalToThisPanel = false
+            if ( parentAlreadyHasChild ){
+                this.parentObject.childrenObjects.forEach( (childPanelObject, childPanelName) => {
+
+                    if(childPanelObject._objectToSpawnFrom === this._objectToSpawnFrom){
+                        anExistingChildIsIdenticalToThisPanel = true
+                    }
+                })
+            }
+
+
+
+            const addingAsSibling = this._thisPanelIsBeingEmbeddedAsSiblingOfAnotherPanel
 
             // Infer animation type from parent-child relationships //
-            const instant = existingChildIsIdenticalToThisPanel && parentHasChildButNoGrandchilren
-            const lateralSwitch = parentHasChildButNoGrandchilren && !existingChildIsIdenticalToThisPanel
-            const extend = parentHasNoChild
-            const retractAndExtend = parenHasGrandchild && !existingChildIsIdenticalToThisPanel
-            const retract = parenHasGrandchild && existingChildIsIdenticalToThisPanel
+            const append = addingAsSibling && parentHasChildButNoGrandchildren && !anExistingChildIsIdenticalToThisPanel
+            const instant = anExistingChildIsIdenticalToThisPanel && parentHasChildButNoGrandchildren && !addingAsSibling
+            const lateralSwitch = !anExistingChildIsIdenticalToThisPanel && parentHasChildButNoGrandchildren && !addingAsSibling
+            const extend = !parentAlreadyHasChild && !addingAsSibling
+            const retract = parentHasGrandChild && anExistingChildIsIdenticalToThisPanel && !addingAsSibling
+            const retractAndExtend = parentHasGrandChild && !anExistingChildIsIdenticalToThisPanel && !addingAsSibling
+
+
 
             // Register animation type for panel //
+            if (append) {this.animation.spawnStyle = 'appendSibling'}
             if (instant) {this.animation.spawnStyle = 'instant'}
             if (lateralSwitch) {this.animation.spawnStyle = 'lateralSwitch'}
             if (extend) {this.animation.spawnStyle = 'extend'}
             if (retractAndExtend) {this.animation.spawnStyle = 'retractAndExtend'}
             if (retract) {this.animation.spawnStyle = 'retract'}
+
         }
 
 
         _respawnInPlaceOfExistingSiblingPanel() {
-            this._removeExistingSiblingPanel()
+            this._removeExistingSiblingPanels()
 
             // Refresh the clicked panel (recreate it with no animations)
             this.animation.duration.extendBridge = 0
@@ -1671,27 +1851,28 @@
 
         _collapseAllPanelsDownstreamAndSpawnThisPanelLateralToSiblingBeingReplaced() {
 
-
             let duration
             if( this.animation.spawnStyle === 'lateralSwitch' ){ duration = this.animation.duration.lateralSwitch }
             if( this.animation.spawnStyle === 'retractAndExtend' ){ duration = this.animation.duration.retractAndExtend }
             if( this.animation.spawnStyle === 'retract' ){ duration = this.animation.duration.retract }
 
 
+            const firstAlreadyExistingSibling = Array.from(this.parentObject.childrenObjects)[0][1]
+
             // Create a copy of the existing bridge, immediately
-            const siblingBridgeObject = this.parentObject.childObject._bridgeObject
+            const bridgeObjectOfFirstSibling = firstAlreadyExistingSibling._bridgeObject
 
             const siblingBridgeCover = new shape.Rectangle()
             siblingBridgeCover
-                .x(siblingBridgeObject.x())
-                .y(siblingBridgeObject.y())
-                .width(siblingBridgeObject.width())
-                .height(siblingBridgeObject.height())
-                .fill(siblingBridgeObject.fill())
+                .x(bridgeObjectOfFirstSibling.x())
+                .y(bridgeObjectOfFirstSibling.y())
+                .width(bridgeObjectOfFirstSibling.width())
+                .height(bridgeObjectOfFirstSibling.height())
+                .fill(bridgeObjectOfFirstSibling.fill())
                 .update(0)
 
             // Create a copy of the existing sibling background, immediately
-            const siblingBackgroundObject = this.parentObject.childObject._backgroundObject
+            const siblingBackgroundObject = firstAlreadyExistingSibling._backgroundObject
 
             const siblingBackgroundCover = new shape.Rectangle()
             siblingBackgroundCover
@@ -1705,7 +1886,7 @@
 
             // Retract the bridge copy
             const initialBridgeCoverWidth = this.animation.spawnStyle === 'retract'
-                ? siblingBridgeObject.width()  // if retracting, start the bridge at full width (no extension animation)
+                ? bridgeObjectOfFirstSibling.width()  // if retracting, start the bridge at full width (no extension animation)
                 : 0
 
             siblingBridgeCover
@@ -1714,7 +1895,7 @@
 
 
             // Remove the existing sibling
-            this._removeExistingSiblingPanel()
+            this._removeExistingSiblingPanels()
 
 
 
@@ -1762,9 +1943,13 @@
 
         }
 
-        _removeExistingSiblingPanel() {
-            this.parentObject.childObject.remove()
-            this.parentObject.childObject = null
+        _removeExistingSiblingPanels() {
+
+            this.parentObject.childrenObjects.forEach( (childPanelObject, childPanelName) => {
+                childPanelObject.remove()
+            })
+
+            this.parentObject.childrenObjects.clear()
         }
 
 
@@ -1781,10 +1966,15 @@
                 super.innerPaddingTop(value)
 
                 // Adjust bridge position
-                if (this.childObject) {
-                    this.childObject._bridgeObject
-                        .y(this.childObject._objectToSpawnFrom.y())
-                        .height(this.childObject._objectToSpawnFrom.height())
+                if ( this.childrenObjects.size ){
+
+                    this.childrenObjects.forEach( (childObject, childName) => {
+
+                        childObject._bridgeObject
+                            .y(childObject._objectToSpawnFrom.y())
+                            .height(childObject._objectToSpawnFrom.height())
+                    })
+
                 }
 
                 return this
@@ -1806,10 +1996,15 @@
                 super.innerPaddingBottom(value)
 
                 // Adjust bridge position
-                if (this.childObject) {
-                    this.childObject._bridgeObject
-                        .y(this.childObject._objectToSpawnFrom.y())
-                        .height(this.childObject._objectToSpawnFrom.height())
+                if ( this.childrenObjects.size ) {
+
+                    this.childrenObjects.forEach( (childObject, childName) => {
+
+                        childObject._bridgeObject
+                            .y(childObject._objectToSpawnFrom.y())
+                            .height(childObject._objectToSpawnFrom.height())
+                    })
+
                 }
 
                 return this

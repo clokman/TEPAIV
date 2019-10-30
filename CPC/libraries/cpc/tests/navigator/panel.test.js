@@ -1445,8 +1445,8 @@ describe ('ABSOLUTE VALUES: Toggling absolute values should show counts instead 
             // Remove child 2
             childPanel2.remove()
 
-            // Parent object should no more have a child
-            expect( childPanel1.childObject ).not.toBe()
+            // Parent object should no more have child
+            expect( childPanel1.childrenObjects.size ).not.toBe()
 
             // Confirm removal on DOM
             allPanelElements = document.querySelectorAll( '.panel' )
@@ -1458,7 +1458,7 @@ describe ('ABSOLUTE VALUES: Toggling absolute values should show counts instead 
             childPanel1.remove()
 
             // Parent object should no more have a child
-            expect( panelZero.childObject ).not.toBe()
+            expect( panelZero.childrenObjects.size ).not.toBe()
 
             // Confirm removal on DOM
             allPanelElements = document.querySelectorAll( '.panel' )
@@ -1864,7 +1864,7 @@ describe ('ANIMATIONS: Switch to a panel on the same depth level using the quick
 
         // Create a child panel
         let objectToSpawnFrom = parentPanel.objects('gender').objects('female')
-        const childPanel = new navigator.NestedPanel( parentPanel, objectToSpawnFrom, 0 )  // spawn source must be specified if a parent panel is specified
+        const childPanel = new navigator.NestedPanel( parentPanel, objectToSpawnFrom )  // spawn source must be specified if a parent panel is specified
         childPanel.id('child-panel').update()
 
         // Count the number of panels on DOM after the animation
@@ -1874,6 +1874,37 @@ describe ('ANIMATIONS: Switch to a panel on the same depth level using the quick
 
     })
 
-    
+
+//     test('APPEND animation: Add sibling panel to existing one ', () => {
+//
+//         // PREP //
+//         // Clear JEST's DOM to prevent leftovers from previous tests
+//         document.body.innerHTML = ''
+//         // Create SVG
+//         const mySvg = new container.Svg()
+//         // Create panel
+//         const parentPanel = new navigator.NestedPanel()
+//         parentPanel.id('parent-panel').update()
+//
+//
+//         let objectToSpawnFrom
+//
+//         // Create a child panel
+//         objectToSpawnFrom = parentPanel.objects('gender').objects('female')
+//         const childPanel = new navigator.NestedPanel( parentPanel, objectToSpawnFrom )  // spawn source must be specified if a parent panel is specified
+//         childPanel.id('child-panel').update()
+//
+//         // Create a sibling panel next to the existing child panel
+//         objectToSpawnFrom = parentPanel.objects('gender').objects('male')
+//         const siblingPanel = new navigator.NestedPanel( parentPanel, objectToSpawnFrom, 'sibling' )  // spawn source must be specified if a parent panel is specified
+//         siblingPanel.id('sibling-panel').update()
+//
+//         // Count the number of panels on DOM after the animation
+//         // const allPanels = document.querySelectorAll( '.panel' )
+//         // const numberOfPanels = allPanels.length
+//         // expect( (numberOfPanels) ).toBe( 2 )
+//
+//     })
+//
 })
 
