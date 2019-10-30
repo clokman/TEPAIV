@@ -1264,7 +1264,8 @@
                     lateralSwitch: 200,
                     maximizePanelCover: 300,
                     backgroundAdjustment: 300,  // longer durations are cut off, probably by animations that follow
-                    collapseBackground: 300
+                    collapseBackground: 300,
+                    appendSibling: 300
                 }
             }
 
@@ -1321,10 +1322,15 @@
                     }
                 }
 
+                const numberOfAlreadyExistingSiblings =
+                    this.parentObject.childrenObjects && this.parentObject.childrenObjects.size
+                        ? this.parentObject.childrenObjects.size
+                        : 0
+
                 this.postAnimationProperties = {
 
                     x: this._thisPanelIsBeingEmbeddedAsSiblingOfAnotherPanel
-                        ? this.parentObject.x() + this._outerPadding.left
+                        ? this.parentObject.x() + (this._outerPadding.left + this._outerPadding.right) * (numberOfAlreadyExistingSiblings + 1)
                         : this.parentObject.x() + this._outerPadding.left,
 
                     y: this.parentObject.y() + this._outerPadding.top,
@@ -1365,6 +1371,9 @@
                 parentPanel.bgExtensionRight(0)
                 parentPanel._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
 
+                parentPanel.childrenObjects.forEach( (childrenPanelObject, childrenPanelName) => {
+                    childrenPanelObject.select().node().remove()  // TODO: THIS IS A RUDIMENTARY LINE AND ADDED FOR PRESENTATION
+                })
                 parentPanel.childrenObjects.clear()
 
             }
@@ -1388,6 +1397,8 @@
                 this._respawnInPlaceOfExistingSiblingPanel()
                 this._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
                 this._recursivelyAlignChartsInParentPanelsWithChartsInThisPanel()
+
+
                 this.updateTopAncestor(0)
 
             }
@@ -1414,13 +1425,10 @@
 
             if ( this.animation.spawnStyle === 'appendSibling' ) {
 
-                // Refresh the clicked panel (recreate it with no animations)
-                this.animation.duration.extendBridge = 0
-                this.animation.duration.maximizePanelCover = 0
-
                 this._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
                 this._createBridgeFromSpawnRoot()
                 this._verticallyMaximizeFromBridgeAsChildPanel()
+                this.updateTopAncestor( this.animation.duration.appendSibling )
             }
 
 
@@ -1654,7 +1662,7 @@
 
 
         /**
-         * WARNING: DO NOT USE UNLESS ABSOLUTELY NECESSARY. Explanation:
+         * WARNING: DO NOT ATTEMPT TO IMPLEMENT THIS METHOD UNLESS ABSOLUTELY NECESSARY. Explanation:
          *      Because the .update() method contains a downstream update method,
          *      Using this upstream method will also trigger downstream updates
          *      at each step up. This may result in undesired behavior.
@@ -1737,6 +1745,7 @@
                     || thisPanel.hasType( 'NestedPanel' )
                 )
             )
+
             const thereIsAGrandParentPanel = (
                 thereIsAParentPanel
                 && thisPanel.parentObject.parentObject
@@ -1744,6 +1753,8 @@
                     || thisPanel.parentObject.parentObject.hasType( 'NestedPanel' )
                 )
             )
+
+
 
             if ( thereIsAParentPanel ) {
 
@@ -1754,10 +1765,15 @@
 
 
                 // Calculate the rightward bg extension value
-                const rightBgExtensionValueOfParent =
-                    + thisPanel.postAnimationProperties.width
-                    + parentPanel._innerPadding.right
-                    + thisPanel.bgExtensionRight()
+                const numberOfSiblingsThatRemainOnLeftSide = parentPanel.childrenObjects && thisPanel._thisPanelIsBeingEmbeddedAsSiblingOfAnotherPanel
+                    ? parentPanel.childrenObjects.size
+                    : 0
+
+                const rightBgExtensionValueOfParent = (
+                        + thisPanel.postAnimationProperties.width * (numberOfSiblingsThatRemainOnLeftSide + 1)
+                        + parentPanel._innerPadding.right
+                        + thisPanel.bgExtensionRight()
+                    )
 
                 // Set bg extension of parent
                 parentPanel

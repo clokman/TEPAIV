@@ -156,7 +156,7 @@ nestedPanel = new navigator.NestedPanel()
 // // myPanel.objects('class').objects('first-class').fill('blue').update()
 
 
-// Embed child panel a1
+// Embed child panel 1
 
 spawnObjectForChild1 = nestedPanel.objects('gender').objects('female')
 
@@ -227,7 +227,30 @@ setTimeout( () => {
 
 
 
+//// PANEL: COMPARISON VIEW  ////
 
+comparisonPanel = new navigator.NestedPanel()
+    .id('parent-panel')
+    .bgFill('#deebf7')
+    .colorSet('Viridis')
+    .x(2000).y(750)
+    .yAxisLabels(true)
+    .update(0)
+
+
+spawnObjectForComparisonChild1 = comparisonPanel.objects('gender').objects('female')
+
+comparisonChild1 = new navigator.NestedPanel(comparisonPanel, spawnObjectForComparisonChild1)
+comparisonChild1
+    .id('comparison-panel-1')
+    .update()
+
+spawnObjectForComparisonChild2 = comparisonPanel.objects('gender').objects('male')
+
+comparisonChild2 = new navigator.NestedPanel(comparisonPanel, spawnObjectForComparisonChild2, 'sibling')
+comparisonChild2
+    .id('comparison-panel-1')
+    .update()
 
 // //// DATASET  ////
 //
@@ -277,7 +300,7 @@ setTimeout( () => {
 
 
 //// NAVIGATOR ////
-const distanceBetweenNavigators = 600
+const distanceBetweenNavigators = 900
 
 // Navigator 1
 
@@ -289,7 +312,7 @@ navigator1.loadDataset(
 ).then(that => {
     that.update()
 
-    that.x( 400 )
+    that.x( 200 )
         .update()
 
     // navigator1.objects('panel-0').height(1500).update()
@@ -312,7 +335,7 @@ navigator2.loadDataset(
 ).then(that => {
     that.update()
 
-    that.x( navigator1.x()+ distanceBetweenNavigators ).update()
+    that.x( navigator1.x() + distanceBetweenNavigators ).update()
 
     // navigator2.objects('panel-0').height(1500).update()
     navigator2.objects('panel-0').yAxisLabels()
@@ -338,7 +361,7 @@ navigator3.loadDataset(
 
     that
         .colorSet('Plasma')
-        .x( navigator2.x()+ distanceBetweenNavigators )
+        .x( navigator2.x() + distanceBetweenNavigators )
         .update()
 
     // navigator3.objects('panel-0').height(1500).update()
@@ -358,7 +381,7 @@ navigator4.loadDataset(
     that.update()
 
     that
-        .x( navigator3.x()+ distanceBetweenNavigators )
+        .x( navigator3.x() + distanceBetweenNavigators )
         .update()
 
     navigator4.objects('panel-0').yAxisLabels()
@@ -376,7 +399,7 @@ navigator5.loadDataset(
     that.update()
 
     that
-        .x( navigator4.x()+ distanceBetweenNavigators )
+        .x( navigator4.x() + distanceBetweenNavigators )
         .update()
 
     navigator5.objects('panel-0').height(750).update()
@@ -395,7 +418,7 @@ navigator6.loadDataset(
     that.update()
 
     that
-        .x( navigator5.x()+ distanceBetweenNavigators )
+        .x( navigator5.x() + distanceBetweenNavigators )
         .update()
 
     navigator6.objects('panel-0').height(7500).update()
