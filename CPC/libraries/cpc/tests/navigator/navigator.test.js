@@ -15,6 +15,7 @@ if (typeof Object.fromEntries !== 'function') {
 
 //// PURE NODE DEPENDENCIES ////
 require('../../../../../JestUtils/jest-console')
+require('../../../../../JestUtils/jest-dom')
 
 
 //// UMD DEPENDENCIES ////
@@ -37,7 +38,6 @@ global.domUtils = require("../../../utils/domUtils")
 require('../../../utils/errorUtils')
 require('../../../utils/jsUtils')  // does not need to be required into a variable
 require('../../../utils/mapUtils')  // does not need to be required into a variable
-
 
 global.data = require("../../data")
 global.dataset = require("../../dataset")
@@ -741,3 +741,53 @@ test ('COLOR SCHEME SET: Set and get', async () => {
 // })
 
 
+
+//// COMPARISON VIEW ///////////////////////////////////////////////////////////////
+
+describe ('COMPARISON VIEW', () => {
+
+    test ('DETECT MODIFIER: Detect which modifier key is pressed ', async () => {
+
+        // PREP //
+
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+        // Create svg container
+        const svg = new container.Svg()
+        // Create Navigator object
+        const myNavigator = new navigator.Navigator()
+        //// Load a dataset into navigator
+        await myNavigator.loadDataset(
+            'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
+            ['Name']
+        ).then(that => {
+            that.update()
+
+        })
+
+        // domUtils.simulateClickOn('#Male', 'shift' )
+        // expect( myNavigator._modifierKeyPressedWithLastClick ).toBe( 'shift' )
+
+
+        domUtils.simulateClickOn('#Male', 'alt' )
+        expect( myNavigator._modifierKeyPressedWithLastClick ).toBe( 'alt' )
+
+
+        domUtils.simulateClickOn('#Male', 'meta' )
+        expect( myNavigator._modifierKeyPressedWithLastClick ).toBe( 'meta' )
+
+        domUtils.simulateClickOn('#Male', 'ctrl' )
+        expect( myNavigator._modifierKeyPressedWithLastClick ).toBe( 'ctrl' )
+
+
+
+
+        // expect( document.lastClick.wasWithShiftKey ).toBe( true )
+        // expect( document.lastClick.wasWithAltKey ).toBe( false )
+        // expect( document.lastClick.wasWithMetaKey ).toBe( false )
+        // expect( document.lastClick.wasWithCtrlKey ).toBe( false )
+
+    })
+
+
+})
