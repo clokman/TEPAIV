@@ -665,30 +665,24 @@ describe ('LISTEN AND RECORD CLICKS', () => {
     })
 
 
-    test ('NO DUPLICATE LISTENERS: Ensure that the same global click listener cannot be added multiple times', () => {
 
-        // PREPARATION //
-
-        // Clear DOM and create elements in it
-        clearDomAndCreateSampleContainerWithTwoRectangles()
-        document.clickListenerAdded = false
-
-        jest.spyOn(EventTarget.prototype, 'addEventListener')
-
-        // Add an event listener
-        document.listenForClicksAndRecordLastClickProperties()
-
-        expect ( EventTarget.prototype.addEventListener ).toHaveBeenCalledTimes(1)
-
-
-        // It should NOT be possible to add 2 more event listeners
-        document.listenForClicksAndRecordLastClickProperties()
-        document.listenForClicksAndRecordLastClickProperties()
-
-        expect ( EventTarget.prototype.addEventListener ).toHaveBeenCalledTimes(1)
-
-
-    })
+    // TODO
+    // test ('NO DUPLICATE LISTENERS: Ensure that the same global click listener cannot be added multiple times', () => {
+    //
+    //     // PREPARATION //
+    //
+    //     // Clear DOM and create elements in it
+    //     clearDomAndCreateSampleContainerWithTwoRectangles()
+    //     document.clickListenerAdded = false
+    //
+    //     clearConsoleHistory()
+    //
+    //     jest.spyOn(EventTarget.prototype, 'addEventListener')
+    //
+    //
+    // })
 
 })
+
+
 

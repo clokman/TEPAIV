@@ -89,10 +89,10 @@ function _validateModifierKey(modifierKey) {
 }
 
 
-Document.prototype.listenForClicksAndRecordLastClickProperties = function(){
+EventTarget.prototype.listenForClicksAndRecordLastClickProperties = function(){
 
     // Add a property to EventTarget object with default properties
-    document.lastClick = {
+    this.lastClick = {
 
         wasOnElement: null,
 
@@ -106,41 +106,36 @@ Document.prototype.listenForClicksAndRecordLastClickProperties = function(){
         wasWithMetaKey: false
     }
 
-    if (!document.clickListenerAdded){
-
-        document.addEventListener('click', (event) => {
-
-            this.lastClick.wasOnElement = event.target
-
-            this.lastClick.wasOnTag = event.target.tagName
-            this.lastClick.wasOnClass = event.target.className.baseVal
-            this.lastClick.wasOnId = event.target.id
-
-            this.lastClick.wasWithShiftKey = event.shiftKey
-            this.lastClick.wasWithCtrlKey = event.ctrlKey
-            this.lastClick.wasWithAltKey = event.altKey
-            this.lastClick.wasWithMetaKey = event.metaKey
-
-            // console.log(`document event listener records click with shift key: ${document.lastClick.wasWithShiftKey} `)
-
-        })
-
-        document.clickListenerAdded = true
-
-    }
-
+    this.removeEventListener('click', _assessAndRecordClickProperties, true)
+    this.addEventListener( 'click', _assessAndRecordClickProperties, true )
 
 }
 
 
-                                                
+const _assessAndRecordClickProperties = function(event) {
+
+    // console.log('global listener reporting')
+
+    this.lastClick.wasOnElement = event.target
+
+    this.lastClick.wasOnTag = event.target.tagName
+    this.lastClick.wasOnClass = event.target.className.baseVal
+    this.lastClick.wasOnId = event.target.id
+
+    this.lastClick.wasWithShiftKey = event.shiftKey
+    this.lastClick.wasWithCtrlKey = event.ctrlKey
+    this.lastClick.wasWithAltKey = event.altKey
+    this.lastClick.wasWithMetaKey = event.metaKey
+
+}
+
+
 //// UMD FOOT ////////////////////////////////////////////////////////////////////////
 
     //// MODULE.EXPORTS ////
     exports.version = version;
     exports.simulateClick = simulateClick;
     exports.simulateClickOn = simulateClickOn;
-
 
 
 	Object.defineProperty(exports, '__esModule', { value: true });
