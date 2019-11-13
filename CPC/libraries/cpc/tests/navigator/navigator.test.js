@@ -459,10 +459,6 @@ test ('Clicking on a category must make a query and visualize query results with
 describe ('ABSOLUTE VALUES: Toggle absolute values in category captions', () => {
 
 
-
-
-
-
     test('GET/SET', async () => {
 
         //// PREPARE DOM AND NAVIGATOR ////

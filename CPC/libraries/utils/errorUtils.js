@@ -45,8 +45,10 @@ Object.prototype.mustBe = function(value, customErrorMessage) {
     }
 }
 
-
-Object.prototype.mustBeOfType = function(acceptableType) {
+    /**
+     * @param acceptableType {String|Object}
+     */
+    Object.prototype.mustBeOfType = function(acceptableType) {
 
     // If user enters the object instance directly as an acceptable type, get the class of the object
     if (acceptableType.constructor.name !== "String"){
