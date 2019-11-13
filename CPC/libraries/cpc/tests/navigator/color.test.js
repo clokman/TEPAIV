@@ -75,20 +75,20 @@ test ('LIST: List scheme sets and the schemes they contain', () => {
 
     expect( navigator.color ).toBeDefined()
     expect( navigator.color.schemeSets ).toTabulateAs(`\
-┌─────────┬──────────────┬────────────────────────────────────────────────────┐
-│ (index) │      0       │                         1                          │
-├─────────┼──────────────┼────────────────────────────────────────────────────┤
-│    0    │ 'Single-Hue' │ [ 'Purples', 'Blues', 'Greens', ... 3 more items ] │
-│    1    │ 'Multi-Hue'  │    [ 'RdPu', 'BuPu', 'PuBu', ... 9 more items ]    │
-│    2    │   'Blues'    │                    [ 'Blues' ]                     │
-│    3    │   'Greens'   │                    [ 'Greens' ]                    │
-│    4    │   'Greys'    │                    [ 'Greys' ]                     │
-│    5    │  'Oranges'   │                   [ 'Oranges' ]                    │
-│    6    │  'Purples'   │                   [ 'Purples' ]                    │
-│    7    │    'Reds'    │                     [ 'Reds' ]                     │
-│    8    │    'BuGn'    │                     [ 'BuGn' ]                     │
-│    9    │    'BuPu'    │                     [ 'BuPu' ]                     │
-└─────────┴──────────────┴────────────────────────────────────────────────────┘
+┌─────────┬──────────────┬──────────────────────────────────────────────────────┐
+│ (index) │      0       │                          1                           │
+├─────────┼──────────────┼──────────────────────────────────────────────────────┤
+│    0    │  'Titanic'   │ [ 'Purples', 'Inferno', 'PuBuGn', ... 3 more items ] │
+│    1    │ 'Titanic-2'  │  [ 'Greys', 'Purples', 'Plasma', ... 1 more item ]   │
+│    2    │ 'Single-Hue' │  [ 'Purples', 'Blues', 'Greens', ... 3 more items ]  │
+│    3    │ 'Multi-Hue'  │     [ 'RdPu', 'BuPu', 'PuBu', ... 9 more items ]     │
+│    4    │   'Blues'    │                     [ 'Blues' ]                      │
+│    5    │   'Greens'   │                     [ 'Greens' ]                     │
+│    6    │   'Greys'    │                     [ 'Greys' ]                      │
+│    7    │  'Oranges'   │                    [ 'Oranges' ]                     │
+│    8    │  'Purples'   │                    [ 'Purples' ]                     │
+│    9    │    'Reds'    │                      [ 'Reds' ]                      │
+└─────────┴──────────────┴──────────────────────────────────────────────────────┘
 ˅˅˅ NaN more rows`, 0, 10)
 
 })
@@ -103,37 +103,39 @@ test ('CIRCULAR INDEXING: Circular scheme indexing and iteration', () => {
 
     // View color scheme sets
     expect( navigator.color.schemeSets ).toTabulateAs(`\
-┌───────────────────┬────────────────────┬────────────────────────────────────────────────────┐
-│ (iteration index) │        Key         │                       Values                       │
-├───────────────────┼────────────────────┼────────────────────────────────────────────────────┤
-│         0         │    'Single-Hue'    │ [ 'Purples', 'Blues', 'Greens', ... 3 more items ] │
-│         1         │    'Multi-Hue'     │    [ 'RdPu', 'BuPu', 'PuBu', ... 9 more items ]    │
-│         2         │      'Blues'       │                    [ 'Blues' ]                     │
-│         3         │      'Greens'      │                    [ 'Greens' ]                    │
-│         4         │      'Greys'       │                    [ 'Greys' ]                     │
-│         5         │     'Oranges'      │                   [ 'Oranges' ]                    │
-│         6         │     'Purples'      │                   [ 'Purples' ]                    │
-│         7         │       'Reds'       │                     [ 'Reds' ]                     │
-│         8         │       'BuGn'       │                     [ 'BuGn' ]                     │
-│         9         │       'BuPu'       │                     [ 'BuPu' ]                     │
-│        10         │       'GnBu'       │                     [ 'GnBu' ]                     │
-│        11         │       'OrRd'       │                     [ 'OrRd' ]                     │
-│        12         │      'PuBuGn'      │                    [ 'PuBuGn' ]                    │
-│        13         │       'PuBu'       │                     [ 'PuBu' ]                     │
-│        14         │       'PuRd'       │                     [ 'PuRd' ]                     │
-│        15         │       'RdPu'       │                     [ 'RdPu' ]                     │
-│        16         │      'YlGnBu'      │                    [ 'YlGnBu' ]                    │
-│        17         │       'YlGn'       │                     [ 'YlGn' ]                     │
-│        18         │      'YlOrBr'      │                    [ 'YlOrBr' ]                    │
-│        19         │      'YlOrRd'      │                    [ 'YlOrRd' ]                    │
-│        20         │     'Viridis'      │                   [ 'Viridis' ]                    │
-│        21         │     'Inferno'      │                   [ 'Inferno' ]                    │
-│        22         │      'Magma'       │                    [ 'Magma' ]                     │
-│        23         │       'Warm'       │                     [ 'Warm' ]                     │
-│        24         │       'Cool'       │                     [ 'Cool' ]                     │
-│        25         │ 'CubehelixDefault' │               [ 'CubehelixDefault' ]               │
-│        26         │      'Plasma'      │                    [ 'Plasma' ]                    │
-└───────────────────┴────────────────────┴────────────────────────────────────────────────────┘`)
+┌───────────────────┬────────────────────┬──────────────────────────────────────────────────────┐
+│ (iteration index) │        Key         │                        Values                        │
+├───────────────────┼────────────────────┼──────────────────────────────────────────────────────┤
+│         0         │     'Titanic'      │ [ 'Purples', 'Inferno', 'PuBuGn', ... 3 more items ] │
+│         1         │    'Titanic-2'     │  [ 'Greys', 'Purples', 'Plasma', ... 1 more item ]   │
+│         2         │    'Single-Hue'    │  [ 'Purples', 'Blues', 'Greens', ... 3 more items ]  │
+│         3         │    'Multi-Hue'     │     [ 'RdPu', 'BuPu', 'PuBu', ... 9 more items ]     │
+│         4         │      'Blues'       │                     [ 'Blues' ]                      │
+│         5         │      'Greens'      │                     [ 'Greens' ]                     │
+│         6         │      'Greys'       │                     [ 'Greys' ]                      │
+│         7         │     'Oranges'      │                    [ 'Oranges' ]                     │
+│         8         │     'Purples'      │                    [ 'Purples' ]                     │
+│         9         │       'Reds'       │                      [ 'Reds' ]                      │
+│        10         │       'BuGn'       │                      [ 'BuGn' ]                      │
+│        11         │       'BuPu'       │                      [ 'BuPu' ]                      │
+│        12         │       'GnBu'       │                      [ 'GnBu' ]                      │
+│        13         │       'OrRd'       │                      [ 'OrRd' ]                      │
+│        14         │      'PuBuGn'      │                     [ 'PuBuGn' ]                     │
+│        15         │       'PuBu'       │                      [ 'PuBu' ]                      │
+│        16         │       'PuRd'       │                      [ 'PuRd' ]                      │
+│        17         │       'RdPu'       │                      [ 'RdPu' ]                      │
+│        18         │      'YlGnBu'      │                     [ 'YlGnBu' ]                     │
+│        19         │       'YlGn'       │                      [ 'YlGn' ]                      │
+│        20         │      'YlOrBr'      │                     [ 'YlOrBr' ]                     │
+│        21         │      'YlOrRd'      │                     [ 'YlOrRd' ]                     │
+│        22         │     'Viridis'      │                    [ 'Viridis' ]                     │
+│        23         │     'Inferno'      │                    [ 'Inferno' ]                     │
+│        24         │      'Magma'       │                     [ 'Magma' ]                      │
+│        25         │       'Warm'       │                      [ 'Warm' ]                      │
+│        26         │       'Cool'       │                      [ 'Cool' ]                      │
+│        27         │ 'CubehelixDefault' │                [ 'CubehelixDefault' ]                │
+│        28         │      'Plasma'      │                     [ 'Plasma' ]                     │
+└───────────────────┴────────────────────┴──────────────────────────────────────────────────────┘`)
 
     // Retrieve some color scheme names by index
     const firstSchemeOfSingleHueTheme = navigator.color.getChartSchemeBySchemeSetNameAndCircularIndex('Single-Hue', 0)
@@ -254,18 +256,18 @@ test ('WRONG SCHEME SET REQUESTED: Wrong scheme set name during circular indexin
 
     // View color themes
     expect( navigator.color.schemeSets ).toTabulateAs(`\
-┌─────────┬──────────────┬────────────────────────────────────────────────────┐
-│ (index) │      0       │                         1                          │
-├─────────┼──────────────┼────────────────────────────────────────────────────┤
-│    0    │ 'Single-Hue' │ [ 'Purples', 'Blues', 'Greens', ... 3 more items ] │
-│    1    │ 'Multi-Hue'  │    [ 'RdPu', 'BuPu', 'PuBu', ... 9 more items ]    │
-│    2    │   'Blues'    │                    [ 'Blues' ]                     │
-│    3    │   'Greens'   │                    [ 'Greens' ]                    │
-│    4    │   'Greys'    │                    [ 'Greys' ]                     │
-│    5    │  'Oranges'   │                   [ 'Oranges' ]                    │
-│    6    │  'Purples'   │                   [ 'Purples' ]                    │
-│    7    │    'Reds'    │                     [ 'Reds' ]                     │
-└─────────┴──────────────┴────────────────────────────────────────────────────┘
+┌─────────┬──────────────┬──────────────────────────────────────────────────────┐
+│ (index) │      0       │                          1                           │
+├─────────┼──────────────┼──────────────────────────────────────────────────────┤
+│    0    │  'Titanic'   │ [ 'Purples', 'Inferno', 'PuBuGn', ... 3 more items ] │
+│    1    │ 'Titanic-2'  │  [ 'Greys', 'Purples', 'Plasma', ... 1 more item ]   │
+│    2    │ 'Single-Hue' │  [ 'Purples', 'Blues', 'Greens', ... 3 more items ]  │
+│    3    │ 'Multi-Hue'  │     [ 'RdPu', 'BuPu', 'PuBu', ... 9 more items ]     │
+│    4    │   'Blues'    │                     [ 'Blues' ]                      │
+│    5    │   'Greens'   │                     [ 'Greens' ]                     │
+│    6    │   'Greys'    │                     [ 'Greys' ]                      │
+│    7    │  'Oranges'   │                    [ 'Oranges' ]                     │
+└─────────┴──────────────┴──────────────────────────────────────────────────────┘
 ˅˅˅ NaN more rows`, 0, 8)
 
     // Retrieve some color scheme names by index
@@ -274,15 +276,15 @@ test ('WRONG SCHEME SET REQUESTED: Wrong scheme set name during circular indexin
 
     expect( () => {
         navigator.color.getChartSchemeBySchemeSetNameAndCircularIndex('WRONG-THEME-NAME', 0)
-    }).toThrow("'WRONG-THEME-NAME' is not as valid value. Expected values are: 'Single-Hue, Multi-Hue, Blues, Greens, Greys, Oranges, Purples, Reds, BuGn, BuPu, GnBu, OrRd, PuBuGn, PuBu, PuRd, RdPu, YlGnBu, YlGn, YlOrBr, YlOrRd, Viridis, Inferno, Magma, Warm, Cool, CubehelixDefault, Plasma'.")
+    }).toThrow("'WRONG-THEME-NAME' is not as valid value. Expected values are: 'Titanic, Titanic-2, Single-Hue, Multi-Hue, Blues, Greens, Greys, Oranges, Purples, Reds, BuGn, BuPu, GnBu, OrRd, PuBuGn, PuBu, PuRd, RdPu, YlGnBu, YlGn, YlOrBr, YlOrRd, Viridis, Inferno, Magma, Warm, Cool, CubehelixDefault, Plasma'.")
 
     expect( () => {
         navigator.color.getChartSchemeBySchemeSetNameAndCircularIndex('Grays', 0)
-    }).toThrow("'Grays' is not as valid value. Expected values are: 'Single-Hue, Multi-Hue, Blues, Greens, Greys, Oranges, Purples, Reds, BuGn, BuPu, GnBu, OrRd, PuBuGn, PuBu, PuRd, RdPu, YlGnBu, YlGn, YlOrBr, YlOrRd, Viridis, Inferno, Magma, Warm, Cool, CubehelixDefault, Plasma'.") // Should be 'Greys', not 'Gray'
+    }).toThrow("'Grays' is not as valid value. Expected values are: 'Titanic, Titanic-2, Single-Hue, Multi-Hue, Blues, Greens, Greys, Oranges, Purples, Reds, BuGn, BuPu, GnBu, OrRd, PuBuGn, PuBu, PuRd, RdPu, YlGnBu, YlGn, YlOrBr, YlOrRd, Viridis, Inferno, Magma, Warm, Cool, CubehelixDefault, Plasma'.") // Should be 'Greys', not 'Gray'
 
     expect( () => {
         navigator.color.getChartSchemeBySchemeSetNameAndCircularIndex('greys', 0)
-    }).toThrow("'greys' is not as valid value. Expected values are: 'Single-Hue, Multi-Hue, Blues, Greens, Greys, Oranges, Purples, Reds, BuGn, BuPu, GnBu, OrRd, PuBuGn, PuBu, PuRd, RdPu, YlGnBu, YlGn, YlOrBr, YlOrRd, Viridis, Inferno, Magma, Warm, Cool, CubehelixDefault, Plasma'.") // Should be 'Greys', not 'grey'
+    }).toThrow("'greys' is not as valid value. Expected values are: 'Titanic, Titanic-2, Single-Hue, Multi-Hue, Blues, Greens, Greys, Oranges, Purples, Reds, BuGn, BuPu, GnBu, OrRd, PuBuGn, PuBu, PuRd, RdPu, YlGnBu, YlGn, YlOrBr, YlOrRd, Viridis, Inferno, Magma, Warm, Cool, CubehelixDefault, Plasma'.") // Should be 'Greys', not 'grey'
 })
 
 

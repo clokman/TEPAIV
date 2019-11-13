@@ -1418,7 +1418,6 @@
                 this.animation.spawnStyle === 'retract' ||
                 this.animation.spawnStyle === 'retractAndExtend'){
 
-                // console.log('this.animation.spawnStyle')
                 this._collapseAllPanelsDownstreamAndSpawnThisPanelLateralToSiblingBeingReplaced()
 
             }
@@ -1429,6 +1428,7 @@
                 this._createBridgeFromSpawnRoot()
                 this._verticallyMaximizeFromBridgeAsChildPanel()
                 this.updateTopAncestor( this.animation.duration.appendSibling )
+
             }
 
 
@@ -3055,6 +3055,8 @@
     const color = {
 
         schemeSets: new Map()
+            .set('Titanic', ['Purples', 'Inferno', 'PuBuGn', 'Oranges', 'Greys', 'Blues'])
+            .set('Titanic-2', ['Greys', 'Purples', 'Plasma', 'PuBu'])
             .set('Single-Hue', ['Purples', 'Blues', 'Greens', 'Oranges', 'Greys', 'Reds'])
             .set('Multi-Hue', ['RdPu', 'BuPu', 'PuBu', 'YlGn', 'OrRd', 'PuBuGn', 'PuRd', 'PuRd', 'BuGn', 'YlGnBu', 'YlOrBr', 'YlOrRd'])
             .set('Blues', ['Blues'])
@@ -3081,10 +3083,10 @@
             .set('Warm', ['Warm'])
             .set('Cool', ['Cool'])
             .set('CubehelixDefault', ['CubehelixDefault'])
-            .set('Plasma', ['Plasma']),
+            .set('Plasma', ['Plasma'])
 
 
-        getChartSchemeBySchemeSetNameAndCircularIndex: function (schemeSet, i) {
+        , getChartSchemeBySchemeSetNameAndCircularIndex: function (schemeSet, i) {
 
             schemeSet.mustBeAKeyIn(color.schemeSets)
 
