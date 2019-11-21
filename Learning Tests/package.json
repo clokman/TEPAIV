@@ -1,0 +1,21 @@
+{
+  "name": "learning-tests",
+  "version": "1.0.0",
+  "description": "",
+  "main": " ",
+  "scripts": {
+    "test": "jest --watchAll"
+  },
+  "author": "John C. Lokman",
+  "license": "ISC",
+  "devDependencies": {
+    "browser-sync": "^2.26.7",
+    "jest": "^24.8.0",
+    "node-fetch-polyfill": "^2.0.6",
+    "object.fromentries": "^2.0.0"
+  },
+  "dependencies": {
+    "jest-canvas-mock": "^2.1.1",
+    "save-dev": "^2.0.0"
+  }
+}
