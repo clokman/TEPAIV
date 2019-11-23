@@ -307,7 +307,7 @@ test ('Update DOM after new data is loaded', async () => {
     const panelElementClass = panelElement.getAttribute('class')
     const panelElementDepth = panelElement.getAttribute('depth')
 
-    expect(panelElementId).toBe('panel-0')
+    expect(panelElementId).toBe('panel-0-0')
     expect(panelElementClass).toBe('panel')
 
 
@@ -323,16 +323,16 @@ test ('Update DOM after new data is loaded', async () => {
     const objectsInNavigator = myNavigator.objects()
 
     expectTable(objectsInNavigator, `\
-┌───────────────────┬───────────┬───────────────┐
-│ (iteration index) │    Key    │    Values     │
-├───────────────────┼───────────┼───────────────┤
-│         0         │ 'panel-0' │ [NestedPanel] │
-└───────────────────┴───────────┴───────────────┘`)
+┌───────────────────┬─────────────┬───────────────┐
+│ (iteration index) │     Key     │    Values     │
+├───────────────────┼─────────────┼───────────────┤
+│         0         │ 'panel-0-0' │ [NestedPanel] │
+└───────────────────┴─────────────┴───────────────┘`)
 
 
 
     //// VERIFY THE FIRST PANEL IN NAVIGATOR CONTAINS A SUMMARY OF THE LOADED DATASET ////
-    const panelObjectOfPanelZero = myNavigator.objects('panel-0')
+    const panelObjectOfPanelZero = myNavigator.objects('panel-0-0')
     const stacksInFirstPanel = panelObjectOfPanelZero.stacks()
     
     expectTable(stacksInFirstPanel, `\
@@ -428,7 +428,7 @@ test ('Clicking on a category must make a query and visualize query results with
 
 
     // Go forward: Click a category in panel 0
-    domUtils.simulateClickOn('#panel-0 #Male')
+    domUtils.simulateClickOn('#panel-0-0 #Male')
     const numberOfPanelsAfterFirstClick = document.querySelectorAll('.panel').length
     expect(numberOfPanelsAfterFirstClick).toBe(2)
     const numberOfCategoriesAfterFirstClick = document.querySelectorAll('.category').length
@@ -436,14 +436,14 @@ test ('Clicking on a category must make a query and visualize query results with
 
 
     // Go forward: Click a category in panel 1
-    domUtils.simulateClickOn('#panel-1 #Survived')
+    domUtils.simulateClickOn('#panel-1-0 #Survived')
     const numberOfPanelsAfterSecondClick = document.querySelectorAll('.panel').length
     expect(numberOfPanelsAfterSecondClick).toBe(3)
     const numberOfCategoriesAfterSecondClick = document.querySelectorAll('.category').length
     expect(numberOfCategoriesAfterSecondClick).toBe(15)
 
     // Go backward: Click a category in panel 0 (should replace panel 2 and remove panel 3)
-    domUtils.simulateClickOn('#panel-0 #Female')
+    domUtils.simulateClickOn('#panel-0-0 #Female')
     const numberOfPanelsAfterThirdClick = document.querySelectorAll('.panel').length
     expect(numberOfPanelsAfterThirdClick).toBe(2)
     const numberOfCategoriesAfterThirdClick = document.querySelectorAll('.category').length
@@ -513,12 +513,12 @@ describe ('ABSOLUTE VALUES: Toggle absolute values in category captions', () => 
         domUtils.simulateClickOn( '#Female' )
         // Confirm the existence of two panels
         expect( myNavigator.objects() ).toTabulateAs(`\
-┌───────────────────┬───────────┬───────────────┐
-│ (iteration index) │    Key    │    Values     │
-├───────────────────┼───────────┼───────────────┤
-│         0         │ 'panel-0' │ [NestedPanel] │
-│         1         │ 'panel-1' │ [NestedPanel] │
-└───────────────────┴───────────┴───────────────┘`)
+┌───────────────────┬─────────────┬───────────────┐
+│ (iteration index) │     Key     │    Values     │
+├───────────────────┼─────────────┼───────────────┤
+│         0         │ 'panel-0-0' │ [NestedPanel] │
+│         1         │ 'panel-1-0' │ [NestedPanel] │
+└───────────────────┴─────────────┴───────────────┘`)
             
             
         // Get initial caption texts on DOM
@@ -639,7 +639,7 @@ test ('COLOR SCHEME SET: Set and get', async () => {
 
     // Get initial color-related values
     expect( myNavigator.colorSet() ).toBe('Single-Hue')
-    actualInitialColorsOnCanvasForGenderCategory = myNavigator.objects('panel-0').objects('Gender').actualColors()
+    actualInitialColorsOnCanvasForGenderCategory = myNavigator.objects('panel-0-0').objects('Gender').actualColors()
     expect( actualInitialColorsOnCanvasForGenderCategory ).toEqual([
         "rgb(34, 139, 69)", "rgb(115, 195, 120)"
     ])
@@ -649,10 +649,10 @@ test ('COLOR SCHEME SET: Set and get', async () => {
 
     // Check if the new color set is set in one of the chart objects within the navigator
     expect( myNavigator.colorSet() ).toBe('Greys')
-    expect ( myNavigator.objects('panel-0').objects('Gender').colorScheme() )
+    expect ( myNavigator.objects('panel-0-0').objects('Gender').colorScheme() )
         .toBe( 'Greys')
     // Check the color of a category on DOM
-    const actualColorsOnCanvasForGenderCategory = myNavigator.objects('panel-0').objects('Gender').actualColors()
+    const actualColorsOnCanvasForGenderCategory = myNavigator.objects('panel-0-0').objects('Gender').actualColors()
     expect ( actualColorsOnCanvasForGenderCategory )
         .toEqual(["rgb(80, 80, 80)", "rgb(151, 151, 151)"])
 
@@ -666,7 +666,7 @@ test ('COLOR SCHEME SET: Set and get', async () => {
     expect(numberOfPanelsBeforeClick).toBe(1)
 
     // Go deeper in Navigator: Click a category in panel 0
-    domUtils.simulateClickOn('#panel-0 #Male')
+    domUtils.simulateClickOn('#panel-0-0 #Male')
 
     // Check the number of panels before click
     const numberOfPanelsAfterFirstClick = document.querySelectorAll('.panel').length
@@ -674,13 +674,13 @@ test ('COLOR SCHEME SET: Set and get', async () => {
 
 
     // After the click: Check the color of an arbitrary category of PANEL-0 on DOM
-    const actualColorsOnDomForGenderCategoryInPanelZeroAfterClick = myNavigator.objects('panel-0').objects('Gender').actualColors()
+    const actualColorsOnDomForGenderCategoryInPanelZeroAfterClick = myNavigator.objects('panel-0-0').objects('Gender').actualColors()
     expect ( actualColorsOnDomForGenderCategoryInPanelZeroAfterClick )
         .toEqual(["rgb(80, 80, 80)", "rgb(151, 151, 151)"])
 
 
     // After the click: Check the color of an arbitrary category of PANEL-1 on DOM
-    const actualColorsOnDomForGenderCategoryInPanelOneAfterClick = myNavigator.objects('panel-0').objects('Gender').actualColors()
+    const actualColorsOnDomForGenderCategoryInPanelOneAfterClick = myNavigator.objects('panel-0-0').objects('Gender').actualColors()
     expect ( actualColorsOnDomForGenderCategoryInPanelZeroAfterClick )
         .toEqual(["rgb(80, 80, 80)", "rgb(151, 151, 151)"])
 
@@ -697,9 +697,9 @@ test ('COLOR SCHEME SET: Set and get', async () => {
     myNavigator.colorSet('Reds').update()
 
     // After the click: Confirm that the child panel's background and bridge colors matches the color of the category this child panel is spawned from
-    const bgColorOfChildPanelAfterColorSetChange = myNavigator.objects('panel-1')._backgroundObject.fill()
-    const bgColorOfBridgeAfterColorSetChange = myNavigator.objects('panel-1')._bridgeObject.fill()
-    const colorOfCategoryThatChildPanelSpawnedFrom = myNavigator.objects('panel-1')._objectToSpawnFrom.fill()
+    const bgColorOfChildPanelAfterColorSetChange = myNavigator.objects('panel-1-0')._backgroundObject.fill()
+    const bgColorOfBridgeAfterColorSetChange = myNavigator.objects('panel-1-0')._bridgeObject.fill()
+    const colorOfCategoryThatChildPanelSpawnedFrom = myNavigator.objects('panel-1-0').objectToSpawnFrom.fill()
 
     expect( bgColorOfChildPanelAfterColorSetChange )
         .toBe( colorOfCategoryThatChildPanelSpawnedFrom )

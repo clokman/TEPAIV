@@ -786,7 +786,7 @@ test ('Instantiate panel with a spawn location', () => {
     childPanel.id('child-panel').update()
 
     // Child panel should refer to a category as its spawn source
-    const classOfObjectToSpawnFrom = childPanel._objectToSpawnFrom.constructor.name
+    const classOfObjectToSpawnFrom = childPanel.objectToSpawnFrom.constructor.name
     expect(classOfObjectToSpawnFrom).toBe('Category')
 
     // There must be two panels after creating a child panel
@@ -800,7 +800,7 @@ test ('Instantiate panel with a spawn location', () => {
 
     // Bridge should be at the correct end position
     const bridgeRectangleElement = document.querySelector('.bridge')
-    const categoryObjectBeingSpawnedFrom = childPanel._objectToSpawnFrom
+    const categoryObjectBeingSpawnedFrom = childPanel.objectToSpawnFrom
         , categoryRectangleElementBeingSpawnedFrom = categoryObjectBeingSpawnedFrom.objects('rectangle').select()
 
     yCoordinateOfBridgeRectangleElement = bridgeRectangleElement.getAttribute('y')
@@ -1446,7 +1446,7 @@ describe ('ABSOLUTE VALUES: Toggling absolute values should show counts instead 
             childPanel2.remove()
 
             // Parent object should no more have child
-            expect( childPanel1.childrenObjects.size ).not.toBe()
+            expect( childPanel1.childrenPanels.size ).not.toBe()
 
             // Confirm removal on DOM
             allPanelElements = document.querySelectorAll( '.panel' )
@@ -1458,7 +1458,7 @@ describe ('ABSOLUTE VALUES: Toggling absolute values should show counts instead 
             childPanel1.remove()
 
             // Parent object should no more have a child
-            expect( panelZero.childrenObjects.size ).not.toBe()
+            expect( panelZero.childrenPanels.size ).not.toBe()
 
             // Confirm removal on DOM
             allPanelElements = document.querySelectorAll( '.panel' )
@@ -1678,7 +1678,7 @@ describe ('COLOR: Manage color themes', () => {
         // Background and bridge color of child should match the color of spawn source
         let bridgeColor = childPanel1._bridgeObject.fill()
         let childBgColor = childPanel1._backgroundObject.fill()
-        let spawnSourceCategoryColor = childPanel1._objectToSpawnFrom.fill()
+        let spawnSourceCategoryColor = childPanel1.objectToSpawnFrom.fill()
         
         expect( bridgeColor ).toBe( spawnSourceCategoryColor )
         expect( childBgColor ).toBe( spawnSourceCategoryColor )
@@ -1908,3 +1908,557 @@ describe ('ANIMATIONS: Switch to a panel on the same depth level using the quick
 //
 })
 
+
+//// PANEL IDs ///////////////////////////////////////////////////////////////
+
+describe ('PANEL IDS: Panel IDs must be generated correctly', () => {
+   
+    
+    test ('First panel id', () => {
+
+        // PREP //
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+        // Create SVG
+        const mySvg = new container.Svg()
+
+
+        myPanel = new navigator.NestedPanel()
+            .bgFill('#deebf7')
+            .x(200)
+            .y(25)
+            // .yAxisLabels(true)
+            .update(0)
+
+
+        expect( myPanel.id() ).toBe( 'panel-0-0' )
+
+    })
+
+
+    test ('DEPTH 1 Siblings: Check ids of panels that spawned directly from panel 0', () => {
+
+        // PREP //
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+        // Create SVG
+        const mySvg = new container.Svg()
+
+        // Create panel 0
+        parentPanel = new navigator.NestedPanel()
+            .bgFill('#deebf7')
+            .x(200).y(25)
+            .yAxisLabels(true)
+            .update(0)
+
+
+        // SIBLING #1.1 //
+        // Create sibling panel
+        spawnObjectForSiblingPanel1 = parentPanel.objects('gender').objects('female')
+
+        siblingPanel1 = new navigator.NestedPanel(parentPanel, spawnObjectForSiblingPanel1)
+        siblingPanel1.update()
+
+        // Check the newly created sibling panel's ID
+        expect( siblingPanel1.id() ).toBe( 'panel-1-0' )
+
+
+        // SIBLING #1.2 //
+        // Create sibling panel
+        spawnObjectForSiblingPanel2 = parentPanel.objects('gender').objects('male')
+
+        siblingPanel2 = new navigator.NestedPanel(parentPanel, spawnObjectForSiblingPanel2, 'sibling')
+        siblingPanel2.update()
+
+        // Check the newly created sibling panel's ID
+        expect( siblingPanel2.id() ).toBe( 'panel-1-1' )
+
+
+        // SIBLING #1.3 //
+        // Create sibling panel
+        spawnObjectForSiblingPanel3 = parentPanel.objects('status').objects('died')
+
+        siblingPanel3 = new navigator.NestedPanel(parentPanel, spawnObjectForSiblingPanel3, 'sibling')
+        siblingPanel3.update()
+
+        // Check the newly created sibling panel's ID
+        expect( siblingPanel3.id() ).toBe( 'panel-1-2' )
+
+
+    })
+
+
+    test ('DEPTH 2 Siblings: Check ids of panels that spawned from panel 1 (i.e., siblings spawned from a child of panel 0)', () => {
+
+        // PREP //
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+        // Create SVG
+        const mySvg = new container.Svg()
+
+
+        // Create panel 0
+        const parentPanel = new navigator.NestedPanel()
+            .bgFill('#deebf7')
+            .x(200).y(25)
+            .yAxisLabels(true)
+            .update(0)
+
+
+        // Create panel 1
+        // Create child panel
+        const spawnObjectForChildPanel = parentPanel.objects('gender').objects('female')
+
+        const childPanel = new navigator.NestedPanel(parentPanel, spawnObjectForChildPanel)
+        childPanel.update()
+
+        // Check the newly created child panel's ID
+        expect( childPanel.id() ).toBe( 'panel-1-0' )
+
+
+        // SIBLING #2.1 //
+        // Create sibling panel
+        const spawnObjectForSiblingPanel1 = childPanel.objects('gender').objects('female')
+
+        const siblingPanel1 = new navigator.NestedPanel(childPanel, spawnObjectForSiblingPanel1)
+        siblingPanel1.update()
+
+        // Check the newly created sibling panel's ID
+        expect( siblingPanel1.id() ).toBe( 'panel-2-0' )
+
+
+        // SIBLING #2.2 //
+        // Create sibling panel
+        const spawnObjectForSiblingPanel2 = childPanel.objects('gender').objects('male')
+
+        const siblingPanel2 = new navigator.NestedPanel(childPanel, spawnObjectForSiblingPanel2, 'sibling')
+        siblingPanel2.update()
+
+        // Check the newly created sibling panel's ID
+        expect( siblingPanel2.id() ).toBe( 'panel-2-1' )
+
+
+        // SIBLING #2.3 //
+        // Create sibling panel
+        const spawnObjectForSiblingPanel3 = childPanel.objects('status').objects('died')
+
+        const siblingPanel3 = new navigator.NestedPanel(childPanel, spawnObjectForSiblingPanel3, 'sibling')
+        siblingPanel3.update()
+
+        // Check the newly created sibling panel's ID
+        expect( siblingPanel3.id() ).toBe( 'panel-2-2' )
+
+
+    })
+
+
+
+
+    test ('Refresh: The name of a panel should NOT change if the panel is recreated in-place.', () => {
+    // Explanation: Clicking on a panel's spawn root refreshes that panel.
+    // During this refresh operation, the panel is recreated.
+    // During the old panel should not be detected as an already existing panel (at least for the purpose of incrementing panel names).
+
+
+        // PREP //
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+        // Create SVG
+        const mySvg = new container.Svg()
+
+
+        // Create panel 0
+        parentPanel = new navigator.NestedPanel()
+            .bgFill('#deebf7')
+            .x(200).y(25)
+            .yAxisLabels(true)
+            .update(0)
+
+
+        // Create panel 1
+        // Create a child panel
+        spawnObjectForChildPanel = parentPanel.objects('gender').objects('female')
+
+        childPanel = new navigator.NestedPanel(parentPanel, spawnObjectForChildPanel)
+        childPanel.update()
+
+        // Check the newly created child panel's ID
+        expect( childPanel.id() ).toBe( 'panel-1-0' )
+
+
+
+        // Re-Create (refresh) panel 1
+
+        childPanel = new navigator.NestedPanel(parentPanel, spawnObjectForChildPanel)
+        childPanel.update()
+
+        // Check the newly created child panel's ID
+        expect( childPanel.id() ).toBe( 'panel-1-0' )
+
+
+    })
+
+})
+
+
+
+//// INFERENCES ///////////////////////////////////////////////////////////////
+
+describe ('INFERENCES: Parent child relationships should be inferred correctly', () => {
+
+    test ('Panel-0: A single-standing panel-0 should have correct relationships inferred', () => {
+
+        // PREP //
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+        // Create SVG
+        const mySvg = new container.Svg()
+
+
+        // Create panel 0
+        const panel0 = new navigator.NestedPanel()
+            .bgFill('#deebf7')
+            .x(200).y(25)
+            .yAxisLabels(true)
+            .update(0)
+
+        // Check inferred relationships for panel-0
+        expect( panel0.has.beenAddedAsSibling ).toBe( false )
+        expect( panel0.has.numberOfSiblings ).toBe( 0 )
+        expect( panel0.has.parentWithNumberOfChildren ).toBe( 0 )
+        expect( panel0.has.parentPanel ).toBe( false )
+        expect( panel0.has.grandParentPanel ).toBe( false )
+        expect( panel0.has.parentWithAnyChild ).toBe( false )
+        expect( panel0.has.parentWithIdenticalChild ).toBe( false )
+        expect( panel0.has.parentWithAnotherChild ).toBe( false )
+        expect( panel0.has.parentWithAnyGrandChild ).toBe( false )
+        expect( panel0.has.parentWithAnyChildButNoGrandchildren ).toBe( false )
+
+        expect( panel0.has.parentWithRightmostChildPanelObject ).toBe(null)
+
+        // Create panel 1
+        // Create child panel
+        spawnObjectForChildPanel = panel0.objects('gender').objects('female')
+
+        childPanel = new navigator.NestedPanel(panel0, spawnObjectForChildPanel)
+        childPanel.updateTopAncestor()
+
+        // Check the newly created child panel's ID
+        expect( childPanel.id() ).toBe( 'panel-1-0' )
+
+    })
+
+
+    test ('Panel-1-0: A single child panel should have correct relationships inferred', () => {
+
+        // PREP //
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+        // Create SVG
+        const mySvg = new container.Svg()
+
+
+        // Create panel 0
+        const panel0 = new navigator.NestedPanel()
+            .bgFill('#deebf7')
+            .x(200).y(25)
+            .yAxisLabels(true)
+            .update(0)
+
+        // Create panel-1
+        let spawnObjectForPanel1 = panel0.objects('gender').objects('female')
+        const panel1 = new navigator.NestedPanel(panel0, spawnObjectForPanel1)
+        panel1.updateTopAncestor()
+
+
+        // Check inferred relationships for panel-1
+        expect( panel1.has.beenAddedAsSibling ).toBe( false )
+        expect( panel1.has.numberOfSiblings ).toBe( 0 )
+        expect( panel1.has.parentWithNumberOfChildren ).toBe( 1 )
+        expect( panel1.has.parentPanel ).toBe( true )
+        expect( panel1.has.grandParentPanel ).toBe( false )
+        expect( panel1.has.parentWithAnyChild ).toBe( true )
+        expect( panel1.has.parentWithIdenticalChild ).toBe( true )
+        expect( panel1.has.parentWithAnotherChild ).toBe( false )
+        expect( panel1.has.parentWithAnyGrandChild ).toBe( false )
+        expect( panel1.has.parentWithAnyChildButNoGrandchildren ).toBe( true )
+
+        expect( panel1.has.parentWithRightmostChildPanelObject.hasType() ).toBe('NestedPanel')
+        expect( panel1.has.parentWithRightmostChildPanelObject.id() ).toBe('panel-1-0')
+
+    })
+
+
+    test ('Panel-2-0: A single grandchild panel should have correct relationships inferred', () => {
+
+        // PREP //
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+        // Create SVG
+        const mySvg = new container.Svg()
+
+
+        // Create panel 0
+        const panel0 = new navigator.NestedPanel()
+            .bgFill('#deebf7')
+            .x(200).y(25)
+            .yAxisLabels(true)
+            .update(0)
+
+        // Create panel-1
+        const spawnObjectForPanel1 = panel0.objects('gender').objects('female')
+        const panel1 = new navigator.NestedPanel(panel0, spawnObjectForPanel1)
+        panel1.updateTopAncestor()
+
+        // Create panel-2
+        const spawnObjectForPanel2 = panel0.objects('gender').objects('female')
+        const panel2 = new navigator.NestedPanel(panel1, spawnObjectForPanel2)
+        panel2.updateTopAncestor()
+
+
+        // Check inferred relationships for panel-2
+        expect( panel2.has.beenAddedAsSibling ).toBe( false )
+        expect( panel2.has.numberOfSiblings ).toBe( 0 )
+        expect( panel2.has.parentWithNumberOfChildren ).toBe( 1 )
+        expect( panel2.has.parentPanel ).toBe( true )
+        expect( panel2.has.grandParentPanel ).toBe( true )
+        expect( panel2.has.parentWithAnyChild ).toBe( true )
+        expect( panel2.has.parentWithIdenticalChild ).toBe( true )
+        expect( panel2.has.parentWithAnotherChild ).toBe( false )
+        expect( panel2.has.parentWithAnyGrandChild ).toBe( false )
+        expect( panel2.has.parentWithAnyChildButNoGrandchildren ).toBe( true )
+
+        expect( panel2.has.parentWithRightmostChildPanelObject.hasType() ).toBe('NestedPanel')
+        expect( panel2.has.parentWithRightmostChildPanelObject.id() ).toBe('panel-2-0')
+
+    })
+
+    test ('Panel-1-1: A child panel with sibling should have correct relationships', () => {
+
+        // PREP //
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+        // Create SVG
+        const mySvg = new container.Svg()
+
+
+        // Create panel 0
+        const panel0 = new navigator.NestedPanel()
+            .bgFill('#deebf7')
+            .x(200).y(25)
+            .yAxisLabels(true)
+            .update(0)
+
+        // Create panel-1-0 (first sibling)
+        const spawnObjectForPanel1_0 = panel0.objects('gender').objects('female')
+        const panel1_0 = new navigator.NestedPanel(panel0, spawnObjectForPanel1_0)
+        panel1_0.updateTopAncestor()
+
+        // Check inferred relationships for panel-1-0 (before it is given a sibling)
+        expect( panel1_0.has.beenAddedAsSibling ).toBe( false )
+        expect( panel1_0.has.numberOfSiblings ).toBe( 0 )
+        expect( panel1_0.has.parentWithNumberOfChildren ).toBe( 1 )
+        expect( panel1_0.has.sibling ).toBe( false )
+        expect( panel1_0.has.parentPanel ).toBe( true )
+        expect( panel1_0.has.grandParentPanel ).toBe( false )
+        expect( panel1_0.has.parentWithAnyChild ).toBe( true )
+        expect( panel1_0.has.parentWithIdenticalChild ).toBe( true )
+        expect( panel1_0.has.parentWithAnotherChild ).toBe( false )
+        expect( panel1_0.has.parentWithAnyGrandChild ).toBe( false )
+        expect( panel1_0.has.parentWithAnyChildButNoGrandchildren ).toBe( true )
+
+        expect( panel1_0.has.parentWithRightmostChildPanelObject.hasType() ).toBe('NestedPanel')
+        expect( panel1_0.has.parentWithRightmostChildPanelObject.id() ).toBe('panel-1-0')
+
+
+        // Create panel-1-1 (second sibling)
+        const spawnObjectForPanel1_1 = panel0.objects('gender').objects('male')
+        const panel1_1 = new navigator.NestedPanel(panel0, spawnObjectForPanel1_1, 'sibling')
+        panel1_1.updateTopAncestor()
+
+        // Check inferred relationships for panel-1-0 (after it is given a sibling)
+        expect( panel1_0.has.beenAddedAsSibling ).toBe( false )
+        expect( panel1_0.has.sibling ).toBe( true )
+        expect( panel1_0.has.numberOfSiblings ).toBe( 1 )
+        expect( panel1_0.has.parentWithNumberOfChildren ).toBe( 2 )
+        expect( panel1_0.has.parentPanel ).toBe( true )
+        expect( panel1_0.has.grandParentPanel ).toBe( false )
+        expect( panel1_0.has.parentWithAnyChild ).toBe( true )
+        expect( panel1_0.has.parentWithIdenticalChild ).toBe( true )
+        expect( panel1_0.has.parentWithAnotherChild ).toBe( true )
+        expect( panel1_0.has.parentWithAnyGrandChild ).toBe( false )
+        expect( panel1_0.has.parentWithAnyChildButNoGrandchildren ).toBe( true )
+
+        expect( panel1_0.has.parentWithRightmostChildPanelObject.hasType() ).toBe('NestedPanel')
+        expect( panel1_0.has.parentWithRightmostChildPanelObject.id() ).toBe('panel-1-1')
+
+
+        // Check inferred relationships for panel-1-1
+        expect( panel1_1.has.beenAddedAsSibling ).toBe( true )
+        expect( panel1_1.has.parentPanel ).toBe( true )
+        expect( panel1_1.has.numberOfSiblings ).toBe( 1 )
+        expect( panel1_1.has.parentWithNumberOfChildren ).toBe( 2 )
+        expect( panel1_1.has.grandParentPanel ).toBe( false )
+        expect( panel1_1.has.parentWithAnyChild ).toBe( true )
+        expect( panel1_1.has.parentWithIdenticalChild ).toBe( true )
+        expect( panel1_1.has.parentWithAnotherChild ).toBe( true )
+        expect( panel1_1.has.parentWithAnyGrandChild ).toBe( false )
+        expect( panel1_1.has.parentWithAnyChildButNoGrandchildren ).toBe( true )
+
+        expect( panel1_1.has.parentWithRightmostChildPanelObject.hasType() ).toBe('NestedPanel')
+        expect( panel1_1.has.parentWithRightmostChildPanelObject.id() ).toBe('panel-1-1')
+
+
+    })
+
+
+    test ('Panel-2-2: A grandchild panel with two siblings should have correct relationships inferred', () => {
+
+        // PREP //
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+        // Create SVG
+        const mySvg = new container.Svg()
+
+        jest.useFakeTimers()
+
+        // Create panel 0
+        const panel0 = new navigator.NestedPanel()
+            .bgFill('#deebf7')
+            .x(200).y(25)
+            .yAxisLabels(true)
+            .update(0)
+
+        // Create panel-1-0
+        const spawnObjectForPanel1_0 = panel0.objects('gender').objects('female')
+        const panel1_0 = new navigator.NestedPanel(panel0, spawnObjectForPanel1_0)
+        panel1_0.update()
+
+
+
+        // ADD PANEL 2-0 //
+
+        // Create panel-2-0 (first child of parent)
+        let panel2_0  // declaration must be outside the setTimer function
+        setTimeout( () => {
+            const spawnObjectForPanel2_0 = panel1_0.objects('class').objects('first-class')
+            panel2_0 = new navigator.NestedPanel(panel1_0, spawnObjectForPanel2_0)
+            panel2_0.update()
+        }, 1000)
+
+        jest.runOnlyPendingTimers()
+        panel2_0._inferParentChildRelationships()
+
+        // Check inferred relationships for panel-2-0 (before it is given a sibling)
+        expect( panel2_0.has.beenAddedAsSibling ).toBe( false )
+        expect( panel2_0.has.sibling ).toBe( false )
+        expect( panel2_0.has.numberOfSiblings ).toBe( 0 )
+        expect( panel2_0.has.parentWithNumberOfChildren ).toBe( 1 )
+        expect( panel2_0.has.parentPanel ).toBe( true )
+        expect( panel2_0.has.grandParentPanel ).toBe( true )
+        expect( panel2_0.has.parentWithAnyChild ).toBe( true )
+        expect( panel2_0.has.parentWithIdenticalChild ).toBe( true )
+        expect( panel2_0.has.parentWithAnotherChild ).toBe( false )
+        expect( panel2_0.has.parentWithAnyGrandChild ).toBe( false )
+        expect( panel2_0.has.parentWithAnyChildButNoGrandchildren ).toBe( true )
+
+        expect( panel2_0.has.parentWithRightmostChildPanelObject.hasType() ).toBe('NestedPanel')
+        expect( panel2_0.has.parentWithRightmostChildPanelObject.id() ).toBe('panel-2-0')
+
+
+        // ADD PANEL 2-1 //
+
+        // Create panel-2-1 (first sibling)
+        let panel2_1
+        setTimeout( () => {
+            const spawnObjectForPanel2_1 = panel1_0.objects('class').objects('second-class')
+            panel2_1 = new navigator.NestedPanel(panel1_0, spawnObjectForPanel2_1, 'sibling')
+            panel2_1.update()
+
+        }, 2000)
+
+        jest.runOnlyPendingTimers()
+        panel2_1._inferParentChildRelationships()
+
+        // Check inferred relationships for panel-2-1 (first sibling)
+        expect( panel2_1.has.beenAddedAsSibling ).toBe( true )
+        expect( panel2_1.has.sibling ).toBe( true )
+        expect( panel2_1.has.numberOfSiblings ).toBe( 1 )
+        expect( panel2_1.has.parentWithNumberOfChildren ).toBe( 2 )
+        expect( panel2_1.has.parentPanel ).toBe( true )
+        expect( panel2_1.has.grandParentPanel ).toBe( true )
+        expect( panel2_1.has.parentWithAnyChild ).toBe( true )
+        expect( panel2_1.has.parentWithIdenticalChild ).toBe( true )
+        expect( panel2_1.has.parentWithAnotherChild ).toBe( true )
+        expect( panel2_1.has.parentWithAnyGrandChild ).toBe( false )
+        expect( panel2_1.has.parentWithAnyChildButNoGrandchildren ).toBe( true )
+
+        expect( panel2_1.has.parentWithRightmostChildPanelObject.hasType() ).toBe('NestedPanel')
+        expect( panel2_1.has.parentWithRightmostChildPanelObject.id() ).toBe('panel-2-1')
+
+
+
+        // ADD PANEL 2-2 //
+
+        // Create panel-2-2 (second sibling)
+        let panel2_2
+        setTimeout( () => {
+            const spawnObjectForPanel2_2 = panel1_0.objects('class').objects('third-class')
+            panel2_2 = new navigator.NestedPanel(panel1_0, spawnObjectForPanel2_2, 'sibling')
+            panel2_2.update()
+        }, 3000)
+
+
+        jest.runOnlyPendingTimers()
+        panel2_2._inferParentChildRelationships()
+
+        // Check inferred relationships for panel-2-2 (second sibling)
+        expect( panel2_2.has.beenAddedAsSibling ).toBe( true )
+        expect( panel2_2.has.sibling ).toBe( true )
+        expect( panel2_2.has.numberOfSiblings ).toBe( 2 )
+        expect( panel2_2.has.parentWithNumberOfChildren ).toBe( 3 )
+        expect( panel2_2.has.parentPanel ).toBe( true )
+        expect( panel2_2.has.grandParentPanel ).toBe( true )
+        expect( panel2_2.has.parentWithAnyChild ).toBe( true )
+        expect( panel2_2.has.parentWithIdenticalChild ).toBe( true )
+        expect( panel2_2.has.parentWithAnotherChild ).toBe( true )
+        expect( panel2_2.has.parentWithAnyGrandChild ).toBe( false )
+        expect( panel2_2.has.parentWithAnyChildButNoGrandchildren ).toBe( true )
+
+        expect( panel2_2.has.parentWithRightmostChildPanelObject.hasType() ).toBe('NestedPanel')
+        expect( panel2_2.has.parentWithRightmostChildPanelObject.id() ).toBe('panel-2-2')
+
+
+
+        // CHECK FINAL STATE //
+
+        jest.runAllTimers()
+        panel2_0._inferParentChildRelationships()
+        panel2_1._inferParentChildRelationships()
+        panel2_2._inferParentChildRelationships()
+
+
+        // Check inferred relationships for panel-2-0 (after it is given a sibling)
+        expect( panel2_0.has.beenAddedAsSibling ).toBe( false )
+        expect( panel2_0.has.sibling ).toBe( true )
+        expect( panel2_0.has.numberOfSiblings ).toBe( 2 )
+        expect( panel2_0.has.parentWithNumberOfChildren ).toBe( 3 )
+        expect( panel2_0.has.parentPanel ).toBe( true )
+        expect( panel2_0.has.grandParentPanel ).toBe( true )
+        expect( panel2_0.has.parentWithAnyChild ).toBe( true )
+        expect( panel2_0.has.parentWithIdenticalChild ).toBe( true )
+        expect( panel2_0.has.parentWithAnotherChild ).toBe( true )
+        expect( panel2_0.has.parentWithAnyGrandChild ).toBe( false )
+        expect( panel2_0.has.parentWithAnyChildButNoGrandchildren ).toBe( true )
+
+        expect( panel2_0.has.parentWithRightmostChildPanelObject.hasType() ).toBe('NestedPanel')
+        expect( panel2_0.has.parentWithRightmostChildPanelObject.id() ).toBe('panel-2-2')
+
+
+
+    })
+
+    
+    
+    
+})

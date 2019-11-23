@@ -231,7 +231,6 @@ setTimeout( () => {
 //// PANEL: COMPARISON VIEW  ////
 
 comparisonPanel = new navigator.NestedPanel()
-    .id('parent-panel')
     .bgFill('#deebf7')
     .colorSet('Viridis')
     .x(2000).y(distanceOfVisualTestsFromTopOfWindow)
@@ -243,15 +242,21 @@ spawnObjectForComparisonChild1 = comparisonPanel.objects('gender').objects('fema
 
 comparisonChild1 = new navigator.NestedPanel(comparisonPanel, spawnObjectForComparisonChild1)
 comparisonChild1
-    .id('comparison-panel-1')
     .update()
 
 spawnObjectForComparisonChild2 = comparisonPanel.objects('gender').objects('male')
 
 comparisonChild2 = new navigator.NestedPanel(comparisonPanel, spawnObjectForComparisonChild2, 'sibling')
 comparisonChild2
-    .id('comparison-panel-1')
     .update()
+
+spawnObjectForComparisonChild3 = comparisonPanel.objects('status').objects('died')
+
+comparisonChild3 = new navigator.NestedPanel(comparisonPanel, spawnObjectForComparisonChild3, 'sibling')
+comparisonChild3
+    // .id('comparison-panel-3')
+    .update()
+
 
 // //// DATASET  ////
 //
@@ -301,7 +306,7 @@ comparisonChild2
 
 
 //// NAVIGATOR ////
-const distanceBetweenNavigators = 1200
+const distanceBetweenNavigators = 1600
 
 // Navigator 1
 

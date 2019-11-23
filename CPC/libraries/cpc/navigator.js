@@ -75,11 +75,9 @@
             summaryStacks.fromNestedMap(levelZeroDatasetSummary)
 
 
-            this._currentPanelDepth += 1
-            const panelId = `panel-${this._currentPanelDepth}`
+
             const panelObject = new NestedPanel(this.select())
                 .stacks(summaryStacks)
-                .id(panelId)
                 .bgText('Dataset')
                 .bgTextFill('white')
                 .height(600)   // TODO: Magic number removed
@@ -87,11 +85,17 @@
 
             panelObject.yAxisLabels(true) // TODO: Why is this not chainable with the setters above?
 
-            this.objects(panelId, panelObject)
 
             this.colorSet(this._colorSet)
 
             this._addListenerToFirstPanel()
+
+            // Update object registry
+            this.objects(panelObject.id(), panelObject)
+
+            // Update instance registry
+            this._lastCreatedPanelName = panelObject.id()
+            this._currentPanelDepth += 1
 
         }
 
@@ -400,10 +404,6 @@
 
         _createChildPanelBasedOnStacks(drilldownResultStacks) {
 
-            // Update instance registry
-            this._currentPanelDepth += 1
-            this._lastCreatedPanelName = `panel-${this._currentPanelDepth}`
-
             const childIsASibling = this._modifierKeyPressedWithLastClick === 'shift'
 
             let childPanelObject
@@ -421,14 +421,18 @@
                   childPanelObject.animation.duration.extendBridge
                 + childPanelObject.animation.duration.maximizePanelCover
 
-            childPanelObject.stacks(drilldownResultStacks)
-                .id(this._lastCreatedPanelName)
+            childPanelObject
+                .stacks(drilldownResultStacks)
                 .bgText(this._lastClickedCategoryName)
                 .bgTextFill('white')
                 .update(totalDurationOfChildPanelInitializationAnimations)  // If too short, update duration cuts off animation times in Panel object.
 
             // Add the newly related child panel to objects registry
-            this.objects(this._lastCreatedPanelName, childPanelObject)
+            this.objects(childPanelObject.id(), childPanelObject)
+
+            // Update instance registry
+            this._lastCreatedPanelName = childPanelObject.id()
+            this._currentPanelDepth += 1
 
 
             // Remove categories of the child panel that are already represented by the child panel's background
@@ -468,7 +472,7 @@
                 // Clear object registry from the removed panels
                 this.removeLast(numberOfExtraPanels)
 
-                this._lastClickedPanelObject.childrenObjects.clear()
+                this._lastClickedPanelObject.childrenPanels.clear()
             }
         }
 
@@ -614,14 +618,9 @@
             // TODO: Container.objects() implementation SHOULD be changed so that _backgroundObject and _bridgeObject would also be included in objects()
             this._createBackgroundObject()
 
-
-
             this._createChartsBasedOnStacksData()
 
             this.update(0)
-
-
-
 
         }
 
@@ -1244,11 +1243,17 @@
 
     class NestedPanel extends Panel {
 
-
         constructor(parentContainerSelectionOrObject, objectToSpawnFrom, addAs='singleton') {
 
             // Superclass Init //
             super(...arguments)
+
+            // Register arguments
+            this.arguments = {
+                parentContainerSelectionOrObject: parentContainerSelectionOrObject,
+                objectToSpawnFrom: objectToSpawnFrom,
+                addAs: addAs
+            }
 
             this.class('panel')
                 .update()
@@ -1270,72 +1275,98 @@
             }
 
 
-            // Private Parameters //
-            this._objectToSpawnFrom = objectToSpawnFrom
+            this.objectToSpawnFrom = this.arguments.objectToSpawnFrom
 
-            this._thisPanelIsBeingEmbeddedAsSiblingOfAnotherPanel = ( addAs === 'sibling' )
 
-            let thisPanelIsBeingEmbeddedInAnotherPanel = arguments.length
-                ?  parentContainerSelectionOrObject.hasType( this.hasType() )
-                : false
-
-            if (thisPanelIsBeingEmbeddedInAnotherPanel && !objectToSpawnFrom) {
-                throw Error('The panel is specified to be a child of another panel, but no object is specified as spawn source (missing argument).')
-            }
-
-            this.childrenObjects = new Map()
-
-            this.parentObject = thisPanelIsBeingEmbeddedInAnotherPanel
+            // This inference must be done separately from others, and first. Do not move to _inferParentChildRelationships method.
+            this.parentPanel = (
+                   this.arguments.parentContainerSelectionOrObject
+                && this.arguments.parentContainerSelectionOrObject.hasType( this.hasType() )
+                )
                 ? parentContainerSelectionOrObject
                 : null
 
-
+            this.childrenPanels = new Map()
             this._bridgeObject = null
 
 
-            this._depthIndexValue = 0   // 'value' added to name to separate the variable from the method of the otherwise same name
+            this.has = {
+                // childPanel: false, // Not supported. Should be calculated manually, real-time
+                sibling: false,
+                numberOfSiblings: 0,
+                parentWithNumberOfChildren: 0,
+                beenAddedAsSibling: false,
+                parentWithRightmostChildPanelObject: null,
+                parentPanel: false,
+                grandParentPanel: false,
+                parentWithAnyChild: false,
+                parentWithAnotherChild: false,
+                parentWithAnyGrandChild: false,
+                parentWithAnyChildButNoGrandchildren: false,
+                parentWithIdenticalChild: false
+            }
+            // At this point in code, this panel is still not added to parent panel
+            // Therefore, inferences are form a state where this panel is not yet in the picture
+            this._inferParentChildRelationships()
 
+            if (this.has.parentPanel && !objectToSpawnFrom) {
+                throw Error('The panel is specified to be a child of another panel, but no object is specified as spawn source (missing argument).')
+            }
 
-            this._bgFill = thisPanelIsBeingEmbeddedInAnotherPanel
-                ? this._objectToSpawnFrom.fill()
-                : this._defaults.bgFill
+            this._numberOfAlreadyExistingSiblingsBeforeAddingThisPanel =
+                this.has.parentWithNumberOfChildren
 
-            // TODO: Uniqueness of panel ID MUST be guaranteed. This method is not enough if there are columns in the data with a duplicate name
-            const panelId = thisPanelIsBeingEmbeddedInAnotherPanel
-                ? this._objectToSpawnFrom.id()
-                : 'Dataset'
+           this._depthIndexValue = this.has.parentPanel
+                ? this.parentPanel.depthIndex() + 1
+                : 0
+
+            const panelId =
+                this.has.parentPanel
+                ? this.has.parentWithIdenticalChild
+                    ? `panel-${ this.depthIndex() }-${ this.has.parentWithNumberOfChildren - 1 }`
+                    : `panel-${ this.depthIndex() }-${ this.has.parentWithNumberOfChildren }`
+                : 'panel-0-0'
             this.id(panelId).update(0)
 
-            if (thisPanelIsBeingEmbeddedInAnotherPanel) {
+
+            // Add defaults for the NestedPanel to the defaults property of Panel
+            this._defaults.paddingBetweenSiblingPanels = 10  // in pixels
+
+
+            this._bgFill = this.has.parentPanel
+                ? this.objectToSpawnFrom.fill()
+                : this._defaults.bgFill
+
+            if (this.has.parentPanel) {
 
                 this.x(  0 - this.width() - this.x() )
                     .update(0)  // start off-screen
 
 
-                if (this._objectToSpawnFrom){
+                if (this.objectToSpawnFrom){
 
                     this.preAnimationProperties = {
                         objectToSpawnFrom: {
-                            height: this._objectToSpawnFrom.height(),
-                            y: this._objectToSpawnFrom.y()
+                            height: this.objectToSpawnFrom.height(),
+                            y: this.objectToSpawnFrom.y()
                         }
                     }
                 }
 
-                const numberOfAlreadyExistingSiblings =
-                    this.parentObject.childrenObjects && this.parentObject.childrenObjects.size
-                        ? this.parentObject.childrenObjects.size
-                        : 0
 
                 this.postAnimationProperties = {
 
-                    x: this._thisPanelIsBeingEmbeddedAsSiblingOfAnotherPanel
-                        ? this.parentObject.x() + (this._outerPadding.left + this._outerPadding.right) * (numberOfAlreadyExistingSiblings + 1)
-                        : this.parentObject.x() + this._outerPadding.left,
+                    x: this.has.beenAddedAsSibling
+                        ?     this.parentPanel.x()
+                            + (this._outerPadding.left + this._outerPadding.right + this.width())
+                            * (this._numberOfAlreadyExistingSiblingsBeforeAddingThisPanel)
+                            + this._defaults.paddingBetweenSiblingPanels * (this._numberOfAlreadyExistingSiblingsBeforeAddingThisPanel)
 
-                    y: this.parentObject.y() + this._outerPadding.top,
-                    width: this.parentObject.width() + this._outerPadding.right,
-                    height: this.parentObject.height() - this._outerPadding.bottom
+                        : this.parentPanel.x() + this._outerPadding.left,
+
+                    y: this.parentPanel.y() + this._outerPadding.top,
+                    width: this.parentPanel.width() + this._outerPadding.right,
+                    height: this.parentPanel.height() - this._outerPadding.bottom
 
                 }
             }
@@ -1345,7 +1376,7 @@
             this.update(0)
 
             // Create as a child panel
-            if (thisPanelIsBeingEmbeddedInAnotherPanel) {
+            if (this.has.parentPanel) {
                 this._inferSpawnAnimationType()
                 this._embedAsChildPanel()
             }
@@ -1355,26 +1386,20 @@
 
         remove(){
 
-            // Establish conditions
-            const thereIsAParentPanel = (
-                this.parentObject
-                && this.parentObject.hasType( this.hasType() )
+            if ( this.has.parentPanel ){
 
-            )
-
-            if (thereIsAParentPanel){
                 // Prepare parent panels for removal of self
-                const parentPanel = this.parentObject
+                const parentPanel = this.parentPanel
 
                 parentPanel._resetVerticalInnerPadding()
                 parentPanel._recursivelyAlignChartsInParentPanelsWithChartsInThisPanel()
                 parentPanel.bgExtensionRight(0)
                 parentPanel._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
 
-                parentPanel.childrenObjects.forEach( (childrenPanelObject, childrenPanelName) => {
+                parentPanel.childrenPanels.forEach( (childrenPanelObject, childrenPanelName) => {
                     childrenPanelObject.select().node().remove()  // TODO: THIS IS A RUDIMENTARY LINE AND ADDED FOR PRESENTATION
                 })
-                parentPanel.childrenObjects.clear()
+                parentPanel.childrenPanels.clear()
 
             }
 
@@ -1388,8 +1413,8 @@
 
         _embedAsChildPanel() {
 
-            this.preAnimationProperties.objectToSpawnFrom.y = this._objectToSpawnFrom.y()
-            this.preAnimationProperties.objectToSpawnFrom.height = this._objectToSpawnFrom.height()
+            this.preAnimationProperties.objectToSpawnFrom.y = this.objectToSpawnFrom.y()
+            this.preAnimationProperties.objectToSpawnFrom.height = this.objectToSpawnFrom.height()
 
             if ( this.animation.spawnStyle === 'instant' ){
                 // console.log('instant')
@@ -1434,15 +1459,11 @@
 
             // Register the current object as a child of its parent panel
             const nameOfThisPanel = this.id()
-            this.parentObject.childrenObjects.set(nameOfThisPanel, this)
-
-            // Update depth index of the current panel (an indicator of how deep it is located in panel hierarchy)
-            const depthOfParent = this.parentObject.depthIndex()
-            this.depthIndex(depthOfParent + 1)
+            this.parentPanel.childrenPanels.set(nameOfThisPanel, this)
 
             // Set color set to be inherited from parent
-            this.colorSet( this.parentObject.colorSet() )
-            this.showAbsoluteValues( this.parentObject.showAbsoluteValues() )
+            this.colorSet( this.parentPanel.colorSet() )
+            this.showAbsoluteValues( this.parentPanel.showAbsoluteValues() )
 
         }
 
@@ -1454,9 +1475,9 @@
             this.select()
                 .attr( 'depthIndex', this.depthIndex() )
 
-            if (this._objectToSpawnFrom) {
+            if (this.objectToSpawnFrom) {
                 this._backgroundObject
-                    .fill( this._objectToSpawnFrom.fill()  )
+                    .fill( this.objectToSpawnFrom.fill()  )
                     .update()
             }
 
@@ -1469,7 +1490,7 @@
 
         _adjustAll() {
             super._adjustAll()
-            if( this._bridgeObject ){
+            if( !!this._bridgeObject ){
                 this._adjustBridgeProperties()
             }
         }
@@ -1481,18 +1502,18 @@
             const verticalCutPreventionOffset = 1  // for preventing vertical cuts that appear during zoom in some browsers
 
             // Formulas
-            const id = `${this._objectToSpawnFrom.id()}-bridge`
+            const bridgeId = `${ this.id() }-bridge`
                 , className = 'bridge'
-                , fill = this._objectToSpawnFrom.fill()
-                , x = this._objectToSpawnFrom.x() + this._objectToSpawnFrom.width() - verticalCutPreventionOffset
-                , y = this._objectToSpawnFrom.y()
-                , width = this.parentObject._innerPadding.right + (verticalCutPreventionOffset * 2)
-                , height = this._objectToSpawnFrom.height()
+                , fill = this.objectToSpawnFrom.fill()
+                , x = this.objectToSpawnFrom.x() + this.objectToSpawnFrom.width() - verticalCutPreventionOffset
+                , y = this.objectToSpawnFrom.y()
+                , width = this.parentPanel._innerPadding.right + (verticalCutPreventionOffset * 2)
+                , height = this.objectToSpawnFrom.height()
 
             // Create a bridge (with 0 width at the right edge of the element to spawn from)
             this._bridgeObject
                 .class( className )
-                .id( id )
+                .id( bridgeId )
                 .fill( fill )
                 .x( x )
                 .y( y )
@@ -1511,11 +1532,11 @@
 
         topmostAncestor(){
 
-            const selectParentPanel = (panel) => {return panel.parentObject}
+            const selectParentPanel = (panel) => {return panel.parentPanel}
 
             let topmostAncestorSoFar = this
-            while (topmostAncestorSoFar.parentObject
-            && topmostAncestorSoFar.parentObject.hasType( this.hasType() ) )
+            while (topmostAncestorSoFar.parentPanel
+            && topmostAncestorSoFar.parentPanel.hasType( this.hasType() ) )
             {
                 topmostAncestorSoFar = selectParentPanel(topmostAncestorSoFar)
             }
@@ -1541,8 +1562,8 @@
 
             if (this.animation.spawnStyle === 'extend' || 'retract' || 'retractAndExtend' || 'instant') {
 
-                const parentBgExtensionValue = this.parentObject.bgExtensionRight()
-                const temporaryMaximumBridgeWidthDuringAnimation = parentBgExtensionValue - this.parentObject._innerPadding.right
+                const parentBgExtensionValue = this.parentPanel.bgExtensionRight()
+                const temporaryMaximumBridgeWidthDuringAnimation = parentBgExtensionValue - this.parentPanel._innerPadding.right
 
                 this._adjustBridgeProperties()
                 // Expand the width of the bridge to its temporary maximum
@@ -1568,7 +1589,7 @@
             // Create a cover (initiate invisible)
             const childPanelCover = new shape.Rectangle()
                 .width(0)
-                .fill(this._objectToSpawnFrom.fill())
+                .fill(this.objectToSpawnFrom.fill())
                 .height(0)
                 .update(0)
 
@@ -1625,15 +1646,16 @@
 
         _recursivelyPropagateValuesFromThisPanelDOWNSTREAMandTriggerUpdates(thisPanel=this, transitionDuration){
 
+
             const thereIsAChildPanel = (
-                thisPanel.childrenObjects
-                && thisPanel.childrenObjects.size
+                !!thisPanel.childrenPanels
+                && thisPanel.childrenPanels.size
                 // && thisPanel.childObject.hasType( this.hasType() )
             )
 
             if( thereIsAChildPanel ){
 
-                this.childrenObjects.forEach( (childPanelObject, childPanelName) => {
+                this.childrenPanels.forEach( (childPanelObject, childPanelName) => {
 
                     // Update the children panel
                     childPanelObject
@@ -1643,7 +1665,7 @@
 
                     childPanelObject._adjustBridgeProperties()
                     childPanelObject._bridgeObject.update( transitionDuration )
-
+                    childPanelObject._updateParentChildRelationships()
 
                     // Call this function for children panel (so their children are subjected to this method too)
                     childPanelObject._recursivelyPropagateValuesFromThisPanelDOWNSTREAMandTriggerUpdates(childPanelObject)
@@ -1669,18 +1691,14 @@
          */
         _recursivelyTriggerUpdatesUPSTREAM(thisPanel=this, transitionDuration){
 
-            const thereIsAParentPanel = (
-                thisPanel.parentObject
-                && thisPanel.parentObject.hasType( thisPanel.hasType() ) )
-
-            if( thereIsAParentPanel ){
+            if( this.has.parentPanel ){
 
                 // Update the parent panel
-                thisPanel.parentObject
+                thisPanel.parentPanel
                     .update( transitionDuration )
 
                 // Call this function for child panel (so its child is subjected to this method)
-                this._recursivelyTriggerUpdatesUPSTREAM(thisPanel.parentObject)
+                this._recursivelyTriggerUpdatesUPSTREAM(thisPanel.parentPanel)
 
             }
 
@@ -1692,24 +1710,12 @@
 
             // Establish conditions
 
-            const thereIsAParentPanel = (
-                thisPanel.parentObject
-                && thisPanel.parentObject.hasType( this.hasType() )
-            )
-            const thereIsAGrandParentPanel = (
-                thereIsAParentPanel
-                && thisPanel.parentObject.parentObject
-                && thisPanel.parentObject.parentObject.hasType( this.hasType() )
-            )
-
-
-
-            if (thereIsAParentPanel){
+            if ( thisPanel.has.parentPanel ){
 
                 // Infer parent during recursion
                 const parentPanel = arguments.length
-                    ? thisPanel.parentObject
-                    : this.parentObject
+                    ? thisPanel.parentPanel
+                    : this.parentPanel
 
                 // Get padding values
                 const selfInnerPaddingTop = thisPanel.innerPaddingTop()
@@ -1724,7 +1730,7 @@
                     .innerPaddingBottom(selfInnerPaddingBottom + selfOuterPaddingBottom - selfOuterPaddingTop)
 
                 // Bubble up if parent also has a parent
-                if (thereIsAGrandParentPanel){
+                if ( thisPanel.has.grandParentPanel ){
                     this._recursivelyAlignChartsInParentPanelsWithChartsInThisPanel(parentPanel)
                 }
 
@@ -1738,35 +1744,17 @@
 
         _recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel(thisPanel=this) {
 
-            // Establish conditions
-            const thereIsAParentPanel = (
-                thisPanel.parentObject
-                && (  thisPanel.hasType( 'Panel' )
-                    || thisPanel.hasType( 'NestedPanel' )
-                )
-            )
-
-            const thereIsAGrandParentPanel = (
-                thereIsAParentPanel
-                && thisPanel.parentObject.parentObject
-                && (   thisPanel.parentObject.parentObject.hasType( 'Panel' )
-                    || thisPanel.parentObject.parentObject.hasType( 'NestedPanel' )
-                )
-            )
-
-
-
-            if ( thereIsAParentPanel ) {
+            if ( thisPanel.has.parentPanel ) {
 
                 // Infer parent during recursion
                 const parentPanel = arguments.length
-                    ? thisPanel.parentObject
-                    : this.parentObject
+                    ? thisPanel.parentPanel
+                    : this.parentPanel
 
 
                 // Calculate the rightward bg extension value
-                const numberOfSiblingsThatRemainOnLeftSide = parentPanel.childrenObjects && thisPanel._thisPanelIsBeingEmbeddedAsSiblingOfAnotherPanel
-                    ? parentPanel.childrenObjects.size
+                const numberOfSiblingsThatRemainOnLeftSide = parentPanel.childrenPanels && thisPanel.has.beenAddedAsSibling
+                    ? parentPanel.childrenPanels.size
                     : 0
 
                 const rightBgExtensionValueOfParent = (
@@ -1781,7 +1769,7 @@
 
 
                 // Bubble up if parent also has a parent
-                if ( thereIsAGrandParentPanel ){
+                if ( thisPanel.has.grandParentPanel ){
                     this._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel(parentPanel)
                 }
 
@@ -1791,54 +1779,144 @@
 
         }
 
+        /**
+         * Alias for `_inferParentChildRelationships`
+         */
+        _updateParentChildRelationships(){
+            this._inferParentChildRelationships()
+        }
+
+
+        _inferParentChildRelationships(){
+
+            // TODO: Child panels should be supported
+            // Does this panel has a child panel?
+            // NOT SUPPORTED. This information should be computed manually when needed.
+            //
+            // this.has.childPanel = (
+            //     this.childrenObjects
+            //     && this.childrenObjects.size
+            // )
+
+            // Does this panel have a parent panel?
+            this.has.parentPanel = (
+                !!this.parentPanel
+            )
+
+            // Does this panel have a grandparent panel?
+            this.has.grandParentPanel = (
+                  this.has.parentPanel
+               && !!this.parentPanel.parentPanel
+               && (   this.parentPanel.parentPanel.hasType( 'Panel' )
+                   || this.parentPanel.parentPanel.hasType( 'NestedPanel' )
+               )
+            )
+
+            // Does parent have a child?
+            // NOTE: This is not an unnecessary condition, even though it sounds like the parent will always have a child---at least the current panel being embedded.
+            // However, if this method is called before this panel is added (e.g, in constructor of this panel), this condition returns useful information.
+            this.has.parentWithAnyChild = (
+                   this.has.parentPanel
+                && !!this.parentPanel.childrenPanels
+                && !!this.parentPanel.childrenPanels.size
+            )
+
+            // Is the existing child of parent identical to the current panel that is being created?
+            this.has.parentWithIdenticalChild = (
+                this.has.parentWithAnyChild
+                && Array.from( this.parentPanel.childrenPanels.values() ).some( (childPanelObject) => {
+                    return ( childPanelObject.objectToSpawnFrom === this.objectToSpawnFrom )
+                })
+            )
+
+            // Does parent have a child that is different from the current one?
+            this.has.parentWithAnotherChild = (
+                   this.has.parentWithAnyChild
+                && Array.from( this.parentPanel.childrenPanels.values() ).some( (childPanelObject) => {
+                    return childPanelObject.objectToSpawnFrom !== this.objectToSpawnFrom
+                })
+            )
+
+            // Does this panel have siblings?
+            this.has.sibling = (
+                this.has.parentWithAnotherChild
+            )
+
+            // How many siblings does this panel have?
+            this.has.numberOfSiblings =
+                !!this.has.sibling
+                    ? this.parentPanel.childrenPanels.size - 1
+                    : 0
+
+            // How many children does the parent panel have?
+            this.has.parentWithNumberOfChildren =
+                !!this.has.parentPanel
+                    ? this.parentPanel.childrenPanels.size
+                    : 0
+
+            // Is this panel being added as a sibling?
+            this.has.beenAddedAsSibling = (
+                this.arguments.addAs === 'sibling'
+            )
+
+            // Does parent have a grandchild?
+            this.has.parentWithAnyGrandChild = (
+                   this.has.parentWithAnyChild
+                && Array.from( this.parentPanel.childrenPanels.values() ).some( (childPanelObject) => {
+                    return (!!childPanelObject.childrenPanels
+                         && !!childPanelObject.childrenPanels.size
+                    )
+                })
+            )
+
+            // Does parent have a child but no grandchildren?
+            this.has.parentWithAnyChildButNoGrandchildren = (
+                   this.has.parentWithAnyChild
+                && !this.has.parentWithAnyGrandChild
+            )
+
+            // What panel object is the last added/rightmost one?
+            this.has.parentWithRightmostChildPanelObject = (
+                   this.has.parentPanel
+                && this.has.parentWithNumberOfChildren > 0
+                    ? Array.from( this.parentPanel.childrenPanels.values() ).slice(-1)[0] // Get the last child of parent
+                    : null
+            )
+
+        }
+
 
         _inferSpawnAnimationType(){
 
-            // Establish parent-child relationships //
-            const parentAlreadyHasChild =
-                   this.parentObject.childrenObjects
-                && this.parentObject.childrenObjects.size
-            // i.e., an existing child prior to this panel's addition as a child
-
-
-            let parentHasGrandChild = false
-            if ( parentAlreadyHasChild ){
-                this.parentObject.childrenObjects.forEach( (childPanelObject, childPanelName) => {
-
-                    if ( childPanelObject.childrenObjects && childPanelObject.childrenObjects.size ) {
-                        parentHasGrandChild = true
-                    }
-
-                })
-            }
-
-            const parentHasChildButNoGrandchildren =
-                   parentAlreadyHasChild
-                && !parentHasGrandChild
-
-
-            let anExistingChildIsIdenticalToThisPanel = false
-            if ( parentAlreadyHasChild ){
-                this.parentObject.childrenObjects.forEach( (childPanelObject, childPanelName) => {
-
-                    if(childPanelObject._objectToSpawnFrom === this._objectToSpawnFrom){
-                        anExistingChildIsIdenticalToThisPanel = true
-                    }
-                })
-            }
-
-
-
-            const addingAsSibling = this._thisPanelIsBeingEmbeddedAsSiblingOfAnotherPanel
-
             // Infer animation type from parent-child relationships //
-            const append = addingAsSibling && parentHasChildButNoGrandchildren && !anExistingChildIsIdenticalToThisPanel
-            const instant = anExistingChildIsIdenticalToThisPanel && parentHasChildButNoGrandchildren && !addingAsSibling
-            const lateralSwitch = !anExistingChildIsIdenticalToThisPanel && parentHasChildButNoGrandchildren && !addingAsSibling
-            const extend = !parentAlreadyHasChild && !addingAsSibling
-            const retract = parentHasGrandChild && anExistingChildIsIdenticalToThisPanel && !addingAsSibling
-            const retractAndExtend = parentHasGrandChild && !anExistingChildIsIdenticalToThisPanel && !addingAsSibling
+            const append =
+                this.has.beenAddedAsSibling
+                && this.has.parentWithAnyChildButNoGrandchildren
+                && !this.has.parentWithIdenticalChild
 
+            const instant =
+                this.has.parentWithIdenticalChild
+                && this.has.parentWithAnyChildButNoGrandchildren
+                && !this.has.beenAddedAsSibling
+
+            const lateralSwitch =
+                !this.has.parentWithIdenticalChild
+                && this.has.parentWithAnyChildButNoGrandchildren
+                && !this.has.beenAddedAsSibling
+
+            const extend =
+                !this.has.parentWithAnyChild
+                && !this.has.beenAddedAsSibling
+
+            const retract =
+                this.has.parentWithAnyGrandChild
+                && this.has.parentWithIdenticalChild
+                && !this.has.beenAddedAsSibling
+
+            const retractAndExtend =
+                this.has.parentWithAnyGrandChild
+                && !this.has.parentWithIdenticalChild
+                && !this.has.beenAddedAsSibling
 
 
             // Register animation type for panel //
@@ -1873,7 +1951,7 @@
             if( this.animation.spawnStyle === 'retract' ){ duration = this.animation.duration.retract }
 
 
-            const firstAlreadyExistingSibling = Array.from(this.parentObject.childrenObjects)[0][1]
+            const firstAlreadyExistingSibling = Array.from(this.parentPanel.childrenPanels)[0][1]
 
             // Create a copy of the existing bridge, immediately
             const bridgeObjectOfFirstSibling = firstAlreadyExistingSibling._bridgeObject
@@ -1926,7 +2004,7 @@
             // Change the color of the copy background
             siblingBackgroundCover
                 .width(this.postAnimationProperties.width)
-                .fill(this._objectToSpawnFrom.fill())
+                .fill(this.objectToSpawnFrom.fill())
                 .update(duration)
 
 
@@ -1961,11 +2039,11 @@
 
         _removeExistingSiblingPanels() {
 
-            this.parentObject.childrenObjects.forEach( (childPanelObject, childPanelName) => {
+            this.parentPanel.childrenPanels.forEach( (childPanelObject, childPanelName) => {
                 childPanelObject.remove()
             })
 
-            this.parentObject.childrenObjects.clear()
+            this.parentPanel.childrenPanels.clear()
         }
 
 
@@ -1982,13 +2060,13 @@
                 super.innerPaddingTop(value)
 
                 // Adjust bridge position
-                if ( this.childrenObjects.size ){
+                if ( !!this.childrenPanels.size ){
 
-                    this.childrenObjects.forEach( (childObject, childName) => {
+                    this.childrenPanels.forEach( (childObject, childName) => {
 
                         childObject._bridgeObject
-                            .y(childObject._objectToSpawnFrom.y())
-                            .height(childObject._objectToSpawnFrom.height())
+                            .y(childObject.objectToSpawnFrom.y())
+                            .height(childObject.objectToSpawnFrom.height())
                     })
 
                 }
@@ -2012,13 +2090,13 @@
                 super.innerPaddingBottom(value)
 
                 // Adjust bridge position
-                if ( this.childrenObjects.size ) {
+                if ( !!this.childrenPanels.size ) {
 
-                    this.childrenObjects.forEach( (childObject, childName) => {
+                    this.childrenPanels.forEach( (childObject, childName) => {
 
                         childObject._bridgeObject
-                            .y(childObject._objectToSpawnFrom.y())
-                            .height(childObject._objectToSpawnFrom.height())
+                            .y(childObject.objectToSpawnFrom.y())
+                            .height(childObject.objectToSpawnFrom.height())
                     })
 
                 }
@@ -2042,9 +2120,9 @@
                 super.colorSet(value)
 
                 // Set color of background and bridge
-                if (this._objectToSpawnFrom){
+                if ( !!this.objectToSpawnFrom ){
 
-                    const spawnSourceColor = this._objectToSpawnFrom.fill()
+                    const spawnSourceColor = this.objectToSpawnFrom.fill()
 
                     this._bridgeObject.fill( spawnSourceColor  )
 
