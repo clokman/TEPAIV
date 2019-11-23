@@ -1316,7 +1316,7 @@
             this._numberOfAlreadyExistingSiblingsBeforeAddingThisPanel =
                 this.has.parentWithNumberOfChildren
 
-           this._depthIndexValue = this.has.parentPanel
+            this._depthIndexValue = this.has.parentPanel
                 ? this.parentPanel.depthIndex() + 1
                 : 0
 
@@ -1330,8 +1330,10 @@
 
 
             // Add defaults for the NestedPanel to the defaults property of Panel
+            // NOTE: Defaults should ONLY be called to get default values, and not current values
             this._defaults.paddingBetweenSiblingPanels = 10  // in pixels
 
+            this._paddingBetweenSiblingPanels = this._defaults.paddingBetweenSiblingPanels
 
             this._bgFill = this.has.parentPanel
                 ? this.objectToSpawnFrom.fill()
@@ -1353,14 +1355,16 @@
                     }
                 }
 
+                const siblingPanelOnLeftSide = this.has.parentWithRightmostChildPanelObject
 
                 this.postAnimationProperties = {
 
                     x: this.has.beenAddedAsSibling
-                        ?     this.parentPanel.x()
-                            + (this._outerPadding.left + this._outerPadding.right + this.width())
-                            * (this._numberOfAlreadyExistingSiblingsBeforeAddingThisPanel)
-                            + this._defaults.paddingBetweenSiblingPanels * (this._numberOfAlreadyExistingSiblingsBeforeAddingThisPanel)
+
+                        ?    siblingPanelOnLeftSide.x()
+                           + siblingPanelOnLeftSide.width()
+                           + siblingPanelOnLeftSide._outerPadding.right
+                           + this._paddingBetweenSiblingPanels
 
                         : this.parentPanel.x() + this._outerPadding.left,
 
