@@ -1923,7 +1923,7 @@ describe ('PANEL IDS: Panel IDs must be generated correctly', () => {
         const mySvg = new container.Svg()
 
 
-        myPanel = new navigator.NestedPanel()
+        const myPanel = new navigator.NestedPanel()
             .bgFill('#deebf7')
             .x(200)
             .y(25)
@@ -1945,7 +1945,7 @@ describe ('PANEL IDS: Panel IDs must be generated correctly', () => {
         const mySvg = new container.Svg()
 
         // Create panel 0
-        parentPanel = new navigator.NestedPanel()
+        const parentPanel = new navigator.NestedPanel()
             .bgFill('#deebf7')
             .x(200).y(25)
             .yAxisLabels(true)
@@ -1954,9 +1954,9 @@ describe ('PANEL IDS: Panel IDs must be generated correctly', () => {
 
         // SIBLING #1.1 //
         // Create sibling panel
-        spawnObjectForSiblingPanel1 = parentPanel.objects('gender').objects('female')
+        const spawnObjectForSiblingPanel1 = parentPanel.objects('gender').objects('female')
 
-        siblingPanel1 = new navigator.NestedPanel(parentPanel, spawnObjectForSiblingPanel1)
+        const siblingPanel1 = new navigator.NestedPanel(parentPanel, spawnObjectForSiblingPanel1)
         siblingPanel1.update()
 
         // Check the newly created sibling panel's ID
@@ -1965,9 +1965,9 @@ describe ('PANEL IDS: Panel IDs must be generated correctly', () => {
 
         // SIBLING #1.2 //
         // Create sibling panel
-        spawnObjectForSiblingPanel2 = parentPanel.objects('gender').objects('male')
+        const spawnObjectForSiblingPanel2 = parentPanel.objects('gender').objects('male')
 
-        siblingPanel2 = new navigator.NestedPanel(parentPanel, spawnObjectForSiblingPanel2, 'sibling')
+        const siblingPanel2 = new navigator.NestedPanel(parentPanel, spawnObjectForSiblingPanel2, 'sibling')
         siblingPanel2.update()
 
         // Check the newly created sibling panel's ID
@@ -1976,9 +1976,9 @@ describe ('PANEL IDS: Panel IDs must be generated correctly', () => {
 
         // SIBLING #1.3 //
         // Create sibling panel
-        spawnObjectForSiblingPanel3 = parentPanel.objects('status').objects('died')
+        const spawnObjectForSiblingPanel3 = parentPanel.objects('status').objects('died')
 
-        siblingPanel3 = new navigator.NestedPanel(parentPanel, spawnObjectForSiblingPanel3, 'sibling')
+        const siblingPanel3 = new navigator.NestedPanel(parentPanel, spawnObjectForSiblingPanel3, 'sibling')
         siblingPanel3.update()
 
         // Check the newly created sibling panel's ID
@@ -2068,7 +2068,7 @@ describe ('PANEL IDS: Panel IDs must be generated correctly', () => {
 
 
         // Create panel 0
-        parentPanel = new navigator.NestedPanel()
+        const parentPanel = new navigator.NestedPanel()
             .bgFill('#deebf7')
             .x(200).y(25)
             .yAxisLabels(true)
@@ -2077,9 +2077,9 @@ describe ('PANEL IDS: Panel IDs must be generated correctly', () => {
 
         // Create panel 1
         // Create a child panel
-        spawnObjectForChildPanel = parentPanel.objects('gender').objects('female')
+        const spawnObjectForChildPanel = parentPanel.objects('gender').objects('female')
 
-        childPanel = new navigator.NestedPanel(parentPanel, spawnObjectForChildPanel)
+        const childPanel = new navigator.NestedPanel(parentPanel, spawnObjectForChildPanel)
         childPanel.update()
 
         // Check the newly created child panel's ID
@@ -2089,11 +2089,11 @@ describe ('PANEL IDS: Panel IDs must be generated correctly', () => {
 
         // Re-Create (refresh) panel 1
 
-        childPanel = new navigator.NestedPanel(parentPanel, spawnObjectForChildPanel)
-        childPanel.update()
+        const childPanel2 = new navigator.NestedPanel(parentPanel, spawnObjectForChildPanel)
+        childPanel2.update()
 
         // Check the newly created child panel's ID
-        expect( childPanel.id() ).toBe( 'panel-1-0' )
+        expect( childPanel2.id() ).toBe( 'panel-1-0' )
 
 
     })
