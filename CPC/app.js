@@ -6,7 +6,7 @@
 
 //// SVG  ////
 
-mySvg = new container.Svg(15000, 15000)
+let mySvg = new container.Svg(15000, 15000)
 
 
 // //// RECTANGLE  ////
@@ -103,6 +103,7 @@ myChart.chartLabel('MY CHART LABEL').update()
 
 const parentElementForPanel = d3.select('body').select('svg')
 myPanel = new navigator.Panel()
+    .bgText('myPanel')
     .bgFill('#deebf7')
     .x(700).y(distanceOfVisualTestsFromTopOfWindow)
     .yAxisLabels(true)
@@ -112,6 +113,7 @@ myPanel.yAxisLabels()
 
 
 myPanel2 = new navigator.Panel()
+    .bgText('myPanel2')
     .bgFill('#deebf7')
     .x(850).y(distanceOfVisualTestsFromTopOfWindow)
     .update()
@@ -121,6 +123,7 @@ myPanel2.objects('status').colorScheme('Oranges').update()
 
 
 myPanel3 = new navigator.Panel()
+    .bgText('myPanel3')
     .bgFill('#deebf7')
     .x(750).y(distanceOfVisualTestsFromTopOfWindow)
     .update()
@@ -130,6 +133,7 @@ myPanel3.objects('status').colorScheme('BuPu').update()
 
 
 myPanel4 = new navigator.Panel()
+    .bgText('myPanel4')
     .bgFill('#deebf7')
     .x(1150).y(distanceOfVisualTestsFromTopOfWindow)
     .update()
@@ -145,6 +149,7 @@ myPanel4.objects('status').colorScheme('Greys').update()
 nestedPanel = new navigator.NestedPanel()
     .id('parent-panel')
     .bgFill('#deebf7')
+    .bgText('nestedPanel')
     .colorSet('Viridis')
     .x(1400).y(distanceOfVisualTestsFromTopOfWindow)
     .update(0)
@@ -232,30 +237,47 @@ setTimeout( () => {
 
 comparisonPanel = new navigator.NestedPanel()
     .bgFill('#deebf7')
+    .bgText('comparisonPanel')
     .colorSet('Viridis')
     .x(2000).y(distanceOfVisualTestsFromTopOfWindow)
     .yAxisLabels(true)
     .update(0)
 
 
-spawnObjectForComparisonChild1 = comparisonPanel.objects('gender').objects('female')
+setTimeout( () => {
+    
+    spawnObjectForComparisonChild1 = comparisonPanel.objects('gender').objects('female')
+    
+    comparisonChild1 = new navigator.NestedPanel(comparisonPanel, spawnObjectForComparisonChild1)
+    comparisonChild1
+        .bgText('comp.Ch.1')
+        .update()
+    
+}, 5000)
 
-comparisonChild1 = new navigator.NestedPanel(comparisonPanel, spawnObjectForComparisonChild1)
-comparisonChild1
-    .update()
 
-spawnObjectForComparisonChild2 = comparisonPanel.objects('gender').objects('male')
 
-comparisonChild2 = new navigator.NestedPanel(comparisonPanel, spawnObjectForComparisonChild2, 'sibling')
-comparisonChild2
-    .update()
+setTimeout( () => {
+    spawnObjectForComparisonChild2 = comparisonPanel.objects('gender').objects('male')
 
-spawnObjectForComparisonChild3 = comparisonPanel.objects('status').objects('died')
+    comparisonChild2 = new navigator.NestedPanel(comparisonPanel, spawnObjectForComparisonChild2, 'sibling')
+    comparisonChild2
+        .bgText('comp.Ch.2')
+        .update()
+    
+}, 6000)
 
-comparisonChild3 = new navigator.NestedPanel(comparisonPanel, spawnObjectForComparisonChild3, 'sibling')
-comparisonChild3
-    // .id('comparison-panel-3')
-    .update()
+
+setTimeout( () => {
+    
+    spawnObjectForComparisonChild3 = comparisonPanel.objects('status').objects('died')
+    comparisonChild3 = new navigator.NestedPanel(comparisonPanel, spawnObjectForComparisonChild3, 'sibling')
+    comparisonChild3
+        .bgText('comp.Ch.3')
+        .update()
+    
+}, 7000)
+
 
 
 // //// DATASET  ////
