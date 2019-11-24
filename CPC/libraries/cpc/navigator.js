@@ -1309,6 +1309,10 @@
             // Therefore, inferences are form a state where this panel is not yet in the picture
             this._inferParentChildRelationships()
 
+            // Alias. At this point in code, these are equal (once nestedPanel is fully instantiated, parentWithRightmostChildPanelObject would be inferred as the current panel ):
+            this._leftSiblingObject = this.has.parentWithRightmostChildPanelObject
+
+
             if (this.has.parentPanel && !objectToSpawnFrom) {
                 throw Error('The panel is specified to be a child of another panel, but no object is specified as spawn source (missing argument).')
             }
@@ -1331,7 +1335,7 @@
 
             // Add defaults for the NestedPanel to the defaults property of Panel
             // NOTE: Defaults should ONLY be called to get default values, and not current values
-            this._defaults.paddingBetweenSiblingPanels = 10  // in pixels
+            this._defaults.paddingBetweenSiblingPanels = 5  // in pixels
 
             this._paddingBetweenSiblingPanels = this._defaults.paddingBetweenSiblingPanels
 
@@ -1503,26 +1507,42 @@
 
         _adjustBridgeProperties() {
 
-            const verticalCutPreventionOffset = 1  // for preventing vertical cuts that appear during zoom in some browsers
 
-            // Formulas
-            const bridgeId = `${ this.id() }-bridge`
-                , className = 'bridge'
-                , fill = this.objectToSpawnFrom.fill()
-                , x = this.objectToSpawnFrom.x() + this.objectToSpawnFrom.width() - verticalCutPreventionOffset
-                , y = this.objectToSpawnFrom.y()
-                , width = this.parentPanel._innerPadding.right + (verticalCutPreventionOffset * 2)
-                , height = this.objectToSpawnFrom.height()
+            if (this.has.parentPanel){
 
-            // Create a bridge (with 0 width at the right edge of the element to spawn from)
-            this._bridgeObject
-                .class( className )
-                .id( bridgeId )
-                .fill( fill )
-                .x( x )
-                .y( y )
-                .width( width )
-                .height( height )
+                // Formulas
+
+                const rightEdgeOfChartsInParentPanel = this.parentPanel.x() + this.parentPanel.width() - this.parentPanel._innerPadding.right
+                const leftEdgeOfThisPanel = this.postAnimationProperties.x
+                const distanceBetweenThisPanelBackgroundAndParentPanelCharts = leftEdgeOfThisPanel - ( rightEdgeOfChartsInParentPanel)
+
+                const verticalTearPreventionOffset = 1  // for preventing vertical cuts that appear during zoom in some browsers
+                const extraDistanceForSiblingPanelIfNecessary = this.has.parentWithAnotherChild
+                    ? this._paddingBetweenSiblingPanels
+                    : 0
+
+                const bridgeId = `${ this.id() }-bridge`
+                    , className = 'bridge'
+                    , fill = this.objectToSpawnFrom.fill()
+                    , x = this.objectToSpawnFrom.x() + this.objectToSpawnFrom.width() - verticalTearPreventionOffset
+                    , y = this.objectToSpawnFrom.y()
+                    , width =
+                        // Difference between this panel's location and parent panel's end point, plus some other values
+                        distanceBetweenThisPanelBackgroundAndParentPanelCharts
+                        + extraDistanceForSiblingPanelIfNecessary
+                        + (verticalTearPreventionOffset * 2) // x2 to add the offset for for each side
+                    , height = this.objectToSpawnFrom.height()
+
+                // Create a bridge (with 0 width at the right edge of the element to spawn from)
+                this._bridgeObject
+                    .class( className )
+                    .id( bridgeId )
+                    .fill( fill )
+                    .x( x )
+                    .y( y )
+                    .width( width )
+                    .height( height )
+            }
 
         }
 
@@ -1564,10 +1584,11 @@
                 .update( 0 )
 
 
-            if (this.animation.spawnStyle === 'extend' || 'retract' || 'retractAndExtend' || 'instant') {
+            if ( this.animation.spawnStyle === 'extend' || 'retract' || 'retractAndExtend' || 'instant' ) {
 
                 const parentBgExtensionValue = this.parentPanel.bgExtensionRight()
-                const temporaryMaximumBridgeWidthDuringAnimation = parentBgExtensionValue - this.parentPanel._innerPadding.right
+                const temporaryMaximumBridgeWidthDuringAnimation =
+                    parentBgExtensionValue - this.parentPanel._innerPadding.right
 
                 this._adjustBridgeProperties()
                 // Expand the width of the bridge to its temporary maximum
@@ -1577,11 +1598,23 @@
 
             }
 
-            if (this.animation.spawnStyle === 'lateralSwitch') {
+            if ( this.animation.spawnStyle === 'lateralSwitch' ) {
 
                 this._adjustBridgeProperties()
                 this._bridgeObject
                     .update( this.animation.duration.lateralSwitch )
+
+            }
+
+            if( this.animation.spawnStyle === 'appendSibling'
+                && !!this.has.parentWithAnotherChild){
+
+                const siblingPanelObjects = Array.from( this.parentPanel.childrenPanels.values() )
+                const siblingPanelObjectsFromRightToLeft = _.reverse(siblingPanelObjects)
+
+                siblingPanelObjectsFromRightToLeft.forEach( (siblingPanelObject) => {
+                    siblingPanelObject.select().raise()
+                })
 
             }
 
@@ -1757,14 +1790,20 @@
 
 
                 // Calculate the rightward bg extension value
-                const numberOfSiblingsThatRemainOnLeftSide = parentPanel.childrenPanels && thisPanel.has.beenAddedAsSibling
+                const numberOfSiblingsThatRemainOnLeftSide =
+                    !!parentPanel.childrenPanels && thisPanel.has.beenAddedAsSibling
                     ? parentPanel.childrenPanels.size
                     : 0
+
+
+                const totalInterSiblingPadding =
+                    this._paddingBetweenSiblingPanels * thisPanel.has.parentWithNumberOfChildren
 
                 const rightBgExtensionValueOfParent = (
                         + thisPanel.postAnimationProperties.width * (numberOfSiblingsThatRemainOnLeftSide + 1)
                         + parentPanel._innerPadding.right
                         + thisPanel.bgExtensionRight()
+                        + totalInterSiblingPadding
                     )
 
                 // Set bg extension of parent
