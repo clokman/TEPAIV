@@ -1396,28 +1396,67 @@
 
             if ( this.has.parentPanel ){
 
-                // Prepare parent panels for removal of self
-                const parentPanel = this.parentPanel
+                // Remove self
+                super.remove()
+                this.parentPanel.childrenPanels.delete( this.id() )
 
-                parentPanel._resetVerticalInnerPadding()
-                parentPanel._recursivelyAlignChartsInParentPanelsWithChartsInThisPanel()
-                parentPanel.bgExtensionRight(0)
-                parentPanel._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
+                if ( !this.has.parentWithAnotherChild ){
 
-                parentPanel.childrenPanels.forEach( (childrenPanelObject, childrenPanelName) => {
-                    childrenPanelObject.select().node().remove()  // TODO: THIS IS A RUDIMENTARY LINE AND ADDED FOR PRESENTATION
-                })
-                parentPanel.childrenPanels.clear()
+                    // Prepare parent panel for removal of self
+                    this._resetParentPanelAndPropagate()
+
+                }
+
+
+                if ( this.has.parentWithAnotherChild){
+
+                    this._inferParentChildRelationships()  // for updating
+                    const rightmostSiblingObject = this.has.parentWithRightmostChildPanelObject
+
+                    const rightmostEdgeOfChildrenArea =
+                          rightmostSiblingObject.x()
+                        + rightmostSiblingObject.width()
+
+                    const rightmostEdgeOfParentPanelWithoutBgExtension =
+                          this.parentPanel.x()
+                        + this.parentPanel.width()
+
+                    const newBgExtensionValue =
+                          rightmostEdgeOfChildrenArea
+                        - rightmostEdgeOfParentPanelWithoutBgExtension
+                        + this.parentPanel._innerPadding.right
+
+                    this.parentPanel.bgExtensionRight(newBgExtensionValue)
+                    this.parentPanel._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
+
+                }
+
+                // parentPanel.childrenPanels.forEach( (childPanelObject, childPanelName) => {
+                //     childPanelObject.select().node().remove()  // TODO: THIS IS A RUDIMENTARY LINE AND ADDED FOR PRESENTATION
+                // })
+                // parentPanel.childrenPanels.clear()
 
             }
 
-            // Remove self
-            super.remove()
 
             this.updateTopAncestor()
 
         }
 
+
+        _resetParentPanelAndPropagate() {
+
+            const parent = this.parentPanel
+
+            // Reset the parameters of parent
+            parent._resetVerticalInnerPadding()
+            parent.bgExtensionRight(0)
+
+            // Given the new parameters of parent, tell all ancestors to acknowledge the changes
+            parent._recursivelyAlignChartsInParentPanelsWithChartsInThisPanel()
+            parent._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
+
+        }
 
         _embedAsChildPanel() {
 
@@ -1974,6 +2013,7 @@
 
 
         _respawnInPlaceOfExistingSiblingPanel() {
+
             this._removeExistingSiblingPanels()
 
             // Refresh the clicked panel (recreate it with no animations)
