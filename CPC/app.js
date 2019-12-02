@@ -47,7 +47,7 @@ myCategory
 //     .select('svg')
 //     .append('g')
 //       .attr('id', 'parent-container-of-captioned-rectangle')
-
+//
 // myCaptionedRectangleCenter = new shape.CaptionedRectangle(parentElementForCaptionedRectangle)
 // myCaptionedRectangleCenter
 //     .x(400)
@@ -57,7 +57,7 @@ myCategory
 //     .fill('green')
 //     .text('Caption')
 //     .update()
-
+//
 // // CAPTION AT TOP LEFT
 // myCaptionedRectangleTopLeft = new shape.CaptionedRectangle()
 // myCaptionedRectangleTopLeft
@@ -72,7 +72,7 @@ myCategory
 //
 //
 // // DEMO
-// // myCaptionedRectangleTopLeft.x(350).y(350).fill('blue').width('300').height('200').text('Hello').textAlignment('center').update()
+// myCaptionedRectangleTopLeft.x(350).y(350).fill('blue').width('300').height('200').text('Hello').textAlignment('center').update()
 
 
 
@@ -95,188 +95,6 @@ myChart.x(450).y(distanceOfVisualTestsFromTopOfWindow).update()
 myChart = new navigator.Chart()
 myChart.x(325).y(distanceOfVisualTestsFromTopOfWindow).categoryLabels(true).update()
 myChart.chartLabel('MY CHART LABEL').update()
-
-
-
-
-//// PANEL ////
-
-const parentElementForPanel = d3.select('body').select('svg')
-myPanel = new navigator.Panel()
-    .bgText('myPanel')
-    .bgFill('#deebf7')
-    .x(700).y(distanceOfVisualTestsFromTopOfWindow)
-    .yAxisLabels(true)
-    .update()
-
-myPanel.yAxisLabels()
-
-
-myPanel2 = new navigator.Panel()
-    .bgText('myPanel2')
-    .bgFill('#deebf7')
-    .x(850).y(distanceOfVisualTestsFromTopOfWindow)
-    .update()
-myPanel2.objects('gender').colorScheme('Blues').update()
-myPanel2.objects('class').colorScheme('RdPu').update()
-myPanel2.objects('status').colorScheme('Oranges').update()
-
-
-myPanel3 = new navigator.Panel()
-    .bgText('myPanel3')
-    .bgFill('#deebf7')
-    .x(750).y(distanceOfVisualTestsFromTopOfWindow)
-    .update()
-myPanel3.objects('gender').colorScheme('YlGn').update()
-myPanel3.objects('class').colorScheme('YlGnBu').update()
-myPanel3.objects('status').colorScheme('BuPu').update()
-
-
-myPanel4 = new navigator.Panel()
-    .bgText('myPanel4')
-    .bgFill('#deebf7')
-    .x(1150).y(distanceOfVisualTestsFromTopOfWindow)
-    .update()
-myPanel4.objects('gender').colorScheme('Greys').update()
-myPanel4.objects('class').colorScheme('Greys').update()
-myPanel4.objects('status').colorScheme('Greys').update()
-
-
-
-
-//// NESTED PANEL ////
-
-nestedPanel = new navigator.NestedPanel()
-    .id('parent-panel')
-    .bgFill('#deebf7')
-    .bgText('nestedPanel')
-    .colorSet('Viridis')
-    .x(1400).y(distanceOfVisualTestsFromTopOfWindow)
-    .update(0)
-
-
-// // Demo Code //
-// // myPanel.objects('gender').x(300).y(25).height(100).width(100).update()
-// // myPanel.objects('status').x(300).y(135).height(100).width(100).update()
-// // myPanel.objects('class').x(300).y(245).height(100).width(100).update()
-// // myPanel.objects('class').objects('first-class').fill('blue').update()
-
-
-// Embed child panel 1
-
-spawnObjectForChild1 = nestedPanel.objects('gender').objects('female')
-
-childPanel1 = new navigator.NestedPanel(nestedPanel, spawnObjectForChild1)
-childPanel1
-    .id('child-panel-1')
-    .update()
-
-
-// EMBED child panel 2
-
-spawnObjectForChild2 = childPanel1.objects('gender').objects('male')
-
-setTimeout(() => {
-    childPanel2 = new navigator.NestedPanel(childPanel1, spawnObjectForChild2)
-    childPanel2.id('child-panel-2').update()
-
-},5000)
-
-
-// REPLACE child panel 2 child panel 3
-
-spawnObjectForChild3 = childPanel1.objects('class').objects('first-class')
-
-setTimeout(() => {
-    childPanel3 = new navigator.NestedPanel(childPanel1, spawnObjectForChild3)
-    childPanel3.id('child-panel-3').update()
-
-},8000)
-
-
-// REMOVE child panel 3
-setTimeout( () => {
-
-    childPanel3.remove()
-
-}, 10000)
-
-
-// REMOVE child panel 1
-setTimeout( () => {
-
-    childPanel1.remove()
-
-}, 12000)
-
-
-// Embed child panel 4
-
-setTimeout( () => {
-    
-    spawnObjectForChild4 = nestedPanel.objects('status').objects('survived')
-    
-    childPanel4 = new navigator.NestedPanel(nestedPanel, spawnObjectForChild4)
-    childPanel4
-        .id('child-panel-4')
-        .update()
-    
-}, 16000)
-
-setTimeout( () => {
-    
-    nestedPanel.colorSet('Magma').update()
-    
-}, 18000)
-
-
-
-
-
-//// PANEL: COMPARISON VIEW  ////
-
-comparisonPanel = new navigator.NestedPanel()
-    .bgFill('#deebf7')
-    .bgText('comparisonPanel')
-    .colorSet('Viridis')
-    .x(2000).y(distanceOfVisualTestsFromTopOfWindow)
-    .yAxisLabels(true)
-    .update(0)
-
-
-setTimeout( () => {
-    
-    spawnObjectForComparisonChild1 = comparisonPanel.objects('gender').objects('female')
-    
-    comparisonChild1 = new navigator.NestedPanel(comparisonPanel, spawnObjectForComparisonChild1)
-    comparisonChild1
-        .bgText('comp.Ch.1')
-        .update()
-    
-}, 5000)
-
-
-
-setTimeout( () => {
-    spawnObjectForComparisonChild2 = comparisonPanel.objects('gender').objects('male')
-
-    comparisonChild2 = new navigator.NestedPanel(comparisonPanel, spawnObjectForComparisonChild2, 'sibling')
-    comparisonChild2
-        .bgText('comp.Ch.2')
-        .update()
-    
-}, 6000)
-
-
-setTimeout( () => {
-    
-    spawnObjectForComparisonChild3 = comparisonPanel.objects('status').objects('died')
-    comparisonChild3 = new navigator.NestedPanel(comparisonPanel, spawnObjectForComparisonChild3, 'sibling')
-    comparisonChild3
-        .bgText('comp.Ch.3')
-        .update()
-    
-}, 7000)
 
 
 
