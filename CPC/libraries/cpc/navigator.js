@@ -1394,52 +1394,61 @@
 
         remove(){
 
+            // Remove self
+            super.remove()
             if ( this.has.parentPanel ){
 
-                // Remove self
-                super.remove()
+                // De-register self from children registry
                 this.parentPanel.childrenPanels.delete( this.id() )
 
                 // Update inferences
                 this._updateParentChildRelationships()
 
-                if ( !this.has.parentWithAnotherChild ){
-
-                    // Prepare parent panel for removal of self
-                    this._resetParentPanelAndPropagate()
-
-                }
+            }
 
 
-                if ( this.has.parentWithAnotherChild){
+            if ( !this.has.parentPanel){
 
-                    const rightmostSiblingObject = this.has.parentWithRightmostChildPanelObject
+                // Clear children (in case the panel re-appears in some future, it should not have any items in its registry)
+                this.childrenPanels.clear()
 
-                    const rightmostEdgeOfChildrenArea =
-                          rightmostSiblingObject.x()
-                        + rightmostSiblingObject.width()
-
-                    const rightmostEdgeOfParentPanelWithoutBgExtension =
-                          this.parentPanel.x()
-                        + this.parentPanel.width()
-
-                    const newBgExtensionValue =
-                          rightmostEdgeOfChildrenArea
-                        - rightmostEdgeOfParentPanelWithoutBgExtension
-                        + this.parentPanel._innerPadding.right
-
-                    this.parentPanel.bgExtensionRight(newBgExtensionValue)
-                    this.parentPanel._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
-
-                }
-
-                // parentPanel.childrenPanels.forEach( (childPanelObject, childPanelName) => {
-                //     childPanelObject.select().node().remove()  // TODO: THIS IS A RUDIMENTARY LINE AND ADDED FOR PRESENTATION
-                // })
-                // parentPanel.childrenPanels.clear()
+                // Remove self
+                super.remove()
 
             }
 
+
+            if ( !this.has.parentWithAnotherChild ){
+
+                // Adjust parent panel
+                this._resetParentPanelAndPropagate()
+
+            }
+
+
+            if ( this.has.parentWithAnotherChild){
+
+                // Select rightmost sibling
+                const rightmostSiblingObject = this.has.parentWithRightmostChildPanelObject
+
+                // Get the x coordinate of right edge of children area
+                const rightmostEdgeOfRightmostSiblingRemainingInParentPanel =
+                      rightmostSiblingObject.x()
+                    + rightmostSiblingObject.width()
+
+                const rightmostEdgeOfParentPanelIfThereWereNoBgExtension =
+                      this.parentPanel.x()
+                    + this.parentPanel.width()
+
+                const newBgExtensionValue =
+                      rightmostEdgeOfRightmostSiblingRemainingInParentPanel
+                    - rightmostEdgeOfParentPanelIfThereWereNoBgExtension
+                    + this.parentPanel._innerPadding.right
+
+                this.parentPanel.bgExtensionRight(newBgExtensionValue)
+                this.parentPanel._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
+
+            }
 
             this.updateTopAncestor()
 
