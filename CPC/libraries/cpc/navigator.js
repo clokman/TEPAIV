@@ -1400,6 +1400,9 @@
                 super.remove()
                 this.parentPanel.childrenPanels.delete( this.id() )
 
+                // Update inferences
+                this._updateParentChildRelationships()
+
                 if ( !this.has.parentWithAnotherChild ){
 
                     // Prepare parent panel for removal of self
@@ -1410,7 +1413,6 @@
 
                 if ( this.has.parentWithAnotherChild){
 
-                    this._inferParentChildRelationships()  // for updating
                     const rightmostSiblingObject = this.has.parentWithRightmostChildPanelObject
 
                     const rightmostEdgeOfChildrenArea =
