@@ -6,7 +6,44 @@ const yCoordinateOfTestRow2 = 600
 const yCoordinateOfTestRow3 = 1150
 
 
-//// PANEL ////
+//// HELPER METHODS ////
+
+// Helper methods:
+navigator.Panel.prototype.describe = function(description) {
+
+    const descriptionObject = new shape.Text()
+    descriptionObject
+        .x(this.x() - this.bgExtensionLeft())
+        .text(`${description}`)
+        .update()
+}
+
+
+const timeStep = {
+
+    timeOfLastStep: 0,
+    stepDuration: 1000,
+
+    next: (oneTimeCustomStepDuration) => {
+        const timeOfThisStep = ( oneTimeCustomStepDuration
+                ? timeStep.timeOfLastStep + oneTimeCustomStepDuration
+                : timeStep.timeOfLastStep + timeStep.stepDuration
+        )
+        timeStep.timeOfLastStep = timeOfThisStep
+        return timeOfThisStep
+    },
+
+    reset: () => {
+        timeStep.timeOfLastStep = 0
+        timeStep.stepDuration = 1000
+    }
+
+}
+
+
+
+//// PANEL ////////////////////////////////////////////////////////////////////////////////
+
 
 const parentElementForPanel = d3.select('body').select('svg')
 myPanel = new navigator.Panel()
@@ -59,13 +96,6 @@ nestedPanel = new navigator.NestedPanel()
     .colorSet('Viridis')
     .x(25).y(yCoordinateOfTestRow1)
     .update(0)
-
-
-// // Demo Code //
-// // myPanel.objects('gender').x(300).y(25).height(100).width(100).update()
-// // myPanel.objects('status').x(300).y(135).height(100).width(100).update()
-// // myPanel.objects('class').x(300).y(245).height(100).width(100).update()
-// // myPanel.objects('class').objects('first-class').fill('blue').update()
 
 
 // Embed child panel 1
@@ -201,11 +231,11 @@ setTimeout( () => {
 
 
 
-//// PANEL: COMPARISON VIEW: Navigation ////
+//// PANEL: COMPARISON VIEW: Simple comparison ///////////////////////////////////////////////////
 
 comparisonPanel = new navigator.NestedPanel()
     .bgFill('#deebf7')
-    .bgText('comparisonPanel')
+    .bgText('comparisonPanel: Simple comparison')
     .colorSet('Viridis')
     .x(650).y(yCoordinateOfTestRow1)
     .yAxisLabels(true)
@@ -218,7 +248,6 @@ comparisonChild1 = new navigator.NestedPanel(comparisonPanel, spawnObjectForComp
 comparisonChild1
     .bgText('comp.Ch.1')
     .update()
-
 
 
 setTimeout( () => {
@@ -246,7 +275,110 @@ setTimeout( () => {
 
 
 
-//// PANEL: COMPARISON VIEW: REMOVALS ////
+
+//// PANEL: COMPARISON VIEW: Lateral switch in comparison view ///////////////////////////////////////////////////
+timeStep.reset()
+timeStep.stepDuration = 2000
+
+
+compPan2 = new navigator.NestedPanel()
+    .bgFill('#deebf7')
+    .bgText(`compPan2: Lateral switch from comparison'  `)
+    .colorSet('Viridis')
+    .x(1250).y(yCoordinateOfTestRow1)
+    .yAxisLabels(true)
+    .update(0)
+
+compPan2.describe(`'Lateral switch in comparison view: Died' category should NOT have buggy bridge at the end.`);
+
+// Generation 1
+
+// Gen 1 sibling 1
+
+setTimeout( () => {
+
+    spawnObjectForGen1sib1 = compPan2.objects('status').objects('died')
+    gen1sib1 = new navigator.NestedPanel(compPan2, spawnObjectForGen1sib1)
+    gen1sib1
+        .bgText('gen1sib1')
+        .update(500)
+
+}, timeStep.next() )
+
+
+// Gen 1 sibling 2
+setTimeout( () => {
+
+    spawnObjectForGen1sib2 = compPan2.objects('status').objects('survived')
+    gen1sib2 = new navigator.NestedPanel(compPan2, spawnObjectForGen1sib2, 'sibling')
+    gen1sib2
+        .bgText('gen1sib2')
+        .update(500)
+
+}, timeStep.next() )
+
+
+
+// TODO:
+//   ISSUE: There is no animation when a 2nd generation singleton is created
+// Gen 2 singleton 1
+setTimeout( () => {
+
+    spawnObjectForGen2sing1 = compPan2.objects('gender').objects('female')
+    gen2sing1 = new navigator.NestedPanel(compPan2, spawnObjectForGen2sing1)
+    gen2sing1
+        .bgText('gen2sing1')
+        .update(500)
+
+}, timeStep.next() )
+
+
+// Generation 2 //
+
+// Gen 2 sibling 1
+setTimeout( () => {
+
+    spawnObjectForGen2sib1 = compPan2.objects('status').objects('died')
+    gen2sib1 = new navigator.NestedPanel(compPan2, spawnObjectForGen2sib1)
+    gen2sib1
+        .bgText('gen2sib1')
+        .update(500)
+
+}, timeStep.next() )
+
+
+// Gen 2 sibling 2
+setTimeout( () => {
+
+    spawnObjectForGen2sib2 = compPan2.objects('status').objects('survived')
+    gen2sib2 = new navigator.NestedPanel(compPan2, spawnObjectForGen2sib2, 'sibling')
+    gen2sib2
+        .bgText('gen2sib2')
+        .update(500)
+
+}, timeStep.next() )
+
+
+
+// Gen 2 singleton 1
+setTimeout( () => {
+
+    spawnObjectForGen2sing2 = compPan2.objects('gender').objects('female')
+    gen2sing2 = new navigator.NestedPanel(compPan2, spawnObjectForGen2sing2)
+    gen2sing2
+        .bgText('gen2sing2')
+        .update(500)
+
+}, timeStep.next() )
+
+
+
+
+
+
+
+
+//// PANEL: COMPARISON VIEW: REMOVALS ///////////////////////////////////////////////////
 
 // Create panel 0
 // CAR: Compare and Remove

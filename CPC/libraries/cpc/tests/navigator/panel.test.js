@@ -1914,7 +1914,7 @@ describe ('ANIMATIONS: Switch to a panel on the same depth level using the quick
 describe ('PANEL IDS: Panel IDs must be generated correctly', () => {
    
     
-    test ('First panel id', () => {
+    test ('INIT: First panel id', () => {
 
         // PREP //
         // Clear JEST's DOM to prevent leftovers from previous tests
@@ -2052,9 +2052,150 @@ describe ('PANEL IDS: Panel IDs must be generated correctly', () => {
     })
 
 
+    test ('REPLACE SINGLETON PANEL: A panels that replaces another panel should have the right IDs', () => {
+
+        // PREP //
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+        // Create SVG
+        const mySvg = new container.Svg()
+
+        jest.useFakeTimers()
 
 
-    test ('Refresh: The name of a panel should NOT change if the panel is recreated in-place.', () => {
+        // PANEL #0.0 //
+        const panel0_0 = new navigator.NestedPanel()
+            .bgFill('#deebf7')
+            .x(200).y(25)
+            .yAxisLabels(true)
+            .update(0)
+
+
+
+        // PANEL #1.0 //
+        // Create child panel
+        let panel1_0
+        setTimeout( () => {
+
+            const spawnObjectForPanel1_0 = panel0_0.objects('gender').objects('female')
+    
+            panel1_0 = new navigator.NestedPanel(panel0_0, spawnObjectForPanel1_0)
+            panel1_0.update()
+            
+        }, 1000)
+
+        jest.runOnlyPendingTimers()
+
+
+        // Check the newly created child panel's ID
+        expect( panel1_0.id() ).toBe( 'panel-1-0' )
+
+
+
+        // REPLACEMENT PANEL #1.0  //
+        // Replace existing panel at level 1
+
+        let replacementPanel1_0
+        setTimeout( () => {
+            const spawnObjectForSecondPanel1_0 = panel0_0.objects('gender').objects('male')
+
+            replacementPanel1_0 = new navigator.NestedPanel(panel0_0, spawnObjectForSecondPanel1_0)
+            replacementPanel1_0.update()
+
+        }, 2000 )
+
+        jest.runOnlyPendingTimers()
+
+        // Check the newly created replacement panel's ID
+        expect( replacementPanel1_0.id() ).toBe( 'panel-1-0' )
+
+
+    })
+
+
+    test ('REPLACE COMPARISON PANEL: A panel that replaces two sibling panels should have the right ID', () => {
+
+        // PREP //
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+        // Create SVG
+        const mySvg = new container.Svg()
+
+        jest.useFakeTimers()
+
+
+        // PANEL #0.0 //
+        const panel0_0 = new navigator.NestedPanel()
+            .bgFill('#deebf7')
+            .x(200).y(25)
+            .yAxisLabels(true)
+            .update(0)
+
+
+
+        // PANEL #1.0 //
+        // Create child panel
+        let panel1_0
+        setTimeout( () => {
+
+            const spawnObjectForPanel1_0 = panel0_0.objects('gender').objects('female')
+
+            panel1_0 = new navigator.NestedPanel(panel0_0, spawnObjectForPanel1_0)
+            panel1_0.update()
+
+        }, 1000)
+
+        jest.runOnlyPendingTimers()
+
+
+        // Check the newly created child panel's ID
+        expect( panel1_0.id() ).toBe( 'panel-1-0' )
+
+
+
+        // PANEL #1.1 //
+        // Create sibling panel
+        let panel1_1
+        setTimeout( () => {
+
+            const spawnObjectForSiblingPanel1_1 = panel0_0.objects('gender').objects('male')
+
+            panel1_1 = new navigator.NestedPanel(panel0_0, spawnObjectForSiblingPanel1_1, 'sibling')
+            panel1_1.update()
+
+        }, 2000)
+
+        jest.runOnlyPendingTimers()
+
+
+        // Check the newly created sibling panel's ID
+        expect( panel1_1.id() ).toBe( 'panel-1-1' )
+
+
+
+
+        // REPLACEMENT PANEL #1.0  //
+        // Replace comparison panels
+
+        let replacementPanel1_0
+        setTimeout( () => {
+            const spawnObjectForSecondPanel1_0 = panel0_0.objects('gender').objects('male')
+
+            replacementPanel1_0 = new navigator.NestedPanel(panel0_0, spawnObjectForSecondPanel1_0)
+            replacementPanel1_0.update()
+
+        }, 2000 )
+
+        jest.runOnlyPendingTimers()
+
+        // Check the newly created replacement panel's ID
+        expect( replacementPanel1_0.id() ).toBe( 'panel-1-0' )
+
+
+    })
+
+
+    test ('REFRESH: The name of a panel should NOT change if the panel is recreated in-place.', () => {
     // Explanation: Clicking on a panel's spawn root refreshes that panel.
     // During this refresh operation, the panel is recreated.
     // During the old panel should not be detected as an already existing panel (at least for the purpose of incrementing panel names).

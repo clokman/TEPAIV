@@ -372,7 +372,6 @@
             // Create a new child panel based on query results
             this._createChildPanelBasedOnStacks(drilldownResultStacks)
 
-
             this._listenForClicksOnPanelBackgroundsAndTreatClickedBackgroundsAsCollapsePoints()
         }
 
@@ -404,7 +403,7 @@
 
         _createChildPanelBasedOnStacks(drilldownResultStacks) {
 
-            const childIsASibling = this._modifierKeyPressedWithLastClick === 'shift'
+            const childIsASibling = (this._modifierKeyPressedWithLastClick === 'shift')
 
             let childPanelObject
 
@@ -417,9 +416,10 @@
             }
 
             // Create the new child panel as the child of the last clicked panel
-            const totalDurationOfChildPanelInitializationAnimations =
+            const totalDurationOfChildPanelInitializationAnimations = (
                   childPanelObject.animation.duration.extendBridge
                 + childPanelObject.animation.duration.maximizePanelCover
+            )
 
             childPanelObject
                 .stacks(drilldownResultStacks)
@@ -1326,9 +1326,9 @@
 
             const panelId =
                 this.has.parentPanel
-                ? this.has.parentWithIdenticalChild
-                    ? `panel-${ this.depthIndex() }-${ this.has.parentWithNumberOfChildren - 1 }`
-                    : `panel-${ this.depthIndex() }-${ this.has.parentWithNumberOfChildren }`
+                ? this.has.beenAddedAsSibling
+                    ? `panel-${ this.depthIndex() }-${ this.has.parentWithNumberOfChildren }`
+                    : `panel-${ this.depthIndex() }-${ 0 }`
                 : 'panel-0-0'
             this.id(panelId).update(0)
 
