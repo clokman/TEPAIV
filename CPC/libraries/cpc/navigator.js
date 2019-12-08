@@ -1396,6 +1396,7 @@
 
             // Remove self
             super.remove()
+
             if ( this.has.parentPanel ){
 
                 // De-register self from children registry
@@ -1450,7 +1451,7 @@
 
             }
 
-            this.updateTopAncestor()
+            this.updateTopAncestorAndLetItPropagate()
 
         }
 
@@ -1482,7 +1483,7 @@
                 this._recursivelyAlignChartsInParentPanelsWithChartsInThisPanel()
 
 
-                this.updateTopAncestor(0)
+                this.updateTopAncestorAndLetItPropagate(0)
 
             }
 
@@ -1493,7 +1494,7 @@
                 this._recursivelyAlignChartsInParentPanelsWithChartsInThisPanel()
                 this._createBridgeFromSpawnRoot()
                 this._verticallyMaximizeFromBridgeAsChildPanel()
-                this.updateTopAncestor( this.animation.duration.extendBridge )
+                this.updateTopAncestorAndLetItPropagate( this.animation.duration.extendBridge )
             }
 
 
@@ -1510,7 +1511,7 @@
                 this._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
                 this._createBridgeFromSpawnRoot()
                 this._verticallyMaximizeFromBridgeAsChildPanel()
-                this.updateTopAncestor( this.animation.duration.appendSibling )
+                this.updateTopAncestorAndLetItPropagate( this.animation.duration.appendSibling )
 
             }
 
@@ -1537,6 +1538,10 @@
                 this._backgroundObject
                     .fill( this.objectToSpawnFrom.fill()  )
                     .update()
+            }
+
+            if (!!this.parentPanel || !!this.childrenPanels){
+                this._updateParentChildRelationships()
             }
 
             this._recursivelyPropagateValuesFromThisPanelDOWNSTREAMandTriggerUpdates(this, transitionDuration)
@@ -1597,7 +1602,7 @@
         }
 
 
-        updateTopAncestor(transitionDuration) {
+        updateTopAncestorAndLetItPropagate(transitionDuration) {
 
             this.topmostAncestor().update(transitionDuration)
 
@@ -1732,7 +1737,6 @@
 
 
         _recursivelyPropagateValuesFromThisPanelDOWNSTREAMandTriggerUpdates(thisPanel=this, transitionDuration){
-
 
             const thereIsAChildPanel = (
                 !!thisPanel.childrenPanels
@@ -2117,7 +2121,7 @@
             this._recursivelyAlignChartsInParentPanelsWithChartsInThisPanel()
             this._createBridgeFromSpawnRoot()
             this._verticallyMaximizeFromBridgeAsChildPanel()
-            this.updateTopAncestor( this.animation.duration.collapseBackground )
+            this.updateTopAncestorAndLetItPropagate( this.animation.duration.collapseBackground )
 
             setTimeout(() => {
                 siblingBackgroundCover.remove()
@@ -3219,7 +3223,6 @@
                 return this
             }
         }
-
 
     }
 
