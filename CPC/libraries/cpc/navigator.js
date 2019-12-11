@@ -1830,10 +1830,45 @@
 
             if ( thisPanel.has.parentPanel ) {
 
-                // Infer parent during recursion
-                const parentPanel = arguments.length
-                    ? thisPanel.parentPanel
-                    : this.parentPanel
+                const currentRecursionIsForThePanelBeingAdded = (
+                    thisPanel === this
+                )
+
+                const currentRecursionIsForTheImmediateParentOfPanelBeingAdded = (
+                    thisPanel === this.parentPanel
+                )
+
+
+                // Select the rightmost sibling
+                const rightmostChildPanelObjectOfParent = (
+                    currentRecursionIsForThePanelBeingAdded
+                        ? null
+                        : thisPanel.has.parentWithRightmostChildPanelObject
+                )
+
+
+                // // Below is a more robust way to calculate the space siblings take.
+                // // This method does not assume that all siblings have equal width.
+                // // But it breaks the code and not fixed & used due to time constraints.
+                // const totalHorizontalSpaceOtherChildrenOccupy = ( () => {
+                //
+                //     let sumOfWidths = 0
+                //     let sumOfPaddingsBetweenSiblingPanels = 0
+                //
+                //     thisPanel.parentPanel.childrenPanels.forEach( ( childPanelObject, childPanelId ) => {
+                //         // The panel currently being added in this instance is not yet in the parent's children registry,
+                //         // So, this is an iteration of other children of parent, if there are any.
+                //         sumOfWidths += childPanelObject.width()
+                //         sumOfPaddingsBetweenSiblingPanels += childPanelObject._paddingBetweenSiblingPanels
+                //     })
+                //
+                //     const totalHorizontalSpace = sumOfWidths + sumOfPaddingsBetweenSiblingPanels
+                //     return totalHorizontalSpace
+                //
+                // }) ()
+
+
+                // Calculate the rightward bg extension value //
 
                 // Get the x coordinate of the right edge of children area
                 const rightmostEdgeOfRightmostChildOfParentPanel = (
