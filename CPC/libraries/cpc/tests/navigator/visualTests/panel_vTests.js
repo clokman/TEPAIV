@@ -14,6 +14,7 @@ navigator.Panel.prototype.describe = function(description) {
     const descriptionObject = new shape.Text()
     descriptionObject
         .x(this.x() - this.bgExtensionLeft())
+        .y( this.y() - 20)
         .text(`${description}`)
         .update()
 }
@@ -276,6 +277,63 @@ setTimeout( () => {
 
 
 
+
+
+//// PANEL: COMPARISON VIEW: REMOVALS ///////////////////////////////////////////////////
+
+// Create panel 0
+const p8_panel0_0 = new navigator.NestedPanel()
+    .bgFill('#deebf7')
+    .bgText('p8_panel0_0 (removals test)')
+    .x(650).y(yCoordinateOfTestRow2)
+    .yAxisLabels(true)
+    .update(0)
+
+p8_panel0_0.describe('Removals')
+
+// Create panel-1-0
+const spawnObjectForP8_panel1_0 = p8_panel0_0.objects('gender').objects('female')
+const p8_panel1_0 = new navigator.NestedPanel(p8_panel0_0, spawnObjectForP8_panel1_0)
+p8_panel1_0.update()
+
+// Create panel-2-0
+let carPanel2_0
+setTimeout( () => {
+    const spawnObjectForP8_panel2_0 = p8_panel1_0.objects('class').objects('first-class')
+    p8_panel2_0 = new navigator.NestedPanel(p8_panel1_0, spawnObjectForP8_panel2_0)
+    p8_panel2_0.update()
+}, 1000)
+
+
+// Create panel-2-1
+let p8_panel2_1
+setTimeout( () => {
+    const spawnObjectForCarPanel2_1 = p8_panel1_0.objects('class').objects('second-class')
+    p8_panel2_1 = new navigator.NestedPanel(p8_panel1_0, spawnObjectForCarPanel2_1, 'sibling')
+    p8_panel2_1.update()
+}, 3000)
+
+
+let p8_panel2_2
+setTimeout( () => {
+    // Create panel-2-2
+    const spawnObjectForP8_panel2_2 = p8_panel1_0.objects('class').objects('third-class')
+    p8_panel2_2 = new navigator.NestedPanel(p8_panel1_0, spawnObjectForP8_panel2_2, 'sibling')
+    p8_panel2_2.update()
+}, 4000)
+setTimeout( () => {p8_panel2_1.remove()}, 5000)
+setTimeout( () => {p8_panel2_2.remove()}, 6000)
+setTimeout( () => {p8_panel2_0.remove()}, 7000)
+setTimeout( () => {p8_panel1_0.remove()}, 8000)
+
+
+
+
+
+
+
+
+
 //// PANEL: COMPARISON VIEW: Lateral switch in comparison view ///////////////////////////////////////////////////
 timeStep.reset()
 timeStep.stepDuration = 2000
@@ -378,50 +436,234 @@ setTimeout( () => {
 
 
 
-//// PANEL: COMPARISON VIEW: REMOVALS ///////////////////////////////////////////////////
 
-// Create panel 0
-// CAR: Compare and Remove
-const carPanel0 = new navigator.NestedPanel()
+//// COMPARISON VIEW: DEEP EXPANSION OF INNER SIBLING ///////////////////////////////////////////////////
+
+timeStep.reset()
+timeStep.stepDuration = 2000
+
+
+// Panel 0-0
+
+
+p7_panel0_0 = new navigator.NestedPanel()
     .bgFill('#deebf7')
-    .bgText('carPanel (removals test)')
-    .x(650).y(yCoordinateOfTestRow2)
+    .colorSet('Viridis')
+    .bgText(`p7_panel0_0'  `)
+    .x(1250)
+    .y(yCoordinateOfTestRow2)
     .yAxisLabels(true)
     .update(0)
 
-// Create panel-1-0
-const spawnObjectForCarPanel1_0 = carPanel0.objects('gender').objects('female')
-const carPanel1_0 = new navigator.NestedPanel(carPanel0, spawnObjectForCarPanel1_0)
-carPanel1_0.update()
+p7_panel0_0.describe(`'COMPARISON VIEW: DEEP EXPANSION OF INNER SIBLING: Outer sibling should move and backgrounds  should be correct in the end.`);
+
+
+
+// Panel 1-0
+
+setTimeout( () => {
+
+    spawnObjectForP7_panel1_0 = p7_panel0_0.objects('status').objects('died')
+    P7_panel1_0 = new navigator.NestedPanel(p7_panel0_0, spawnObjectForP7_panel1_0)
+    P7_panel1_0
+        .bgText('P7_panel1_0')
+        .update(500)
+
+}, timeStep.next() )
+
+
+
+// Panel 1-1
+
+setTimeout( () => {
+
+    spawnObjectForP7_panel1_1 = p7_panel0_0.objects('status').objects('survived')
+    P7_panel_1_1 = new navigator.NestedPanel(p7_panel0_0, spawnObjectForP7_panel1_1, 'sibling')
+    P7_panel_1_1
+        .bgText('P7_panel_1_1')
+        .update(500)
+
+}, timeStep.next() )
+
+
+// Panel 1-0--1
+
+setTimeout( () => {
+
+    spawnObjectForP7_panel1_1 = P7_panel1_0.objects('status').objects('survived')
+    P7_panel_1_0__1 = new navigator.NestedPanel(P7_panel1_0, spawnObjectForP7_panel1_1)
+    P7_panel_1_0__1
+        .bgText('P7_panel_1_0__1')
+        .update(500)
+
+}, timeStep.next() )
+
+
+
+
+
+
+
+
+
+
+//// PANEL: COMPARISON VIEW: Deep Expansions ///////////////////////////////////////////////////
+
+timeStep.reset()
+timeStep.stepDuration = 2000
+
+
+panel9_0 = new navigator.NestedPanel()
+    .bgFill('#deebf7')
+    .bgText(`panel9_0: Deep expansions in comparison view'  `)
+    .colorSet('Viridis')
+    .x(1900).y(yCoordinateOfTestRow1)
+    .yAxisLabels(true)
+    .update(0)
+
+panel9_0.describe(`'Expansion of outer panel should shrink previous panels properly, and not lead to extra right BG extension for the panel 0 background.`);
+
+
+// Level 1 Comparisons
+
+setTimeout( () => {
+
+    spawnObjectForP9_Panel1_0 = panel9_0.objects('status').objects('died')
+    p9_panel1_0 = new navigator.NestedPanel(panel9_0, spawnObjectForP9_Panel1_0)
+    p9_panel1_0
+        .bgText('p9_panel1_0')
+        .update(500)
+
+}, timeStep.next() )
+
+
+setTimeout( () => {
+
+    spawnObjectForP9_Panel1_1 = panel9_0.objects('status').objects('survived')
+    p9_panel1_1 = new navigator.NestedPanel(panel9_0, spawnObjectForP9_Panel1_1, 'sibling')
+    p9_panel1_1
+        .bgText('p9_panel1_1')
+        .update(500)
+
+}, timeStep.next() )
+
+
+// Deep Expansion: Outer
+
+setTimeout( () => {
+
+    spawnObjectForP9_Panel1_1__0 = p9_panel1_1.objects('gender').objects('female')
+    p9_panel1_1__0 = new navigator.NestedPanel(p9_panel1_1, spawnObjectForP9_Panel1_1__0)
+    p9_panel1_1__0
+        .bgText('p9_panel1_1__0')
+        .update(500)
+
+}, timeStep.next() )
+
+
+
+
+
+//// PANEL: DEEP EXTENSIONS IN REGULAR VIEW ///////////////////////////////////////////////////
+timeStep.reset()
+
+// Create panel 0
+const p10_panel0_0 = new navigator.NestedPanel()
+    .bgFill('#deebf7')
+    .bgText('p10_panel0_0')
+    .x(2750).y(yCoordinateOfTestRow1)
+    .yAxisLabels(true)
+    .update(0)
+
+p10_panel0_0.describe('DEEP EXTENSION: Backgrounds should look OK after adding many children panels')
+
+
+// // Create panel-1-0
+const spawnObjectForP10_Panel1_0 = p10_panel0_0.objects('gender').objects('female')
+const p10_panel1_0 = new navigator.NestedPanel(p10_panel0_0, spawnObjectForP10_Panel1_0)
+p10_panel1_0
+    .bgText('p10_panel1_0')
+    .update()
 
 // Create panel-2-0
-let carPanel2_0
+let p10_panel2_0
 setTimeout( () => {
-    const spawnObjectForCarPanel2_0 = carPanel1_0.objects('class').objects('first-class')
-    carPanel2_0 = new navigator.NestedPanel(carPanel1_0, spawnObjectForCarPanel2_0)
-    carPanel2_0.update()
-}, 1000)
+    const spawnObjectForP10_Panel2_0 = p10_panel1_0.objects('class').objects('first-class')
+    p10_panel2_0 = new navigator.NestedPanel(p10_panel1_0, spawnObjectForP10_Panel2_0)
+    p10_panel2_0
+        .bgText('p10_panel2_0')
+        .update()
+}, timeStep.next() )
+
+
+// Create panel-3-0
+let p10_panel3_0
+setTimeout( () => {
+    const spawnObjectForP10_Panel3_0 = p10_panel2_0.objects('class').objects('second-class')
+    p10_panel3_0 = new navigator.NestedPanel(p10_panel2_0, spawnObjectForP10_Panel3_0)
+    p10_panel3_0
+        .bgText('p10_panel3_0')
+        .update()
+}, timeStep.next() )
+
+
+
+
+//// PANEL: COMPARISON VIEW: BACKGROUNDS ///////////////////////////////////////////////////
+
+timeStep.reset()
+timeStep.stepDuration = 2000
+
+// Create panel-0-0
+const p11_panel0_0 = new navigator.NestedPanel()
+    .bgFill('#deebf7')
+    .bgText('p11_panel0_0')
+    .x(2750).y(yCoordinateOfTestRow2)
+    .yAxisLabels(true)
+    .bgText( 'p11_panel0_0' )
+    .update(0)
+
+
+p11_panel0_0.describe('COMPARISON VIEW: BACKGROUNDS: Backgrounds should look OK in the end.')
+
+
+// Create panel-1-0
+const spawnObjectForP11_Panel1_0 = p11_panel0_0.objects('gender').objects('female')
+const p11_panel1_0 = new navigator.NestedPanel(p11_panel0_0, spawnObjectForP11_Panel1_0)
+p11_panel1_0
+    .bgText( 'p11_panel1_0' )
+    .update()
+
+
+// Create panel-2-0
+let p11_panel2_0
+setTimeout( () => {
+    const spawnObjectForP11_panel2_0 = p11_panel1_0.objects('class').objects('first-class')
+    p11_panel2_0 = new navigator.NestedPanel(p11_panel1_0, spawnObjectForP11_panel2_0)
+    p11_panel2_0
+        .bgText( 'p11_panel2_0' )
+        .update()
+}, timeStep.next() )
 
 
 // Create panel-2-1
-let carPanel2_1
+let p11_panel2_1
 setTimeout( () => {
-    const spawnObjectForCarPanel2_1 = carPanel1_0.objects('class').objects('second-class')
-    carPanel2_1 = new navigator.NestedPanel(carPanel1_0, spawnObjectForCarPanel2_1, 'sibling')
-    carPanel2_1.update()
-}, 3000)
+    const spawnObjectForP11_panel2_1 = p11_panel1_0.objects('class').objects('second-class')
+    p11_panel2_1 = new navigator.NestedPanel(p11_panel1_0, spawnObjectForP11_panel2_1, 'sibling')
+    p11_panel2_1
+        .bgText( 'p11_panel2_1' )
+        .update()
+}, timeStep.next() )
 
-
-let carPanel2_2
-setTimeout( () => {
-    // Create panel-2-2
-    const spawnObjectForCarPanel2_2 = carPanel1_0.objects('class').objects('third-class')
-    carPanel2_2 = new navigator.NestedPanel(carPanel1_0, spawnObjectForCarPanel2_2, 'sibling')
-    carPanel2_2.update()
-}, 4000)
-setTimeout( () => {carPanel2_1.remove()}, 5000)
-setTimeout( () => {carPanel2_2.remove()}, 6000)
-setTimeout( () => {carPanel2_0.remove()}, 7000)
-setTimeout( () => {carPanel1_0.remove()}, 8000)
+// // Create panel-2-2
+// let p11_panel2_2
+// setTimeout( () => {
+//     const spawnObjectForP11_panel2_2 = p11_panel1_0.objects('class').objects('third-class')
+//     p11_panel2_2 = new navigator.NestedPanel(p11_panel1_0, spawnObjectForP11_panel2_2, 'sibling')
+//     p11_panel2_2
+//         .bgText( 'p11_panel2_2' )
+//         .update()
+// }, timeStep.next() )
 
 
