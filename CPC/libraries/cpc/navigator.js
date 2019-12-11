@@ -1387,6 +1387,7 @@
             if (this.has.parentPanel) {
                 this._inferSpawnAnimationType()
                 this._embedAsChildPanel()
+                this._adjustAll()
             }
 
         }
@@ -1403,7 +1404,7 @@
                 this.parentPanel.childrenPanels.delete( this.id() )
 
                 // Update inferences
-                this._updateParentChildRelationships()
+                this._adjust()
 
             }
 
@@ -1451,7 +1452,7 @@
 
             }
 
-            this.updateTopAncestorAndLetItPropagate()
+            this.updateAll()
 
         }
 
@@ -1483,7 +1484,7 @@
                 this._recursivelyAlignChartsInParentPanelsWithChartsInThisPanel()
 
 
-                this.updateTopAncestorAndLetItPropagate(0)
+                this.updateAll(0)
 
             }
 
@@ -1494,7 +1495,7 @@
                 this._recursivelyAlignChartsInParentPanelsWithChartsInThisPanel()
                 this._createBridgeFromSpawnRoot()
                 this._verticallyMaximizeFromBridgeAsChildPanel()
-                this.updateTopAncestorAndLetItPropagate( this.animation.duration.extendBridge )
+                this.updateAll( this.animation.duration.extendBridge )
             }
 
 
@@ -1511,7 +1512,7 @@
                 this._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
                 this._createBridgeFromSpawnRoot()
                 this._verticallyMaximizeFromBridgeAsChildPanel()
-                this.updateTopAncestorAndLetItPropagate( this.animation.duration.appendSibling )
+                this.updateAll( this.animation.duration.appendSibling )
 
             }
 
@@ -1527,37 +1528,66 @@
         }
 
 
-        update(transitionDuration) {
+        updateAll(transitionDuration) {
 
-            super.update(transitionDuration)
+            this.topmostAncestor().update(transitionDuration)
 
-            this.select()
-                .attr( 'depthIndex', this.depthIndex() )
+        }
 
-            if (this.objectToSpawnFrom) {
-                this._backgroundObject
-                    .fill( this.objectToSpawnFrom.fill()  )
+
+        /**
+         * Updates the current panel and triggers updates downstream
+         */
+        update(transitionDuration, thisPanel=this) {
+        // TODO: All adjustments in this method moved to _adjust method
+
+            this._adjustAll()
+
+            thisPanel.select()
+                .attr( 'depthIndex', thisPanel.depthIndex() )
+
+            if (!!thisPanel.objectToSpawnFrom) {
+                thisPanel._backgroundObject
+                    .fill( thisPanel.objectToSpawnFrom.fill()  )
                     .update()
             }
 
-            if (!!this.parentPanel || !!this.childrenPanels){
-                this._updateParentChildRelationships()
+            if (!!thisPanel._bridgeObject){
+                thisPanel._adjustBridgeProperties()
+                thisPanel._bridgeObject.update( transitionDuration )
             }
 
-            this._recursivelyPropagateValuesFromThisPanelDOWNSTREAMandTriggerUpdates(this, transitionDuration)
+            if (!!thisPanel.parentPanel || !!thisPanel.childrenPanels){
+                thisPanel._adjust()
+            }
+
+
+            const thereIsAChildPanel = (
+                !!thisPanel.childrenPanels
+                && thisPanel.childrenPanels.size
+            )
+
+            super.update(transitionDuration)
+
+            if (thereIsAChildPanel){
+                this.childrenPanels.forEach( (childPanelObject, childPanelName) => {
+
+                    // Propagate values that need to be passed to child
+                    childPanelObject
+                        .showAbsoluteValues( this.showAbsoluteValues() )  // use of 'this' is not a mistake here
+                        .colorSet( this.colorSet() )
+
+                    // Call this function for children panel (so their children are subjected to this method too)
+                    childPanelObject.update(transitionDuration, childPanelObject)
+
+                })
+            }
+
+
 
             return this
 
         }
-
-
-        _adjustAll() {
-            super._adjustAll()
-            if( !!this._bridgeObject ){
-                this._adjustBridgeProperties()
-            }
-        }
-
 
 
         _adjustBridgeProperties() {
@@ -1598,13 +1628,6 @@
                     .width( width )
                     .height( height )
             }
-
-        }
-
-
-        updateTopAncestorAndLetItPropagate(transitionDuration) {
-
-            this.topmostAncestor().update(transitionDuration)
 
         }
 
@@ -1736,42 +1759,12 @@
         }
 
 
-        _recursivelyPropagateValuesFromThisPanelDOWNSTREAMandTriggerUpdates(thisPanel=this, transitionDuration){
+        _recursivelyAdjustAndUpdateDOWNSTREAM(thisPanel=this, transitionDuration){
 
-            const thereIsAChildPanel = (
-                !!thisPanel.childrenPanels
-                && thisPanel.childrenPanels.size
-                // && thisPanel.childObject.hasType( this.hasType() )
-            )
-
-            if( thereIsAChildPanel ){
-
-                this.childrenPanels.forEach( (childPanelObject, childPanelName) => {
-
-                    // Update the children panel
-                    childPanelObject
-                        .showAbsoluteValues( this.showAbsoluteValues() )  // use of 'this' is not a mistake here
-                        .colorSet( this.colorSet() )
-                        .update( transitionDuration )
-
-                    childPanelObject._adjustBridgeProperties()
-                    childPanelObject._bridgeObject.update( transitionDuration )
-                    childPanelObject._updateParentChildRelationships()
-
-                    // Call this function for children panel (so their children are subjected to this method too)
-                    childPanelObject._recursivelyPropagateValuesFromThisPanelDOWNSTREAMandTriggerUpdates(childPanelObject)
-                    // TODO: Not a TODO but a WARNING: The previous version of the row above was:
-                    // this._recursivelyPropagateValuesFromThisPanelDOWNSTREAMandTriggerUpdates(childPanelObject)
-                    // TODO: Ctd: 'this' was replaced with 'childPanelObject' due to leading to an  infinite loop
-                    //       ...after switching from 'childObject' to 'childrenObjects' registry to accomodate
-                    //       comparison view. However, even though things work, this is logically different from the
-                    //       previous version change. An eye should be kept on this recursion in case of issues around
-                    //       this block.
-                })
-
-            }
+            this.update(thisPanel, transitionDuration)
 
         }
+
 
 
         /**
@@ -1842,32 +1835,51 @@
                     ? thisPanel.parentPanel
                     : this.parentPanel
 
+                // Get the x coordinate of the right edge of children area
+                const rightmostEdgeOfRightmostChildOfParentPanel = (
 
-                // Calculate the rightward bg extension value
-                const numberOfSiblingsThatRemainOnLeftSide =
-                    !!parentPanel.childrenPanels && thisPanel.has.beenAddedAsSibling
-                    ? parentPanel.childrenPanels.size
-                    : 0
+                    // Recursing self
+                    currentRecursionIsForThePanelBeingAdded
+
+                        ?   this.postAnimationProperties.x  // because this.x() starts at a default location (e.g., off-screen)
+                          + this.postAnimationProperties.width
+
+                    // Recursing direct parent
+                    : currentRecursionIsForTheImmediateParentOfPanelBeingAdded
+
+                    ?   rightmostChildPanelObjectOfParent.x()
+                      + rightmostChildPanelObjectOfParent.width()
+                      + this.postAnimationProperties.width * (thisPanel.childrenPanels.size + 1) + (this._paddingBetweenSiblingPanels * thisPanel.childrenPanels.size + 1 )
+                      + thisPanel._innerPadding.right
+
+                    // Recursing a grandparent
+                    :   rightmostChildPanelObjectOfParent.x()
+                      + rightmostChildPanelObjectOfParent.width()
+                      + rightmostChildPanelObjectOfParent.bgExtensionRight()
 
 
-                const totalInterSiblingPadding =
-                    this._paddingBetweenSiblingPanels * thisPanel.has.parentWithNumberOfChildren
+                )
 
-                const rightBgExtensionValueOfParent = (
-                        + thisPanel.postAnimationProperties.width * (numberOfSiblingsThatRemainOnLeftSide + 1)
-                        + parentPanel._innerPadding.right
-                        + thisPanel.bgExtensionRight()
-                        + totalInterSiblingPadding
-                    )
+                const rightmostEdgeOfParentPanelIfThereWereNoBgExtension = (
+                      thisPanel.parentPanel.x()
+                    + thisPanel.parentPanel.width()
+                )
+
+                const newRightBgExtensionValueOfParent = (
+                    rightmostEdgeOfRightmostChildOfParentPanel
+                    - rightmostEdgeOfParentPanelIfThereWereNoBgExtension
+                    + thisPanel.parentPanel._innerPadding.right
+                )
+
 
                 // Set bg extension of parent
-                parentPanel
-                    .bgExtensionRight( rightBgExtensionValueOfParent )
+                thisPanel.parentPanel
+                    .bgExtensionRight( newRightBgExtensionValueOfParent )
 
 
                 // Bubble up if parent also has a parent
                 if ( thisPanel.has.grandParentPanel ){
-                    this._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel(parentPanel)
+                    this._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel(thisPanel.parentPanel)
                 }
 
             }
@@ -1876,11 +1888,35 @@
 
         }
 
+
+        _adjustAll() {
+        // Unlike the _adjustAll of superclass, this method affects other panels
+        // The functionality of the _adjustAll method of superclass is covered in _adjust method
+
+            this.topmostAncestor()._adjust()
+
+        }
+
         /**
-         * Alias for `_inferParentChildRelationships`
+         * Adjusts the current panel and triggers adjustments downstream
          */
-        _updateParentChildRelationships(){
-            this._inferParentChildRelationships()
+        _adjust( thisPanel=this ){
+
+            super._adjustAll.call(thisPanel)
+
+            if ( thisPanel.parentPanel || (!!thisPanel.childrenPanels && !!thisPanel.childrenPanels.size) ){
+                thisPanel._inferParentChildRelationships()
+            }
+
+            // Recursion
+            if (!!thisPanel.childrenPanels && !!thisPanel.childrenPanels.size){
+                thisPanel.childrenPanels.forEach( (childPanelObject, childPanelId) => {
+
+                    childPanelObject._adjust(childPanelObject)
+
+                })
+            }
+
         }
 
 
@@ -2121,7 +2157,7 @@
             this._recursivelyAlignChartsInParentPanelsWithChartsInThisPanel()
             this._createBridgeFromSpawnRoot()
             this._verticallyMaximizeFromBridgeAsChildPanel()
-            this.updateTopAncestorAndLetItPropagate( this.animation.duration.collapseBackground )
+            this.updateAll( this.animation.duration.collapseBackground )
 
             setTimeout(() => {
                 siblingBackgroundCover.remove()
@@ -2246,7 +2282,7 @@
 
                 this._depthIndexValue = value
 
-                this._adjustAll()
+                super._adjustAll()
 
                 return this
             }
