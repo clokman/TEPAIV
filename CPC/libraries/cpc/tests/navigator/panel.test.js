@@ -2279,6 +2279,9 @@ describe ('INFERENCES: Parent child relationships should be inferred correctly',
 
         expect( panel0._leftSiblingObject ).toBe( null)
 
+        expect( panel0.has.siblingObjectsOnRightSide ).toBe( null )
+
+
         // Create panel 1
         // Create child panel
         spawnObjectForChildPanel = panel0.objects('gender').objects('female')
@@ -2331,6 +2334,8 @@ describe ('INFERENCES: Parent child relationships should be inferred correctly',
 
         expect( panel1._leftSiblingObject ).toBe( null)
 
+        expect( panel1.has.siblingObjectsOnRightSide ).toBe( null )
+
     })
 
 
@@ -2376,7 +2381,10 @@ describe ('INFERENCES: Parent child relationships should be inferred correctly',
         expect( panel2.has.parentWithRightmostChildPanelObject.hasType() ).toBe( 'NestedPanel' )
         expect( panel2.has.parentWithRightmostChildPanelObject.id() ).toBe( 'panel-2-0' )
 
-        expect( panel2._leftSiblingObject ).toBe( null)
+        expect( panel2._leftSiblingObject ).toBe( null )
+
+        expect( panel2.has.siblingObjectsOnRightSide ).toBe( null )
+
 
     })
 
@@ -2419,6 +2427,8 @@ describe ('INFERENCES: Parent child relationships should be inferred correctly',
 
         expect( panel1_0._leftSiblingObject ).toBe( null )
 
+        expect( panel1_0.has.siblingObjectsOnRightSide ).toBe( null)
+
 
         // Create panel-1-1 (second sibling)
         const spawnObjectForPanel1_1 = panel0.objects('gender').objects('male')
@@ -2441,6 +2451,12 @@ describe ('INFERENCES: Parent child relationships should be inferred correctly',
         expect( panel1_0.has.parentWithRightmostChildPanelObject.hasType() ).toBe( 'NestedPanel' )
         expect( panel1_0.has.parentWithRightmostChildPanelObject.id() ).toBe( 'panel-1-1' )
 
+        // expect( panel1_0.has.siblingObjectsAtRightSide ).toBe( null )
+
+        const rightwardSiblingsOfPanel1_0 = panel1_0.has.siblingObjectsOnRightSide.keys()
+        const rightwardSiblingsOfPanel1_0_printable = String( Array.from( rightwardSiblingsOfPanel1_0 ) )
+        expect( rightwardSiblingsOfPanel1_0_printable ).toBe( "panel-1-1" )
+
 
         // Check inferred relationships for panel-1-1
         expect( panel1_1.has.beenAddedAsSibling ).toBe( true )
@@ -2459,6 +2475,9 @@ describe ('INFERENCES: Parent child relationships should be inferred correctly',
 
         expect( panel1_1._leftSiblingObject.hasType() ).toBe( 'NestedPanel' )
         expect( panel1_1._leftSiblingObject.id() ).toBe( 'panel-1-0' )
+
+        expect( panel1_1.has.siblingObjectsOnRightSide ).toBe( null )
+
     })
 
 
@@ -2516,6 +2535,7 @@ describe ('INFERENCES: Parent child relationships should be inferred correctly',
 
         expect( panel2_0._leftSiblingObject ).toBe( null )
 
+        expect( panel2_0.has.siblingObjectsOnRightSide ).toBe( null )
 
 
         // ADD PANEL 2-1 //
@@ -2550,7 +2570,7 @@ describe ('INFERENCES: Parent child relationships should be inferred correctly',
         expect( panel2_1._leftSiblingObject.hasType() ).toBe( 'NestedPanel' )
         expect( panel2_1._leftSiblingObject.id() ).toBe( 'panel-2-0' )
 
-
+        expect( panel2_1.has.siblingObjectsOnRightSide ).toBe( null )
 
         // ADD PANEL 2-2 //
 
@@ -2585,7 +2605,7 @@ describe ('INFERENCES: Parent child relationships should be inferred correctly',
         expect( panel2_2._leftSiblingObject.hasType() ).toBe( 'NestedPanel' )
         expect( panel2_2._leftSiblingObject.id() ).toBe( 'panel-2-1' )
 
-
+        expect( panel2_2.has.siblingObjectsOnRightSide ).toBe( null )
 
         // CHECK FINAL STATE //
 
@@ -2607,12 +2627,107 @@ describe ('INFERENCES: Parent child relationships should be inferred correctly',
 
         expect( panel2_0._leftSiblingObject ).toBe( null )
 
+        const rightwardSiblingsOfPanel2_0 = panel2_0.has.siblingObjectsOnRightSide.keys()
+        const rightwardSiblingsOfPanel2_0_printable = String( Array.from( rightwardSiblingsOfPanel2_0 ) )
+        expect( rightwardSiblingsOfPanel2_0_printable ).toBe( "panel-2-1,panel-2-2" )
+
         expect( panel2_0.has.parentWithRightmostChildPanelObject.hasType() ).toBe( 'NestedPanel' )
         expect( panel2_0.has.parentWithRightmostChildPanelObject.id() ).toBe( 'panel-2-2' )
 
+
     })
 
-    
-    
-    
+
+
+
+    test ('A deep child panel whose parent has siblings should have correct relationships', () => {
+
+        // PREP //
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+        // Create SVG
+        const mySvg = new container.Svg()
+
+        jest.useFakeTimers()
+
+        // Create panel 0
+        const panel0 = new navigator.NestedPanel()
+            .bgFill('#deebf7')
+            .x(200).y(25)
+            .yAxisLabels(true)
+            .update(0)
+
+
+
+        // Create panel-1-0 (first sibling)
+        let panel1_0
+        setTimeout( () => {
+            const spawnObjectForPanel1_0 = panel0.objects('gender').objects('female')
+            panel1_0 = new navigator.NestedPanel(panel0, spawnObjectForPanel1_0)
+        }, 1000)
+        jest.runOnlyPendingTimers()
+
+
+
+        // Create panel-1-1 (second sibling)
+        let panel1_1
+        setTimeout( () => {
+            const spawnObjectForPanel1_1 = panel0.objects('gender').objects('male')
+            panel1_1 = new navigator.NestedPanel(panel0, spawnObjectForPanel1_1, 'sibling')
+        }, 2000)
+        jest.runOnlyPendingTimers()
+
+
+        let panel1_2
+        setTimeout( () => {
+            // Create panel-1-2 (third sibling)
+            const spawnObjectForPanel1_2 = panel0.objects('class').objects('first-class')
+            panel1_2 = new navigator.NestedPanel(panel0, spawnObjectForPanel1_2, 'sibling')
+            // panel1_2.updateAll()
+        }, 4000)
+        jest.runOnlyPendingTimers()
+
+
+        // Create panel-2-0 of 1_0 (child of first sibling)
+        let panel2_0_of_1_0
+        setTimeout( () => {
+            let spawnObjectForPanel2_0_of_1_0 = panel1_0.objects('gender').objects('male')
+            panel2_0_of_1_0 = new navigator.NestedPanel(panel1_0, spawnObjectForPanel2_0_of_1_0)
+        }, 3000)
+
+        jest.runOnlyPendingTimers()
+
+
+        // Check inferred relationships for panel-2-0 of 1_0
+        expect( panel2_0_of_1_0.has.beenAddedAsSibling ).toBe( false )
+        expect( panel2_0_of_1_0.has.parentPanel ).toBe( true )
+        expect( panel2_0_of_1_0.has.numberOfSiblings ).toBe( 0 )
+        expect( panel2_0_of_1_0.has.parentWithNumberOfChildren ).toBe( 1 )
+        expect( panel2_0_of_1_0.has.grandParentPanel ).toBe( true )
+        expect( panel2_0_of_1_0.has.parentWithAnyChild ).toBe( true )
+        expect( panel2_0_of_1_0.has.parentWithIdenticalChild ).toBe( true )
+        expect( panel2_0_of_1_0.has.parentWithAnotherChild ).toBe( false )
+        expect( panel2_0_of_1_0.has.parentWithAnyGrandChild ).toBe( false )
+        expect( panel2_0_of_1_0.has.parentWithAnyChildButNoGrandchildren ).toBe( true )
+        expect( panel2_0_of_1_0.has.beenFullyInstantiatedAsAChild ).toBe( true )
+
+        expect( panel2_0_of_1_0.has.parentWithRightmostChildPanelObject.hasType() ).toBe( 'NestedPanel' )
+        expect( panel2_0_of_1_0.has.parentWithRightmostChildPanelObject.id() ).toBe( 'panel-2-0' )
+
+        expect( panel2_0_of_1_0._leftSiblingObject ).toBe( null )
+        expect( panel2_0_of_1_0.has.siblingObjectsOnRightSide ).toBe( null )
+
+
+        // Check siblings on the right side of parent panel (special case needed for `NestedPanel._pushAnySiblingsOfParentRightward` method)
+        const allSiblingsOfParent = panel2_0_of_1_0.parentPanel.parentPanel.childrenPanels.keys()
+        const allSiblingsOfParent_printable = String( Array.from( allSiblingsOfParent ) )
+        expect ( allSiblingsOfParent_printable ).toBe( "panel-1-0,panel-1-1,panel-1-2" )
+
+        const rightwardSiblingsOfTheParentPanelOfPanel2_0_of_1_0 = panel2_0_of_1_0.parentPanel.has.siblingObjectsOnRightSide.keys()
+        const rightwardSiblingsOfTheParentPanelOfPanel2_0_of_1_0_printable = String( Array.from( rightwardSiblingsOfTheParentPanelOfPanel2_0_of_1_0 ) )
+        expect ( rightwardSiblingsOfTheParentPanelOfPanel2_0_of_1_0_printable ).toBe( "panel-1-1,panel-1-2" )
+
+    })
+
+
 })

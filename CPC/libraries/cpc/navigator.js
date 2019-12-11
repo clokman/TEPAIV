@@ -1294,6 +1294,7 @@
                 // childPanel: false, // Not supported. Should be calculated manually, real-time
                 sibling: false,
                 numberOfSiblings: 0,
+                siblingObjectsOnRightSide: null,
                 parentWithNumberOfChildren: 0,
                 beenAddedAsSibling: false,
                 parentWithRightmostChildPanelObject: null,
@@ -1303,12 +1304,14 @@
                 parentWithAnotherChild: false,
                 parentWithAnyGrandChild: false,
                 parentWithAnyChildButNoGrandchildren: false,
-                parentWithIdenticalChild: false
+                parentWithIdenticalChild: false,
+                beenFullyInstantiatedAsAChild: false
             }
             // At this point in code, this panel is still not added to parent panel
             // Therefore, inferences are form a state where this panel is not yet in the picture
             this._inferParentChildRelationships()
 
+            // TODO: _leftSiblingObject SHOULD be moved to .inferParentChildRelationships method.
             // Alias. At this point in code, these are equal (once nestedPanel is fully instantiated, parentWithRightmostChildPanelObject would be inferred as the current panel ):
             this._leftSiblingObject = this.has.parentWithRightmostChildPanelObject
 
@@ -1957,7 +1960,7 @@
 
         _inferParentChildRelationships(){
 
-            // TODO: Child panels should be supported
+            // TODO: Child panels SHOULD be supported
             // Does this panel has a child panel?
             // NOT SUPPORTED. This information should be computed manually when needed.
             //
@@ -2050,6 +2053,40 @@
                     ? Array.from( this.parentPanel.childrenPanels.values() ).slice(-1)[0] // Get the last child of parent
                     : null
             )
+
+            this.has.beenFullyInstantiatedAsAChild = (
+                   this.has.parentPanel
+                       ? this.parentPanel.childrenPanels.has( this.id() )  // line returns true or false
+                       : null
+            )
+
+            // What are the sibling panels on the right side?
+            this.has.siblingObjectsOnRightSide = (
+                   this.has.parentWithAnotherChild
+                && this.has.beenFullyInstantiatedAsAChild // only calculate this if this panel is fully instantiated
+                       // Above .has is different; it is the `has` method of Map
+                    ? ( () => {
+                           // Find this panel's index in parent's registry
+                           const childrenIdsInParentPanelRegistry = Array.from( this.parentPanel.childrenPanels.keys() )
+                           const indexOfThisPanel = childrenIdsInParentPanelRegistry.findIndex( (id) => { return id === this.id() } )
+                           const inclusiveStartIndexOfSlice = indexOfThisPanel + 1
+
+                           // Get all objects that are on the right side of this index
+                            const allObjectsInParentPanelRegistry = Array.from( this.parentPanel.childrenPanels )
+                            const objectsOnTheRightSideOfThisPanel_asArray = allObjectsInParentPanelRegistry.slice( inclusiveStartIndexOfSlice )
+                            const objectsOnTheRightSideOfThisPanel = (
+                                objectsOnTheRightSideOfThisPanel_asArray.length
+                                    ? new Map(objectsOnTheRightSideOfThisPanel_asArray)
+                                    : null
+                            )
+
+                            return objectsOnTheRightSideOfThisPanel
+                    }) ()
+                    : null
+
+            )
+
+
 
         }
 
