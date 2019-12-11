@@ -455,7 +455,7 @@ p7_panel0_0 = new navigator.NestedPanel()
     .yAxisLabels(true)
     .update(0)
 
-p7_panel0_0.describe(`'COMPARISON VIEW: DEEP EXPANSION OF INNER SIBLING: Outer sibling should move and backgrounds  should be correct in the end.`);
+p7_panel0_0.describe(`'COMPARISON VIEW: DEEP EXPANSION OF INNER SIBLING: Outer sibling should move rightward and backgrounds should look correct in the end.`);
 
 
 
