@@ -1264,13 +1264,15 @@
 
                 duration: {  // in milliseconds
                     extendBridge: 300,
+                    appendSibling: 300,
                     retractAndExtend: 300,
                     retract: 300,
                     lateralSwitch: 200,
+
                     maximizePanelCover: 300,
                     backgroundAdjustment: 300,  // longer durations are cut off, probably by animations that follow
-                    collapseBackground: 300,
-                    appendSibling: 300
+                    collapseBackground: 300
+
                 }
             }
 
@@ -1305,7 +1307,7 @@
                 parentWithAnyGrandChild: false,
                 parentWithAnyChildButNoGrandchildren: false,
                 parentWithIdenticalChild: false,
-                beenFullyInstantiatedAsAChild: false
+                beenFullyInstantiated: false
             }
             // At this point in code, this panel is still not added to parent panel
             // Therefore, inferences are form a state where this panel is not yet in the picture
@@ -1393,6 +1395,11 @@
                 this._adjustAll()
             }
 
+
+            setTimeout( () => {
+                this.has.beenFullyInstantiated = true
+            }, 600 ) // TODO!: DEMO VALUE. Total animation duration must be calculated properly instead.
+            
         }
 
 
@@ -1614,12 +1621,12 @@
                     , fill = this.objectToSpawnFrom.fill()
                     , x = this.objectToSpawnFrom.x() + this.objectToSpawnFrom.width() - verticalTearPreventionOffset
                     , y = this.objectToSpawnFrom.y()
+                    , height = this.objectToSpawnFrom.height()
                     , width =
                         // Difference between this panel's location and parent panel's end point, plus some other values
                         distanceBetweenThisPanelBackgroundAndParentPanelCharts
                         + extraDistanceForSiblingPanelIfNecessary
                         + (verticalTearPreventionOffset * 2) // x2 to add the offset for for each side
-                    , height = this.objectToSpawnFrom.height()
 
                 // Create a bridge (with 0 width at the right edge of the element to spawn from)
                 this._bridgeObject
@@ -2054,17 +2061,11 @@
                     : null
             )
 
-            this.has.beenFullyInstantiatedAsAChild = (
-                   this.has.parentPanel
-                       ? this.parentPanel.childrenPanels.has( this.id() )  // line returns true or false
-                       : null
-            )
-
             // What are the sibling panels on the right side?
             this.has.siblingObjectsOnRightSide = (
                    this.has.parentWithAnotherChild
-                && this.has.beenFullyInstantiatedAsAChild // only calculate this if this panel is fully instantiated
-                       // Above .has is different; it is the `has` method of Map
+                && this.has.beenFullyInstantiated // only calculate this if this panel is fully instantiated
+                       // The `.has` method above is different; it is the `has` method of Map class.
                     ? ( () => {
                            // Find this panel's index in parent's registry
                            const childrenIdsInParentPanelRegistry = Array.from( this.parentPanel.childrenPanels.keys() )
@@ -2082,6 +2083,7 @@
 
                             return objectsOnTheRightSideOfThisPanel
                     }) ()
+
                     : null
 
             )
@@ -2333,7 +2335,6 @@
                     this._bridgeObject.fill( spawnSourceColor  )
 
                 }
-
 
                 return this
             }

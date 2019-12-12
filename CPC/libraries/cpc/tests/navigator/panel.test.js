@@ -2255,6 +2255,7 @@ describe ('INFERENCES: Parent child relationships should be inferred correctly',
         // Create SVG
         const mySvg = new container.Svg()
 
+        jest.useFakeTimers()
 
         // Create panel 0
         const panel0 = new navigator.NestedPanel()
@@ -2262,6 +2263,7 @@ describe ('INFERENCES: Parent child relationships should be inferred correctly',
             .x(200).y(25)
             .yAxisLabels(true)
             .update(0)
+        jest.runOnlyPendingTimers()
 
         // Check inferred relationships for panel-0
         expect( panel0.has.beenAddedAsSibling ).toBe( false )
@@ -2285,9 +2287,10 @@ describe ('INFERENCES: Parent child relationships should be inferred correctly',
         // Create panel 1
         // Create child panel
         spawnObjectForChildPanel = panel0.objects('gender').objects('female')
-
         childPanel = new navigator.NestedPanel(panel0, spawnObjectForChildPanel)
         childPanel.updateAll()
+        jest.runOnlyPendingTimers()
+
 
         // Check the newly created child panel's ID
         expect( childPanel.id() ).toBe( 'panel-1-0' )
@@ -2303,6 +2306,8 @@ describe ('INFERENCES: Parent child relationships should be inferred correctly',
         // Create SVG
         const mySvg = new container.Svg()
 
+        jest.useFakeTimers()
+
 
         // Create panel 0
         const panel0 = new navigator.NestedPanel()
@@ -2310,11 +2315,14 @@ describe ('INFERENCES: Parent child relationships should be inferred correctly',
             .x(200).y(25)
             .yAxisLabels(true)
             .update(0)
+        jest.runOnlyPendingTimers()
+
 
         // Create panel-1
         let spawnObjectForPanel1 = panel0.objects('gender').objects('female')
         const panel1 = new navigator.NestedPanel(panel0, spawnObjectForPanel1)
         panel1.updateAll()
+        jest.runOnlyPendingTimers()
 
 
         // Check inferred relationships for panel-1
@@ -2347,6 +2355,8 @@ describe ('INFERENCES: Parent child relationships should be inferred correctly',
         // Create SVG
         const mySvg = new container.Svg()
 
+        jest.useFakeTimers()
+
 
         // Create panel 0
         const panel0 = new navigator.NestedPanel()
@@ -2354,16 +2364,21 @@ describe ('INFERENCES: Parent child relationships should be inferred correctly',
             .x(200).y(25)
             .yAxisLabels(true)
             .update(0)
+        jest.runOnlyPendingTimers()
+
 
         // Create panel-1
         const spawnObjectForPanel1 = panel0.objects('gender').objects('female')
         const panel1 = new navigator.NestedPanel(panel0, spawnObjectForPanel1)
         panel1.updateAll()
+        jest.runOnlyPendingTimers()
+
 
         // Create panel-2
         const spawnObjectForPanel2 = panel0.objects('gender').objects('female')
         const panel2 = new navigator.NestedPanel(panel1, spawnObjectForPanel2)
         panel2.updateAll()
+        jest.runOnlyPendingTimers()
 
 
         // Check inferred relationships for panel-2
@@ -2396,6 +2411,8 @@ describe ('INFERENCES: Parent child relationships should be inferred correctly',
         // Create SVG
         const mySvg = new container.Svg()
 
+        jest.useFakeTimers()
+
 
         // Create panel 0
         const panel0 = new navigator.NestedPanel()
@@ -2403,11 +2420,15 @@ describe ('INFERENCES: Parent child relationships should be inferred correctly',
             .x(200).y(25)
             .yAxisLabels(true)
             .update(0)
+        jest.runOnlyPendingTimers()
+
 
         // Create panel-1-0 (first sibling)
         const spawnObjectForPanel1_0 = panel0.objects('gender').objects('female')
         const panel1_0 = new navigator.NestedPanel(panel0, spawnObjectForPanel1_0)
         panel1_0.updateAll()
+        jest.runOnlyPendingTimers()
+
 
         // Check inferred relationships for panel-1-0 (before it is given a sibling)
         expect( panel1_0.has.beenAddedAsSibling ).toBe( false )
@@ -2434,6 +2455,8 @@ describe ('INFERENCES: Parent child relationships should be inferred correctly',
         const spawnObjectForPanel1_1 = panel0.objects('gender').objects('male')
         const panel1_1 = new navigator.NestedPanel(panel0, spawnObjectForPanel1_1, 'sibling')
         panel1_1.updateAll()
+        jest.runOnlyPendingTimers()
+
 
         // Check inferred relationships for panel-1-0 (after it is given a sibling)
         expect( panel1_0.has.beenAddedAsSibling ).toBe( false )
@@ -2451,7 +2474,6 @@ describe ('INFERENCES: Parent child relationships should be inferred correctly',
         expect( panel1_0.has.parentWithRightmostChildPanelObject.hasType() ).toBe( 'NestedPanel' )
         expect( panel1_0.has.parentWithRightmostChildPanelObject.id() ).toBe( 'panel-1-1' )
 
-        // expect( panel1_0.has.siblingObjectsAtRightSide ).toBe( null )
 
         const rightwardSiblingsOfPanel1_0 = panel1_0.has.siblingObjectsOnRightSide.keys()
         const rightwardSiblingsOfPanel1_0_printable = String( Array.from( rightwardSiblingsOfPanel1_0 ) )
@@ -2497,12 +2519,14 @@ describe ('INFERENCES: Parent child relationships should be inferred correctly',
             .x(200).y(25)
             .yAxisLabels(true)
             .update(0)
+        jest.runOnlyPendingTimers()
+
 
         // Create panel-1-0
         const spawnObjectForPanel1_0 = panel0.objects('gender').objects('female')
         const panel1_0 = new navigator.NestedPanel(panel0, spawnObjectForPanel1_0)
         panel1_0.update()
-
+        jest.runOnlyPendingTimers()
 
 
         // ADD PANEL 2-0 //
@@ -2514,7 +2538,6 @@ describe ('INFERENCES: Parent child relationships should be inferred correctly',
             panel2_0 = new navigator.NestedPanel(panel1_0, spawnObjectForPanel2_0)
             panel2_0.update()
         }, 1000)
-
         jest.runOnlyPendingTimers()
 
         // Check inferred relationships for panel-2-0 (before it is given a sibling)
@@ -2548,7 +2571,6 @@ describe ('INFERENCES: Parent child relationships should be inferred correctly',
             panel2_1.update()
 
         }, 2000)
-
         jest.runOnlyPendingTimers()
 
         // Check inferred relationships for panel-2-1 (first sibling)
@@ -2581,7 +2603,6 @@ describe ('INFERENCES: Parent child relationships should be inferred correctly',
             panel2_2 = new navigator.NestedPanel(panel1_0, spawnObjectForPanel2_2, 'sibling')
             panel2_2.update()
         }, 3000)
-
         jest.runOnlyPendingTimers()
         panel2_2.updateAll()
 
@@ -2656,7 +2677,7 @@ describe ('INFERENCES: Parent child relationships should be inferred correctly',
             .x(200).y(25)
             .yAxisLabels(true)
             .update(0)
-
+        jest.runOnlyPendingTimers()
 
 
         // Create panel-1-0 (first sibling)
@@ -2694,7 +2715,10 @@ describe ('INFERENCES: Parent child relationships should be inferred correctly',
             let spawnObjectForPanel2_0_of_1_0 = panel1_0.objects('gender').objects('male')
             panel2_0_of_1_0 = new navigator.NestedPanel(panel1_0, spawnObjectForPanel2_0_of_1_0)
         }, 3000)
+        jest.runOnlyPendingTimers()
 
+        // Let some time pass, so has.beenFullyInstantiated can be set after all animations are done
+        setTimeout( () => {}, 1000)  // TODO!: DEMO VALUE This 1000 is arbitrary, and it should be set to animationDuration.total when it exists.
         jest.runOnlyPendingTimers()
 
 
@@ -2709,7 +2733,7 @@ describe ('INFERENCES: Parent child relationships should be inferred correctly',
         expect( panel2_0_of_1_0.has.parentWithAnotherChild ).toBe( false )
         expect( panel2_0_of_1_0.has.parentWithAnyGrandChild ).toBe( false )
         expect( panel2_0_of_1_0.has.parentWithAnyChildButNoGrandchildren ).toBe( true )
-        expect( panel2_0_of_1_0.has.beenFullyInstantiatedAsAChild ).toBe( true )
+        expect( panel2_0_of_1_0.has.beenFullyInstantiated ).toBe( true )
 
         expect( panel2_0_of_1_0.has.parentWithRightmostChildPanelObject.hasType() ).toBe( 'NestedPanel' )
         expect( panel2_0_of_1_0.has.parentWithRightmostChildPanelObject.id() ).toBe( 'panel-2-0' )
