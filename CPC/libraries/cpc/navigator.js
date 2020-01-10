@@ -1501,6 +1501,7 @@
             if ( this.animation.spawnStyle === 'extend'  ){
                 // console.log('extend')
 
+                this._pushAnySiblingsOfParentRightward()
                 this._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
                 this._recursivelyAlignChartsInParentPanelsWithChartsInThisPanel()
                 this._createBridgeFromSpawnRoot()
@@ -1519,6 +1520,7 @@
 
             if ( this.animation.spawnStyle === 'appendSibling' ) {
 
+                this._pushAnySiblingsOfParentRightward()
                 this._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
                 this._createBridgeFromSpawnRoot()
                 this._verticallyMaximizeFromBridgeAsChildPanel()
@@ -1608,7 +1610,11 @@
                 // Formulas
 
                 const rightEdgeOfChartsInParentPanel = this.parentPanel.x() + this.parentPanel.width() - this.parentPanel._innerPadding.right
-                const leftEdgeOfThisPanel = this.postAnimationProperties.x
+                const leftEdgeOfThisPanel = (
+                    this.has.beenFullyInstantiated
+                        ? this.x()
+                        : this.postAnimationProperties.x
+                )
                 const distanceBetweenThisPanelBackgroundAndParentPanelCharts = leftEdgeOfThisPanel - ( rightEdgeOfChartsInParentPanel)
 
                 const verticalTearPreventionOffset = 1  // for preventing vertical cuts that appear during zoom in some browsers
@@ -1769,6 +1775,69 @@
         }
 
 
+        _pushAnySiblingsOfParentRightward( thisPanel=this ){
+
+            // Push parent's sibling to right
+            if ( thisPanel.has.parentPanel && thisPanel.parentPanel.has.siblingObjectsOnRightSide ){
+
+                const rightwardSiblingsOfParent = thisPanel.parentPanel.has.siblingObjectsOnRightSide
+
+                rightwardSiblingsOfParent.forEach( ( siblingObjectOfParent, parentSiblingId ) => {
+
+                    const horizontalSpaceAddedByThisPanel = thisPanel.width() + thisPanel.parentPanel._innerPadding.right
+                    siblingObjectOfParent.x( siblingObjectOfParent.x() + horizontalSpaceAddedByThisPanel )
+
+                })
+
+
+            }
+
+
+            // Recurse with parent
+            if ( thisPanel.has.parentPanel ){
+                this._pushAnySiblingsOfParentRightward( thisPanel.parentPanel )
+            }
+
+        }
+
+
+        // TODO: Should be tested
+        x(value) {
+
+            // Getter
+            if (!arguments.length){
+                return super.x()
+            }
+
+            // Setter
+            else{
+
+                const oldValue = this.x()
+
+                super.x(value)
+
+                if ( !!this.childrenPanels ){
+
+                    const difference = value - oldValue
+
+                    this.childrenPanels.forEach( (childPanelObject, childPanelId) => {
+
+                        const oldLocation = childPanelObject.x()
+                        const newLocation = oldLocation + difference
+                        childPanelObject.x(newLocation)
+
+                    })
+
+                    // BRIDGE object is not adjusted here because
+                    // ... it is managed by _adjustBridgeProperties method.
+
+                }
+
+                return this
+            }
+
+        }
+
         _recursivelyAdjustAndUpdateDOWNSTREAM(thisPanel=this, transitionDuration){
 
             this.update(thisPanel, transitionDuration)
@@ -1822,6 +1891,7 @@
                 parentPanel
                     .innerPaddingTop( selfInnerPaddingTop + selfOuterPaddingTop )
                     .innerPaddingBottom(selfInnerPaddingBottom + selfOuterPaddingBottom - selfOuterPaddingTop)
+
 
                 // Bubble up if parent also has a parent
                 if ( thisPanel.has.grandParentPanel ){
