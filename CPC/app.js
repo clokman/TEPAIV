@@ -258,21 +258,21 @@ navigator5.loadDataset(
 
 // Navigator 6
 
-const navigator6 = new navigator.Navigator()
-
-navigator6.loadDataset(
-    'http://localhost:3000/data/mushrooms/mushrooms.csv',
-    ['Name']
-).then(that => {
-    that.update()
-
-    that
-        .x( navigator5.x() + distanceBetweenNavigators )
-        .update()
-
-    navigator6.objects('panel-0').height(7500).update()
-    navigator6.objects('panel-0').yAxisLabels()
-})
+// const navigator6 = new navigator.Navigator()
+//
+// navigator6.loadDataset(
+//     'http://localhost:3000/data/mushrooms/mushrooms.csv',
+//     ['Name']
+// ).then(that => {
+//     that.update()
+//
+//     that
+//         .x( navigator5.x() + distanceBetweenNavigators )
+//         .update()
+//
+//     navigator6.objects('panel-0').height(7500).update()
+//     navigator6.objects('panel-0').yAxisLabels()
+// })
 
 
 
