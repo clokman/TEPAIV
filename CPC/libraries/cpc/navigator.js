@@ -417,8 +417,8 @@
 
             // Create the new child panel as the child of the last clicked panel
             const totalDurationOfChildPanelInitializationAnimations = (
-                  childPanelObject.animation.duration.extendBridge
-                + childPanelObject.animation.duration.maximizePanelCover
+                  childPanelObject._animation.duration.extendBridge
+                + childPanelObject._animation.duration.maximizePanelCover
             )
 
             childPanelObject
@@ -1258,7 +1258,7 @@
             this.class('panel')
                 .update()
 
-            this.animation = {
+            this._animation = {
 
                 spawnStyle: null,
 
@@ -1486,7 +1486,7 @@
             this.preAnimationProperties.objectToSpawnFrom.y = this.objectToSpawnFrom.y()
             this.preAnimationProperties.objectToSpawnFrom.height = this.objectToSpawnFrom.height()
 
-            if ( this.animation.spawnStyle === 'instant' ){
+            if ( this._animation.spawnStyle === 'instant' ){
                 // console.log('instant')
 
                 this._respawnInPlaceOfExistingSiblingPanel()
@@ -1498,7 +1498,7 @@
 
             }
 
-            if ( this.animation.spawnStyle === 'extend'  ){
+            if ( this._animation.spawnStyle === 'extend'  ){
                 // console.log('extend')
 
                 this._pushAnySiblingsOfParentRightward()
@@ -1506,25 +1506,25 @@
                 this._recursivelyAlignChartsInParentPanelsWithChartsInThisPanel()
                 this._createBridgeFromSpawnRoot()
                 this._verticallyMaximizeFromBridgeAsChildPanel()
-                this.updateAll( this.animation.duration.extendBridge )
+                this.updateAll( this._animation.duration.extendBridge )
             }
 
 
-            if ( this.animation.spawnStyle === 'lateralSwitch' ||
-                this.animation.spawnStyle === 'retract' ||
-                this.animation.spawnStyle === 'retractAndExtend'){
+            if ( this._animation.spawnStyle === 'lateralSwitch' ||
+                this._animation.spawnStyle === 'retract' ||
+                this._animation.spawnStyle === 'retractAndExtend'){
 
                 this._collapseAllPanelsDownstreamAndSpawnThisPanelLateralToSiblingBeingReplaced()
 
             }
 
-            if ( this.animation.spawnStyle === 'appendSibling' ) {
+            if ( this._animation.spawnStyle === 'appendSibling' ) {
 
                 this._pushAnySiblingsOfParentRightward()
                 this._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
                 this._createBridgeFromSpawnRoot()
                 this._verticallyMaximizeFromBridgeAsChildPanel()
-                this.updateAll( this.animation.duration.appendSibling )
+                this.updateAll( this._animation.duration.appendSibling )
 
             }
 
@@ -1678,7 +1678,7 @@
                 .update( 0 )
 
 
-            if ( this.animation.spawnStyle === 'extend' || 'retract' || 'retractAndExtend' || 'instant' ) {
+            if ( this._animation.spawnStyle === 'extend' || 'retract' || 'retractAndExtend' || 'instant' ) {
 
                 const parentBgExtensionValue = this.parentPanel.bgExtensionRight()
                 const temporaryMaximumBridgeWidthDuringAnimation =
@@ -1688,19 +1688,19 @@
                 // Expand the width of the bridge to its temporary maximum
                 this._bridgeObject
                     .width( temporaryMaximumBridgeWidthDuringAnimation )
-                    .update( this.animation.duration.extendBridge )
+                    .update( this._animation.duration.extendBridge )
 
             }
 
-            if ( this.animation.spawnStyle === 'lateralSwitch' ) {
+            if ( this._animation.spawnStyle === 'lateralSwitch' ) {
 
                 this._adjustBridgeProperties()
                 this._bridgeObject
-                    .update( this.animation.duration.lateralSwitch )
+                    .update( this._animation.duration.lateralSwitch )
 
             }
 
-            if( this.animation.spawnStyle === 'appendSibling'
+            if( this._animation.spawnStyle === 'appendSibling'
                 && !!this.has.parentWithAnotherChild){
 
                 const siblingPanelObjects = Array.from( this.parentPanel.childrenPanels.values() )
@@ -1742,7 +1742,7 @@
                     .update( 0 )
 
 
-            }, this.animation.duration.extendBridge)  // do after bridge is extended
+            }, this._animation.duration.extendBridge)  // do after bridge is extended
 
 
 
@@ -1754,9 +1754,9 @@
                     .y( this.postAnimationProperties.y )
                     .height( this.postAnimationProperties.height )
                     .width( this.postAnimationProperties.width )
-                    .update( this.animation.duration.maximizePanelCover )
+                    .update( this._animation.duration.maximizePanelCover )
 
-            }, this.animation.duration.extendBridge)  // do after bridge is extended
+            }, this._animation.duration.extendBridge)  // do after bridge is extended
 
 
             // Remove the child panel's cover and teleport child panel to its final position
@@ -1771,7 +1771,7 @@
                     .height( this.postAnimationProperties.height )
                     .update( 0 )
 
-            }, this.animation.duration.extendBridge + this.animation.duration.maximizePanelCover)  // do after bridge extended and cover is maximized
+            }, this._animation.duration.extendBridge + this._animation.duration.maximizePanelCover)  // do after bridge extended and cover is maximized
         }
 
 
@@ -2197,12 +2197,12 @@
 
 
             // Register animation type for panel //
-            if (append) {this.animation.spawnStyle = 'appendSibling'}
-            if (instant) {this.animation.spawnStyle = 'instant'}
-            if (lateralSwitch) {this.animation.spawnStyle = 'lateralSwitch'}
-            if (extend) {this.animation.spawnStyle = 'extend'}
-            if (retractAndExtend) {this.animation.spawnStyle = 'retractAndExtend'}
-            if (retract) {this.animation.spawnStyle = 'retract'}
+            if (append) {this._animation.spawnStyle = 'appendSibling'}
+            if (instant) {this._animation.spawnStyle = 'instant'}
+            if (lateralSwitch) {this._animation.spawnStyle = 'lateralSwitch'}
+            if (extend) {this._animation.spawnStyle = 'extend'}
+            if (retractAndExtend) {this._animation.spawnStyle = 'retractAndExtend'}
+            if (retract) {this._animation.spawnStyle = 'retract'}
 
         }
 
@@ -2212,8 +2212,8 @@
             this._removeExistingSiblingPanels()
 
             // Refresh the clicked panel (recreate it with no animations)
-            this.animation.duration.extendBridge = 0
-            this.animation.duration.maximizePanelCover = 0
+            this._animation.duration.extendBridge = 0
+            this._animation.duration.maximizePanelCover = 0
 
 
             this._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
@@ -2224,9 +2224,9 @@
         _collapseAllPanelsDownstreamAndSpawnThisPanelLateralToSiblingBeingReplaced() {
 
             let duration
-            if( this.animation.spawnStyle === 'lateralSwitch' ){ duration = this.animation.duration.lateralSwitch }
-            if( this.animation.spawnStyle === 'retractAndExtend' ){ duration = this.animation.duration.retractAndExtend }
-            if( this.animation.spawnStyle === 'retract' ){ duration = this.animation.duration.retract }
+            if( this._animation.spawnStyle === 'lateralSwitch' ){ duration = this._animation.duration.lateralSwitch }
+            if( this._animation.spawnStyle === 'retractAndExtend' ){ duration = this._animation.duration.retractAndExtend }
+            if( this._animation.spawnStyle === 'retract' ){ duration = this._animation.duration.retract }
 
 
             const firstAlreadyExistingSibling = Array.from(this.parentPanel.childrenPanels)[0][1]
@@ -2257,7 +2257,7 @@
 
 
             // Retract the bridge copy
-            const initialBridgeCoverWidth = this.animation.spawnStyle === 'retract'
+            const initialBridgeCoverWidth = this._animation.spawnStyle === 'retract'
                 ? bridgeObjectOfFirstSibling.width()  // if retracting, start the bridge at full width (no extension animation)
                 : 0
 
@@ -2287,13 +2287,13 @@
 
 
             // Save default animation durations to be restored later
-            const defaultMaximizePanelCoverDuration = this.animation.duration.maximizePanelCover
-            const defaultExtendBridgeDuration = this.animation.duration.extendBridge
+            const defaultMaximizePanelCoverDuration = this._animation.duration.maximizePanelCover
+            const defaultExtendBridgeDuration = this._animation.duration.extendBridge
 
             // Set temporary animation durations so that bridge creation and spawn
             // animations can be reused here with new animation durations
-            this.animation.duration.maximizePanelCover = 0
-            this.animation.duration.extendBridge = duration
+            this._animation.duration.maximizePanelCover = 0
+            this._animation.duration.extendBridge = duration
 
             // Main procedure
             this._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
@@ -2301,7 +2301,7 @@
             this._recursivelyAlignChartsInParentPanelsWithChartsInThisPanel()
             this._createBridgeFromSpawnRoot()
             this._verticallyMaximizeFromBridgeAsChildPanel()
-            this.updateAll( this.animation.duration.collapseBackground )
+            this.updateAll( this._animation.duration.collapseBackground )
 
             setTimeout(() => {
                 siblingBackgroundCover.remove()
@@ -2310,8 +2310,8 @@
 
 
             // Reset the animation durations that were temporarily changed
-            this.animation.duration.maximizePanelCover = defaultMaximizePanelCoverDuration
-            this.animation.duration.extendBridge = defaultExtendBridgeDuration
+            this._animation.duration.maximizePanelCover = defaultMaximizePanelCoverDuration
+            this._animation.duration.extendBridge = defaultExtendBridgeDuration
 
         }
 
