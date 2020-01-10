@@ -2753,5 +2753,233 @@ describe ('INFERENCES: Parent child relationships should be inferred correctly',
 
     })
 
+})
 
+
+
+//// ANIMATION TIMES ///////////////////////////////////////////////////////////////
+
+describe ('animationDuration', () => {
+
+    test ('Init: Animation times must be correctly set on initialization', ()  => {
+
+        // PREP //
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+        // Create SVG
+        const mySvg = new container.Svg()
+
+        jest.useFakeTimers()
+
+        // Create panel 0
+        const panel0 = new navigator.NestedPanel()
+            .bgFill('#deebf7')
+            .x(200).y(25)
+            .yAxisLabels(true)
+            .update(0)
+        jest.runOnlyPendingTimers()
+
+
+        // Check initially calculated animation durations
+        expect( panel0._animation.duration ).toTabulateAs(`\
+┌──────────────────────┬────────┐
+│       (index)        │ Values │
+├──────────────────────┼────────┤
+│        total         │  600   │
+│     extendBridge     │  300   │
+│    appendSibling     │  300   │
+│   retractAndExtend   │  300   │
+│       retract        │  300   │
+│    lateralSwitch     │  200   │
+│  maximizePanelCover  │  300   │
+│ backgroundAdjustment │  300   │
+│  collapseBackground  │  300   │
+└──────────────────────┴────────┘`)
+
+    })
+
+
+
+
+    test ('Get/Set: Animation times must be correctly get/set ', ()  => {
+
+        // PREP //
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+        // Create SVG
+        const mySvg = new container.Svg()
+
+        jest.useFakeTimers()
+
+        // Create panel 0
+        const panel0 = new navigator.NestedPanel()
+            .bgFill('#deebf7')
+            .x(200).y(25)
+            .yAxisLabels(true)
+            .update(0)
+        jest.runOnlyPendingTimers()
+
+
+
+        // Modify total animation duration and recalculate individual durations
+        panel0._animation.duration.total = 299  // to test rounding
+        panel0._inferAnimationDurations()
+
+        expect( panel0._animation.duration ).toTabulateAs(`\
+┌──────────────────────┬────────┐
+│       (index)        │ Values │
+├──────────────────────┼────────┤
+│        total         │  299   │
+│     extendBridge     │  150   │
+│    appendSibling     │  150   │
+│   retractAndExtend   │  150   │
+│       retract        │  150   │
+│    lateralSwitch     │  100   │
+│  maximizePanelCover  │  150   │
+│ backgroundAdjustment │  150   │
+│  collapseBackground  │  150   │
+└──────────────────────┴────────┘`)
+
+        // Use `_adjustAll` after modifying, instead of `_adjustAnimationDurations`
+        panel0._animation.duration.total = 1000  // to test rounding
+        panel0._adjustAll()
+
+        expect( panel0._animation.duration ).toTabulateAs(`\
+┌──────────────────────┬────────┐
+│       (index)        │ Values │
+├──────────────────────┼────────┤
+│        total         │  1000  │
+│     extendBridge     │  500   │
+│    appendSibling     │  500   │
+│   retractAndExtend   │  500   │
+│       retract        │  500   │
+│    lateralSwitch     │  333   │
+│  maximizePanelCover  │  500   │
+│ backgroundAdjustment │  500   │
+│  collapseBackground  │  500   │
+└──────────────────────┴────────┘`)
+
+    })
+
+
+    test ('Propagate: When an animation duration is set, it should be propagated to all children and parents', () => {
+
+        // PREP //
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+        // Create SVG
+        const mySvg = new container.Svg()
+
+        jest.useFakeTimers()
+
+        // Create panel 0
+        const panel0 = new navigator.NestedPanel()
+            .bgFill('#deebf7')
+            .x(200).y(25)
+            .yAxisLabels(true)
+            .update(0)
+        jest.runOnlyPendingTimers()
+
+        // Create panel-1-0 (child)
+        const spawnObjectForPanel1_0 = panel0.objects('gender').objects('female')
+        const panel1_0 = new navigator.NestedPanel(panel0, spawnObjectForPanel1_0)
+        panel1_0.update()
+        jest.runOnlyPendingTimers()
+
+
+        // Create panel-2-0 (grandchild)
+        let panel2_0  // declaration must be outside the setTimer function
+        setTimeout( () => {
+            const spawnObjectForPanel2_0 = panel1_0.objects('class').objects('first-class')
+            panel2_0 = new navigator.NestedPanel(panel1_0, spawnObjectForPanel2_0)
+            panel2_0.update()
+        }, 1000)
+        jest.runOnlyPendingTimers()
+
+        // Create panel-2-1 (sibling of grandchild)
+        let panel2_1
+        setTimeout( () => {
+            const spawnObjectForPanel2_1 = panel1_0.objects('class').objects('second-class')
+            panel2_1 = new navigator.NestedPanel(panel1_0, spawnObjectForPanel2_1, 'sibling')
+            panel2_1.update()
+
+        }, 2000)
+        jest.runOnlyPendingTimers()
+
+
+
+
+        // Set animation duration for panel-1-0 (child)
+        expect ( panel1_0.animationDuration() ).not.toBe( 1000 )
+        panel1_0.animationDuration(1000 )
+        panel1_0.update()
+
+        expect( panel1_0._animation.duration ).toTabulateAs(`\
+┌──────────────────────┬────────┐
+│       (index)        │ Values │
+├──────────────────────┼────────┤
+│        total         │  1000  │
+│     extendBridge     │  500   │
+│    appendSibling     │  500   │
+│   retractAndExtend   │  500   │
+│       retract        │  500   │
+│    lateralSwitch     │  333   │
+│  maximizePanelCover  │  500   │
+│ backgroundAdjustment │  500   │
+│  collapseBackground  │  500   │
+└──────────────────────┴────────┘`)
+
+        expect( panel0._animation.duration ).toTabulateAs(`\
+┌──────────────────────┬────────┐
+│       (index)        │ Values │
+├──────────────────────┼────────┤
+│        total         │  1000  │
+│     extendBridge     │  500   │
+│    appendSibling     │  500   │
+│   retractAndExtend   │  500   │
+│       retract        │  500   │
+│    lateralSwitch     │  333   │
+│  maximizePanelCover  │  500   │
+│ backgroundAdjustment │  500   │
+│  collapseBackground  │  500   │
+└──────────────────────┴────────┘`)
+
+        expect( panel2_0._animation.duration ).toTabulateAs(`\
+┌──────────────────────┬────────┐
+│       (index)        │ Values │
+├──────────────────────┼────────┤
+│        total         │  1000  │
+│     extendBridge     │  500   │
+│    appendSibling     │  500   │
+│   retractAndExtend   │  500   │
+│       retract        │  500   │
+│    lateralSwitch     │  333   │
+│  maximizePanelCover  │  500   │
+│ backgroundAdjustment │  500   │
+│  collapseBackground  │  500   │
+└──────────────────────┴────────┘`)
+
+        expect( panel2_1._animation.duration ).toTabulateAs(`\
+┌──────────────────────┬────────┐
+│       (index)        │ Values │
+├──────────────────────┼────────┤
+│        total         │  1000  │
+│     extendBridge     │  500   │
+│    appendSibling     │  500   │
+│   retractAndExtend   │  500   │
+│       retract        │  500   │
+│    lateralSwitch     │  333   │
+│  maximizePanelCover  │  500   │
+│ backgroundAdjustment │  500   │
+│  collapseBackground  │  500   │
+└──────────────────────┴────────┘`)
+
+
+
+
+
+    })
+    
+    
+    
 })
