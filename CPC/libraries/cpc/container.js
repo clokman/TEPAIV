@@ -23,11 +23,12 @@ const version = "1.0"
 
 class Svg {
 
-    constructor(width=500, height=500){
+    constructor( width=500, height=500, parentContainerSelectionOrObject=d3.select('body') ){
 
         this._width = width
         this._height = height
 
+        this._parentContainerSelection = container.Group.getD3SelectionFromVariousParameterTypes(parentContainerSelectionOrObject)
         this._selection = null  // set by .create()
 
         this.create()
@@ -35,7 +36,7 @@ class Svg {
 
 
     create(){
-        this._selection = d3.select('body')
+        this._selection = this._parentContainerSelection
             .append('svg')
               .attr('width', this._width)
               .attr('height', this._height)

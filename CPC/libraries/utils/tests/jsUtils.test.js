@@ -33,6 +33,8 @@ global._ = require("../../external/lodash")
 
 global.container = require("../../cpc/container")
 
+global.classUtils = require("../classUtils")
+
 //// MODULE BEING TESTED IN CURRENT FILE ////
 global.__ = {
     ...require("../../utils/arrayUtils"),

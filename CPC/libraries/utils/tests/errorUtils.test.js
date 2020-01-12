@@ -33,6 +33,9 @@ global._ = require("../../external/lodash")
 
 global.container = require("../../cpc/container")
 
+global.classUtils = require("../classUtils")
+
+
 global.__ = {
     ...require("../../utils/arrayUtils"),
     ...require("../../utils/classUtils"),

@@ -22,6 +22,9 @@ global.shape = require("../shape")
 
 require("../../../../JestUtils/jest-dom")
 
+global.classUtils = require("../../utils/classUtils")
+
+
 const datasets = require("../../../data/datasets")
 
 
@@ -48,7 +51,7 @@ test('Different D3 modules should import OK', () => {
 })
 
 
-//// PREVEN D3 TRANSITIONS FROM INTERRUPTING /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//// PREVENT D3 TRANSITIONS FROM INTERRUPTING /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 test ('Should update position of element in DOM', async () => {
 

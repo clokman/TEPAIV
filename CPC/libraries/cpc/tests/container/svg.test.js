@@ -22,6 +22,7 @@ global.d3 = {
 
 global.container = require("../../container")
 global.shape = require("../../shape")
+global.classUtils = require("../../../utils/classUtils")
 
 //// MODULES BEING TESTED ////
 //...
@@ -36,7 +37,7 @@ global.shape = require("../../shape")
 
 //// INSTANTIATE ///
 
-test ('Should instantiate object with defaul parameters', () => {
+test ('new: Should instantiate object with default parameters', () => {
 
     const mySvg = new container.Svg()
 
@@ -44,10 +45,30 @@ test ('Should instantiate object with defaul parameters', () => {
 
 })
 
+// TODO: Below test Works on HTML, but not in JEST.
+// test ('new with custom parent: Should instantiate object with a custom parent', () => {
+//
+//     // Clear JEST's DOM to prevent leftovers from previous tests
+//     document.body.innerHTML = ''
+//
+//     jest.useFakeTimers()
+//
+//
+//     const myDiv = document.createElement('div')
+//     const myDivD3Selection = d3.select('div')
+//
+//     const mySvg = new container.Svg(500,500, myDivD3Selection)
+//
+//    jest.runAllTimers()
+//
+//     expect(mySvg).toBeDefined()
+//     expect( document.querySelector( 'svg' ).parentElement.tagName ).toBe()
+//
+// })
 
 //// SELECT ///
 
-test ("Should return the D3 Selection to the svg object's corresponding DOM element" , () => {
+test ("select(): Should return the D3 Selection to the svg object's corresponding DOM element" , () => {
 
     // Clear JEST's DOM to prevent leftovers from previous tests
     document.body.innerHTML = ''
@@ -74,7 +95,7 @@ test ("Should return the D3 Selection to the svg object's corresponding DOM elem
 //// CLEAR ////
 
 
-test ("Should remove all DOM objects in SVG" , () => {
+test ("clear(): Should remove all DOM objects in SVG" , () => {
 
     // Clear JEST's DOM to prevent leftovers from previous tests
     document.body.innerHTML = ''
@@ -110,7 +131,7 @@ test ("Should remove all DOM objects in SVG" , () => {
 
 
 //// HEIGHT AND WIDTH ////
-test ('Should get and set Svg width and height correctly in single and chain syntax', () => {
+test ('width()/height():Should get and set Svg width and height correctly in single and chain syntax', () => {
 
     // Clear JEST's DOM to prevent leftovers from previous tests
     document.body.innerHTML = ''
@@ -119,7 +140,7 @@ test ('Should get and set Svg width and height correctly in single and chain syn
     const mySvg = new container.Svg()
 
     mySvg.width(111)
-        .height(222)
+         .height(222)
 
     // SINGLE METHOD //
 
@@ -149,7 +170,7 @@ test ('Should get and set Svg width and height correctly in single and chain syn
 
 
 //// UPDATE ////
-test ('Should update the corresponding DOM element of the Svg object', () => {
+test ('update(): Should update the corresponding DOM element of the Svg object', () => {
 
     // Clear JEST's DOM to prevent leftovers from previous tests
     document.body.innerHTML = ''

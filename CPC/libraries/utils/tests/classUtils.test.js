@@ -21,10 +21,10 @@ global.d3 = {
 }
 
 global.container = require("../../cpc/container")
+global.classUtils = require("../classUtils")
 
 
 //// MODULES BEING TESTED ////
-const classUtils = require("../classUtils")
 
 
 
