@@ -1,5 +1,5 @@
 //// SVG  ////
-let mySvg = new container.Svg(15000, 15000)
+let mySvg = new container.Svg(150000, 15000)
 
 const yCoordinateOfTestRow1 = 50
 const yCoordinateOfTestRow2 = 600
@@ -40,7 +40,6 @@ const timeStep = {
     }
 
 }
-
 
 
 //// PANEL ////////////////////////////////////////////////////////////////////////////////
