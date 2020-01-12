@@ -20,7 +20,7 @@ const version = "1.0"
 
 class Slider{
 
-    constructor(label, value, min, max, instanceToCallOnUpdate, instanceMethodToCallOnUpdate){
+    constructor(label, value, min, max, instanceToCallOnUpdate, instanceMethodToCallOnUpdate, parentHtmlElement=document.body){
 
         const formattedLabel = stringUtils.formatAsCssSelector(label)
 
@@ -38,6 +38,8 @@ class Slider{
         this._instanceToCallOnUpdate = instanceToCallOnUpdate
         this._comboGetterSetterMethodOfCalledInstance = instanceMethodToCallOnUpdate
 
+
+        this._parentHtmlElement = parentHtmlElement
 
         this._create()
         this._listen()
@@ -69,18 +71,19 @@ class Slider{
 
 
     _create(){
+
         const sliderDiv = document.createElement('DIV')
 
         sliderDiv.innerHTML =
             `<input type="range"
-        class="slider"
-        id=${this._sliderId}
-        value=${this._value}
-        max=${this._max}
-        min=${this._min}
-        ><p>${this._label}: <span id="${this._monitorId}"></span></p>`
+            class="slider preference-control"
+            id=${this._sliderId}
+            value=${this._value}
+            max=${this._max}
+            min=${this._min}
+            ><p>${this._label}: <span id="${this._monitorId}"></span></p>`
 
-        document.body.appendChild(sliderDiv)
+        this._parentHtmlElement.appendChild(sliderDiv)
     }
 
 
