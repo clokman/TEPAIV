@@ -689,6 +689,7 @@
 
 
         _adjustAll(){
+
             if (this._backgroundObject){
                 this._adjustBackgroundProperties()
             }
@@ -1476,7 +1477,7 @@
             super.update(transitionDuration)
 
             if (thereIsAChildPanel){
-                this.childrenPanels.forEach( (childPanelObject, childPanelName) => {
+                thisPanel.childrenPanels.forEach( (childPanelObject, childPanelName) => {
 
                     // Recursion
                     childPanelObject.update(transitionDuration, childPanelObject)
