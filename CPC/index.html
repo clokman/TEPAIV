@@ -95,17 +95,19 @@
 
     <div class="main-container">
 
-        <div class="preferences-area">
+        <div class="preferences-pane">
 
-                <!--Absolute Values Checkbox-->
-                <div class="preference-control ui checkbox">
-                    <input type="checkbox" name="example" id="checkbox1" onclick="toggleAbsoluteValues()">
-                    <label>Show absolute values</label>
-                </div>
 
-                <!--Color Scheme Dropdown-->
+            <!--Absolute Values Checkbox-->
+            <div class="preference-control ui checkbox">
+                <input type="checkbox" name="example" id="checkbox1" onclick="toggleAbsoluteValues()">
+                <label>Show absolute values</label>
+            </div>
+
+
+            <!--Color Scheme Dropdown-->
             <div class="preference-control">
-<!--                <p>ColorScheme</p>-->
+                <!--<p>ColorScheme</p>-->
                 <select class="ui dropdown" id="navigator-1-color-scheme-dropdown" onchange="setColorScheme()">
 
                     <option value="">ColorScheme</option>
@@ -170,9 +172,13 @@
     <!--======================== LATEST DEMO ========================-->
     <!--    <script type="text/javascript" src="demos/cpc-horizontal-static/demo.js"></script>-->
 
-    <!--======================== APP LOGIC ========================-->
+    <!--======================== NAVIGATORS LOGIC ========================-->
     <script type="text/javascript" src="./app.js"></script>
 
+
+
+
+    <!--======================== INTERFACE LOGIC ========================-->
 
     <script>
 
@@ -203,7 +209,7 @@
         }
 
 
-        // TOGGLE ABSOLUTE VALUES //
+        // TOGGLE ABSOLUTE VALUES CHECKBOX //
         function toggleAbsoluteValues() {
 
             // Get the checkbox element
@@ -221,22 +227,6 @@
                 navigator.update()
             })
 
-        }
-
-
-        function checkbox2() {
-
-            // Get the checkbox
-            var checkBox2 = document.getElementById("checkbox2")
-
-            // If the checkbox is checked, toggle labels
-            if (checkBox2.checked === true ){
-                navigator2.showAbsoluteValues(true)
-            } else {
-                navigator2.showAbsoluteValues(false)
-            }
-
-            navigator2.update()
         }
 
 
