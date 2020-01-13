@@ -1514,7 +1514,7 @@
 
             super._adjustAll.call(thisPanel)  // super's `_adjustAll` does not propagate any values to other panels
 
-            // Infer parent-child relationshiGps
+            // Infer parent-child relationships
             if ( !!thisPanel.parentPanel || (!!thisPanel.childrenPanels && !!thisPanel.childrenPanels.size) ){
                 thisPanel._inferParentChildRelationships()
             }
