@@ -787,3 +787,47 @@ describe ('COMPARISON VIEW', () => {
 
 
 })
+
+
+
+//// HAS ///////////////////////////////////////////////////////////////
+
+describe ('get(): Inferences should be made correctly', () => {
+   
+    test ('panelZero: Should select panelZero correctly', async () => {
+
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+        // Create svg container
+        const svg = new container.Svg()
+        // Create Navigator object
+        const myNavigator = new navigator.Navigator()
+        //// Load a dataset into navigator
+        await myNavigator.loadDataset(
+            'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
+            ['Name']
+        ).then(that => {
+            that.update()
+
+        })
+
+        // Select panelZero
+        let panelZero = myNavigator.get('panelZero')
+        expect( panelZero ).toBeDefined()
+        expect( panelZero.id() ).toBe( "panel-0-0" )
+
+
+        // ADD A SECOND PANEL //
+        domUtils.simulateClickOn('#Male' )
+        const numberOfPanels = myNavigator.objects().size
+        expect( numberOfPanels ).toBe(2)
+
+        // panelZero should still return
+        panelZero = myNavigator.get('panelZero')
+        expect( panelZero ).toBeDefined()
+        expect( panelZero.id() ).toBe( "panel-0-0" )
+
+
+    })
+    
+})

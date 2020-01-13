@@ -31,9 +31,13 @@
             // Public Parameters //
             this.datasetObject = null
 
+
             // Private Variables //
             this._awaitingDomUpdateAfterDataChange = false
 
+            this._colorSet = 'Single-Hue'
+            this._showAbsoluteValues = false
+            this._animationDuration = 600
 
             this._currentPanelDepth = -1  // `-1`, so that the first panel can be labeled as `panel-0`
 
@@ -51,16 +55,12 @@
 
             this._currentDrilldownPathParameter = []  // stores the drilldown path that generated whatever is being visualized in the navigator at a point in time
 
-            this._colorSet = 'Single-Hue'
-
-            this._showAbsoluteValues = false
-
-
             // Initialize //
 
 
             // document.removeEventListener('click', domUtils._assessAndRecordClickProperties, true)
             document.listenForClicksAndRecordLastClickProperties()
+
             this._addListenerToFirstPanel()
 
 
@@ -314,19 +314,19 @@
 
         update(transitionDuration) {
 
-            // Establish conditions
-            const navigatorContainsAtLeastOnePanel = this.objects().size
-
             // Keep DOM in line with underlying data
             this._updateDomIfStacksDataHasChanged()
 
             // Update panel zero (which, in turn, will update its children)
-            if ( navigatorContainsAtLeastOnePanel ) {
-                const panelZero = this.objects().values().next().value
+            const panelZero = this.get('panelZero')
+            if (!!panelZero){
                 panelZero
                     .showAbsoluteValues( this.showAbsoluteValues() )
                     .colorSet( this.colorSet() )
+                    .animationDuration( this.animationDuration() )
             }
+
+
 
 
             super.update(transitionDuration)
@@ -335,6 +335,23 @@
 
         }
 
+
+        get( query ){
+
+            let result
+
+            if ( query === 'panelZero' ){
+
+                const navigatorContainsAtLeastOnePanel = this.objects().size
+
+                result = navigatorContainsAtLeastOnePanel
+                    ? this.objects().values().next().value
+                    : null
+            }
+
+            return result
+
+        }
 
         _updateDomIfStacksDataHasChanged() {
 
@@ -510,6 +527,23 @@
                 return this
             }
         }
+
+       animationDuration(value) {
+
+           // Getter
+           if (!arguments.length){
+               return this._animationDuration
+           }
+       
+           // Setter
+           else{
+               value.mustBeOfType('Number')
+               this._animationDuration = value
+               
+               return this
+           }
+           
+       }
 
     }
 
