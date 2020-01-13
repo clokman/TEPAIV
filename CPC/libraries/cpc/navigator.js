@@ -2164,7 +2164,7 @@
 
             // Is this panel being added as a sibling?
             this.has.beenAddedAsSibling = (
-                this.arguments.addAs === 'sibling'
+                this.arguments.addAs === 'sibling' && this.has.sibling
             )
 
             // Does parent have a grandchild?

@@ -808,7 +808,6 @@ describe ('get(): Inferences should be made correctly', () => {
             ['Name']
         ).then(that => {
             that.update()
-
         })
 
         // Select panelZero
@@ -826,6 +825,68 @@ describe ('get(): Inferences should be made correctly', () => {
         panelZero = myNavigator.get('panelZero')
         expect( panelZero ).toBeDefined()
         expect( panelZero.id() ).toBe( "panel-0-0" )
+
+
+    })
+    
+})
+
+
+
+//// SIBLING PANEL ///////////////////////////////////////////////////////////////
+
+describe ('Sibling Panel via Click', () => {
+   
+    test ('Add sibling', async () => {
+
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+        // Create svg container
+        const svg = new container.Svg()
+        // Create Navigator object
+        const myNavigator = new navigator.Navigator()
+        //// Load a dataset into navigator
+        await myNavigator.loadDataset(
+            'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
+            ['Name']
+        ).then(that => {
+            that.update()
+        })
+
+
+        // CLICK ON A CATEGORY
+        domUtils.simulateClickOn('#Male' )
+        let numberOfPanels = myNavigator.objects().size
+        expect( numberOfPanels ).toBe(2)
+
+        // ADD A SIBLING PANEL VIA SHIFT CLICK
+        domUtils.simulateClickOn('#Female', 'shift' )
+        numberOfPanels = myNavigator.objects().size
+        expect( numberOfPanels ).toBe(3)
+
+    })
+    
+    
+    test ('Sibling-Click as First Click: This should not cause a bug', async () => {
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+        // Create svg container
+        const svg = new container.Svg()
+        // Create Navigator object
+        const myNavigator = new navigator.Navigator()
+        //// Load a dataset into navigator
+        await myNavigator.loadDataset(
+            'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
+            ['Name']
+        ).then(that => {
+            that.update()
+        })
+
+
+        // CLICK ON A CATEGORY
+        domUtils.simulateClickOn('#Male', 'shift' )
+        let numberOfPanels = myNavigator.objects().size
+        expect( numberOfPanels ).toBe(2)
 
 
     })
