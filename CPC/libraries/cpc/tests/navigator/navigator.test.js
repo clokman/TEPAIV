@@ -867,7 +867,7 @@ describe ('Sibling Panel via Click', () => {
     })
     
     
-    test ('Sibling-Click as First Click: This should not cause a bug', async () => {
+    test ('Shift-Click as First Click: Shift-Clicking on a category that has no siblings should not cause a bug', async () => {
         // Clear JEST's DOM to prevent leftovers from previous tests
         document.body.innerHTML = ''
         // Create svg container
@@ -883,7 +883,7 @@ describe ('Sibling Panel via Click', () => {
         })
 
 
-        // CLICK ON A CATEGORY
+        // SHIFT-CLICK ON A CATEGORY
         domUtils.simulateClickOn('#Male', 'shift' )
         let numberOfPanels = myNavigator.objects().size
         expect( numberOfPanels ).toBe(2)
