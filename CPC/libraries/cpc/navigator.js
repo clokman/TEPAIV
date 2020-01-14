@@ -1988,6 +1988,8 @@
                     this._recursivelyAlignChartsInParentPanelsWithChartsInThisPanel(parentPanel)
                 }
 
+
+
             }
 
 
@@ -2047,9 +2049,7 @@
                     // bear in mind that the parent panel's bgExtension is already expanded ...
                     // before this iteration of recursion (while `recursingForThePanelBeingAdded`).
                     // So, there is no need to include `rightEdgeOfPanelBeingAddedPanel` or new panel's width
-                    newRightEdgeOfOfParentPanel =
-                      + rightEdgeOfExistingRightmostSiblingOrSelf
-                      + thisPanel._innerPadding.right
+                    newRightEdgeOfOfParentPanel = rightEdgeOfExistingRightmostSiblingOrSelf
                 }
 
 
