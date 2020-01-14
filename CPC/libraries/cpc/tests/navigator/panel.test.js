@@ -2718,7 +2718,7 @@ describe ('INFERENCES: Parent child relationships should be inferred correctly',
         jest.runOnlyPendingTimers()
 
         // Let some time pass, so has.beenFullyInstantiated can be set after all animations are done
-        setTimeout( () => {}, 1000)  // TODO!: DEMO VALUE This 1000 is arbitrary, and it should be set to animationDuration.total when it exists.
+        setTimeout( () => {}, panel2_0_of_1_0.animationDuration() )
         jest.runOnlyPendingTimers()
 
 
