@@ -669,7 +669,6 @@
 
         update(transitionDuration) {
 
-
             this._updateDomIfStacksDataHasChanged()
             this._adjustAll()
 
@@ -2001,90 +2000,74 @@
 
             if ( thisPanel.has.parentPanel ) {
 
-                const currentRecursionIsForThePanelBeingAdded = (
+                // Establish conditions
+                const recursingForThePanelBeingAdded = (
                     thisPanel === this
                 )
-
-                const currentRecursionIsForTheImmediateParentOfPanelBeingAdded = (
-                    thisPanel === this.parentPanel
+                const recursingForAParentOfPanelBeingAdded = (
+                    thisPanel !== this
                 )
 
 
-                // Select the rightmost sibling
-                const rightmostChildPanelObjectOfParent = (
-                    currentRecursionIsForThePanelBeingAdded
-                        ? null
-                        : thisPanel.has.parentWithRightmostChildPanelObject
+                // Calculate variables
+
+                const rightEdgeOfPanelBeingAddedPanel =
+                    + this.postAnimationProperties.x  // because this.x() starts at a default location (e.g., off-screen)
+                    + this.postAnimationProperties.width
+
+
+                const existingRightmostSiblingOrSelfIfThereAreNoSiblings = (
+                    recursingForAParentOfPanelBeingAdded
+                        ? thisPanel.has.parentWithRightmostChildPanelObject
+                        : null
                 )
 
+                const rightEdgeOfExistingRightmostSiblingOrSelf = (
+                    !!existingRightmostSiblingOrSelfIfThereAreNoSiblings
+                        ? + existingRightmostSiblingOrSelfIfThereAreNoSiblings.x()
+                          + existingRightmostSiblingOrSelfIfThereAreNoSiblings.width()
+                          + existingRightmostSiblingOrSelfIfThereAreNoSiblings.bgExtensionRight()
+                        : null
+                )
 
-                // // Below is a more robust way to calculate the space siblings take.
-                // // This method does not assume that all siblings have equal width.
-                // // But it breaks the code and not fixed & used due to time constraints.
-                // const totalHorizontalSpaceOtherChildrenOccupy = ( () => {
-                //
-                //     let sumOfWidths = 0
-                //     let sumOfPaddingsBetweenSiblingPanels = 0
-                //
-                //     thisPanel.parentPanel.childrenPanels.forEach( ( childPanelObject, childPanelId ) => {
-                //         // The panel currently being added in this instance is not yet in the parent's children registry,
-                //         // So, this is an iteration of other children of parent, if there are any.
-                //         sumOfWidths += childPanelObject.width()
-                //         sumOfPaddingsBetweenSiblingPanels += childPanelObject._paddingBetweenSiblingPanels
-                //     })
-                //
-                //     const totalHorizontalSpace = sumOfWidths + sumOfPaddingsBetweenSiblingPanels
-                //     return totalHorizontalSpace
-                //
-                // }) ()
+                const rightmostEdgeOfParentPanelIfThereWereNoBgExtension =
+                    + thisPanel.parentPanel.x()
+                    + thisPanel.parentPanel.width()
+
+
+
+                // Calculate the new right edge of parent panel //
+                let newRightEdgeOfOfParentPanel
+
+                if( recursingForThePanelBeingAdded ){
+                    newRightEdgeOfOfParentPanel = rightEdgeOfPanelBeingAddedPanel
+                }
+
+                if( recursingForAParentOfPanelBeingAdded ){
+                    // bear in mind that the parent panel's bgExtension is already expanded ...
+                    // before this iteration of recursion (while `recursingForThePanelBeingAdded`).
+                    // So, there is no need to include `rightEdgeOfPanelBeingAddedPanel` or new panel's width
+                    newRightEdgeOfOfParentPanel =
+                      + rightEdgeOfExistingRightmostSiblingOrSelf
+                      + thisPanel._innerPadding.right
+                }
+
 
 
                 // Calculate the rightward bg extension value //
-
-                // Get the x coordinate of the right edge of children area
-                const rightmostEdgeOfRightmostChildOfParentPanel = (
-
-                    // Recursing self
-                    currentRecursionIsForThePanelBeingAdded
-
-                        ?   this.postAnimationProperties.x  // because this.x() starts at a default location (e.g., off-screen)
-                          + this.postAnimationProperties.width
-
-                    // Recursing direct parent
-                    : currentRecursionIsForTheImmediateParentOfPanelBeingAdded
-
-                    ?   rightmostChildPanelObjectOfParent.x()
-                      + rightmostChildPanelObjectOfParent.width()
-                      + this.postAnimationProperties.width * (thisPanel.childrenPanels.size + 1) + (this._paddingBetweenSiblingPanels * thisPanel.childrenPanels.size + 1 )
-                      + thisPanel._innerPadding.right
-
-                    // Recursing a grandparent
-                    :   rightmostChildPanelObjectOfParent.x()
-                      + rightmostChildPanelObjectOfParent.width()
-                      + rightmostChildPanelObjectOfParent.bgExtensionRight()
-
-
-                )
-
-                const rightmostEdgeOfParentPanelIfThereWereNoBgExtension = (
-                      thisPanel.parentPanel.x()
-                    + thisPanel.parentPanel.width()
-                )
-
                 const newRightBgExtensionValueOfParent = (
-                    rightmostEdgeOfRightmostChildOfParentPanel
+                    + newRightEdgeOfOfParentPanel
                     - rightmostEdgeOfParentPanelIfThereWereNoBgExtension
                     + thisPanel.parentPanel._innerPadding.right
                 )
 
-
-                // Set bg extension of parent
+                // Set bg extension of parent  //
                 thisPanel.parentPanel
                     .bgExtensionRight( newRightBgExtensionValueOfParent )
 
 
-                // Bubble up if parent also has a parent
-                if ( thisPanel.has.grandParentPanel ){
+                // Bubble up if parent also has a parent //
+                if ( thisPanel.has.parentPanel ){
                     this._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel(thisPanel.parentPanel)
                 }
 
