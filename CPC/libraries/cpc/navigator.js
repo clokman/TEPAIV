@@ -1753,7 +1753,6 @@
         }
 
 
-
         _createBridgeFromSpawnRoot() {
 
             // Create a bridge (with 0 width at the right edge of the element to spawn from)
