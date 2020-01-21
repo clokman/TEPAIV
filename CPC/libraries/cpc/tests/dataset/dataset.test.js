@@ -211,18 +211,18 @@ test ('Dataset should initiate with an omitted column', async () => {
 
 
 
-test ('BREAKDOWN dataset by column using .breakdown(), and then manually drilldown with .get()', async () => {
+test ('SPLIT dataset by column using .splitBy(), and then manually drilldown with .get()', async () => {
 
     // Query terminology:
-    // BREAKDOWN: d3.group()
+    // SPLIT: d3.group()
     // DRILLDOWN: d3.group().get()
-    // BREAKDOWN+SUMMARIZE: d3.rollup()
+    // SPLIT+SUMMARIZE: d3.rollup()
 
     const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv', 'Name')
     await titanicDataset.build()
 
-    // BREAKDOWN using column name
-    const dataByGender = titanicDataset.breakdown('Gender')  // gender is a column name
+    // SPLIT using column name
+    const dataByGender = titanicDataset.splitBy('Gender')  // gender is a column name
     expectTable(dataByGender, `\
 ┌───────────────────┬──────────┬──────────────────────────────────────────────────────┐
 │ (iteration index) │   Key    │                        Values                        │
@@ -236,8 +236,8 @@ test ('BREAKDOWN dataset by column using .breakdown(), and then manually drilldo
     expect(dataByGender.get('Male')).toHaveLength(843)
 
 
-    // BREAKDOWN using 2 column names
-    const dataByGenderAndStatus = titanicDataset.breakdown('Gender', 'Status')
+    // SPLIT using 2 column names
+    const dataByGenderAndStatus = titanicDataset.splitBy('Gender', 'Status')
     expectTable(dataByGenderAndStatus, `\
 ┌───────────────────┬──────────┬──────────────────────────────────────────────────┐
 │ (iteration index) │   Key    │                      Values                      │
@@ -276,7 +276,7 @@ test ('BREAKDOWN dataset by column using .breakdown(), and then manually drilldo
 ˅˅˅ 151 more rows`, 0, 10)
 
 
-    // BREAKDOWN & COUNT the drilled down category by another category using d3.rollup()
+    // SPLIT & COUNT the drilled down category by another category using d3.rollup()
     const survivingMalesByTicket =
         d3.rollup(survivingMales, v=>v.length, g=>g['Ticket'])
     expectTable(survivingMalesByTicket, `\
@@ -291,25 +291,25 @@ test ('BREAKDOWN dataset by column using .breakdown(), and then manually drilldo
 
     // Attempting to query with both column and category names should give error
     expect(() =>
-        titanicDataset.breakdown('Gender', '1st class')
+        titanicDataset.splitBy('Gender', '1st class')
     ).toThrow(Error)
 
 })
 
 
 
-test ('DRILLDOWN dataset by category using drilldown()', async () => {
+test ('DRILLDOWN dataset by category using drilldownTo()', async () => {
 
     // Query terminology:
-    // BREAKDOWN: d3.group()
+    // SPLIT: d3.group()
     // DRILLDOWN: d3.group().get()
-    // BREAKDOWN+SUMMARIZE: d3.rollup()
+    // SPLIT+SUMMARIZE: d3.rollup()
 
     const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv', 'Name')
     await titanicDataset.build()
 
     // DRILDOWN using a category name (i.e., 'Female')
-    const femaleSubset = titanicDataset.drilldown({'Gender':'Female'})  // 'Gender' is a column name, while 'Female' is a category in the 'Gender' column
+    const femaleSubset = titanicDataset.drilldownTo({'Gender':'Female'})  // 'Gender' is a column name, while 'Female' is a category in the 'Gender' column
 
     expectTable(femaleSubset, `\
 ┌─────────┬─────────────┬────────────┬──────────┐
@@ -358,7 +358,7 @@ test ('DRILLDOWN dataset by category using drilldown()', async () => {
 
 
         // DRILDOWN using two category names (i.e., 'Female' and 'Survived')
-    const femaleSurvivorsSubset = titanicDataset.drilldown({'Gender':'Female'}, {'Status':'Survived'})
+    const femaleSurvivorsSubset = titanicDataset.drilldownTo({'Gender':'Female'}, {'Status':'Survived'})
 
     expectTable(femaleSurvivorsSubset, `\
 ┌─────────┬─────────────┬────────────┬──────────┐
@@ -434,19 +434,19 @@ test ('DRILLDOWN dataset by category using drilldown()', async () => {
 
 
 
-test ('DRILLDOWN the dataset and BREAKDOWN+SUMMARIZE of all categories in the context of the drilled down data', async () => {
+test ('DRILLDOWN the dataset and SPLIT+SUMMARIZE of all categories in the context of the drilled down data', async () => {
 
     // Query terminology:
-    // BREAKDOWN: d3.group()
+    // SPLIT: d3.group()
     // DRILLDOWN: d3.group().get()
-    // BREAKDOWN+SUMMARIZE: d3.rollup()
+    // SPLIT+SUMMARIZE: d3.rollup()
 
     const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv', 'Name')
     await titanicDataset.build()
 
 //
 //
-//     // DRILLDOWN, and then BREAKDOWN+SUMMARIZE --- Zero depth (summary of initial/surface data without drilling down)
+//     // DRILLDOWN, and then SPLIT+SUMMARIZE --- Zero depth (summary of initial/surface data without drilling down)
 //     const datasetSummary = titanicDataset.drilldownAndSummarize()
 //
 //     expectTable(datasetSummary, `\
@@ -461,7 +461,7 @@ test ('DRILLDOWN the dataset and BREAKDOWN+SUMMARIZE of all categories in the co
 //
 //
 //
-//     // DRILLDOWN, and then BREAKDOWN+SUMMARIZE --- One category deep
+//     // DRILLDOWN, and then SPLIT+SUMMARIZE --- One category deep
 //     const femaleSubsetSummary = titanicDataset.drilldownAndSummarize({'Gender':'Female'})
 //
 //     expectTable(femaleSubsetSummary, `\
@@ -475,7 +475,7 @@ test ('DRILLDOWN the dataset and BREAKDOWN+SUMMARIZE of all categories in the co
 //
 //
 //
-//     // DRILLDOWN, and then BREAKDOWN+SUMMARIZE --- Two categories deep
+//     // DRILLDOWN, and then SPLIT+SUMMARIZE --- Two categories deep
 //
 //     const femaleSurvivorsSubsetSummary =
 //         titanicDataset.drilldownAndSummarize({'Gender':'Female'}, {'Status':'Survived'})
@@ -491,7 +491,7 @@ test ('DRILLDOWN the dataset and BREAKDOWN+SUMMARIZE of all categories in the co
 //
 //
 //
-//     // DRILLDOWN, and then BREAKDOWN+SUMMARIZE --- Three categories deep
+//     // DRILLDOWN, and then SPLIT+SUMMARIZE --- Three categories deep
 //
 //     const firstClassFemaleSurvivorsSubsetSummary =
 //         titanicDataset.drilldownAndSummarize({'Gender':'Female'}, {'Status':'Survived'}, {'Ticket':'1st class'})
@@ -506,7 +506,7 @@ test ('DRILLDOWN the dataset and BREAKDOWN+SUMMARIZE of all categories in the co
 // └───────────────────┴──────────┴────────────────────────────┘`)
 
 
-    // DRILLDOWN, and then BREAKDOWN+SUMMARIZE --- Providing an array as parameter
+    // DRILLDOWN, and then SPLIT+SUMMARIZE --- Providing an array as parameter
 
     const arrayParameterSummary =
         titanicDataset.drilldownAndSummarize([{'Gender':'Female'}, {'Status':'Survived'}])
@@ -527,12 +527,12 @@ test ('DRILLDOWN the dataset and BREAKDOWN+SUMMARIZE of all categories in the co
 
 
 
-test ('BREAKDOWN+SUMMARIZE level-0/SURFACE data with summarize()', async () => {
+test ('SPLIT+SUMMARIZE level-0/SURFACE data with summarize()', async () => {
 
     // Query terminology:
-    // BREAKDOWN: d3.group()
+    // SPLIT: d3.group()
     // DRILLDOWN: d3.group().get()
-    // BREAKDOWN+SUMMARIZE: d3.rollup()
+    // SPLIT+SUMMARIZE: d3.rollup()
 
     const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv', 'Name')
     await titanicDataset.build()
@@ -555,19 +555,19 @@ test ('BREAKDOWN+SUMMARIZE level-0/SURFACE data with summarize()', async () => {
 
 
 
-test ('DRILLDOWN the dataset and BREAKDOWN+SUMMARIZE of all categories in the context of the drilled down data', async () => {
+test ('DRILLDOWN the dataset and SPLIT+SUMMARIZE of all categories in the context of the drilled down data', async () => {
 
     // Query terminology:
-    // BREAKDOWN: d3.group()
+    // SPLIT: d3.group()
     // DRILLDOWN: d3.group().get()
-    // BREAKDOWN+SUMMARIZE: d3.rollup()
+    // SPLIT+SUMMARIZE: d3.rollup()
 
     const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv', 'Name')
     await titanicDataset.build()
 
 
 
-    // DRILLDOWN, and then BREAKDOWN+SUMMARIZE --- Zero depth (summary of initial/surface data without drilling down)
+    // DRILLDOWN, and then SPLIT+SUMMARIZE --- Zero depth (summary of initial/surface data without drilling down)
     const datasetSummary = titanicDataset.drilldownAndSummarize()
 
     expectTable(datasetSummary, `\
@@ -582,7 +582,7 @@ test ('DRILLDOWN the dataset and BREAKDOWN+SUMMARIZE of all categories in the co
 
 
 
-    // DRILLDOWN, and then BREAKDOWN+SUMMARIZE --- One category deep
+    // DRILLDOWN, and then SPLIT+SUMMARIZE --- One category deep
     const femaleSubsetSummary = titanicDataset.drilldownAndSummarize({'Gender':'Female'})
 
     expectTable(femaleSubsetSummary, `\
@@ -596,7 +596,7 @@ test ('DRILLDOWN the dataset and BREAKDOWN+SUMMARIZE of all categories in the co
 
 
 
-    // DRILLDOWN, and then BREAKDOWN+SUMMARIZE --- Two categories deep
+    // DRILLDOWN, and then SPLIT+SUMMARIZE --- Two categories deep
 
     const femaleSurvivorsSubsetSummary =
         titanicDataset.drilldownAndSummarize({'Gender':'Female'}, {'Status':'Survived'})
@@ -612,7 +612,7 @@ test ('DRILLDOWN the dataset and BREAKDOWN+SUMMARIZE of all categories in the co
 
 
 
-    // DRILLDOWN, and then BREAKDOWN+SUMMARIZE --- Three categories deep
+    // DRILLDOWN, and then SPLIT+SUMMARIZE --- Three categories deep
 
     const firstClassFemaleSurvivorsSubsetSummary =
         titanicDataset.drilldownAndSummarize({'Gender':'Female'}, {'Status':'Survived'}, {'Ticket':'1st class'})
@@ -630,12 +630,12 @@ test ('DRILLDOWN the dataset and BREAKDOWN+SUMMARIZE of all categories in the co
 
 
 
-test ('BREAKDOWN+SUMMARIZE level-0/SURFACE data with summarize()', async () => {
+test ('SPLIT+SUMMARIZE level-0/SURFACE data with summarize()', async () => {
 
     // Query terminology:
-    // BREAKDOWN: d3.group()
+    // SPLIT: d3.group()
     // DRILLDOWN: d3.group().get()
-    // BREAKDOWN+SUMMARIZE: d3.rollup()
+    // SPLIT+SUMMARIZE: d3.rollup()
 
     const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv', 'Name')
     await titanicDataset.build()
@@ -663,7 +663,7 @@ test ('Should query the dataset for counts of nested categories using private in
 
 
     // Query depth: 1
-    const status = titanicDataset.breakdown('Status')
+    const status = titanicDataset.splitBy('Status')
         , survived = status.get('Survived')
         , died = status.get('Died')
 
@@ -672,7 +672,7 @@ test ('Should query the dataset for counts of nested categories using private in
 
 
     // Query depth: 2
-    const statusByGender = titanicDataset.breakdown('Status', 'Gender')
+    const statusByGender = titanicDataset.splitBy('Status', 'Gender')
         , survivedFemales = statusByGender.get('Survived').get('Female')
         , survivedMales = statusByGender.get('Survived').get('Male')
 
@@ -682,7 +682,7 @@ test ('Should query the dataset for counts of nested categories using private in
 
     // Query depth: 3
     const survivedFirstClassFemales =
-        titanicDataset.breakdown('Status', 'Gender', 'Ticket')
+        titanicDataset.splitBy('Status', 'Gender', 'Ticket')
             .get('Survived').get('Female').get('1st class')
 
     expect(survivedFirstClassFemales).toHaveLength(139)
@@ -793,9 +793,9 @@ test ('Should return error if query is invalid because of a bad column or catego
 
     expect( () => {
 
-        const myColumnQuery = new dataset.BreakdownQuery( titanicDataset, ['random column name'] )
+        const myColumnQuery = new dataset.SplitQuery( titanicDataset, ['random column name'] )
 
-    }).toThrow(`Provided breakdown query argument(s), "[random column name]", do not correspond to a column or category in the dataset.`)
+    }).toThrow(`Provided split query argument(s), "[random column name]", do not correspond to a column or category in the dataset.`)
 
 })
 
@@ -805,16 +805,16 @@ test ('Should determine whether the query is column-based, category-based, or hy
     const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv')
     await titanicDataset.build()
 
-    const myColumnQuery = new dataset.BreakdownQuery( titanicDataset, ['Status'] )
-    const myCategoryQuery = new dataset.BreakdownQuery( titanicDataset, ['Survived'] )
+    const myColumnQuery = new dataset.SplitQuery( titanicDataset, ['Status'] )
+    const myCategoryQuery = new dataset.SplitQuery( titanicDataset, ['Survived'] )
 
-    expect(myColumnQuery._breakdownType).toBe('column')
-    expect(myCategoryQuery._breakdownType).toBe('category')
-    // hybrid category is not tested with the private method, because the class constructor does not allow initialization with a hybrid breakdown query.
+    expect(myColumnQuery._splitType).toBe('column')
+    expect(myCategoryQuery._splitType).toBe('category')
+    // hybrid category is not tested with the private method, because the class constructor does not allow initialization with a hybrid split query.
 
     expect( () => {
-        const myHybridQuery = new dataset.BreakdownQuery( titanicDataset, ['Gender', 'Survived'] )
-    }).toThrow(`Both a column name and a category name exists in breakdown path argument "[Gender,Survived]". Breakdown path must consist of either only column names, or only category names.`)
+        const myHybridQuery = new dataset.SplitQuery( titanicDataset, ['Gender', 'Survived'] )
+    }).toThrow(`Both a column name and a category name exists in split-path argument "[Gender,Survived]". Split-path must consist of either only column names, or only category names.`)
 
 })
 

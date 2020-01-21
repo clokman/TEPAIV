@@ -53,7 +53,7 @@
 
             this._lastCreatedPanelName = null
 
-            this._currentDrilldownPathParameter = []  // stores the drilldown path that generated whatever is being visualized in the navigator at a point in time
+            this._currentDrilldownPathParameter = []  // stores the drilldownTo path that generated whatever is being visualized in the navigator at a point in time
 
             // Initialize //
 

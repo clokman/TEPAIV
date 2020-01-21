@@ -83,20 +83,33 @@ const version = "1.0"
 
      /**
       * Calculate the frequencies within a specified nested category (e.g., status=>gender=>ticket)
-      * @param breakdownPath {rest}
+      * Query terminology:
+      *   SPLIT: d3.group()
+      *   DRILLDOWN: d3.group().get()
+      *   SPLIT+SUMMARIZE: d3.rollup()
+      *
+      * @param splitPath {rest}
       * @return {null}
+      *
       */
-     breakdown (...breakdownPath){
+     splitBy (...splitPath){
 
          let queryString
-         queryString = new BreakdownQuery(this, breakdownPath).queryString
+         queryString = new SplitQuery(this, splitPath).queryString
 
          return eval(queryString)
 
      }
 
-
-     drilldown (...drilldownPath){
+     /**
+      * Query terminology:
+      *   SPLIT: d3.group()
+      *   DRILLDOWN: d3.group().get()
+      *   SPLIT+SUMMARIZE: d3.rollup()
+      * @param drilldownPath
+      * @return {any}
+      */
+     drilldownTo (...drilldownPath){
 
          let queryString
 
@@ -126,9 +139,17 @@ const version = "1.0"
      }
 
 
+     /**
+      * Query terminology:
+      *   SPLIT: d3.group()
+      *   DRILLDOWN: d3.group().get()
+      *   SPLIT+SUMMARIZE: d3.rollup()
+      * @param drilldownPath
+      * @return {Map<any, any>}
+      */
      drilldownAndSummarize (...drilldownPath){
 
-         const resultingDataFromDrilldown = this.drilldown(...drilldownPath)
+         const resultingDataFromDrilldown = this.drilldownTo(...drilldownPath)
 
 
          const allCategoryFrequenciesInData = new Map()
@@ -195,8 +216,8 @@ const version = "1.0"
         // loop //
         this.columnNames.forEach( (eachColumnName) => {
 
-                const levelOneBreakDownResult = this.breakdown(eachColumnName)  // returns object
-                const categoryNamesInEachColumn = Array.from(levelOneBreakDownResult.keys())  // returns array
+                const levelOneSplitResult = this.splitBy(eachColumnName)  // returns object
+                const categoryNamesInEachColumn = Array.from(levelOneSplitResult.keys())  // returns array
                 structure.set(eachColumnName, categoryNamesInEachColumn)  // e.g.,  'Gender' => ['Male', 'Female']
 
         })
@@ -209,25 +230,25 @@ const version = "1.0"
 }
 
 
-class BreakdownQuery {
+class SplitQuery {
 
     /**
      @param dataset {Dataset}
-     @param breakdownPath {array} - e.g., ['Gender', 'Male', 'First class']
+     @param splitPath {array} - e.g., ['Gender', 'Male', 'First class']
      @return {null}
      */
-    constructor (dataset, breakdownPath) {
+    constructor (dataset, splitPath) {
 
 
         // Public Parameters //
         this._datasetObject = dataset
-        this._breakdownPath = breakdownPath
+        this._splitPath = splitPath
 
         // Private Variables //
         this._categoryPath = []
         this._columnPath = []
 
-        this._breakdownType = this._inferBreakdownType.call(this)  // e.g., 'column' type
+        this._splitType = this._inferSplitType.call(this)  // e.g., 'column' type
 
         this._argumentsSubstring =  this._constructArgumentsSubstring.call(this)
         this._gettersSubstring = this._constructGettersSubstring.call(this)
@@ -240,28 +261,28 @@ class BreakdownQuery {
             ['data', 'columnNames', 'categoryNames', '_omitColumns']
         )
 
-        this._requireBreakdownPathToNotContainColumnAndCategoryNamesAtTheSameTime()
-        this._validateBreakdownPath()
+        this._requireSplitPathToNotContainColumnAndCategoryNamesAtTheSameTime()
+        this._validateSplitPath()
 
     }
 
 
-    _requireBreakdownPathToNotContainColumnAndCategoryNamesAtTheSameTime(){
+    _requireSplitPathToNotContainColumnAndCategoryNamesAtTheSameTime(){
 
-        if (this._breakdownType === 'hybrid'){
-            throw Error (`Both a column name and a category name exists in breakdown path argument "[${this._breakdownPath}]". Breakdown path must consist of either only column names, or only category names.`)
+        if (this._splitType === 'hybrid'){
+            throw Error (`Both a column name and a category name exists in split-path argument "[${this._splitPath}]". Split-path must consist of either only column names, or only category names.`)
         }
 
     }
 
-    _validateBreakdownPath(){
+    _validateSplitPath(){
 
         let stepDoesNotCorrespondToAColumnOrCategory = false
 
         const erroneousSteps = []
 
         // loop
-        this._breakdownPath.forEach( (step) => {
+        this._splitPath.forEach( (step) => {
 
             let stepIsAmongColumns = false
             let stepIsAmongCategories = false
@@ -283,7 +304,7 @@ class BreakdownQuery {
         })
 
         if (stepDoesNotCorrespondToAColumnOrCategory){
-            throw Error(`Provided breakdown query argument(s), "[${erroneousSteps}]", do not correspond to a column or category in the dataset.`)
+            throw Error(`Provided split query argument(s), "[${erroneousSteps}]", do not correspond to a column or category in the dataset.`)
         }
 
 
@@ -291,16 +312,16 @@ class BreakdownQuery {
     }
 
 
-    _inferBreakdownType(){
+    _inferSplitType(){
 
         let isColumnPath = false
             , isCategoryPath =  false
             , isHybridPath = false
 
         // loop //
-        this._breakdownPath.forEach( (breakdownStep) => {
-            if (this._datasetObject.categoryNames.includes(breakdownStep)){isCategoryPath = true}
-            if (this._datasetObject.columnNames.includes(breakdownStep)){isColumnPath = true}
+        this._splitPath.forEach( (splitStep) => {
+            if (this._datasetObject.categoryNames.includes(splitStep)){isCategoryPath = true}
+            if (this._datasetObject.columnNames.includes(splitStep)){isColumnPath = true}
         })
 
         isHybridPath = isCategoryPath && isColumnPath
@@ -314,8 +335,8 @@ class BreakdownQuery {
 
 
     _constructArgumentsSubstring(
-        type = this._breakdownType,
-        breakdownPath = this._breakdownPath,
+        type = this._splitType,
+        splitPath = this._splitPath,
         datasetObject = this._datasetObject
         ){
 
@@ -327,7 +348,7 @@ class BreakdownQuery {
             let substring = ''
 
             // Infer the column path from categories
-            breakdownPath.forEach( (category) => {
+            splitPath.forEach( (category) => {
                 const column = datasetObject.inferColumnFromCategory(category)
                 substring += `d => d["${column}"], `  // e.g., "d => d['gender'],"
 
@@ -338,8 +359,8 @@ class BreakdownQuery {
 
         if (type === 'column') {
 
-            for (let eachBreakdownStep of this._breakdownPath) {
-                substring += `d => d["${eachBreakdownStep}"], `  // e.g., "d => d['gender'],"
+            for (let eachSplitStep of this._splitPath) {
+                substring += `d => d["${eachSplitStep}"], `  // e.g., "d => d['gender'],"
             }
 
         }
@@ -358,11 +379,11 @@ class BreakdownQuery {
         let substring = ''
 
 
-        if (this._breakdownType === 'column'){
+        if (this._splitType === 'column'){
             return ''
         }
 
-        if (this._breakdownType === 'category'){
+        if (this._splitType === 'category'){
 
 
             // Build the getters substring
@@ -402,7 +423,7 @@ class DrilldownQuery{
             ['data', 'columnNames', 'categoryNames', '_omitColumns']
         )
 
-        // this._validateBreakdownPath()  // TODO: Validation of path SHOULD BE DONE, so that incorrectly typed column and category names returns an appropriate error
+        // this._validateSplitPath()  // TODO: Validation of path SHOULD BE DONE, so that incorrectly typed column and category names returns an appropriate error
 
         this._constructDrilldownQuery()
 
@@ -439,7 +460,7 @@ class DrilldownQuery{
     //// MODULE.EXPORTS ////
     exports.version = version;
     exports.Dataset = Dataset;
-    exports.BreakdownQuery = BreakdownQuery;  // TODO: Exposed for development. MUST be removed or the class name should be made public.
+    exports.SplitQuery = SplitQuery;  // TODO: Exposed for development. MUST be removed or the class name should be made public.
 
 
 	Object.defineProperty(exports, '__esModule', { value: true });
