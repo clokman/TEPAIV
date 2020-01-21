@@ -800,21 +800,130 @@ test ('Should return error if query is invalid because of a bad column or catego
 })
 
 
-test ('Should determine whether the query is column-based, category-based, or hybrid, and return error if hybrid', async () => {
+//// CONTINUOUS DATA ///////////////////////////////////////////////////////////////
 
-    const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv')
-    await titanicDataset.build()
+describe ('Continuous Data: ', () => {
+   
+    test ('Read: Continuous data should be read', async () => {
 
-    const myColumnQuery = new dataset.SplitQuery( titanicDataset, ['Status'] )
-    const myCategoryQuery = new dataset.SplitQuery( titanicDataset, ['Survived'] )
+        const bigFiveDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/BigFivePersonalityTraits-Small.csv')
+        await bigFiveDataset.build()
 
-    expect(myColumnQuery._splitType).toBe('column')
-    expect(myCategoryQuery._splitType).toBe('category')
-    // hybrid category is not tested with the private method, because the class constructor does not allow initialization with a hybrid split query.
 
-    expect( () => {
-        const myHybridQuery = new dataset.SplitQuery( titanicDataset, ['Gender', 'Survived'] )
-    }).toThrow(`Both a column name and a category name exists in split-path argument "[Gender,Survived]". Split-path must consist of either only column names, or only category names.`)
+        expect(bigFiveDataset.data).toBeDefined()
+        expect(bigFiveDataset.data).toHaveLength(99)
+
+        expectTable(bigFiveDataset.data, `\
+┌─────────┬─────────────┬──────────────┬───────────┬───────────────┬───────────────────┐
+│ (index) │ Neuroticism │ Extraversion │ Openness  │ Agreeableness │ Conscientiousness │
+├─────────┼─────────────┼──────────────┼───────────┼───────────────┼───────────────────┤
+│    0    │  '2.47917'  │  '4.20833'   │ '3.9375'  │   '3.95833'   │     '3.45833'     │
+│    1    │  '2.60417'  │   '3.1875'   │ '3.95833' │   '3.39583'   │     '3.22917'     │
+│    2    │  '2.8125'   │  '2.89583'   │ '3.41667' │    '2.75'     │       '3.5'       │
+│    3    │  '2.89583'  │   '3.5625'   │ '3.52083' │   '3.16667'   │     '2.79167'     │
+│    4    │  '3.02083'  │  '3.33333'   │ '4.02083' │   '3.20833'   │     '2.85417'     │
+│    5    │  '2.52083'  │  '3.29167'   │ '3.4375'  │   '3.70833'   │       '2.5'       │
+│    6    │  '2.35417'  │  '4.41667'   │ '4.58333' │   '3.0625'    │     '3.33333'     │
+│    7    │  '2.52083'  │    '3.5'     │ '2.89583' │   '3.66667'   │     '3.0625'      │
+│    8    │  '3.10417'  │   '3.8125'   │ '4.0625'  │   '3.77083'   │     '2.83333'     │
+│    9    │  '2.6875'   │  '3.54708'   │ '3.78667' │   '3.35417'   │     '3.10417'     │
+│   10    │   '2.625'   │  '3.45833'   │ '2.89583' │   '3.45833'   │      '3.375'      │
+│   11    │   '2.375'   │  '3.77083'   │ '3.16667' │     '3.5'     │     '3.52083'     │
+│   12    │  '3.0625'   │  '3.41667'   │ '3.77083' │   '3.8125'    │      '3.125'      │
+│   13    │   '3.125'   │  '2.52083'   │ '2.64583' │    '3.75'     │     '3.20833'     │
+│   14    │  '2.58333'  │  '3.02083'   │   '3.5'   │   '3.41667'   │     '3.58333'     │
+└─────────┴─────────────┴──────────────┴───────────┴───────────────┴───────────────────┘
+˅˅˅ 84 more rows`, 0, 15)
+    })
+
+
+
+
+    test ('DRILLDOWN: Split dataset by column using .splitBy(), and then manually drilldown with .get()', async () => {
+
+        // Query terminology:
+        // SPLIT: d3.group()
+        // DRILLDOWN: d3.group().get()
+        // SPLIT+SUMMARIZE: d3.rollup()
+
+        const bigFiveDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/BigFivePersonalityTraits-Small.csv', 'Name')
+        await bigFiveDataset.build()
+
+        // SPLIT using column name
+        const dataByOpenness = bigFiveDataset.splitBy('Openness')  // Openness is a column name
+        expectTable(dataByOpenness, `\
+┌───────────────────┬──────────┬──────────────────────────────────────────────────────┐
+│ (iteration index) │   Key    │                        Values                        │
+├───────────────────┼──────────┼──────────────────────────────────────────────────────┤
+│         0         │ 'Female' │ [ [Object], [Object], [Object], ... 463 more items ] │
+│         1         │  'Male'  │ [ [Object], [Object], [Object], ... 840 more items ] │
+└───────────────────┴──────────┴──────────────────────────────────────────────────────┘`)
+
+        expect(dataByOpenness.size).toBe(2)
+        expect(dataByOpenness.get('Female')).toHaveLength(466)
+        expect(dataByOpenness.get('Male')).toHaveLength(843)
+
+
+        // SPLIT using 2 column names
+        const dataByGenderAndStatus = bigFiveDataset.splitBy('Gender', 'Status')
+        expectTable(dataByGenderAndStatus, `\
+┌───────────────────┬──────────┬──────────────────────────────────────────────────┐
+│ (iteration index) │   Key    │                      Values                      │
+├───────────────────┼──────────┼──────────────────────────────────────────────────┤
+│         0         │ 'Female' │ Map { 'Survived' => [Array], 'Died' => [Array] } │
+│         1         │  'Male'  │ Map { 'Survived' => [Array], 'Died' => [Array] } │
+└───────────────────┴──────────┴──────────────────────────────────────────────────┘`)
+
+        // DRILLDOWN on one of the categories (i.e., 'Male') of the broken down data
+        const malesByStatus = dataByGenderAndStatus.get('Male')
+        expectTable(malesByStatus, `\
+┌───────────────────┬────────────┬──────────────────────────────────────────────────────┐
+│ (iteration index) │    Key     │                        Values                        │
+├───────────────────┼────────────┼──────────────────────────────────────────────────────┤
+│         0         │ 'Survived' │ [ [Object], [Object], [Object], ... 158 more items ] │
+│         1         │   'Died'   │ [ [Object], [Object], [Object], ... 679 more items ] │
+└───────────────────┴────────────┴──────────────────────────────────────────────────────┘`)
+
+        // DRILLDOWN further on the drilled down category (i.e., 'Male')
+        const survivingMales = malesByStatus.get('Survived')
+        expectTable(survivingMales, `\
+┌─────────┬─────────────┬────────────┬────────┐
+│ (index) │   Ticket    │   Status   │ Gender │
+├─────────┼─────────────┼────────────┼────────┤
+│    0    │ '1st class' │ 'Survived' │ 'Male' │
+│    1    │ '1st class' │ 'Survived' │ 'Male' │
+│    2    │ '1st class' │ 'Survived' │ 'Male' │
+│    3    │ '1st class' │ 'Survived' │ 'Male' │
+│    4    │ '1st class' │ 'Survived' │ 'Male' │
+│    5    │ '1st class' │ 'Survived' │ 'Male' │
+│    6    │ '1st class' │ 'Survived' │ 'Male' │
+│    7    │ '1st class' │ 'Survived' │ 'Male' │
+│    8    │ '1st class' │ 'Survived' │ 'Male' │
+│    9    │ '1st class' │ 'Survived' │ 'Male' │
+└─────────┴─────────────┴────────────┴────────┘
+˅˅˅ 151 more rows`, 0, 10)
+
+
+        // SPLIT & COUNT the drilled down category by another category using d3.rollup()
+        const survivingMalesByTicket =
+            d3.rollup(survivingMales, v=>v.length, g=>g['Ticket'])
+        expectTable(survivingMalesByTicket, `\
+┌───────────────────┬─────────────┬────────┐
+│ (iteration index) │     Key     │ Values │
+├───────────────────┼─────────────┼────────┤
+│         0         │ '1st class' │   61   │
+│         1         │ '2nd class' │   25   │
+│         2         │ '3rd class' │   75   │
+└───────────────────┴─────────────┴────────┘`)
+
+
+        // Attempting to query with both column and category names should give error
+        expect(() =>
+            bigFiveDataset.splitBy('Gender', '1st class')
+        ).toThrow(Error)
+
+    })
+
+
 
 })
-

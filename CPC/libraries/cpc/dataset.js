@@ -251,7 +251,7 @@ class SplitQuery {
         this._splitType = this._inferSplitType.call(this)  // e.g., 'column' type
 
         this._argumentsSubstring =  this._constructArgumentsSubstring.call(this)
-        this._gettersSubstring = this._constructGettersSubstring.call(this)
+        this._gettersSubstring = ''
 
         this.queryString = this._constructQueryString.call(this)
 
@@ -373,26 +373,25 @@ class SplitQuery {
 
     }
 
-    // TODO: This method and the class that wraps it SHOULD be checked for obsolete code
-    _constructGettersSubstring(){
-
-        let substring = ''
-
-
-        if (this._splitType === 'column'){
-            return ''
-        }
-
-        if (this._splitType === 'category'){
-
-
-            // Build the getters substring
-
-
-            return `.get('Male')`
-        }
-
-    }
+    // _constructGettersSubstring(){
+    //
+    //     let substring = ''
+    //
+    //
+    //     if (this._splitType === 'column'){
+    //         return ''
+    //     }
+    //
+    //     if (this._splitType === 'category'){
+    //
+    //
+    //         // Build the getters substring
+    //
+    //
+    //         return `.get('Male')`
+    //     }
+    //
+    // }
 
 
     _constructQueryString(){
