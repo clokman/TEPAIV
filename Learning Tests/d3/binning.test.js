@@ -524,11 +524,6 @@ describe ('Treat continuous data', () => {
 └─────────┴─────────────┴──────────────┴──────────┴───────────────┘
 ˅˅˅ 94 more rows`, 0, 5)
 
-
-        // TODO: HOW TO ROLLUP WITH BINS? IF I FIND THIS, THEN THE PROBLEM IS SOLVED
-        // const myRollup = d3.rollup( mixedData, v=> v.length,  d=>bins...)
-
-
         const outputCategories = d3.range(4)
 
         const min =d3.min( mixedData, d => d['Extraversion'] )
@@ -711,7 +706,6 @@ describe ('Treat continuous data', () => {
 
 
     })
-
 
 
 })
