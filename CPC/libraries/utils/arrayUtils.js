@@ -12,8 +12,8 @@
 
 
 
-               
-// Module content goes here. 
+
+// Module content goes here.
 const version = "1.0"
 
 
@@ -31,6 +31,56 @@ Array.prototype.convertToString = function () {
 }
 
 
+Array.prototype.containsMostlyNumbers = function (sampleSize=25, requiredRatioOfNumbers=0.9){
+
+    const result = {
+        isANumber: 0,
+        notANumber: 0
+    }
+    let judgment
+
+    const actualSampleSize =
+        this.length < sampleSize
+            ? this.length
+            : sampleSize
+
+
+    const dataSample = this.slice(0, actualSampleSize)
+
+    dataSample.forEach( (sampleValue) => {
+
+        const omittedValues = [true, false, '', null]  // so that these are not converted to 0 and 1
+
+        // Establish Conditions
+        const sampleValueIsNotAmongOmittedValues = sampleValue !== omittedValues
+        const sampleValueIsConvertibleToANumber = Number(sampleValue)
+
+        if (sampleValueIsNotAmongOmittedValues && sampleValueIsConvertibleToANumber){
+            result.isANumber += 1
+        }
+        else{
+            result.notANumber += 1
+        }
+
+    })
+
+    const ratioOfNumbers = result.isANumber / actualSampleSize
+
+        // ratioOfNonNumberElements <= tolerance
+       if ( ratioOfNumbers >= requiredRatioOfNumbers ){
+           judgment = true
+           console.log('test')
+       }
+       else {
+           judgment = false
+           console.log('test')
+
+       }
+
+
+    return judgment
+
+}
 
 
 function toPercentages(array){
@@ -76,9 +126,9 @@ function toStackData(array){
 }
 
 
-                                                
+
 //// UMD FOOT ////////////////////////////////////////////////////////////////////////
-                             
+
     //// MODULE.EXPORTS ////
     exports.version = version;
 
