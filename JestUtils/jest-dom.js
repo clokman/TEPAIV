@@ -8,4 +8,15 @@ writeDomToFile = function (path){
 
 }
 
+initializeDomWithSvg = function (){
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+
+    // Create a svg object as the topmost container
+    new container.Svg(1280, 800)
+
+}
+
 exports.writeDomToFile = writeDomToFile
+exports.initializeDomWithSvg = initializeDomWithSvg
