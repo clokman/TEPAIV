@@ -33,6 +33,10 @@ global.classUtils = require("../../../utils/classUtils")
 global.container = require("../../container")
 global.shape = require("../../shape")
 global.stringUtils = require("../../../utils/stringUtils")
+global.jestUtils = {
+    ...require("../../../../../JestUtils/jest-dom")
+    //, ...require("../../../../../JestUtils/jest-console")
+}
 global.data = require("../../../cpc/data")
 
 
@@ -48,240 +52,276 @@ const navigator = require("../../navigator")
 //// TESTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+//// INSTANTIATE CAPTIONED RECTANGLE  ///////////////////////////////////////////////////////////////
+
+describe ('Instantiate', () => {
 
 
-//// INSTANTIATE CAPTIONED RECTANGLE ///
+    test ('Instantiate with default options', () => {
 
-test ('Instantiate CaptionedRectangle with default options', () => {
-
-    // Clear JEST's DOM to prevent leftovers from previous tests
-    document.body.innerHTML = ''
+        initializeDomWithSvg()
 
 
-    const mySvg = new container.Svg()
-    const myCaptionedRectangle = new shape.CaptionedRectangle()
+        const myCaptionedRectangle = new shape.CaptionedRectangle()
 
-    // Verify that the object exists
-    expect(myCaptionedRectangle).toBeDefined()
+        // Verify that the object exists
+        expect(myCaptionedRectangle).toBeDefined()
 
 
-    // Verify that the DOM counterpart of the object exists
-    expect(document.getElementsByTagName('rect').length)
-        .toBe(1)
-    expect(document.getElementsByTagName('text').length)
-        .toBe(1)
+        // Verify that the DOM counterpart of the object exists
+        expect(document.getElementsByTagName('rect').length)
+            .toBe(1)
+        expect(document.getElementsByTagName('text').length)
+            .toBe(1)
+
+    })
+
+
+    test ('Instantiate as a child object/element', () => {
+
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+
+
+        // Create a svg object as the topmost container
+        const mySvg = new container.Svg(640, 480)
+            , svgSelection = mySvg.select()
+
+        // Create a parent container for captioned rectangle
+        const myContainer = new container.Group(svgSelection)
+            , containerSelection = myContainer.select()
+
+        // Create the captioned rectangle
+        const myCaptionedRectangle = new shape.CaptionedRectangle(containerSelection)
+
+
+        // A DOM counterpart of captioned rectangle should exist
+        const noOfRectangleElements = document
+            .getElementsByTagName('rect')
+            .length
+        expect(noOfRectangleElements).toBe(1)
+
+        const noOfTextElements = document
+            .getElementsByTagName('text')
+            .length
+        expect(noOfTextElements).toBe(1)
+
+
+        // Captioned rectangle should have a parent group
+        const parentElementType = document
+            .getElementsByTagName('rect')[0]
+            .parentElement
+            .tagName
+        expect(parentElementType).toBe('g')
+
+    })
+
 
 })
 
 
+//// GETTERS AND SETTERS ///////////////////////////////////////////////////////////////
 
+describe ('Getters and setters ', () => {
 
-//// INSTANTIATE CAPTIONED RECTANGLE AS CHILD ////
 
-test ('Instantiate CaptionedRectangle as a child object/element', () => {
+    test ('Misc. getters and setters', () => {
 
-    // Clear JEST's DOM to prevent leftovers from previous tests
-    document.body.innerHTML = ''
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
 
+        // Create a svg object as the topmost container
+        const mySvg = new container.Svg(640, 480)
 
-    // Create a svg object as the topmost container
-    const mySvg = new container.Svg(640, 480)
-        , svgSelection = mySvg.select()
+        // Create the captioned rectangle
+        const myCaptionedRectangle = new shape.CaptionedRectangle()
 
-    // Create a parent container for captioned rectangle
-    const myContainer = new container.Group(svgSelection)
-        , containerSelection = myContainer.select()
 
-    // Create the captioned rectangle
-    const myCaptionedRectangle = new shape.CaptionedRectangle(containerSelection)
+        // Select elements of captioned rectangle on DOM
+        const rectangleElementOfCaptionedRectangle = document.querySelector('rect')
+        const textElementOfCaptionedRectangle = document.querySelector('text')
 
 
-    // A DOM counterpart of captioned rectangle should exist
-    const noOfRectangleElements = document
-        .getElementsByTagName('rect')
-        .length
-    expect(noOfRectangleElements).toBe(1)
 
-    const noOfTextElements = document
-        .getElementsByTagName('text')
-        .length
-    expect(noOfTextElements).toBe(1)
+        // X() //
 
+        // Verify initial values (get)
+        expect(myCaptionedRectangle.x()).toBe(25)
+        expect(rectangleElementOfCaptionedRectangle.getAttribute('x')).toBe('25')
+        expect(textElementOfCaptionedRectangle.getAttribute('x')).toBe('50')
 
-    // Captioned rectangle should have a parent group
-    const parentElementType = document
-        .getElementsByTagName('rect')[0]
-        .parentElement
-        .tagName
-    expect(parentElementType).toBe('g')
+        // Set new value (set)
+        myCaptionedRectangle.x(50).update()
 
-})
+        // Verify new values
+        // Object
+        expect(myCaptionedRectangle.x()).toBe(50)
+        // Elements
+        expect(rectangleElementOfCaptionedRectangle.getAttribute('x')).toBe('50')
+        expect(textElementOfCaptionedRectangle.getAttribute('x')).toBe('75')
 
 
 
-//// GETTERS AND SETTERS ////
+        // Y() //
 
-test ('Getters and setters should work', () => {
+        // Verify initial values (get)
+        expect(myCaptionedRectangle.y()).toBe(25)
+        expect(rectangleElementOfCaptionedRectangle.getAttribute('y')).toBe('25')
+        expect(textElementOfCaptionedRectangle.getAttribute('y')).toBe('53')
 
-    // Clear JEST's DOM to prevent leftovers from previous tests
-    document.body.innerHTML = ''
+        // Set new value (set)
+        myCaptionedRectangle.y(50).update()
 
-    // Create a svg object as the topmost container
-    const mySvg = new container.Svg(640, 480)
+        // Verify new values
+        // Object
+        expect(myCaptionedRectangle.y()).toBe(50)
+        // Elements
+        expect(rectangleElementOfCaptionedRectangle.getAttribute('y')).toBe('50')
+        expect(textElementOfCaptionedRectangle.getAttribute('y')).toBe('78')
 
-    // Create the captioned rectangle
-    const myCaptionedRectangle = new shape.CaptionedRectangle()
 
 
-    // Select elements of captioned rectangle on DOM
-    const rectangleElementOfCaptionedRectangle = document.querySelector('rect')
-    const textElementOfCaptionedRectangle = document.querySelector('text')
+        // TEXT() //
 
+        // Verify initial values (get)
+        expect(myCaptionedRectangle.text()).toBe('Text')
+        expect(textElementOfCaptionedRectangle.textContent).toBe('Text')
 
+        // Set new value (set)
+        myCaptionedRectangle.text('New Text').update()
 
-    // X() //
+        // Verify new values
+        // Object
+        expect(myCaptionedRectangle.text()).toBe('New Text')
+        // Elements
+        expect(textElementOfCaptionedRectangle.textContent).toBe('New Text')
 
-    // Verify initial values (get)
-    expect(myCaptionedRectangle.x()).toBe(25)
-    expect(rectangleElementOfCaptionedRectangle.getAttribute('x')).toBe('25')
-    expect(textElementOfCaptionedRectangle.getAttribute('x')).toBe('50')
 
-    // Set new value (set)
-    myCaptionedRectangle.x(50).update()
 
-    // Verify new values
-    // Object
-    expect(myCaptionedRectangle.x()).toBe(50)
-    // Elements
-    expect(rectangleElementOfCaptionedRectangle.getAttribute('x')).toBe('50')
-    expect(textElementOfCaptionedRectangle.getAttribute('x')).toBe('75')
+        // WIDTH() //
 
+        // Verify initial values (get)
+        expect(myCaptionedRectangle.width()).toBe(50)
+        expect(rectangleElementOfCaptionedRectangle.getAttribute('height')).toBe('50')
+        expect(textElementOfCaptionedRectangle.getAttribute('x')).toBe('75')
 
+        // Set new value (set)
+        myCaptionedRectangle.width(150).update()
 
-    // Y() //
+        // Verify new values
+        // Object
+        expect(myCaptionedRectangle.width()).toBe(150)
+        // Elements
+        expect(rectangleElementOfCaptionedRectangle.getAttribute('width')).toBe('150')
+        expect(textElementOfCaptionedRectangle.getAttribute('x')).toBe('125')
 
-    // Verify initial values (get)
-    expect(myCaptionedRectangle.y()).toBe(25)
-    expect(rectangleElementOfCaptionedRectangle.getAttribute('y')).toBe('25')
-    expect(textElementOfCaptionedRectangle.getAttribute('y')).toBe('53')
 
-    // Set new value (set)
-    myCaptionedRectangle.y(50).update()
 
-    // Verify new values
-    // Object
-    expect(myCaptionedRectangle.y()).toBe(50)
-    // Elements
-    expect(rectangleElementOfCaptionedRectangle.getAttribute('y')).toBe('50')
-    expect(textElementOfCaptionedRectangle.getAttribute('y')).toBe('78')
+        // HEIGHT() //
 
+        // Verify initial values (get)
+        expect(myCaptionedRectangle.height()).toBe(50)
+        expect(rectangleElementOfCaptionedRectangle.getAttribute('height')).toBe('50')
+        expect(textElementOfCaptionedRectangle.getAttribute('y')).toBe('78')
 
+        // Set new value (set)
+        myCaptionedRectangle.height(150).update()
 
-    // TEXT() //
+        // Verify new values
+        // Object
+        expect(myCaptionedRectangle.height()).toBe(150)
+        // Elements
+        expect(rectangleElementOfCaptionedRectangle.getAttribute('height')).toBe('150')
+        expect(textElementOfCaptionedRectangle.getAttribute('y')).toBe('128')
 
-    // Verify initial values (get)
-    expect(myCaptionedRectangle.text()).toBe('Text')
-    expect(textElementOfCaptionedRectangle.textContent).toBe('Text')
 
-    // Set new value (set)
-    myCaptionedRectangle.text('New Text').update()
+        // STROKECOLOR () //
 
-    // Verify new values
-    // Object
-    expect(myCaptionedRectangle.text()).toBe('New Text')
-    // Elements
-    expect(textElementOfCaptionedRectangle.textContent).toBe('New Text')
+        // Verify initial values (get)
+        expect(myCaptionedRectangle.strokeColor()).toBe('rgba(0, 0, 0, 0.0)')
+        expect(rectangleElementOfCaptionedRectangle.getAttribute('stroke')).toBe('rgba(0, 0, 0, 0.0)')
 
+        // Set new value (set)
+        myCaptionedRectangle.strokeColor('salmon').update()
 
+        // Verify new values
+        // Object
+        expect(myCaptionedRectangle.strokeColor()).toBe('salmon')
+        // Elements
+        expect(rectangleElementOfCaptionedRectangle.getAttribute('stroke')).toBe('salmon')
 
-    // WIDTH() //
+        // STROKEWIDTH () //
 
-    // Verify initial values (get)
-    expect(myCaptionedRectangle.width()).toBe(50)
-    expect(rectangleElementOfCaptionedRectangle.getAttribute('height')).toBe('50')
-    expect(textElementOfCaptionedRectangle.getAttribute('x')).toBe('75')
+        // Verify initial values (get)
+        expect(myCaptionedRectangle.strokeWidth()).toBe('1px')
+        expect(rectangleElementOfCaptionedRectangle.getAttribute('stroke-width')).toBe('1px')
 
-    // Set new value (set)
-    myCaptionedRectangle.width(150).update()
+        // Set new value (set)
+        myCaptionedRectangle.strokeWidth('24px').update()
 
-    // Verify new values
-    // Object
-    expect(myCaptionedRectangle.width()).toBe(150)
-    // Elements
-    expect(rectangleElementOfCaptionedRectangle.getAttribute('width')).toBe('150')
-    expect(textElementOfCaptionedRectangle.getAttribute('x')).toBe('125')
+        // Verify new values
+        // Object
+        expect(myCaptionedRectangle.strokeWidth()).toBe('24px')
+        // Elements
+        expect(rectangleElementOfCaptionedRectangle.getAttribute('stroke-width')).toBe('24px')
 
 
 
-    // HEIGHT() //
 
-    // Verify initial values (get)
-    expect(myCaptionedRectangle.height()).toBe(50)
-    expect(rectangleElementOfCaptionedRectangle.getAttribute('height')).toBe('50')
-    expect(textElementOfCaptionedRectangle.getAttribute('y')).toBe('78')
 
-    // Set new value (set)
-    myCaptionedRectangle.height(150).update()
+        // FILL() //
 
-    // Verify new values
-    // Object
-    expect(myCaptionedRectangle.height()).toBe(150)
-    // Elements
-    expect(rectangleElementOfCaptionedRectangle.getAttribute('height')).toBe('150')
-    expect(textElementOfCaptionedRectangle.getAttribute('y')).toBe('128')
+        // Verify initial values (get)
+        expect(myCaptionedRectangle.fill()).toBe('gray')
+        expect(rectangleElementOfCaptionedRectangle.getAttribute('fill')).toBe('gray')
 
+        // Set new value (set)
+        myCaptionedRectangle.fill('salmon').update()
 
+        // Verify new values
+        // Object
+        expect(myCaptionedRectangle.fill()).toBe('salmon')
+        // Elements
+        expect(rectangleElementOfCaptionedRectangle.getAttribute('fill')).toBe('salmon')
 
-    // FILL() //
 
-    // Verify initial values (get)
-    expect(myCaptionedRectangle.fill()).toBe('gray')
-    expect(rectangleElementOfCaptionedRectangle.getAttribute('fill')).toBe('gray')
 
-    // Set new value (set)
-    myCaptionedRectangle.fill('salmon').update()
+        // TEXTFILL() //
 
-    // Verify new values
-    // Object
-    expect(myCaptionedRectangle.fill()).toBe('salmon')
-    // Elements
-    expect(rectangleElementOfCaptionedRectangle.getAttribute('fill')).toBe('salmon')
+        // Verify initial values (get)
+        expect(myCaptionedRectangle.textFill()).toBe('white')
+        expect(textElementOfCaptionedRectangle.getAttribute('fill')).toBe('white')
 
+        // Set new value (set)
+        myCaptionedRectangle.textFill('dodgerblue').update()
 
+        // Verify new values
+        // Object
+        expect(myCaptionedRectangle.textFill()).toBe('dodgerblue')
+        // Elements
+        expect(textElementOfCaptionedRectangle.getAttribute('fill')).toBe('dodgerblue')
 
-    // TEXTFILL() //
 
-    // Verify initial values (get)
-    expect(myCaptionedRectangle.textFill()).toBe('white')
-    expect(textElementOfCaptionedRectangle.getAttribute('fill')).toBe('white')
 
-    // Set new value (set)
-    myCaptionedRectangle.textFill('dodgerblue').update()
+        // TEXTALIGNMENT() //
 
-    // Verify new values
-    // Object
-    expect(myCaptionedRectangle.textFill()).toBe('dodgerblue')
-    // Elements
-    expect(textElementOfCaptionedRectangle.getAttribute('fill')).toBe('dodgerblue')
+        // Verify initial values (get)
+        expect(myCaptionedRectangle.textAlignment()).toBe('center')
+        expect(textElementOfCaptionedRectangle.getAttribute('text-anchor')).toBe('middle')
+        expect(textElementOfCaptionedRectangle.getAttribute('dominant-baseline')).toBe('auto')
 
+        // Set new value (set)
+        myCaptionedRectangle.textAlignment('top-left').update()
 
+        // Verify new values
+        // Object
+        expect(myCaptionedRectangle.textAlignment()).toBe('top-left')
+        // Elements
+        expect(textElementOfCaptionedRectangle.getAttribute('text-anchor')).toBe('start')
+        expect(textElementOfCaptionedRectangle.getAttribute('dominant-baseline')).toBe('hanging')
 
-    // TEXTALIGNMENT() //
 
-    // Verify initial values (get)
-    expect(myCaptionedRectangle.textAlignment()).toBe('center')
-    expect(textElementOfCaptionedRectangle.getAttribute('text-anchor')).toBe('middle')
-    expect(textElementOfCaptionedRectangle.getAttribute('dominant-baseline')).toBe('auto')
-
-    // Set new value (set)
-    myCaptionedRectangle.textAlignment('top-left').update()
-
-    // Verify new values
-    // Object
-    expect(myCaptionedRectangle.textAlignment()).toBe('top-left')
-    // Elements
-    expect(textElementOfCaptionedRectangle.getAttribute('text-anchor')).toBe('start')
-    expect(textElementOfCaptionedRectangle.getAttribute('dominant-baseline')).toBe('hanging')
+    })
 
 
 })

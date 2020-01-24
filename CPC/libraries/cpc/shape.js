@@ -629,6 +629,26 @@
         }
 
 
+        strokeColor(value){
+            if (!arguments.length) {
+                return this._rectangleObject.strokeColor()
+            }
+            else {
+                this._rectangleObject.strokeColor(value)
+                return this
+            }
+        }
+
+        strokeWidth(value){
+            if (!arguments.length) {
+                return this._rectangleObject.strokeWidth()
+            }
+            else {
+                this._rectangleObject.strokeWidth(value)
+                return this
+            }
+        }
+
 
         fill(value) {
             if (!arguments.length) {
