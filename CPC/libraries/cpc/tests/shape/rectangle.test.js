@@ -29,6 +29,10 @@ global.classUtils = require("../../../utils/classUtils")
 global.container = require("../../container")
 global.shape = require("../../shape")
 global.stringUtils = require("../../../utils/stringUtils")
+global.jestUtils = {
+    ...require("../../../../../JestUtils/jest-dom")
+    //, ...require("../../../../../JestUtils/jest-console")
+}
 global.data = require("../../../cpc/data")
 
 //// MODULES BEING TESTED ////
@@ -100,9 +104,6 @@ describe ('Instantiate', () => {
 
 })
 
-//// INSTANTIATE ///
-
-
 
 
 //// SELECT ///////////////////////////////////////////////////////////////
@@ -111,12 +112,7 @@ describe ('select()', () => {
 
     test ("Should return a Selection to the rectangle's corresponding DOM element" , () => {
 
-        // Clear JEST's DOM to prevent leftovers from previous tests
-        document.body.innerHTML = ''
-
-
-        // Create an svg object that that the rectangle can exist in
-        const mySvg = new container.Svg(640, 480)
+       initializeDomWithSvg()
 
         // Initiate rectangle instance
         const myRectangle = new shape.Rectangle()  // implicitly attaches to svg
@@ -185,6 +181,8 @@ describe ('x() and y() ', () => {
 
     test ('Should set rectangle x and y coordinates', () => {
 
+        initializeDomWithSvg()
+
         const myRectangle = new shape.Rectangle()
 
         // SINGLE METHOD //
@@ -228,6 +226,8 @@ describe ('width() and height(): ', () => {
 
     test ('Should get and set rectangle width and height correctly in single and chain syntax', () => {
 
+        initializeDomWithSvg()
+
         const myRectangle = new shape.Rectangle()
 
         // SINGLE METHOD //
@@ -266,6 +266,8 @@ describe ('fill()', () => {
 
     test ('.get() and .set()', () => {
 
+        initializeDomWithSvg()
+
         const myRectangle = new shape.Rectangle()
 
         // Single method
@@ -288,8 +290,7 @@ describe ('strokeColor() ', () => {
 
     test('Get: Get stroke color', () => {
 
-        // Clear JEST's DOM to prevent leftovers from previous tests
-        document.body.innerHTML = ''
+        initializeDomWithSvg()
 
         const myRectangle = new shape.Rectangle()
 
@@ -299,10 +300,9 @@ describe ('strokeColor() ', () => {
 
     test('Set: Set stroke color', () => {
 
-        // Clear JEST's DOM to prevent leftovers from previous tests
-        document.body.innerHTML = ''
-        jest.useFakeTimers()
+        initializeDomWithSvg()
 
+        // Create a new rectangle
         const myRectangle = new shape.Rectangle()
 
         // Ensure that the default color is different than this example value
@@ -315,9 +315,9 @@ describe ('strokeColor() ', () => {
         expect( myRectangle.strokeColor() ).toBe( 'rgba(0, 175, 255, .8)' )
 
         // Confirm change on DOM
-        // myRectangle.id('my-rectangle').update()
-        // const strokeColorOnDom = document.querySelector( '#my-rectangle' ).getAttribute('stroke');
-        // expect( strokeColorOnDom ).toBe( 'rgba(0, 175, 255, .8)' )
+        myRectangle.id('my-rectangle').update()
+        const strokeColorOnDom = document.querySelector( '#my-rectangle' ).getAttribute('stroke');
+        expect( strokeColorOnDom ).toBe( 'rgba(0, 175, 255, .8)' )
 
     })
     
@@ -330,8 +330,7 @@ describe ('strokeWidth() ', () => {
 
     test('Get: Get stroke width', () => {
 
-        // Clear JEST's DOM to prevent leftovers from previous tests
-        document.body.innerHTML = ''
+        initializeDomWithSvg()
 
         const myRectangle = new shape.Rectangle()
 
@@ -341,9 +340,9 @@ describe ('strokeWidth() ', () => {
 
     test('Set: Set stroke width', () => {
 
-        // Clear JEST's DOM to prevent leftovers from previous tests
-        document.body.innerHTML = ''
+        initializeDomWithSvg()
 
+        // Create a new rectangle
         const myRectangle = new shape.Rectangle()
 
         // Ensure that the default color is different than this example value
@@ -357,9 +356,9 @@ describe ('strokeWidth() ', () => {
 
 
         // Confirm change on DOM //
-        // myRectangle.id('my-rectangle').update(0)
-        // const strokeWidthOnDom = document.querySelector( '#my-rectangle' ).getAttribute('stroke-width')
-        // expect( strokeWidthOnDom ).toBe( '24px' )
+        myRectangle.id('my-rectangle').update()
+        const strokeWidthOnDom = document.querySelector( '#my-rectangle' ).getAttribute('stroke-width')
+        expect( strokeWidthOnDom ).toBe( '24px' )
 
     })
 
@@ -373,6 +372,8 @@ describe ('strokeWidth() ', () => {
 describe ('class() and id()', () => {
 
     test ('Should set rectangle class and ID with single and chain syntax', () => {
+
+        initializeDomWithSvg()
 
         const myRectangle = new shape.Rectangle()
 
