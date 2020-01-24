@@ -56,7 +56,7 @@ global.stringUtils = require("../../CPC/libraries/utils/stringUtils")
 //// READ CONTINUOUS DATA ///////////////////////////////////////////////////////////////
 
 describe ('Treat continuous data', () => {
-   
+
     // PREP //
 
     test ('Read: Read in continuous data', async () => {
@@ -135,8 +135,8 @@ describe ('Treat continuous data', () => {
     })
 
 
-    
-    
+
+
     test ('Detect: Detect continuous data', async () => {
 
 
@@ -386,7 +386,7 @@ describe ('Treat continuous data', () => {
 
     })
 
-    
+
     test ('Bin (SPLIT): Via custom `Bin` function  ', async () => {
 
         const mixedData = await d3.csv( 'http://localhost:3000/data/SampleMixedData.csv' )
@@ -702,6 +702,241 @@ describe ('Treat continuous data', () => {
 │    5    │  '2.9375'   │  '4.22917'   │ 'Female' │    'March'    │
 │    6    │  '1.64583'  │  '3.95833'   │ 'Female' │    'June'     │
 │    7    │   '1.75'    │  '4.22917'   │ 'Female' │  'December'   │
+└─────────┴─────────────┴──────────────┴──────────┴───────────────┘`)
+
+
+    })
+
+
+
+
+
+    test ('Rename group keys: Use custom bin names during d3.group and d3.rollup ', async () => {
+
+        const mixedData = await d3.csv( 'http://localhost:3000/data/SampleMixedData.csv' )
+
+        expect( mixedData ).toTabulateAs(`\
+┌─────────┬─────────────┬──────────────┬──────────┬───────────────┐
+│ (index) │ Neuroticism │ Extraversion │  Gender  │ MonthMeasured │
+├─────────┼─────────────┼──────────────┼──────────┼───────────────┤
+│    0    │  '2.47917'  │  '4.20833'   │  'Male'  │   'January'   │
+│    1    │  '2.60417'  │   '3.1875'   │  'Male'  │  'February'   │
+│    2    │  '2.52083'  │  '2.89583'   │  'Male'  │    'March'    │
+│    3    │  '3.29167'  │  '3.29167'   │ 'Female' │    'April'    │
+│    4    │  '3.02083'  │  '3.29167'   │ 'Female' │     'May'     │
+└─────────┴─────────────┴──────────────┴──────────┴───────────────┘
+˅˅˅ 94 more rows`, 0, 5)
+
+        const outputCategories = d3.range(4)
+
+        const min =d3.min( mixedData, d => d['Extraversion'] )
+        const max =d3.max( mixedData, d => d['Extraversion'] )
+
+
+        const quantizeScale = d3.scaleQuantize()
+            .domain( [min, max] )
+            .range( outputCategories )
+
+
+        // Group and change group names on the go
+        const groupedData = d3.group(mixedData,
+                d=>quantizeScale(d['Extraversion'])
+        )
+        const groupedDataWithRenamedKeys = new Map(
+            Array.from(groupedData, ([categoryName, categoryData]) => {
+
+                    const categoryMin = d3.min(categoryData, d=>d['Extraversion'])
+                    const categoryMax = d3.max(categoryData, d=>d['Extraversion'])
+
+                    const categoryMinShortened = Number( categoryMin ).toFixed(2)
+                    const categoryMaxShortened = Number( categoryMax ).toFixed(2)
+
+                    const newName = `${categoryMinShortened}-${categoryMaxShortened}`
+                    return [ newName, categoryData ]
+
+                }
+            )
+        )
+
+
+        // Reorder groups
+        const sortedGroupedData = new Map( [...groupedDataWithRenamedKeys.entries()].sort().reverse() )
+
+
+        // Do a manual rollup to preserve new group names(i.e., without using d3.rollup)
+        const manuallyRolledUpData = new Map()
+        sortedGroupedData.forEach( (categoryData, categoryName) => {
+            manuallyRolledUpData.set(categoryName, categoryData.length)
+        })
+
+        expect( manuallyRolledUpData ).toTabulateAs(`\
+┌───────────────────┬─────────────┬────────┐
+│ (iteration index) │     Key     │ Values │
+├───────────────────┼─────────────┼────────┤
+│         0         │ '3.96-4.42' │   8    │
+│         1         │ '3.48-3.88' │   42   │
+│         2         │ '3.00-3.46' │   38   │
+│         3         │ '2.52-2.98' │   11   │
+└───────────────────┴─────────────┴────────┘`)
+
+        expect( groupedDataWithRenamedKeys ).toTabulateAs(`\
+┌───────────────────┬─────────────┬─────────────────────────────────────────────────────┐
+│ (iteration index) │     Key     │                       Values                        │
+├───────────────────┼─────────────┼─────────────────────────────────────────────────────┤
+│         0         │ '3.96-4.42' │ [ [Object], [Object], [Object], ... 5 more items ]  │
+│         1         │ '3.00-3.46' │ [ [Object], [Object], [Object], ... 35 more items ] │
+│         2         │ '2.52-2.98' │ [ [Object], [Object], [Object], ... 8 more items ]  │
+│         3         │ '3.48-3.88' │ [ [Object], [Object], [Object], ... 39 more items ] │
+└───────────────────┴─────────────┴─────────────────────────────────────────────────────┘`)
+
+        expect( sortedGroupedData ).toTabulateAs(`\
+┌───────────────────┬─────────────┬─────────────────────────────────────────────────────┐
+│ (iteration index) │     Key     │                       Values                        │
+├───────────────────┼─────────────┼─────────────────────────────────────────────────────┤
+│         0         │ '3.96-4.42' │ [ [Object], [Object], [Object], ... 5 more items ]  │
+│         1         │ '3.48-3.88' │ [ [Object], [Object], [Object], ... 39 more items ] │
+│         2         │ '3.00-3.46' │ [ [Object], [Object], [Object], ... 35 more items ] │
+│         3         │ '2.52-2.98' │ [ [Object], [Object], [Object], ... 8 more items ]  │
+└───────────────────┴─────────────┴─────────────────────────────────────────────────────┘`)
+
+
+
+        // Extraversion group 1
+        expect( d3.min( sortedGroupedData.get('3.96-4.42'), d=>d.Extraversion ) ).toBe( '3.95833' )
+        expect( d3.max( sortedGroupedData.get('3.96-4.42'), d=>d.Extraversion ) ).toBe( '4.41667' )
+        expect( sortedGroupedData.get('3.96-4.42') ).toTabulateAs(`\
+┌─────────┬─────────────┬──────────────┬──────────┬───────────────┐
+│ (index) │ Neuroticism │ Extraversion │  Gender  │ MonthMeasured │
+├─────────┼─────────────┼──────────────┼──────────┼───────────────┤
+│    0    │  '2.47917'  │  '4.20833'   │  'Male'  │   'January'   │
+│    1    │  '2.35417'  │  '4.41667'   │  'Male'  │    'July'     │
+│    2    │   '2.875'   │  '4.08333'   │  'Male'  │  'December'   │
+│    3    │  '1.91667'  │  '4.10417'   │  'Male'  │  'November'   │
+│    4    │  '2.33333'  │   '4.1875'   │  'Male'  │  'September'  │
+│    5    │  '2.9375'   │  '4.22917'   │ 'Female' │    'March'    │
+│    6    │  '1.64583'  │  '3.95833'   │ 'Female' │    'June'     │
+│    7    │   '1.75'    │  '4.22917'   │ 'Female' │  'December'   │
+└─────────┴─────────────┴──────────────┴──────────┴───────────────┘`)
+
+
+        // Extraversion group 2
+        expect( d3.min( sortedGroupedData.get('3.48-3.88'), d=>d.Extraversion ) ).toBe( '3.47917' )
+        expect( d3.max( sortedGroupedData.get('3.48-3.88'), d=>d.Extraversion ) ).toBe( '3.875' )
+        expect( sortedGroupedData.get('3.48-3.88') ).toTabulateAs(`\
+┌─────────┬─────────────┬──────────────┬──────────┬───────────────┐
+│ (index) │ Neuroticism │ Extraversion │  Gender  │ MonthMeasured │
+├─────────┼─────────────┼──────────────┼──────────┼───────────────┤
+│    0    │  '2.52083'  │    '3.5'     │  'Male'  │   'August'    │
+│    1    │  '3.10417'  │   '3.8125'   │  'Male'  │  'September'  │
+│    2    │  '2.6875'   │  '3.54708'   │  'Male'  │   'October'   │
+│    3    │   '2.375'   │  '3.77083'   │  'Male'  │  'December'   │
+│    4    │  '2.79167'  │  '3.79167'   │  'Male'  │     'May'     │
+│    5    │  '2.5625'   │  '3.54167'   │  'Male'  │    'June'     │
+│    6    │  '2.4375'   │  '3.72917'   │  'Male'  │    'July'     │
+│    7    │  '2.85417'  │  '3.64583'   │  'Male'  │  'November'   │
+│    8    │  '2.85417'  │   '3.5625'   │  'Male'  │   'January'   │
+│    9    │   '2.875'   │  '3.58333'   │  'Male'  │  'February'   │
+│   10    │   '3.125'   │   '3.625'    │  'Male'  │    'March'    │
+│   11    │   '2.75'    │  '3.83333'   │  'Male'  │    'April'    │
+│   12    │  '2.5625'   │  '3.83333'   │  'Male'  │    'June'     │
+│   13    │   '2.75'    │  '3.64583'   │  'Male'  │   'August'    │
+│   14    │   '3.125'   │  '3.70833'   │  'Male'  │   'October'   │
+│   15    │   '2.75'    │  '3.54167'   │  'Male'  │  'December'   │
+│   16    │  '3.10417'  │  '3.47917'   │  'Male'  │   'January'   │
+│   17    │  '3.6875'   │    '3.5'     │  'Male'  │    'April'    │
+│   18    │  '2.20833'  │  '3.66667'   │  'Male'  │     'May'     │
+│   19    │  '2.10417'  │  '3.77083'   │  'Male'  │    'June'     │
+│   20    │  '2.58333'  │   '3.6875'   │  'Male'  │    'July'     │
+│   21    │  '3.70833'  │  '3.72917'   │  'Male'  │  'November'   │
+│   22    │  '2.91667'  │   '3.5625'   │  'Male'  │   'January'   │
+│   23    │  '3.02083'  │  '3.64583'   │ 'Female' │    'June'     │
+│   24    │  '2.79167'  │  '3.83333'   │ 'Female' │  'September'  │
+│   25    │     '3'     │  '3.66667'   │ 'Female' │   'January'   │
+│   26    │  '2.60708'  │  '3.54167'   │ 'Female' │  'February'   │
+│   27    │  '3.29167'  │    '3.5'     │ 'Female' │    'April'    │
+│   28    │  '2.80042'  │   '3.625'    │ 'Female' │    'June'     │
+│   29    │  '3.02083'  │  '3.60417'   │ 'Female' │  'November'   │
+│   30    │  '2.52083'  │  '3.47917'   │ 'Female' │  'December'   │
+│   31    │  '3.0625'   │  '3.72917'   │ 'Female' │   'January'   │
+│   32    │  '2.97917'  │  '3.54167'   │ 'Female' │  'February'   │
+│   33    │  '3.60417'  │    '3.5'     │ 'Female' │    'April'    │
+│   34    │  '2.6875'   │  '3.47917'   │ 'Female' │     'May'     │
+│   35    │  '2.52083'  │   '3.6875'   │ 'Female' │    'July'     │
+│   36    │    '3.5'    │  '3.47917'   │ 'Female' │   'August'    │
+│   37    │  '2.33333'  │  '3.58333'   │ 'Female' │     'May'     │
+│   38    │  '2.35417'  │   '3.5625'   │ 'Female' │    'June'     │
+│   39    │  '3.14583'  │  '3.77083'   │ 'Female' │   'August'    │
+│   40    │  '3.3125'   │  '3.64583'   │ 'Female' │   'January'   │
+│   41    │  '2.83333'  │   '3.875'    │ 'Female' │    'March'    │
+└─────────┴─────────────┴──────────────┴──────────┴───────────────┘`)
+
+
+
+        // Extraversion group 3
+        expect( d3.min( sortedGroupedData.get('3.00-3.46'), d=>d.Extraversion ) ).toBe( '3' )
+        expect( d3.max( sortedGroupedData.get('3.00-3.46'), d=>d.Extraversion ) ).toBe( '3.45833' )
+        expect( sortedGroupedData.get('3.00-3.46') ).toTabulateAs(`\
+┌─────────┬─────────────┬──────────────┬──────────┬───────────────┐
+│ (index) │ Neuroticism │ Extraversion │  Gender  │ MonthMeasured │
+├─────────┼─────────────┼──────────────┼──────────┼───────────────┤
+│    0    │  '2.60417'  │   '3.1875'   │  'Male'  │  'February'   │
+│    1    │  '3.29167'  │  '3.29167'   │ 'Female' │    'April'    │
+│    2    │  '3.02083'  │  '3.29167'   │ 'Female' │     'May'     │
+│    3    │  '2.52083'  │  '3.29167'   │  'Male'  │    'June'     │
+│    4    │   '2.625'   │  '3.45833'   │  'Male'  │  'November'   │
+│    5    │  '3.0625'   │  '3.41667'   │  'Male'  │   'January'   │
+│    6    │  '2.58333'  │  '3.02083'   │  'Male'  │    'March'    │
+│    7    │  '2.97917'  │   '3.3125'   │  'Male'  │    'April'    │
+│    8    │  '3.0625'   │    '3.25'    │  'Male'  │   'August'    │
+│    9    │  '2.41667'  │   '3.4375'   │  'Male'  │   'October'   │
+│   10    │  '3.22917'  │  '3.20833'   │  'Male'  │     'May'     │
+│   11    │  '2.9375'   │   '3.0625'   │  'Male'  │    'July'     │
+│   12    │  '3.0625'   │  '3.14583'   │  'Male'  │  'September'  │
+│   13    │  '3.02083'  │  '3.20833'   │  'Male'  │  'February'   │
+│   14    │  '2.16667'  │  '3.45833'   │  'Male'  │    'March'    │
+│   15    │  '2.8125'   │   '3.375'    │  'Male'  │   'August'    │
+│   16    │  '3.04167'  │    '3.25'    │  'Male'  │   'October'   │
+│   17    │     '3'     │  '3.35417'   │  'Male'  │  'December'   │
+│   18    │  '2.77083'  │  '3.33333'   │ 'Female' │  'February'   │
+│   19    │  '2.6875'   │  '3.41667'   │ 'Female' │    'April'    │
+│   20    │  '3.4375'   │  '3.02083'   │ 'Female' │     'May'     │
+│   21    │  '2.85417'  │  '3.29167'   │ 'Female' │    'July'     │
+│   22    │  '3.39583'  │     '3'      │ 'Female' │   'August'    │
+│   23    │  '3.39583'  │  '3.35417'   │ 'Female' │   'October'   │
+│   24    │  '2.58333'  │  '3.35417'   │ 'Female' │  'November'   │
+│   25    │  '2.79167'  │  '3.39583'   │ 'Female' │     'May'     │
+│   26    │  '2.77083'  │  '3.41667'   │ 'Female' │    'July'     │
+│   27    │  '3.10417'  │   '3.375'    │ 'Female' │   'August'    │
+│   28    │  '3.19479'  │  '3.45833'   │ 'Female' │  'September'  │
+│   29    │  '2.91667'  │   '3.4375'   │ 'Female' │   'October'   │
+│   30    │     '3'     │  '3.41667'   │ 'Female' │   'October'   │
+│   31    │  '3.79167'  │  '3.02083'   │ 'Female' │  'November'   │
+│   32    │  '3.10417'  │  '3.35417'   │ 'Female' │   'January'   │
+│   33    │   '3.25'    │  '3.27083'   │ 'Female' │    'April'    │
+│   34    │  '3.29167'  │  '3.16667'   │ 'Female' │  'September'  │
+│   35    │  '3.14583'  │  '3.29167'   │ 'Female' │   'October'   │
+│   36    │  '2.83333'  │   '3.3125'   │ 'Female' │  'December'   │
+│   37    │  '2.52083'  │    '3.25'    │ 'Female' │  'February'   │
+└─────────┴─────────────┴──────────────┴──────────┴───────────────┘`)
+
+        // Extraversion group 4
+        expect( d3.min( sortedGroupedData.get('2.52-2.98'), d=>d.Extraversion ) ).toBe( '2.52083' )
+        expect( d3.max( sortedGroupedData.get('2.52-2.98'), d=>d.Extraversion ) ).toBe( '2.97917' )
+        expect( sortedGroupedData.get('2.52-2.98') ).toTabulateAs(`\
+┌─────────┬─────────────┬──────────────┬──────────┬───────────────┐
+│ (index) │ Neuroticism │ Extraversion │  Gender  │ MonthMeasured │
+├─────────┼─────────────┼──────────────┼──────────┼───────────────┤
+│    0    │  '2.52083'  │  '2.89583'   │  'Male'  │    'March'    │
+│    1    │   '3.125'   │  '2.52083'   │  'Male'  │  'February'   │
+│    2    │  '3.22917'  │  '2.91667'   │  'Male'  │  'September'  │
+│    3    │   '3.875'   │  '2.64583'   │ 'Female' │  'December'   │
+│    4    │  '2.87792'  │  '2.97917'   │ 'Female' │    'March'    │
+│    5    │  '3.10417'  │    '2.75'    │ 'Female' │    'March'    │
+│    6    │  '3.58333'  │  '2.58333'   │ 'Female' │  'September'  │
+│    7    │  '3.6875'   │  '2.95833'   │ 'Female' │  'February'   │
+│    8    │  '3.70833'  │  '2.77083'   │ 'Female' │    'March'    │
+│    9    │  '2.60417'  │  '2.97917'   │ 'Female' │    'July'     │
+│   10    │  '2.85417'  │  '2.83333'   │ 'Female' │  'November'   │
 └─────────┴─────────────┴──────────────┴──────────┴───────────────┘`)
 
 
