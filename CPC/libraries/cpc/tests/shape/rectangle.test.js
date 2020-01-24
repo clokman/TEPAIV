@@ -282,8 +282,95 @@ describe ('fill()', () => {
 
 
 
+//// STROKE COLOR ///////////////////////////////////////////////////////////////
 
-//// CLASS AND ID ///
+describe ('strokeColor() ', () => {
+
+    test('Get: Get stroke color', () => {
+
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+
+        const myRectangle = new shape.Rectangle()
+
+        expect( myRectangle.strokeColor() ).toBe( 'rgba(0, 0, 0, 0.0)' )
+
+    })
+
+    test('Set: Set stroke color', () => {
+
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+        jest.useFakeTimers()
+
+        const myRectangle = new shape.Rectangle()
+
+        // Ensure that the default color is different than this example value
+        expect( myRectangle.strokeColor() ).not.toBe( 'rgba(0, 175, 255, .8)' )
+
+        // Change stroke color
+        myRectangle.strokeColor('rgba(0, 175, 255, .8)')
+
+        // Confirm change in object
+        expect( myRectangle.strokeColor() ).toBe( 'rgba(0, 175, 255, .8)' )
+
+        // Confirm change on DOM
+        // myRectangle.id('my-rectangle').update()
+        // const strokeColorOnDom = document.querySelector( '#my-rectangle' ).getAttribute('stroke');
+        // expect( strokeColorOnDom ).toBe( 'rgba(0, 175, 255, .8)' )
+
+    })
+    
+})
+
+
+//// STROKE WIDTH ///////////////////////////////////////////////////////////////
+
+describe ('strokeWidth() ', () => {
+
+    test('Get: Get stroke width', () => {
+
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+
+        const myRectangle = new shape.Rectangle()
+
+        expect( myRectangle.strokeWidth() ).toBe( '1px' )
+
+    })
+
+    test('Set: Set stroke width', () => {
+
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+
+        const myRectangle = new shape.Rectangle()
+
+        // Ensure that the default color is different than this example value
+        expect( myRectangle.strokeWidth() ).not.toBe( '24px' )
+
+        // Change stroke color
+        myRectangle.strokeWidth('24px')
+
+        // Confirm change in object
+        expect( myRectangle.strokeWidth() ).toBe( '24px' )
+
+
+        // Confirm change on DOM //
+        // myRectangle.id('my-rectangle').update(0)
+        // const strokeWidthOnDom = document.querySelector( '#my-rectangle' ).getAttribute('stroke-width')
+        // expect( strokeWidthOnDom ).toBe( '24px' )
+
+    })
+
+})
+
+
+
+
+//// CLASS AND ID ///////////////////////////////////////////////////////////////
+
+describe ('class() and id()', () => {
 
     test ('Should set rectangle class and ID with single and chain syntax', () => {
 

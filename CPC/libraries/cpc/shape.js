@@ -13,7 +13,7 @@
 
 
 
-// Module content goes here. 
+// Module content goes here.
     const version = "1.0"
 
 
@@ -27,6 +27,8 @@
             this._x = 0
             this._y = 0
             this._fill = 'gray'
+            this._strokeWidth = '1px'
+            this._strokeColor = 'rgba(0, 0, 0, 0.0)'
             this._htmlClass = null
             this._htmlId = null
             this._data = [null]
@@ -49,6 +51,25 @@
                 return this._fill
             } else {
                 this._fill = value
+                return this
+            }
+        }
+
+
+        strokeColor(value){
+            if (!arguments.length) {
+                return this._strokeColor
+            } else {
+                this._strokeColor = value
+                return this
+            }
+        }
+
+        strokeWidth(value){
+            if (!arguments.length) {
+                return this._strokeWidth
+            } else {
+                this._strokeWidth = value
                 return this
             }
         }
@@ -163,6 +184,9 @@
                     .attr('width', this._width)
                     .attr('height', this._height)
                     .attr('fill', this._fill)
+                    .attr('stroke', this._strokeColor)
+                    .attr('stroke-width', this._strokeWidth)
+
             // }
 
             // if (isNodeEnvironment){
