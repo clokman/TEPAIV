@@ -29,11 +29,9 @@ global.classUtils = require("../../../utils/classUtils")
 global.container = require("../../container")
 global.shape = require("../../shape")
 global.stringUtils = require("../../../utils/stringUtils")
-global.jestUtils = {
-    ...require("../../../../../JestUtils/jest-dom")
-    //, ...require("../../../../../JestUtils/jest-console")
-}
 global.data = require("../../../cpc/data")
+
+require("../../../../../JestUtils/jest-dom")
 
 //// MODULES BEING TESTED ////
 const datasets = require("../../../../data/datasets")
