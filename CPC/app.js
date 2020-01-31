@@ -31,12 +31,12 @@ navigator1.loadDataset(
         .update()
 
     // navigator1.objects('panel-0').height(1500).update()
-    navigator1.objects('panel-0').yAxisLabels()
+    // navigator1.objects('panel-0').yAxisLabels()
 
     // CAPITALIZE CHART LABELS
-    navigator1.objects('panel-0').objects('Status')._chartLabelObject.text('STATUS').update()
-    navigator1.objects('panel-0').objects('Ticket')._chartLabelObject.text('TICKET').update()
-    navigator1.objects('panel-0').objects('Gender')._chartLabelObject.text('GENDER').update()
+    // navigator1.objects('panel-0').objects('Status')._chartLabelObject.text('STATUS').update()
+    // navigator1.objects('panel-0').objects('Ticket')._chartLabelObject.text('TICKET').update()
+    // navigator1.objects('panel-0').objects('Gender')._chartLabelObject.text('GENDER').update()
 })
 
 
@@ -55,13 +55,13 @@ navigator2.loadDataset(
         .update()
 
     // navigator2.objects('panel-0').height(1500).update()
-    navigator2.objects('panel-0').yAxisLabels()
+    // navigator2.objects('panel-0').yAxisLabels()
 
     // CAPITALIZE CHART LABELS
-    navigator2.objects('panel-0').objects('Survived')._chartLabelObject.text('SURVIVED').update()
-    navigator2.objects('panel-0').objects('Pclass')._chartLabelObject.text('PCLASS').update()
-    navigator2.objects('panel-0').objects('Sex')._chartLabelObject.text('SEX').update()
-    navigator2.objects('panel-0').objects('Embarked')._chartLabelObject.text('EMBARKED').update()
+    // navigator2.objects('panel-0').objects('Status')._chartLabelObject.text('SURVIVED').update()
+    // navigator2.objects('panel-0').objects('Pclass')._chartLabelObject.text('PCLASS').update()
+    // navigator2.objects('panel-0').objects('Sex')._chartLabelObject.text('SEX').update()
+    // navigator2.objects('panel-0').objects('Embarked')._chartLabelObject.text('EMBARKED').update()
 
 })
 
@@ -81,9 +81,6 @@ navigator3.loadDataset(
         .x( navigator2.x() + horizontalDistanceBetweenNavigators )
         .update()
 
-    // navigator3.objects('panel-0').height(1500).update()
-    navigator3.objects('panel-0').yAxisLabels()
-
 })
 
 
@@ -101,7 +98,6 @@ navigator4.loadDataset(
         .x( navigator3.x() + horizontalDistanceBetweenNavigators )
         .update()
 
-    navigator4.objects('panel-0').yAxisLabels()
 })
 
 
@@ -119,8 +115,8 @@ navigator5.loadDataset(
         .x( navigator4.x() + horizontalDistanceBetweenNavigators )
         .update()
 
-    navigator5.objects('panel-0').height(750).update()
-    navigator5.objects('panel-0').yAxisLabels()
+    navigator5.objects('panel-0-0').height(750).update()
+
 })
 
 
@@ -139,7 +135,7 @@ navigator5.loadDataset(
 //         .update()
 //
 //     navigator6.objects('panel-0').height(7500).update()
-//     navigator6.objects('panel-0').yAxisLabels()
+
 // })
 
 
@@ -163,10 +159,6 @@ navigatorB1.loadDataset(
         // .y(verticalDistanceBetweenNavigators)
         .update()
 
-    // CAPITALIZE CHART LABELS
-    navigatorB1.objects('panel-0').objects('Status')._chartLabelObject.text('STATUS').update()
-    navigatorB1.objects('panel-0').objects('Ticket')._chartLabelObject.text('TICKET').update()
-    navigatorB1.objects('panel-0').objects('Gender')._chartLabelObject.text('GENDER').update()
 })
 
 
