@@ -1432,13 +1432,13 @@ describe ('ABSOLUTE VALUES: Toggling absolute values should show counts instead 
 
 
             // Add panel #0
-            panelZero = new navigator.NestedPanel()
+            const panelZero = new navigator.NestedPanel()
             // Add child panel #1
-            spawnObjectForChild1 = panelZero.objects('gender').objects('female')
-            childPanel1 = new navigator.NestedPanel(panelZero, spawnObjectForChild1)
+            const spawnObjectForChild1 = panelZero.objects('gender').objects('female')
+            const childPanel1 = new navigator.NestedPanel(panelZero, spawnObjectForChild1)
             // Add child panel #2
-            spawnObjectForChild2 = childPanel1.objects('gender').objects('male')
-            childPanel2 = new navigator.NestedPanel(childPanel1, spawnObjectForChild2)
+            const spawnObjectForChild2 = childPanel1.objects('gender').objects('male')
+            const childPanel2 = new navigator.NestedPanel(childPanel1, spawnObjectForChild2)
 
 
             // Get initial number of panels
