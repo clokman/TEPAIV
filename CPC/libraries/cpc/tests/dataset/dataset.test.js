@@ -24,6 +24,8 @@ global.d3 = {
 global.data = require("../../data")
 global._ = require("../../../external/lodash")
 global.classUtils = require("../../../utils/classUtils")
+global.jsUtils = require("../../../utils/jsUtils")
+global.arrayUtils = require("../../../utils/arrayUtils")
 
 //// MODULES BEING TESTED ////
 const dataset = require("../../dataset")
@@ -37,16 +39,21 @@ const dataset = require("../../dataset")
 
 
 
+//// D3 General ///////////////////////////////////////////////////////////////
 
-test ('Should read data with d3', async () => {
+describe ('D3: Learning tests for async reading with D3', () => {
 
-    expect.assertions(2)
 
-    const titanicDataset = await d3.csv('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv')
 
-    expect(titanicDataset.length).toBe(1309)
-    
-    expectTable(titanicDataset, `\
+    test ('Should read data with d3', async () => {
+
+        expect.assertions(2)
+
+        const titanicDataset = await d3.csv('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv')
+
+        expect(titanicDataset.length).toBe(1309)
+
+        expectTable(titanicDataset, `\
 ┌─────────┬─────────────┬────────────┬──────────┬─────────────────────────────────────────────────────┐
 │ (index) │   Ticket    │   Status   │  Gender  │                        Name                         │
 ├─────────┼─────────────┼────────────┼──────────┼─────────────────────────────────────────────────────┤
@@ -69,41 +76,48 @@ test ('Should read data with d3', async () => {
 ˅˅˅ 1294 more rows`, 0, 15)
 
 
-})
+    })
 
 
-test ('Should read data with d3.csv wrapped in a function', async () => {
+    test ('Should read data with d3.csv wrapped in a function', async () => {
 
-    expect.assertions(1)
+        expect.assertions(1)
 
-    async function wrapper(){
+        async function wrapper(){
 
-        return await d3.csv('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv')
+            return await d3.csv('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv')
 
-    }
+        }
 
-    const titanicDataset = await wrapper()
+        const titanicDataset = await wrapper()
 
-    expect(titanicDataset.length).toBe(1309)
+        expect(titanicDataset.length).toBe(1309)
 
 
+    })
+
+    
+    
 })
 
 
 //// DATASET ////
 
-test ('Should initiate a Dataset instance, read data into it, and calculate properties', async () => {
+//// INITIALIZE ///////////////////////////////////////////////////////////////
 
-    expect.assertions(11)
+describe ('Initialization', () => {
 
-    const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv')
-    await titanicDataset.build()
+    test ('Initiate a Dataset instance, read data into it, and calculate properties', async () => {
 
+            expect.assertions(11)
 
-    expect(titanicDataset.data).toBeDefined()
-    expect(titanicDataset.data).toHaveLength(1309)
+            const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv')
+            await titanicDataset.build()
 
-    expectTable(titanicDataset.data, `\
+            expect(titanicDataset.data).toBeDefined()
+            expect(titanicDataset.data).toHaveLength(1309)
+
+            expectTable(titanicDataset.data, `\
 ┌─────────┬─────────────┬────────────┬──────────┬─────────────────────────────────────────────────────┐
 │ (index) │   Ticket    │   Status   │  Gender  │                        Name                         │
 ├─────────┼─────────────┼────────────┼──────────┼─────────────────────────────────────────────────────┤
@@ -126,7 +140,7 @@ test ('Should initiate a Dataset instance, read data into it, and calculate prop
 ˅˅˅ 1294 more rows`, 0, 15)
 
 
-    expectTable(titanicDataset.data, `\
+            expectTable(titanicDataset.data, `\
 ˄˄˄ 1300 preceding rows
 ┌─────────┬─────────────┬────────────┬──────────┬───────────────────────────────────────────┐
 │ (index) │   Ticket    │   Status   │  Gender  │                   Name                    │
@@ -144,667 +158,30 @@ test ('Should initiate a Dataset instance, read data into it, and calculate prop
 ˅˅˅ 0 more rows`,1300, 9)
 
 
-    expect(titanicDataset.columnNames).toEqual(["Ticket", "Status", "Gender", "Name"])
-    // For category names, see the test that initiates the dataset with an omitted column.
-    // (Category names are not tested here due to excessive number of them caused by 'Name' column to be included.)
+            expect(titanicDataset.columnNames).toEqual(["Ticket", "Status", "Gender", "Name"])
+            // For category names, see the test that initiates the dataset with an omitted column.
+            // (Category names are not tested here due to excessive number of them caused by 'Name' column to be included.)
 
-    // Verify that dataset structure is correctly mapped
-    expect(titanicDataset.structure).toBeInstanceOf(Map)
-    expect(titanicDataset.structure.size).toBe(4)
-    expect(titanicDataset.structure.get('Gender')).toBeInstanceOf(Array)
-    expect(titanicDataset.structure.get('Gender')).toEqual(["Female", "Male"])
-    expect(titanicDataset.structure.get('Ticket')).toEqual(["1st class", "2nd class", "3rd class"])
-    expect(titanicDataset.structure.get('Status')).toEqual(["Survived", "Died"])
-
-
-
-    // Verify that a dataset summary is calculated upon initiation dataset
-        // This test is skipped due to excessive output due to inclusion of 'Name' column.
-        // The test is carried out in [REF-1], where this column is not included.
-
-
-    }
-)
+            // Verify that dataset structure is correctly mapped
+            expect(titanicDataset.structure).toBeInstanceOf(Map)
+            expect(titanicDataset.structure.size).toBe(4)
+            expect(titanicDataset.structure.get('Gender')).toBeInstanceOf(Array)
+            expect(titanicDataset.structure.get('Gender')).toEqual(["Female", "Male"])
+            expect(titanicDataset.structure.get('Ticket')).toEqual(["1st class", "2nd class", "3rd class"])
+            expect(titanicDataset.structure.get('Status')).toEqual(["Survived", "Died"])
 
 
 
+            // Verify that a dataset summary is calculated upon initiation dataset
+            // This test is skipped due to excessive output due to inclusion of 'Name' column.
+            // The test is carried out in [REF-1], where this column is not included.
 
-test ('Dataset should initiate with an omitted column', async () => {
 
-    expect.assertions(11)
-
-    const titanicDataset = new dataset.Dataset(
-          'http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv',
-          'Name'
+        }
     )
-    await titanicDataset.build()
 
 
-    expect(titanicDataset.data).toBeDefined()
-    expect(titanicDataset.data).toHaveLength(1309)
-
-    expect(titanicDataset.columnNames).toEqual(["Ticket", "Status", "Gender"])
-    expect(titanicDataset.categoryNames).toEqual(["1st class", "2nd class", "3rd class", "Survived", "Died", "Female", "Male"])
-
-    // Verify that dataset structure is correctly mapped
-    expect(titanicDataset.structure).toBeInstanceOf(Map)
-    expect(titanicDataset.structure.size).toBe(3)
-    expect(titanicDataset.structure.get('Gender')).toBeInstanceOf(Array)
-    expect(titanicDataset.structure.get('Gender')).toEqual(["Female", "Male"])
-    expect(titanicDataset.structure.get('Ticket')).toEqual(["1st class", "2nd class", "3rd class"])
-    expect(titanicDataset.structure.get('Status')).toEqual(["Survived", "Died"])
-
-
-    // Verify that a dataset summary is calculated upon initiation dataset
-    // [REF-1]
-    expectTable(titanicDataset.summary, `\
-┌───────────────────┬──────────┬────────────────────────────────────────────────────────────────────┐
-│ (iteration index) │   Key    │                               Values                               │
-├───────────────────┼──────────┼────────────────────────────────────────────────────────────────────┤
-│         0         │ 'Ticket' │ Map { '1st class' => 323, '2nd class' => 277, '3rd class' => 709 } │
-│         1         │ 'Status' │              Map { 'Survived' => 500, 'Died' => 809 }              │
-│         2         │ 'Gender' │               Map { 'Female' => 466, 'Male' => 843 }               │
-└───────────────────┴──────────┴────────────────────────────────────────────────────────────────────┘`)
-
-})
-
-
-
-
-test ('SPLIT dataset by column using .splitBy(), and then manually drilldown with .get()', async () => {
-
-    // Query terminology:
-    // SPLIT: d3.group()
-    // DRILLDOWN: d3.group().get()
-    // SPLIT+SUMMARIZE: d3.rollup()
-
-    const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv', 'Name')
-    await titanicDataset.build()
-
-    // SPLIT using column name
-    const dataByGender = titanicDataset.splitBy('Gender')  // gender is a column name
-    expectTable(dataByGender, `\
-┌───────────────────┬──────────┬──────────────────────────────────────────────────────┐
-│ (iteration index) │   Key    │                        Values                        │
-├───────────────────┼──────────┼──────────────────────────────────────────────────────┤
-│         0         │ 'Female' │ [ [Object], [Object], [Object], ... 463 more items ] │
-│         1         │  'Male'  │ [ [Object], [Object], [Object], ... 840 more items ] │
-└───────────────────┴──────────┴──────────────────────────────────────────────────────┘`)
-
-    expect(dataByGender.size).toBe(2)
-    expect(dataByGender.get('Female')).toHaveLength(466)
-    expect(dataByGender.get('Male')).toHaveLength(843)
-
-
-    // SPLIT using 2 column names
-    const dataByGenderAndStatus = titanicDataset.splitBy('Gender', 'Status')
-    expectTable(dataByGenderAndStatus, `\
-┌───────────────────┬──────────┬──────────────────────────────────────────────────┐
-│ (iteration index) │   Key    │                      Values                      │
-├───────────────────┼──────────┼──────────────────────────────────────────────────┤
-│         0         │ 'Female' │ Map { 'Survived' => [Array], 'Died' => [Array] } │
-│         1         │  'Male'  │ Map { 'Survived' => [Array], 'Died' => [Array] } │
-└───────────────────┴──────────┴──────────────────────────────────────────────────┘`)
-
-    // DRILLDOWN on one of the categories (i.e., 'Male') of the broken down data
-    const malesByStatus = dataByGenderAndStatus.get('Male')
-    expectTable(malesByStatus, `\
-┌───────────────────┬────────────┬──────────────────────────────────────────────────────┐
-│ (iteration index) │    Key     │                        Values                        │
-├───────────────────┼────────────┼──────────────────────────────────────────────────────┤
-│         0         │ 'Survived' │ [ [Object], [Object], [Object], ... 158 more items ] │
-│         1         │   'Died'   │ [ [Object], [Object], [Object], ... 679 more items ] │
-└───────────────────┴────────────┴──────────────────────────────────────────────────────┘`)
-
-    // DRILLDOWN further on the drilled down category (i.e., 'Male')
-    const survivingMales = malesByStatus.get('Survived')
-    expectTable(survivingMales, `\
-┌─────────┬─────────────┬────────────┬────────┐
-│ (index) │   Ticket    │   Status   │ Gender │
-├─────────┼─────────────┼────────────┼────────┤
-│    0    │ '1st class' │ 'Survived' │ 'Male' │
-│    1    │ '1st class' │ 'Survived' │ 'Male' │
-│    2    │ '1st class' │ 'Survived' │ 'Male' │
-│    3    │ '1st class' │ 'Survived' │ 'Male' │
-│    4    │ '1st class' │ 'Survived' │ 'Male' │
-│    5    │ '1st class' │ 'Survived' │ 'Male' │
-│    6    │ '1st class' │ 'Survived' │ 'Male' │
-│    7    │ '1st class' │ 'Survived' │ 'Male' │
-│    8    │ '1st class' │ 'Survived' │ 'Male' │
-│    9    │ '1st class' │ 'Survived' │ 'Male' │
-└─────────┴─────────────┴────────────┴────────┘
-˅˅˅ 151 more rows`, 0, 10)
-
-
-    // SPLIT & COUNT the drilled down category by another category using d3.rollup()
-    const survivingMalesByTicket =
-        d3.rollup(survivingMales, v=>v.length, g=>g['Ticket'])
-    expectTable(survivingMalesByTicket, `\
-┌───────────────────┬─────────────┬────────┐
-│ (iteration index) │     Key     │ Values │
-├───────────────────┼─────────────┼────────┤
-│         0         │ '1st class' │   61   │
-│         1         │ '2nd class' │   25   │
-│         2         │ '3rd class' │   75   │
-└───────────────────┴─────────────┴────────┘`)
-
-
-    // Attempting to query with both column and category names should give error
-    expect(() =>
-        titanicDataset.splitBy('Gender', '1st class')
-    ).toThrow(Error)
-
-})
-
-
-
-test ('DRILLDOWN dataset by category using drilldownTo()', async () => {
-
-    // Query terminology:
-    // SPLIT: d3.group()
-    // DRILLDOWN: d3.group().get()
-    // SPLIT+SUMMARIZE: d3.rollup()
-
-    const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv', 'Name')
-    await titanicDataset.build()
-
-    // DRILDOWN using a category name (i.e., 'Female')
-    const femaleSubset = titanicDataset.drilldownTo({'Gender':'Female'})  // 'Gender' is a column name, while 'Female' is a category in the 'Gender' column
-
-    expectTable(femaleSubset, `\
-┌─────────┬─────────────┬────────────┬──────────┐
-│ (index) │   Ticket    │   Status   │  Gender  │
-├─────────┼─────────────┼────────────┼──────────┤
-│    0    │ '1st class' │ 'Survived' │ 'Female' │
-│    1    │ '1st class' │   'Died'   │ 'Female' │
-│    2    │ '1st class' │   'Died'   │ 'Female' │
-│    3    │ '1st class' │ 'Survived' │ 'Female' │
-│    4    │ '1st class' │ 'Survived' │ 'Female' │
-│    5    │ '1st class' │ 'Survived' │ 'Female' │
-│    6    │ '1st class' │ 'Survived' │ 'Female' │
-│    7    │ '1st class' │ 'Survived' │ 'Female' │
-│    8    │ '1st class' │ 'Survived' │ 'Female' │
-│    9    │ '1st class' │ 'Survived' │ 'Female' │
-│   10    │ '1st class' │ 'Survived' │ 'Female' │
-│   11    │ '1st class' │ 'Survived' │ 'Female' │
-│   12    │ '1st class' │ 'Survived' │ 'Female' │
-│   13    │ '1st class' │ 'Survived' │ 'Female' │
-│   14    │ '1st class' │ 'Survived' │ 'Female' │
-└─────────┴─────────────┴────────────┴──────────┘
-˅˅˅ 451 more rows`, 0, 15)
-    // Sample from further down in the data to see differing Ticket classes, while still only having 'Female' as gender.
-    expectTable(femaleSubset, `\
-˄˄˄ 150 preceding rows
-┌─────────┬─────────────┬────────────┬──────────┐
-│ (index) │   Ticket    │   Status   │  Gender  │
-├─────────┼─────────────┼────────────┼──────────┤
-│    0    │ '2nd class' │ 'Survived' │ 'Female' │
-│    1    │ '2nd class' │ 'Survived' │ 'Female' │
-│    2    │ '2nd class' │ 'Survived' │ 'Female' │
-│    3    │ '2nd class' │ 'Survived' │ 'Female' │
-│    4    │ '2nd class' │ 'Survived' │ 'Female' │
-│    5    │ '2nd class' │ 'Survived' │ 'Female' │
-│    6    │ '2nd class' │ 'Survived' │ 'Female' │
-│    7    │ '2nd class' │ 'Survived' │ 'Female' │
-│    8    │ '2nd class' │ 'Survived' │ 'Female' │
-│    9    │ '2nd class' │ 'Survived' │ 'Female' │
-│   10    │ '2nd class' │   'Died'   │ 'Female' │
-│   11    │ '2nd class' │   'Died'   │ 'Female' │
-│   12    │ '2nd class' │ 'Survived' │ 'Female' │
-│   13    │ '2nd class' │ 'Survived' │ 'Female' │
-│   14    │ '2nd class' │ 'Survived' │ 'Female' │
-└─────────┴─────────────┴────────────┴──────────┘
-˅˅˅ 301 more rows`, 150, 15)  // 'The remaining rows is not 0'  // TODO: Remaining rows in sliced array inputs are not correctly calculated. This COULD be fixed.
-
-
-        // DRILDOWN using two category names (i.e., 'Female' and 'Survived')
-    const femaleSurvivorsSubset = titanicDataset.drilldownTo({'Gender':'Female'}, {'Status':'Survived'})
-
-    expectTable(femaleSurvivorsSubset, `\
-┌─────────┬─────────────┬────────────┬──────────┐
-│ (index) │   Ticket    │   Status   │  Gender  │
-├─────────┼─────────────┼────────────┼──────────┤
-│    0    │ '1st class' │ 'Survived' │ 'Female' │
-│    1    │ '1st class' │ 'Survived' │ 'Female' │
-│    2    │ '1st class' │ 'Survived' │ 'Female' │
-│    3    │ '1st class' │ 'Survived' │ 'Female' │
-│    4    │ '1st class' │ 'Survived' │ 'Female' │
-│    5    │ '1st class' │ 'Survived' │ 'Female' │
-│    6    │ '1st class' │ 'Survived' │ 'Female' │
-│    7    │ '1st class' │ 'Survived' │ 'Female' │
-│    8    │ '1st class' │ 'Survived' │ 'Female' │
-│    9    │ '1st class' │ 'Survived' │ 'Female' │
-│   10    │ '1st class' │ 'Survived' │ 'Female' │
-│   11    │ '1st class' │ 'Survived' │ 'Female' │
-│   12    │ '1st class' │ 'Survived' │ 'Female' │
-│   13    │ '1st class' │ 'Survived' │ 'Female' │
-│   14    │ '1st class' │ 'Survived' │ 'Female' │
-└─────────┴─────────────┴────────────┴──────────┘
-˅˅˅ 324 more rows`, 0, 15)
-
-    expectTable(femaleSurvivorsSubset, `\
-˄˄˄ 150 preceding rows
-┌─────────┬─────────────┬────────────┬──────────┐
-│ (index) │   Ticket    │   Status   │  Gender  │
-├─────────┼─────────────┼────────────┼──────────┤
-│    0    │ '2nd class' │ 'Survived' │ 'Female' │
-│    1    │ '2nd class' │ 'Survived' │ 'Female' │
-│    2    │ '2nd class' │ 'Survived' │ 'Female' │
-│    3    │ '2nd class' │ 'Survived' │ 'Female' │
-│    4    │ '2nd class' │ 'Survived' │ 'Female' │
-│    5    │ '2nd class' │ 'Survived' │ 'Female' │
-│    6    │ '2nd class' │ 'Survived' │ 'Female' │
-│    7    │ '2nd class' │ 'Survived' │ 'Female' │
-│    8    │ '2nd class' │ 'Survived' │ 'Female' │
-│    9    │ '2nd class' │ 'Survived' │ 'Female' │
-│   10    │ '2nd class' │ 'Survived' │ 'Female' │
-│   11    │ '2nd class' │ 'Survived' │ 'Female' │
-│   12    │ '2nd class' │ 'Survived' │ 'Female' │
-│   13    │ '2nd class' │ 'Survived' │ 'Female' │
-│   14    │ '2nd class' │ 'Survived' │ 'Female' │
-└─────────┴─────────────┴────────────┴──────────┘
-˅˅˅ 174 more rows`, 150, 15)
-
-    expectTable(femaleSurvivorsSubset, `\
-˄˄˄ 250 preceding rows
-┌─────────┬─────────────┬────────────┬──────────┐
-│ (index) │   Ticket    │   Status   │  Gender  │
-├─────────┼─────────────┼────────────┼──────────┤
-│    0    │ '3rd class' │ 'Survived' │ 'Female' │
-│    1    │ '3rd class' │ 'Survived' │ 'Female' │
-│    2    │ '3rd class' │ 'Survived' │ 'Female' │
-│    3    │ '3rd class' │ 'Survived' │ 'Female' │
-│    4    │ '3rd class' │ 'Survived' │ 'Female' │
-│    5    │ '3rd class' │ 'Survived' │ 'Female' │
-│    6    │ '3rd class' │ 'Survived' │ 'Female' │
-│    7    │ '3rd class' │ 'Survived' │ 'Female' │
-│    8    │ '3rd class' │ 'Survived' │ 'Female' │
-│    9    │ '3rd class' │ 'Survived' │ 'Female' │
-│   10    │ '3rd class' │ 'Survived' │ 'Female' │
-│   11    │ '3rd class' │ 'Survived' │ 'Female' │
-│   12    │ '3rd class' │ 'Survived' │ 'Female' │
-│   13    │ '3rd class' │ 'Survived' │ 'Female' │
-│   14    │ '3rd class' │ 'Survived' │ 'Female' │
-└─────────┴─────────────┴────────────┴──────────┘
-˅˅˅ 74 more rows`, 250, 15)
-
-
-})
-
-
-
-
-test ('DRILLDOWN the dataset and SPLIT+SUMMARIZE of all categories in the context of the drilled down data', async () => {
-
-    // Query terminology:
-    // SPLIT: d3.group()
-    // DRILLDOWN: d3.group().get()
-    // SPLIT+SUMMARIZE: d3.rollup()
-
-    const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv', 'Name')
-    await titanicDataset.build()
-
-//
-//
-//     // DRILLDOWN, and then SPLIT+SUMMARIZE --- Zero depth (summary of initial/surface data without drilling down)
-//     const datasetSummary = titanicDataset.drilldownAndSummarize()
-//
-//     expectTable(datasetSummary, `\
-// ┌───────────────────┬──────────┬────────────────────────────────────────────────────────────────────┐
-// │ (iteration index) │   Key    │                               Values                               │
-// ├───────────────────┼──────────┼────────────────────────────────────────────────────────────────────┤
-// │         0         │ 'Ticket' │ Map { '1st class' => 323, '2nd class' => 277, '3rd class' => 709 } │
-// │         1         │ 'Status' │              Map { 'Survived' => 500, 'Died' => 809 }              │
-// │         2         │ 'Gender' │               Map { 'Female' => 466, 'Male' => 843 }               │
-// └───────────────────┴──────────┴────────────────────────────────────────────────────────────────────┘`)
-//
-//
-//
-//
-//     // DRILLDOWN, and then SPLIT+SUMMARIZE --- One category deep
-//     const femaleSubsetSummary = titanicDataset.drilldownAndSummarize({'Gender':'Female'})
-//
-//     expectTable(femaleSubsetSummary, `\
-// ┌───────────────────┬──────────┬────────────────────────────────────────────────────────────────────┐
-// │ (iteration index) │   Key    │                               Values                               │
-// ├───────────────────┼──────────┼────────────────────────────────────────────────────────────────────┤
-// │         0         │ 'Ticket' │ Map { '1st class' => 144, '2nd class' => 106, '3rd class' => 216 } │
-// │         1         │ 'Status' │              Map { 'Survived' => 339, 'Died' => 127 }              │
-// │         2         │ 'Gender' │                      Map { 'Female' => 466 }                       │
-// └───────────────────┴──────────┴────────────────────────────────────────────────────────────────────┘`)
-//
-//
-//
-//     // DRILLDOWN, and then SPLIT+SUMMARIZE --- Two categories deep
-//
-//     const femaleSurvivorsSubsetSummary =
-//         titanicDataset.drilldownAndSummarize({'Gender':'Female'}, {'Status':'Survived'})
-//
-//     expectTable(femaleSurvivorsSubsetSummary, `\
-// ┌───────────────────┬──────────┬───────────────────────────────────────────────────────────────────┐
-// │ (iteration index) │   Key    │                              Values                               │
-// ├───────────────────┼──────────┼───────────────────────────────────────────────────────────────────┤
-// │         0         │ 'Ticket' │ Map { '1st class' => 139, '2nd class' => 94, '3rd class' => 106 } │
-// │         1         │ 'Status' │                     Map { 'Survived' => 339 }                     │
-// │         2         │ 'Gender' │                      Map { 'Female' => 339 }                      │
-// └───────────────────┴──────────┴───────────────────────────────────────────────────────────────────┘`)
-//
-//
-//
-//     // DRILLDOWN, and then SPLIT+SUMMARIZE --- Three categories deep
-//
-//     const firstClassFemaleSurvivorsSubsetSummary =
-//         titanicDataset.drilldownAndSummarize({'Gender':'Female'}, {'Status':'Survived'}, {'Ticket':'1st class'})
-//
-//     expectTable(firstClassFemaleSurvivorsSubsetSummary, `\
-// ┌───────────────────┬──────────┬────────────────────────────┐
-// │ (iteration index) │   Key    │           Values           │
-// ├───────────────────┼──────────┼────────────────────────────┤
-// │         0         │ 'Ticket' │ Map { '1st class' => 139 } │
-// │         1         │ 'Status' │ Map { 'Survived' => 139 }  │
-// │         2         │ 'Gender' │  Map { 'Female' => 139 }   │
-// └───────────────────┴──────────┴────────────────────────────┘`)
-
-
-    // DRILLDOWN, and then SPLIT+SUMMARIZE --- Providing an array as parameter
-
-    const arrayParameterSummary =
-        titanicDataset.drilldownAndSummarize([{'Gender':'Female'}, {'Status':'Survived'}])
-
-    expectTable(arrayParameterSummary, `\
-┌───────────────────┬──────────┬───────────────────────────────────────────────────────────────────┐
-│ (iteration index) │   Key    │                              Values                               │
-├───────────────────┼──────────┼───────────────────────────────────────────────────────────────────┤
-│         0         │ 'Ticket' │ Map { '1st class' => 139, '2nd class' => 94, '3rd class' => 106 } │
-│         1         │ 'Status' │                     Map { 'Survived' => 339 }                     │
-│         2         │ 'Gender' │                      Map { 'Female' => 339 }                      │
-└───────────────────┴──────────┴───────────────────────────────────────────────────────────────────┘`)
-
-
-
-
-})
-
-
-
-test ('SPLIT+SUMMARIZE level-0/SURFACE data with summarize()', async () => {
-
-    // Query terminology:
-    // SPLIT: d3.group()
-    // DRILLDOWN: d3.group().get()
-    // SPLIT+SUMMARIZE: d3.rollup()
-
-    const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv', 'Name')
-    await titanicDataset.build()
-
-    const datasetSummary = titanicDataset.summarize()
-
-
-    expectTable(datasetSummary, `\
-┌───────────────────┬──────────┬────────────────────────────────────────────────────────────────────┐
-│ (iteration index) │   Key    │                               Values                               │
-├───────────────────┼──────────┼────────────────────────────────────────────────────────────────────┤
-│         0         │ 'Ticket' │ Map { '1st class' => 323, '2nd class' => 277, '3rd class' => 709 } │
-│         1         │ 'Status' │              Map { 'Survived' => 500, 'Died' => 809 }              │
-│         2         │ 'Gender' │               Map { 'Female' => 466, 'Male' => 843 }               │
-└───────────────────┴──────────┴────────────────────────────────────────────────────────────────────┘`)
-
-})
-
-
-
-
-
-test ('DRILLDOWN the dataset and SPLIT+SUMMARIZE of all categories in the context of the drilled down data', async () => {
-
-    // Query terminology:
-    // SPLIT: d3.group()
-    // DRILLDOWN: d3.group().get()
-    // SPLIT+SUMMARIZE: d3.rollup()
-
-    const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv', 'Name')
-    await titanicDataset.build()
-
-
-
-    // DRILLDOWN, and then SPLIT+SUMMARIZE --- Zero depth (summary of initial/surface data without drilling down)
-    const datasetSummary = titanicDataset.drilldownAndSummarize()
-
-    expectTable(datasetSummary, `\
-┌───────────────────┬──────────┬────────────────────────────────────────────────────────────────────┐
-│ (iteration index) │   Key    │                               Values                               │
-├───────────────────┼──────────┼────────────────────────────────────────────────────────────────────┤
-│         0         │ 'Ticket' │ Map { '1st class' => 323, '2nd class' => 277, '3rd class' => 709 } │
-│         1         │ 'Status' │              Map { 'Survived' => 500, 'Died' => 809 }              │
-│         2         │ 'Gender' │               Map { 'Female' => 466, 'Male' => 843 }               │
-└───────────────────┴──────────┴────────────────────────────────────────────────────────────────────┘`)
-
-
-
-
-    // DRILLDOWN, and then SPLIT+SUMMARIZE --- One category deep
-    const femaleSubsetSummary = titanicDataset.drilldownAndSummarize({'Gender':'Female'})
-
-    expectTable(femaleSubsetSummary, `\
-┌───────────────────┬──────────┬────────────────────────────────────────────────────────────────────┐
-│ (iteration index) │   Key    │                               Values                               │
-├───────────────────┼──────────┼────────────────────────────────────────────────────────────────────┤
-│         0         │ 'Ticket' │ Map { '1st class' => 144, '2nd class' => 106, '3rd class' => 216 } │
-│         1         │ 'Status' │              Map { 'Survived' => 339, 'Died' => 127 }              │
-│         2         │ 'Gender' │                      Map { 'Female' => 466 }                       │
-└───────────────────┴──────────┴────────────────────────────────────────────────────────────────────┘`)
-
-
-
-    // DRILLDOWN, and then SPLIT+SUMMARIZE --- Two categories deep
-
-    const femaleSurvivorsSubsetSummary =
-        titanicDataset.drilldownAndSummarize({'Gender':'Female'}, {'Status':'Survived'})
-
-    expectTable(femaleSurvivorsSubsetSummary, `\
-┌───────────────────┬──────────┬───────────────────────────────────────────────────────────────────┐
-│ (iteration index) │   Key    │                              Values                               │
-├───────────────────┼──────────┼───────────────────────────────────────────────────────────────────┤
-│         0         │ 'Ticket' │ Map { '1st class' => 139, '2nd class' => 94, '3rd class' => 106 } │
-│         1         │ 'Status' │                     Map { 'Survived' => 339 }                     │
-│         2         │ 'Gender' │                      Map { 'Female' => 339 }                      │
-└───────────────────┴──────────┴───────────────────────────────────────────────────────────────────┘`)
-
-
-
-    // DRILLDOWN, and then SPLIT+SUMMARIZE --- Three categories deep
-
-    const firstClassFemaleSurvivorsSubsetSummary =
-        titanicDataset.drilldownAndSummarize({'Gender':'Female'}, {'Status':'Survived'}, {'Ticket':'1st class'})
-
-    expectTable(firstClassFemaleSurvivorsSubsetSummary, `\
-┌───────────────────┬──────────┬────────────────────────────┐
-│ (iteration index) │   Key    │           Values           │
-├───────────────────┼──────────┼────────────────────────────┤
-│         0         │ 'Ticket' │ Map { '1st class' => 139 } │
-│         1         │ 'Status' │ Map { 'Survived' => 139 }  │
-│         2         │ 'Gender' │  Map { 'Female' => 139 }   │
-└───────────────────┴──────────┴────────────────────────────┘`)
-
-})
-
-
-
-test ('SPLIT+SUMMARIZE level-0/SURFACE data with summarize()', async () => {
-
-    // Query terminology:
-    // SPLIT: d3.group()
-    // DRILLDOWN: d3.group().get()
-    // SPLIT+SUMMARIZE: d3.rollup()
-
-    const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv', 'Name')
-    await titanicDataset.build()
-
-    const datasetSummary = titanicDataset.summarize()
-
-
-    expectTable(datasetSummary, `\
-┌───────────────────┬──────────┬────────────────────────────────────────────────────────────────────┐
-│ (iteration index) │   Key    │                               Values                               │
-├───────────────────┼──────────┼────────────────────────────────────────────────────────────────────┤
-│         0         │ 'Ticket' │ Map { '1st class' => 323, '2nd class' => 277, '3rd class' => 709 } │
-│         1         │ 'Status' │              Map { 'Survived' => 500, 'Died' => 809 }              │
-│         2         │ 'Gender' │               Map { 'Female' => 466, 'Male' => 843 }               │
-└───────────────────┴──────────┴────────────────────────────────────────────────────────────────────┘`)
-
-})
-
-
-
-test ('Should query the dataset for counts of nested categories using private interface', async () => {
-
-    const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv')
-    await titanicDataset.build()
-
-
-    // Query depth: 1
-    const status = titanicDataset.splitBy('Status')
-        , survived = status.get('Survived')
-        , died = status.get('Died')
-
-    expect(survived).toHaveLength(500)
-    expect(died).toHaveLength(809)
-
-
-    // Query depth: 2
-    const statusByGender = titanicDataset.splitBy('Status', 'Gender')
-        , survivedFemales = statusByGender.get('Survived').get('Female')
-        , survivedMales = statusByGender.get('Survived').get('Male')
-
-    expect(survivedFemales).toHaveLength(339)
-    expect(survivedMales).toHaveLength(161)
-
-
-    // Query depth: 3
-    const survivedFirstClassFemales =
-        titanicDataset.splitBy('Status', 'Gender', 'Ticket')
-            .get('Survived').get('Female').get('1st class')
-
-    expect(survivedFirstClassFemales).toHaveLength(139)
-
-})
-
-
-
-test ('Should get column names in the imported dataset', async () => {
-
-    const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv')
-    await titanicDataset.build()
-
-    // Verify that the property that holds column names is correctly set upon initiation
-    let propertyThatHoldsColumnNames
-
-    propertyThatHoldsColumnNames = JSON.stringify(titanicDataset.columnNames)
-    expect(propertyThatHoldsColumnNames).toBe( `["Ticket","Status","Gender","Name"]`)
-
-
-
-    const titanicDatasetWithOmittedColumn = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv', 'Name')
-    await titanicDatasetWithOmittedColumn.build()
-
-    // Verify that the property that holds column names is correctly set upon initiation
-    propertyThatHoldsColumnNames = JSON.stringify(titanicDataset.columnNames)
-    expect(propertyThatHoldsColumnNames).toBe( `["Ticket","Status","Gender","Name"]`)
-
-})
-
-test ('Should return column name when provided a category name', async () => {
-
-    const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv', 'Name')
-    await titanicDataset.build()
-
-    // Infer column name from given category name
-    expect(titanicDataset.inferColumnFromCategory('Female')).toBe('Gender')
-    expect(titanicDataset.inferColumnFromCategory('Male')).toBe('Gender')
-    expect(titanicDataset.inferColumnFromCategory('1st class')).toBe('Ticket')
-    expect(titanicDataset.inferColumnFromCategory('2nd class')).toBe('Ticket')
-    expect(titanicDataset.inferColumnFromCategory('Survived')).toBe('Status')
-    expect(titanicDataset.inferColumnFromCategory('Died')).toBe('Status')
-
-
-    // Specified category does not exist in dataset
-    expect(() => titanicDataset.inferColumnFromCategory('Non-existent category'))
-        .toThrow(`The category name "Non-existent category" does not occur in the dataset. One column in the dataset should contain the specified category.`)
-
-    // Category occurs in more than one column
-    titanicDataset.structure.set('Sex', ['Male', 'Female'])
-    expect(() => titanicDataset.inferColumnFromCategory('Male'))
-        .toThrow(`The category name "Male" occurs in these columns: "Gender,Sex". Columns in the dataset should not share category names.`)
-
-})
-
-
-
-
-//// DRILLDOWN QUERY TEMPLATE ////  //TODO: TESTS OF THIS CLASS MUST BE MOVED TO ITS OWN TEST FILE
-//
-// test ('Should construct a query string', async () => {
-//
-//     const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv')
-//     await titanicDataset.build()
-//
-//     let myQuery1 = new dataset.DrilldownQueryTemplate( titanicDataset, ['Status'] )
-//       , myQuery2 = new dataset.DrilldownQueryTemplate( titanicDataset, ['Status', 'Gender'] )
-//       , myQuery3 = new dataset.DrilldownQueryTemplate( titanicDataset, ['Status', 'Gender', 'Ticket'] )
-//
-//     const expected1 = `d3.group(this.data, d => d["Status"])`
-//         , expected2 = `d3.group(this.data, d => d["Status"], d => d["Gender"])`
-//         , expected3 = `d3.group(this.data, d => d["Status"], d => d["Gender"], d => d["Ticket"])`
-//
-//     // Verify the entire query string generated (static + dynamic)
-//     expect(myQuery1.queryString).toBe(expected1)
-//     expect(myQuery2.queryString).toBe(expected2)
-//     expect(myQuery3.queryString).toBe(expected3)
-//
-//     // Verify the dynamic part of the query
-//     expect(myQuery1._argumentsSubstring).toBe(`d => d["Status"]`)
-//     expect(myQuery2._argumentsSubstring).toBe(`d => d["Status"], d => d["Gender"]`)
-//     expect(myQuery3._argumentsSubstring).toBe(`d => d["Status"], d => d["Gender"], d => d["Ticket"]`)
-//
-// })
-
-test ('Should parse query parameters', async () => {
-
-    const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv')
-    await titanicDataset.build()
-
-
-
-    // let myQuery1 = new dataset.DrilldownQueryTemplate( titanicDataset, [{'Status':'Survived'}] )
-      // , myQuery2 = new dataset.DrilldownQueryTemplate( titanicDataset, [{'Status':'Survived'}, {'Gender':'Male'}] )
-      // , myQuery3 = new dataset.DrilldownQueryTemplate( titanicDataset, [{'Status':'Survived'}, {'Gender':'Male'}, {'Ticket':'1st class'}] )
-
-    expect()
-
-})
-
-test ('Should return error if query is invalid because of a bad column or category name', async () => {
-
-
-    const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv')
-    await titanicDataset.build()
-
-
-
-    expect( () => {
-
-        const myColumnQuery = new dataset.SplitQuery( titanicDataset, ['random column name'] )
-
-    }).toThrow(`Provided split query argument(s), "[random column name]", do not correspond to a column or category in the dataset.`)
-
-})
-
-
-//// CONTINUOUS DATA ///////////////////////////////////////////////////////////////
-
-describe ('Continuous Data: ', () => {
-   
-    test ('Read: Continuous data should be read', async () => {
+    test ('Continuous data: Read continuous data', async () => {
 
         const bigFiveDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/BigFivePersonalityTraits-Small.csv')
         await bigFiveDataset.build()
@@ -836,10 +213,371 @@ describe ('Continuous Data: ', () => {
 ˅˅˅ 84 more rows`, 0, 15)
     })
 
+})
 
 
 
-    test ('DRILLDOWN: Split dataset by column using .splitBy(), and then manually drilldown with .get()', async () => {
+
+
+//// INFERENCES ///////////////////////////////////////////////////////////////
+
+describe ('Inferences', () => {
+
+    test ('Get column names in the imported dataset', async () => {
+
+        const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv')
+        await titanicDataset.build()
+
+        // Verify that the property that holds column names is correctly set upon initiation
+        let propertyThatHoldsColumnNames
+
+        propertyThatHoldsColumnNames = JSON.stringify(titanicDataset.columnNames)
+        expect(propertyThatHoldsColumnNames).toBe( `["Ticket","Status","Gender","Name"]`)
+
+
+
+        const titanicDatasetWithOmittedColumn = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv', 'Name')
+        await titanicDatasetWithOmittedColumn.build()
+
+        // Verify that the property that holds column names is correctly set upon initiation
+        propertyThatHoldsColumnNames = JSON.stringify(titanicDataset.columnNames)
+        expect(propertyThatHoldsColumnNames).toBe( `["Ticket","Status","Gender","Name"]`)
+
+    })
+
+    test ('Return column name when provided a category name', async () => {
+
+        const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv', 'Name')
+        await titanicDataset.build()
+
+        // Infer column name from given category name
+        expect(titanicDataset._inferColumnFromCategory('Female')).toBe('Gender')
+        expect(titanicDataset._inferColumnFromCategory('Male')).toBe('Gender')
+        expect(titanicDataset._inferColumnFromCategory('1st class')).toBe('Ticket')
+        expect(titanicDataset._inferColumnFromCategory('2nd class')).toBe('Ticket')
+        expect(titanicDataset._inferColumnFromCategory('Survived')).toBe('Status')
+        expect(titanicDataset._inferColumnFromCategory('Died')).toBe('Status')
+
+
+        // Specified category does not exist in dataset
+        expect(() => titanicDataset._inferColumnFromCategory('Non-existent category'))
+            .toThrow(`The category name "Non-existent category" does not occur in the dataset. One column in the dataset should contain the specified category.`)
+
+        // Category occurs in more than one column
+        titanicDataset.structure.set('Sex', ['Male', 'Female'])
+        expect(() => titanicDataset._inferColumnFromCategory('Male'))
+            .toThrow(`The category name "Male" occurs in these columns: "Gender,Sex". Columns in the dataset should not share category names.`)
+
+    })
+
+
+    test ('Column Type: Detect whether a column is continuous or categorical', async () => {
+
+
+        const mixedDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/SampleMixedData.csv')
+        await mixedDataset.build()
+
+        expectTable(mixedDataset.data, `\
+┌─────────┬─────────────┬──────────────┬──────────┬───────────────┐
+│ (index) │ Neuroticism │ Extraversion │  Gender  │ MonthMeasured │
+├─────────┼─────────────┼──────────────┼──────────┼───────────────┤
+│    0    │  '2.47917'  │  '4.20833'   │  'Male'  │   'January'   │
+│    1    │  '2.60417'  │   '3.1875'   │  'Male'  │  'February'   │
+│    2    │  '2.52083'  │  '2.89583'   │  'Male'  │    'March'    │
+│    3    │  '3.29167'  │  '3.29167'   │ 'Female' │    'April'    │
+│    4    │  '3.02083'  │  '3.29167'   │ 'Female' │     'May'     │
+│    5    │  '2.52083'  │  '3.29167'   │  'Male'  │    'June'     │
+│    6    │  '2.35417'  │  '4.41667'   │  'Male'  │    'July'     │
+│    7    │  '2.52083'  │    '3.5'     │  'Male'  │   'August'    │
+│    8    │  '3.10417'  │   '3.8125'   │  'Male'  │  'September'  │
+│    9    │  '2.6875'   │  '3.54708'   │  'Male'  │   'October'   │
+│   10    │   '2.625'   │  '3.45833'   │  'Male'  │  'November'   │
+│   11    │   '2.375'   │  '3.77083'   │  'Male'  │  'December'   │
+│   12    │  '3.0625'   │  '3.41667'   │  'Male'  │   'January'   │
+│   13    │   '3.125'   │  '2.52083'   │  'Male'  │  'February'   │
+│   14    │  '2.58333'  │  '3.02083'   │  'Male'  │    'March'    │
+└─────────┴─────────────┴──────────────┴──────────┴───────────────┘
+˅˅˅ 84 more rows`, 0, 15)
+
+
+        const columnTypes = mixedDataset._inferColumnTypes()
+
+        const neuroticismColumnType = columnTypes.get('Neuroticism')
+        expect( neuroticismColumnType ).toBe( 'continuous' )
+
+        const extraversionColumnType = columnTypes.get('Extraversion')
+        expect( extraversionColumnType ).toBe( 'continuous' )
+
+        const genderColumnType = columnTypes.get('Gender')
+        expect( genderColumnType ).toBe( 'categorical' )
+
+        const monthMeasuredColumnType = columnTypes.get('MonthMeasured')
+        expect( monthMeasuredColumnType ).toBe( 'categorical' )
+
+    })
+    
+    test ('Column Type: Column types should be detected during instantiation', async () => {
+
+
+        const mixedDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/SampleMixedData.csv')
+        await mixedDataset.build()
+
+        expectTable(mixedDataset.data, `\
+┌─────────┬─────────────┬──────────────┬──────────┬───────────────┐
+│ (index) │ Neuroticism │ Extraversion │  Gender  │ MonthMeasured │
+├─────────┼─────────────┼──────────────┼──────────┼───────────────┤
+│    0    │  '2.47917'  │  '4.20833'   │  'Male'  │   'January'   │
+│    1    │  '2.60417'  │   '3.1875'   │  'Male'  │  'February'   │
+│    2    │  '2.52083'  │  '2.89583'   │  'Male'  │    'March'    │
+│    3    │  '3.29167'  │  '3.29167'   │ 'Female' │    'April'    │
+│    4    │  '3.02083'  │  '3.29167'   │ 'Female' │     'May'     │
+│    5    │  '2.52083'  │  '3.29167'   │  'Male'  │    'June'     │
+│    6    │  '2.35417'  │  '4.41667'   │  'Male'  │    'July'     │
+│    7    │  '2.52083'  │    '3.5'     │  'Male'  │   'August'    │
+│    8    │  '3.10417'  │   '3.8125'   │  'Male'  │  'September'  │
+│    9    │  '2.6875'   │  '3.54708'   │  'Male'  │   'October'   │
+│   10    │   '2.625'   │  '3.45833'   │  'Male'  │  'November'   │
+│   11    │   '2.375'   │  '3.77083'   │  'Male'  │  'December'   │
+│   12    │  '3.0625'   │  '3.41667'   │  'Male'  │   'January'   │
+│   13    │   '3.125'   │  '2.52083'   │  'Male'  │  'February'   │
+│   14    │  '2.58333'  │  '3.02083'   │  'Male'  │    'March'    │
+└─────────┴─────────────┴──────────────┴──────────┴───────────────┘
+˅˅˅ 84 more rows`, 0, 15)
+
+        expect( mixedDataset.columnTypes ).toTabulateAs(`\
+┌───────────────────┬─────────────────┬───────────────┐
+│ (iteration index) │       Key       │    Values     │
+├───────────────────┼─────────────────┼───────────────┤
+│         0         │  'Neuroticism'  │ 'continuous'  │
+│         1         │ 'Extraversion'  │ 'continuous'  │
+│         2         │    'Gender'     │ 'categorical' │
+│         3         │ 'MonthMeasured' │ 'categorical' │
+└───────────────────┴─────────────────┴───────────────┘`)
+
+    })
+
+})
+
+
+
+
+//// OMIT ///////////////////////////////////////////////////////////////
+
+describe ('Omitting Columns', () => {
+
+    test ('Initiate Dataset with an omitted column', async () => {
+
+        expect.assertions(11)
+
+        const titanicDataset = new dataset.Dataset(
+            'http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv',
+            'Name'
+        )
+        await titanicDataset.build()
+
+
+        expect(titanicDataset.data).toBeDefined()
+        expect(titanicDataset.data).toHaveLength(1309)
+
+        expect(titanicDataset.columnNames).toEqual(["Ticket", "Status", "Gender"])
+        expect(titanicDataset.categoryNames).toEqual(["1st class", "2nd class", "3rd class", "Survived", "Died", "Female", "Male"])
+
+        // Verify that dataset structure is correctly mapped
+        expect(titanicDataset.structure).toBeInstanceOf(Map)
+        expect(titanicDataset.structure.size).toBe(3)
+        expect(titanicDataset.structure.get('Gender')).toBeInstanceOf(Array)
+        expect(titanicDataset.structure.get('Gender')).toEqual(["Female", "Male"])
+        expect(titanicDataset.structure.get('Ticket')).toEqual(["1st class", "2nd class", "3rd class"])
+        expect(titanicDataset.structure.get('Status')).toEqual(["Survived", "Died"])
+
+
+        // Verify that a dataset summary is calculated upon initiation dataset
+        // [REF-1]
+        expectTable(titanicDataset.summary, `\
+┌───────────────────┬──────────┬────────────────────────────────────────────────────────────────────┐
+│ (iteration index) │   Key    │                               Values                               │
+├───────────────────┼──────────┼────────────────────────────────────────────────────────────────────┤
+│         0         │ 'Ticket' │ Map { '1st class' => 323, '2nd class' => 277, '3rd class' => 709 } │
+│         1         │ 'Status' │              Map { 'Survived' => 500, 'Died' => 809 }              │
+│         2         │ 'Gender' │               Map { 'Female' => 466, 'Male' => 843 }               │
+└───────────────────┴──────────┴────────────────────────────────────────────────────────────────────┘`)
+
+    })
+
+})
+
+
+
+//// SPLIT ///////////////////////////////////////////////////////////////
+
+describe ('Splitting', () => {
+
+
+    test ('Parse SplitQuery parameters', async () => {
+
+        const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv')
+        await titanicDataset.build()
+
+
+        const myQuery1 = new dataset.SplitQuery( titanicDataset, ['Status'] )
+        expect(myQuery1.queryString).toBe(`d3.group(this.data, d => d["Status"])`)
+
+        const myQuery2 = new dataset.SplitQuery( titanicDataset, ['Status', 'Gender'] )
+        expect(myQuery2.queryString).toBe(`d3.group(this.data, d => d["Status"], d => d["Gender"])`)
+
+        const myQuery3 = new dataset.SplitQuery( titanicDataset, ['Status', 'Gender', 'Ticket'] )
+        expect(myQuery3.queryString).toBe(`d3.group(this.data, d => d["Status"], d => d["Gender"], d => d["Ticket"])`)
+
+
+    })
+
+
+    test ('Return error if split query is invalid because of a bad column or category name', async () => {
+
+
+        const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv')
+        await titanicDataset.build()
+
+
+
+        expect( () => {
+
+            const myColumnQuery = new dataset.SplitQuery( titanicDataset, ['random column name'] )
+
+        }).toThrow(`Provided split query argument(s), "[random column name]", do not correspond to a column or category in the dataset.`)
+
+    })
+
+
+
+    test ('SPLIT dataset by column using .splitBy(), and then manually drilldown with .get()', async () => {
+
+        // Query terminology:
+        // SPLIT: d3.group()
+        // DRILLDOWN: d3.group().get()
+        // SPLIT+SUMMARIZE: d3.rollup()
+
+        const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv', 'Name')
+        await titanicDataset.build()
+
+        // SPLIT using column name
+        const dataByGender = titanicDataset.splitBy('Gender')  // gender is a column name
+        expectTable(dataByGender, `\
+┌───────────────────┬──────────┬──────────────────────────────────────────────────────┐
+│ (iteration index) │   Key    │                        Values                        │
+├───────────────────┼──────────┼──────────────────────────────────────────────────────┤
+│         0         │ 'Female' │ [ [Object], [Object], [Object], ... 463 more items ] │
+│         1         │  'Male'  │ [ [Object], [Object], [Object], ... 840 more items ] │
+└───────────────────┴──────────┴──────────────────────────────────────────────────────┘`)
+
+        expect(dataByGender.size).toBe(2)
+        expect(dataByGender.get('Female')).toHaveLength(466)
+        expect(dataByGender.get('Male')).toHaveLength(843)
+
+
+        // SPLIT using 2 column names
+        const dataByGenderAndStatus = titanicDataset.splitBy('Gender', 'Status')
+        expectTable(dataByGenderAndStatus, `\
+┌───────────────────┬──────────┬──────────────────────────────────────────────────┐
+│ (iteration index) │   Key    │                      Values                      │
+├───────────────────┼──────────┼──────────────────────────────────────────────────┤
+│         0         │ 'Female' │ Map { 'Survived' => [Array], 'Died' => [Array] } │
+│         1         │  'Male'  │ Map { 'Survived' => [Array], 'Died' => [Array] } │
+└───────────────────┴──────────┴──────────────────────────────────────────────────┘`)
+
+        // DRILLDOWN on one of the categories (i.e., 'Male') of the broken down data
+        const malesByStatus = dataByGenderAndStatus.get('Male')
+        expectTable(malesByStatus, `\
+┌───────────────────┬────────────┬──────────────────────────────────────────────────────┐
+│ (iteration index) │    Key     │                        Values                        │
+├───────────────────┼────────────┼──────────────────────────────────────────────────────┤
+│         0         │ 'Survived' │ [ [Object], [Object], [Object], ... 158 more items ] │
+│         1         │   'Died'   │ [ [Object], [Object], [Object], ... 679 more items ] │
+└───────────────────┴────────────┴──────────────────────────────────────────────────────┘`)
+
+        // DRILLDOWN further on the drilled down category (i.e., 'Male')
+        const survivingMales = malesByStatus.get('Survived')
+        expectTable(survivingMales, `\
+┌─────────┬─────────────┬────────────┬────────┐
+│ (index) │   Ticket    │   Status   │ Gender │
+├─────────┼─────────────┼────────────┼────────┤
+│    0    │ '1st class' │ 'Survived' │ 'Male' │
+│    1    │ '1st class' │ 'Survived' │ 'Male' │
+│    2    │ '1st class' │ 'Survived' │ 'Male' │
+│    3    │ '1st class' │ 'Survived' │ 'Male' │
+│    4    │ '1st class' │ 'Survived' │ 'Male' │
+│    5    │ '1st class' │ 'Survived' │ 'Male' │
+│    6    │ '1st class' │ 'Survived' │ 'Male' │
+│    7    │ '1st class' │ 'Survived' │ 'Male' │
+│    8    │ '1st class' │ 'Survived' │ 'Male' │
+│    9    │ '1st class' │ 'Survived' │ 'Male' │
+└─────────┴─────────────┴────────────┴────────┘
+˅˅˅ 151 more rows`, 0, 10)
+
+
+        // SPLIT & COUNT the drilled down category by another category using d3.rollup()
+        const survivingMalesByTicket =
+            d3.rollup(survivingMales, v=>v.length, g=>g['Ticket'])
+        expectTable(survivingMalesByTicket, `\
+┌───────────────────┬─────────────┬────────┐
+│ (iteration index) │     Key     │ Values │
+├───────────────────┼─────────────┼────────┤
+│         0         │ '1st class' │   61   │
+│         1         │ '2nd class' │   25   │
+│         2         │ '3rd class' │   75   │
+└───────────────────┴─────────────┴────────┘`)
+
+
+        // Attempting to query with both column and category names should give error
+        expect(() =>
+            titanicDataset.splitBy('Gender', '1st class')
+        ).toThrow(Error)
+
+    })
+
+
+
+
+
+
+
+
+    test ('Query the dataset for counts of nested categories using private interface', async () => {
+
+        const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv')
+        await titanicDataset.build()
+
+
+        // Query depth: 1
+        const status = titanicDataset.splitBy('Status')
+            , survived = status.get('Survived')
+            , died = status.get('Died')
+
+        expect(survived).toHaveLength(500)
+        expect(died).toHaveLength(809)
+
+
+        // Query depth: 2
+        const statusByGender = titanicDataset.splitBy('Status', 'Gender')
+            , survivedFemales = statusByGender.get('Survived').get('Female')
+            , survivedMales = statusByGender.get('Survived').get('Male')
+
+        expect(survivedFemales).toHaveLength(339)
+        expect(survivedMales).toHaveLength(161)
+
+
+        // Query depth: 3
+        const survivedFirstClassFemales =
+            titanicDataset.splitBy('Status', 'Gender', 'Ticket')
+                .get('Survived').get('Female').get('1st class')
+
+        expect(survivedFirstClassFemales).toHaveLength(139)
+
+    })
+
+
+
+    test ('Continous SPLIT: Split dataset by column using .splitBy(), and then manually drilldown with .get()', async () => {
 
         // Query terminology:
         // SPLIT: d3.group()
@@ -923,6 +661,621 @@ describe ('Continuous Data: ', () => {
         ).toThrow(Error)
 
     })
+
+
+})
+
+
+
+
+
+
+//// DRILLDOWN QUERY TEMPLATE ////  //TODO: TESTS OF THIS CLASS MUST BE MOVED TO ITS OWN TEST FILE
+//
+// test ('Should construct a query string', async () => {
+//
+//     const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv')
+//     await titanicDataset.build()
+//
+//     let myQuery1 = new dataset.DrilldownQueryTemplate( titanicDataset, ['Status'] )
+//       , myQuery2 = new dataset.DrilldownQueryTemplate( titanicDataset, ['Status', 'Gender'] )
+//       , myQuery3 = new dataset.DrilldownQueryTemplate( titanicDataset, ['Status', 'Gender', 'Ticket'] )
+//
+//     const expected1 = `d3.group(this.data, d => d["Status"])`
+//         , expected2 = `d3.group(this.data, d => d["Status"], d => d["Gender"])`
+//         , expected3 = `d3.group(this.data, d => d["Status"], d => d["Gender"], d => d["Ticket"])`
+//
+//     // Verify the entire query string generated (static + dynamic)
+//     expect(myQuery1.queryString).toBe(expected1)
+//     expect(myQuery2.queryString).toBe(expected2)
+//     expect(myQuery3.queryString).toBe(expected3)
+//
+//     // Verify the dynamic part of the query
+//     expect(myQuery1._argumentsSubstring).toBe(`d => d["Status"]`)
+//     expect(myQuery2._argumentsSubstring).toBe(`d => d["Status"], d => d["Gender"]`)
+//     expect(myQuery3._argumentsSubstring).toBe(`d => d["Status"], d => d["Gender"], d => d["Ticket"]`)
+//
+// })
+
+
+
+//// DRILLDOWN ///////////////////////////////////////////////////////////////
+
+describe ('Drillling Down ', () => {
+   
+    test ('Parse DrilldownQuery parameters', async () => {
+
+        const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv')
+        await titanicDataset.build()
+
+
+        const myQuery1 = new dataset.DrilldownQuery( titanicDataset, [{'Status':'Survived'}] )
+        expect(myQuery1.queryString).toBe(`d3.group(this.data, g=>g['Status']).get('Survived')`)
+
+        const myQuery2 = new dataset.DrilldownQuery( titanicDataset, [{'Status':'Survived'}, {'Gender':'Male'}] )
+        expect(myQuery2.queryString).toBe(`d3.group(this.data, g=>g['Status'], g=>g['Gender']).get('Survived').get('Male')`)
+
+        const myQuery3 = new dataset.DrilldownQuery( titanicDataset, [{'Status':'Survived'}, {'Gender':'Male'}, {'Ticket':'1st class'}] )
+        expect(myQuery3.queryString).toBe(`d3.group(this.data, g=>g['Status'], g=>g['Gender'], g=>g['Ticket']).get('Survived').get('Male').get('1st class')`)
+
+
+    })
+
+
+
+    test ('DRILLDOWN dataset by category using drilldownTo()', async () => {
+
+        // Query terminology:
+        // SPLIT: d3.group()
+        // DRILLDOWN: d3.group().get()
+        // SPLIT+SUMMARIZE: d3.rollup()
+
+        const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv', 'Name')
+        await titanicDataset.build()
+
+        // DRILDOWN using a category name (i.e., 'Female')
+        const femaleSubset = titanicDataset.drilldownTo({'Gender':'Female'})  // 'Gender' is a column name, while 'Female' is a category in the 'Gender' column
+
+        expectTable(femaleSubset, `\
+┌─────────┬─────────────┬────────────┬──────────┐
+│ (index) │   Ticket    │   Status   │  Gender  │
+├─────────┼─────────────┼────────────┼──────────┤
+│    0    │ '1st class' │ 'Survived' │ 'Female' │
+│    1    │ '1st class' │   'Died'   │ 'Female' │
+│    2    │ '1st class' │   'Died'   │ 'Female' │
+│    3    │ '1st class' │ 'Survived' │ 'Female' │
+│    4    │ '1st class' │ 'Survived' │ 'Female' │
+│    5    │ '1st class' │ 'Survived' │ 'Female' │
+│    6    │ '1st class' │ 'Survived' │ 'Female' │
+│    7    │ '1st class' │ 'Survived' │ 'Female' │
+│    8    │ '1st class' │ 'Survived' │ 'Female' │
+│    9    │ '1st class' │ 'Survived' │ 'Female' │
+│   10    │ '1st class' │ 'Survived' │ 'Female' │
+│   11    │ '1st class' │ 'Survived' │ 'Female' │
+│   12    │ '1st class' │ 'Survived' │ 'Female' │
+│   13    │ '1st class' │ 'Survived' │ 'Female' │
+│   14    │ '1st class' │ 'Survived' │ 'Female' │
+└─────────┴─────────────┴────────────┴──────────┘
+˅˅˅ 451 more rows`, 0, 15)
+        // Sample from further down in the data to see differing Ticket classes, while still only having 'Female' as gender.
+        expectTable(femaleSubset, `\
+˄˄˄ 150 preceding rows
+┌─────────┬─────────────┬────────────┬──────────┐
+│ (index) │   Ticket    │   Status   │  Gender  │
+├─────────┼─────────────┼────────────┼──────────┤
+│    0    │ '2nd class' │ 'Survived' │ 'Female' │
+│    1    │ '2nd class' │ 'Survived' │ 'Female' │
+│    2    │ '2nd class' │ 'Survived' │ 'Female' │
+│    3    │ '2nd class' │ 'Survived' │ 'Female' │
+│    4    │ '2nd class' │ 'Survived' │ 'Female' │
+│    5    │ '2nd class' │ 'Survived' │ 'Female' │
+│    6    │ '2nd class' │ 'Survived' │ 'Female' │
+│    7    │ '2nd class' │ 'Survived' │ 'Female' │
+│    8    │ '2nd class' │ 'Survived' │ 'Female' │
+│    9    │ '2nd class' │ 'Survived' │ 'Female' │
+│   10    │ '2nd class' │   'Died'   │ 'Female' │
+│   11    │ '2nd class' │   'Died'   │ 'Female' │
+│   12    │ '2nd class' │ 'Survived' │ 'Female' │
+│   13    │ '2nd class' │ 'Survived' │ 'Female' │
+│   14    │ '2nd class' │ 'Survived' │ 'Female' │
+└─────────┴─────────────┴────────────┴──────────┘
+˅˅˅ 301 more rows`, 150, 15)  // 'The remaining rows is not 0'  // TODO: Remaining rows in sliced array inputs are not correctly calculated. This COULD be fixed.
+
+
+        // DRILDOWN using two category names (i.e., 'Female' and 'Survived')
+        const femaleSurvivorsSubset = titanicDataset.drilldownTo({'Gender':'Female'}, {'Status':'Survived'})
+
+        expectTable(femaleSurvivorsSubset, `\
+┌─────────┬─────────────┬────────────┬──────────┐
+│ (index) │   Ticket    │   Status   │  Gender  │
+├─────────┼─────────────┼────────────┼──────────┤
+│    0    │ '1st class' │ 'Survived' │ 'Female' │
+│    1    │ '1st class' │ 'Survived' │ 'Female' │
+│    2    │ '1st class' │ 'Survived' │ 'Female' │
+│    3    │ '1st class' │ 'Survived' │ 'Female' │
+│    4    │ '1st class' │ 'Survived' │ 'Female' │
+│    5    │ '1st class' │ 'Survived' │ 'Female' │
+│    6    │ '1st class' │ 'Survived' │ 'Female' │
+│    7    │ '1st class' │ 'Survived' │ 'Female' │
+│    8    │ '1st class' │ 'Survived' │ 'Female' │
+│    9    │ '1st class' │ 'Survived' │ 'Female' │
+│   10    │ '1st class' │ 'Survived' │ 'Female' │
+│   11    │ '1st class' │ 'Survived' │ 'Female' │
+│   12    │ '1st class' │ 'Survived' │ 'Female' │
+│   13    │ '1st class' │ 'Survived' │ 'Female' │
+│   14    │ '1st class' │ 'Survived' │ 'Female' │
+└─────────┴─────────────┴────────────┴──────────┘
+˅˅˅ 324 more rows`, 0, 15)
+
+        expectTable(femaleSurvivorsSubset, `\
+˄˄˄ 150 preceding rows
+┌─────────┬─────────────┬────────────┬──────────┐
+│ (index) │   Ticket    │   Status   │  Gender  │
+├─────────┼─────────────┼────────────┼──────────┤
+│    0    │ '2nd class' │ 'Survived' │ 'Female' │
+│    1    │ '2nd class' │ 'Survived' │ 'Female' │
+│    2    │ '2nd class' │ 'Survived' │ 'Female' │
+│    3    │ '2nd class' │ 'Survived' │ 'Female' │
+│    4    │ '2nd class' │ 'Survived' │ 'Female' │
+│    5    │ '2nd class' │ 'Survived' │ 'Female' │
+│    6    │ '2nd class' │ 'Survived' │ 'Female' │
+│    7    │ '2nd class' │ 'Survived' │ 'Female' │
+│    8    │ '2nd class' │ 'Survived' │ 'Female' │
+│    9    │ '2nd class' │ 'Survived' │ 'Female' │
+│   10    │ '2nd class' │ 'Survived' │ 'Female' │
+│   11    │ '2nd class' │ 'Survived' │ 'Female' │
+│   12    │ '2nd class' │ 'Survived' │ 'Female' │
+│   13    │ '2nd class' │ 'Survived' │ 'Female' │
+│   14    │ '2nd class' │ 'Survived' │ 'Female' │
+└─────────┴─────────────┴────────────┴──────────┘
+˅˅˅ 174 more rows`, 150, 15)
+
+        expectTable(femaleSurvivorsSubset, `\
+˄˄˄ 250 preceding rows
+┌─────────┬─────────────┬────────────┬──────────┐
+│ (index) │   Ticket    │   Status   │  Gender  │
+├─────────┼─────────────┼────────────┼──────────┤
+│    0    │ '3rd class' │ 'Survived' │ 'Female' │
+│    1    │ '3rd class' │ 'Survived' │ 'Female' │
+│    2    │ '3rd class' │ 'Survived' │ 'Female' │
+│    3    │ '3rd class' │ 'Survived' │ 'Female' │
+│    4    │ '3rd class' │ 'Survived' │ 'Female' │
+│    5    │ '3rd class' │ 'Survived' │ 'Female' │
+│    6    │ '3rd class' │ 'Survived' │ 'Female' │
+│    7    │ '3rd class' │ 'Survived' │ 'Female' │
+│    8    │ '3rd class' │ 'Survived' │ 'Female' │
+│    9    │ '3rd class' │ 'Survived' │ 'Female' │
+│   10    │ '3rd class' │ 'Survived' │ 'Female' │
+│   11    │ '3rd class' │ 'Survived' │ 'Female' │
+│   12    │ '3rd class' │ 'Survived' │ 'Female' │
+│   13    │ '3rd class' │ 'Survived' │ 'Female' │
+│   14    │ '3rd class' │ 'Survived' │ 'Female' │
+└─────────┴─────────────┴────────────┴──────────┘
+˅˅˅ 74 more rows`, 250, 15)
+
+
+    })
+
+
+    test ('DRILLDOWN and then SPLIT+SUMMARIZE of all categories in the context of the drilled down data', async () => {
+
+        // Query terminology:
+        // SPLIT: d3.group()
+        // DRILLDOWN: d3.group().get()
+        // SPLIT+SUMMARIZE: d3.rollup()
+
+        const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv', 'Name')
+        await titanicDataset.build()
+
+//
+//
+//     // DRILLDOWN, and then SPLIT+SUMMARIZE --- Zero depth (summary of initial/surface data without drilling down)
+//     const datasetSummary = titanicDataset.drilldownAndSummarize()
+//
+//     expectTable(datasetSummary, `\
+// ┌───────────────────┬──────────┬────────────────────────────────────────────────────────────────────┐
+// │ (iteration index) │   Key    │                               Values                               │
+// ├───────────────────┼──────────┼────────────────────────────────────────────────────────────────────┤
+// │         0         │ 'Ticket' │ Map { '1st class' => 323, '2nd class' => 277, '3rd class' => 709 } │
+// │         1         │ 'Status' │              Map { 'Survived' => 500, 'Died' => 809 }              │
+// │         2         │ 'Gender' │               Map { 'Female' => 466, 'Male' => 843 }               │
+// └───────────────────┴──────────┴────────────────────────────────────────────────────────────────────┘`)
+//
+//
+//
+//
+//     // DRILLDOWN, and then SPLIT+SUMMARIZE --- One category deep
+//     const femaleSubsetSummary = titanicDataset.drilldownAndSummarize({'Gender':'Female'})
+//
+//     expectTable(femaleSubsetSummary, `\
+// ┌───────────────────┬──────────┬────────────────────────────────────────────────────────────────────┐
+// │ (iteration index) │   Key    │                               Values                               │
+// ├───────────────────┼──────────┼────────────────────────────────────────────────────────────────────┤
+// │         0         │ 'Ticket' │ Map { '1st class' => 144, '2nd class' => 106, '3rd class' => 216 } │
+// │         1         │ 'Status' │              Map { 'Survived' => 339, 'Died' => 127 }              │
+// │         2         │ 'Gender' │                      Map { 'Female' => 466 }                       │
+// └───────────────────┴──────────┴────────────────────────────────────────────────────────────────────┘`)
+//
+//
+//
+//     // DRILLDOWN, and then SPLIT+SUMMARIZE --- Two categories deep
+//
+//     const femaleSurvivorsSubsetSummary =
+//         titanicDataset.drilldownAndSummarize({'Gender':'Female'}, {'Status':'Survived'})
+//
+//     expectTable(femaleSurvivorsSubsetSummary, `\
+// ┌───────────────────┬──────────┬───────────────────────────────────────────────────────────────────┐
+// │ (iteration index) │   Key    │                              Values                               │
+// ├───────────────────┼──────────┼───────────────────────────────────────────────────────────────────┤
+// │         0         │ 'Ticket' │ Map { '1st class' => 139, '2nd class' => 94, '3rd class' => 106 } │
+// │         1         │ 'Status' │                     Map { 'Survived' => 339 }                     │
+// │         2         │ 'Gender' │                      Map { 'Female' => 339 }                      │
+// └───────────────────┴──────────┴───────────────────────────────────────────────────────────────────┘`)
+//
+//
+//
+//     // DRILLDOWN, and then SPLIT+SUMMARIZE --- Three categories deep
+//
+//     const firstClassFemaleSurvivorsSubsetSummary =
+//         titanicDataset.drilldownAndSummarize({'Gender':'Female'}, {'Status':'Survived'}, {'Ticket':'1st class'})
+//
+//     expectTable(firstClassFemaleSurvivorsSubsetSummary, `\
+// ┌───────────────────┬──────────┬────────────────────────────┐
+// │ (iteration index) │   Key    │           Values           │
+// ├───────────────────┼──────────┼────────────────────────────┤
+// │         0         │ 'Ticket' │ Map { '1st class' => 139 } │
+// │         1         │ 'Status' │ Map { 'Survived' => 139 }  │
+// │         2         │ 'Gender' │  Map { 'Female' => 139 }   │
+// └───────────────────┴──────────┴────────────────────────────┘`)
+
+
+        // DRILLDOWN, and then SPLIT+SUMMARIZE --- Providing an array as parameter
+
+        const arrayParameterSummary =
+            titanicDataset.drilldownAndSummarize([{'Gender':'Female'}, {'Status':'Survived'}])
+
+        expectTable(arrayParameterSummary, `\
+┌───────────────────┬──────────┬───────────────────────────────────────────────────────────────────┐
+│ (iteration index) │   Key    │                              Values                               │
+├───────────────────┼──────────┼───────────────────────────────────────────────────────────────────┤
+│         0         │ 'Ticket' │ Map { '1st class' => 139, '2nd class' => 94, '3rd class' => 106 } │
+│         1         │ 'Status' │                     Map { 'Survived' => 339 }                     │
+│         2         │ 'Gender' │                      Map { 'Female' => 339 }                      │
+└───────────────────┴──────────┴───────────────────────────────────────────────────────────────────┘`)
+
+
+
+    })
+
+})
+
+
+
+//// SUMMARIZE ///////////////////////////////////////////////////////////////
+
+describe ('Summarizing', () => {
+
+
+    test ('summarize(): SPLIT+SUMMARIZE level-0/SURFACE data with summarize()', async () => {
+
+        // Query terminology:
+        // SPLIT: d3.group()
+        // DRILLDOWN: d3.group().get()
+        // SPLIT+SUMMARIZE: d3.rollup()
+
+        const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv', 'Name')
+        await titanicDataset.build()
+
+        const datasetSummary = titanicDataset.summarize()
+
+
+        expectTable(datasetSummary, `\
+┌───────────────────┬──────────┬────────────────────────────────────────────────────────────────────┐
+│ (iteration index) │   Key    │                               Values                               │
+├───────────────────┼──────────┼────────────────────────────────────────────────────────────────────┤
+│         0         │ 'Ticket' │ Map { '1st class' => 323, '2nd class' => 277, '3rd class' => 709 } │
+│         1         │ 'Status' │              Map { 'Survived' => 500, 'Died' => 809 }              │
+│         2         │ 'Gender' │               Map { 'Female' => 466, 'Male' => 843 }               │
+└───────────────────┴──────────┴────────────────────────────────────────────────────────────────────┘`)
+
+    })
+
+    test ('drilldownAndSummarize(): SUMMARIZE of all categories in the context of the drilled down data', async () => {
+
+        // Query terminology:
+        // SPLIT: d3.group()
+        // DRILLDOWN: d3.group().get()
+        // SPLIT+SUMMARIZE: d3.rollup()
+
+        const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv', 'Name')
+        await titanicDataset.build()
+
+
+
+        // DRILLDOWN, and then SPLIT+SUMMARIZE --- Zero depth (summary of initial/surface data without drilling down)
+        const datasetSummary = titanicDataset.drilldownAndSummarize()
+
+        expectTable(datasetSummary, `\
+┌───────────────────┬──────────┬────────────────────────────────────────────────────────────────────┐
+│ (iteration index) │   Key    │                               Values                               │
+├───────────────────┼──────────┼────────────────────────────────────────────────────────────────────┤
+│         0         │ 'Ticket' │ Map { '1st class' => 323, '2nd class' => 277, '3rd class' => 709 } │
+│         1         │ 'Status' │              Map { 'Survived' => 500, 'Died' => 809 }              │
+│         2         │ 'Gender' │               Map { 'Female' => 466, 'Male' => 843 }               │
+└───────────────────┴──────────┴────────────────────────────────────────────────────────────────────┘`)
+
+
+
+
+        // DRILLDOWN, and then SPLIT+SUMMARIZE --- One category deep
+        const femaleSubsetSummary = titanicDataset.drilldownAndSummarize({'Gender':'Female'})
+
+        expectTable(femaleSubsetSummary, `\
+┌───────────────────┬──────────┬────────────────────────────────────────────────────────────────────┐
+│ (iteration index) │   Key    │                               Values                               │
+├───────────────────┼──────────┼────────────────────────────────────────────────────────────────────┤
+│         0         │ 'Ticket' │ Map { '1st class' => 144, '2nd class' => 106, '3rd class' => 216 } │
+│         1         │ 'Status' │              Map { 'Survived' => 339, 'Died' => 127 }              │
+│         2         │ 'Gender' │                      Map { 'Female' => 466 }                       │
+└───────────────────┴──────────┴────────────────────────────────────────────────────────────────────┘`)
+
+
+
+        // DRILLDOWN, and then SPLIT+SUMMARIZE --- Two categories deep
+
+        const femaleSurvivorsSubsetSummary =
+            titanicDataset.drilldownAndSummarize({'Gender':'Female'}, {'Status':'Survived'})
+
+        expectTable(femaleSurvivorsSubsetSummary, `\
+┌───────────────────┬──────────┬───────────────────────────────────────────────────────────────────┐
+│ (iteration index) │   Key    │                              Values                               │
+├───────────────────┼──────────┼───────────────────────────────────────────────────────────────────┤
+│         0         │ 'Ticket' │ Map { '1st class' => 139, '2nd class' => 94, '3rd class' => 106 } │
+│         1         │ 'Status' │                     Map { 'Survived' => 339 }                     │
+│         2         │ 'Gender' │                      Map { 'Female' => 339 }                      │
+└───────────────────┴──────────┴───────────────────────────────────────────────────────────────────┘`)
+
+
+
+        // DRILLDOWN, and then SPLIT+SUMMARIZE --- Three categories deep
+
+        const firstClassFemaleSurvivorsSubsetSummary =
+            titanicDataset.drilldownAndSummarize({'Gender':'Female'}, {'Status':'Survived'}, {'Ticket':'1st class'})
+
+        expectTable(firstClassFemaleSurvivorsSubsetSummary, `\
+┌───────────────────┬──────────┬────────────────────────────┐
+│ (iteration index) │   Key    │           Values           │
+├───────────────────┼──────────┼────────────────────────────┤
+│         0         │ 'Ticket' │ Map { '1st class' => 139 } │
+│         1         │ 'Status' │ Map { 'Survived' => 139 }  │
+│         2         │ 'Gender' │  Map { 'Female' => 139 }   │
+└───────────────────┴──────────┴────────────────────────────┘`)
+
+    })
+
+
+    test ('lvl0 continuous drilldownAndSummarize: drilldownAndSummarize level 0 continuous data', async () => {
+
+        const mixedDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/SampleMixedData.csv')
+        await mixedDataset.build()
+
+        expectTable(mixedDataset.data, `\
+┌─────────┬─────────────┬──────────────┬──────────┬───────────────┐
+│ (index) │ Neuroticism │ Extraversion │  Gender  │ MonthMeasured │
+├─────────┼─────────────┼──────────────┼──────────┼───────────────┤
+│    0    │  '2.47917'  │  '4.20833'   │  'Male'  │   'January'   │
+│    1    │  '2.60417'  │   '3.1875'   │  'Male'  │  'February'   │
+│    2    │  '2.52083'  │  '2.89583'   │  'Male'  │    'March'    │
+│    3    │  '3.29167'  │  '3.29167'   │ 'Female' │    'April'    │
+│    4    │  '3.02083'  │  '3.29167'   │ 'Female' │     'May'     │
+│    5    │  '2.52083'  │  '3.29167'   │  'Male'  │    'June'     │
+│    6    │  '2.35417'  │  '4.41667'   │  'Male'  │    'July'     │
+│    7    │  '2.52083'  │    '3.5'     │  'Male'  │   'August'    │
+│    8    │  '3.10417'  │   '3.8125'   │  'Male'  │  'September'  │
+│    9    │  '2.6875'   │  '3.54708'   │  'Male'  │   'October'   │
+│   10    │   '2.625'   │  '3.45833'   │  'Male'  │  'November'   │
+│   11    │   '2.375'   │  '3.77083'   │  'Male'  │  'December'   │
+│   12    │  '3.0625'   │  '3.41667'   │  'Male'  │   'January'   │
+│   13    │   '3.125'   │  '2.52083'   │  'Male'  │  'February'   │
+│   14    │  '2.58333'  │  '3.02083'   │  'Male'  │    'March'    │
+└─────────┴─────────────┴──────────────┴──────────┴───────────────┘
+˅˅˅ 84 more rows`, 0, 15)
+
+
+        expect( mixedDataset.drilldownAndSummarize() ).toTabulateAs(`\
+┌───────────────────┬─────────────────┬──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ (iteration index) │       Key       │                                                                                            Values                                                                                            │
+├───────────────────┼─────────────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│         0         │  'Neuroticism'  │                                                          Map { '3.4-3.9' => 12, '2.8-3.3' => 52, '2.2-2.8' => 30, '1.6-2.2' => 5 }                                                           │
+│         1         │ 'Extraversion'  │                                                          Map { '4.0-4.4' => 8, '3.5-3.9' => 42, '3.0-3.5' => 38, '2.5-3.0' => 11 }                                                           │
+│         2         │    'Gender'     │                                                                             Map { 'Male' => 47, 'Female' => 52 }                                                                             │
+│         3         │ 'MonthMeasured' │ Map { 'January' => 9, 'February' => 9, 'March' => 9, 'April' => 8, 'May' => 8, 'June' => 8, 'July' => 8, 'August' => 8, 'September' => 8, 'October' => 8, 'November' => 8, 'December' => 8 } │
+└───────────────────┴─────────────────┴──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘`)
+
+    })
+
+
+    test ('Lvl1 continuous drilldownAndSummarize: drilldownAndSummarize Level 1 continuous data', async () => {
+
+        const mixedDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/SampleMixedData.csv')
+        await mixedDataset.build()
+
+        expectTable(mixedDataset.data, `\
+┌─────────┬─────────────┬──────────────┬──────────┬───────────────┐
+│ (index) │ Neuroticism │ Extraversion │  Gender  │ MonthMeasured │
+├─────────┼─────────────┼──────────────┼──────────┼───────────────┤
+│    0    │  '2.47917'  │  '4.20833'   │  'Male'  │   'January'   │
+│    1    │  '2.60417'  │   '3.1875'   │  'Male'  │  'February'   │
+│    2    │  '2.52083'  │  '2.89583'   │  'Male'  │    'March'    │
+│    3    │  '3.29167'  │  '3.29167'   │ 'Female' │    'April'    │
+│    4    │  '3.02083'  │  '3.29167'   │ 'Female' │     'May'     │
+│    5    │  '2.52083'  │  '3.29167'   │  'Male'  │    'June'     │
+│    6    │  '2.35417'  │  '4.41667'   │  'Male'  │    'July'     │
+│    7    │  '2.52083'  │    '3.5'     │  'Male'  │   'August'    │
+│    8    │  '3.10417'  │   '3.8125'   │  'Male'  │  'September'  │
+│    9    │  '2.6875'   │  '3.54708'   │  'Male'  │   'October'   │
+│   10    │   '2.625'   │  '3.45833'   │  'Male'  │  'November'   │
+│   11    │   '2.375'   │  '3.77083'   │  'Male'  │  'December'   │
+│   12    │  '3.0625'   │  '3.41667'   │  'Male'  │   'January'   │
+│   13    │   '3.125'   │  '2.52083'   │  'Male'  │  'February'   │
+│   14    │  '2.58333'  │  '3.02083'   │  'Male'  │    'March'    │
+└─────────┴─────────────┴──────────────┴──────────┴───────────────┘
+˅˅˅ 84 more rows`, 0, 15)
+
+
+        // Level 0 drilldown
+        expect( mixedDataset.drilldownAndSummarize() ).toTabulateAs(`\
+┌───────────────────┬─────────────────┬──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ (iteration index) │       Key       │                                                                                            Values                                                                                            │
+├───────────────────┼─────────────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│         0         │  'Neuroticism'  │                                                          Map { '3.5-4.2' => 5, '2.9-4.4' => 30, '2.6-3.7' => 12, '2.5-4.2' => 52 }                                                           │
+│         1         │ 'Extraversion'  │                                                          Map { '4.0-4.4' => 8, '3.5-3.9' => 42, '3.0-3.5' => 38, '2.5-3.0' => 11 }                                                           │
+│         2         │    'Gender'     │                                                                             Map { 'Male' => 47, 'Female' => 52 }                                                                             │
+│         3         │ 'MonthMeasured' │ Map { 'January' => 9, 'February' => 9, 'March' => 9, 'April' => 8, 'May' => 8, 'June' => 8, 'July' => 8, 'August' => 8, 'September' => 8, 'October' => 8, 'November' => 8, 'December' => 8 } │
+└───────────────────┴─────────────────┴──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘`)
+
+        // Level 1 drilldown for categorical data
+        expect( mixedDataset.drilldownTo({'Gender':'Male'}) ).toTabulateAs(`\
+┌─────────┬─────────────┬──────────────┬────────┬───────────────┐
+│ (index) │ Neuroticism │ Extraversion │ Gender │ MonthMeasured │
+├─────────┼─────────────┼──────────────┼────────┼───────────────┤
+│    0    │  '2.47917'  │  '4.20833'   │ 'Male' │   'January'   │
+│    1    │  '2.60417'  │   '3.1875'   │ 'Male' │  'February'   │
+│    2    │  '2.52083'  │  '2.89583'   │ 'Male' │    'March'    │
+│    3    │  '2.52083'  │  '3.29167'   │ 'Male' │    'June'     │
+│    4    │  '2.35417'  │  '4.41667'   │ 'Male' │    'July'     │
+│    5    │  '2.52083'  │    '3.5'     │ 'Male' │   'August'    │
+│    6    │  '3.10417'  │   '3.8125'   │ 'Male' │  'September'  │
+│    7    │  '2.6875'   │  '3.54708'   │ 'Male' │   'October'   │
+│    8    │   '2.625'   │  '3.45833'   │ 'Male' │  'November'   │
+│    9    │   '2.375'   │  '3.77083'   │ 'Male' │  'December'   │
+└─────────┴─────────────┴──────────────┴────────┴───────────────┘
+˅˅˅ 37 more rows`, 0, 10)
+
+
+        // Level 1 drilldown + summarize for categorical data
+        expect( mixedDataset.drilldownAndSummarize({'Gender':'Male'}) ).toTabulateAs(`\
+┌───────────────────┬─────────────────┬──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ (iteration index) │       Key       │                                                                                            Values                                                                                            │
+├───────────────────┼─────────────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│         0         │  'Neuroticism'  │                                                           Map { '3.5-4.1' => 3, '3.5-3.7' => 2, '2.9-4.4' => 20, '2.5-4.1' => 22 }                                                           │
+│         1         │ 'Extraversion'  │                                                           Map { '4.1-4.4' => 5, '3.5-3.8' => 23, '3.0-3.5' => 16, '2.5-2.9' => 3 }                                                           │
+│         2         │    'Gender'     │                                                                                     Map { 'Male' => 47 }                                                                                     │
+│         3         │ 'MonthMeasured' │ Map { 'January' => 5, 'February' => 4, 'March' => 4, 'June' => 4, 'July' => 4, 'August' => 4, 'September' => 4, 'October' => 4, 'November' => 4, 'December' => 4, 'April' => 3, 'May' => 3 } │
+└───────────────────┴─────────────────┴──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘`)
+
+        // Level 1 drilldown for continuous data
+        expect( mixedDataset.drilldownTo({'Neuroticism':'3.46-4.23'}) ).toTabulateAs(`\
+┌───────────────────┬─────────────────┬──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ (iteration index) │       Key       │                                                                                            Values                                                                                            │
+├───────────────────┼─────────────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│         0         │  'Neuroticism'  │                                                          Map { '3.4-3.9' => 12, '2.8-3.3' => 52, '2.2-2.8' => 30, '1.6-2.2' => 5 }                                                           │
+│         1         │ 'Extraversion'  │                                                          Map { '4.0-4.4' => 8, '3.5-3.9' => 42, '3.0-3.5' => 38, '2.5-3.0' => 11 }                                                           │
+│         2         │    'Gender'     │                                                                             Map { 'Male' => 47, 'Female' => 52 }                                                                             │
+│         3         │ 'MonthMeasured' │ Map { 'January' => 9, 'February' => 9, 'March' => 9, 'April' => 8, 'May' => 8, 'June' => 8, 'July' => 8, 'August' => 8, 'September' => 8, 'October' => 8, 'November' => 8, 'December' => 8 } │
+└───────────────────┴─────────────────┴──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘`)
+
+        // Level 1 drilldown + summarize for continuous data
+        expect( mixedDataset.drilldownAndSummarize({'Neuroticism':'3.46-4.23'}) ).toTabulateAs(`\
+┌───────────────────┬─────────────────┬──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ (iteration index) │       Key       │                                                                                            Values                                                                                            │
+├───────────────────┼─────────────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│         0         │  'Neuroticism'  │                                                       Map { '3.50-3.73' => 2, '3.46-4.10' => 3, '2.90-4.42' => 20, '2.52-4.08' => 22 }                                                       │
+│         1         │ 'Extraversion'  │                                                       Map { '4.08-4.42' => 5, '3.48-3.83' => 23, '3.02-3.46' => 16, '2.52-2.92' => 3 }                                                       │
+│         2         │    'Gender'     │                                                                                     Map { 'Male' => 47 }                                                                                     │
+│         3         │ 'MonthMeasured' │ Map { 'January' => 5, 'February' => 4, 'March' => 4, 'June' => 4, 'July' => 4, 'August' => 4, 'September' => 4, 'October' => 4, 'November' => 4, 'December' => 4, 'April' => 3, 'May' => 3 } │
+└───────────────────┴─────────────────┴──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘`)
+
+
+    })
+
+
+})
+
+
+
+//// QUANTIZING ///////////////////////////////////////////////////////////////
+
+describe ('Quantizing', () => {
+
+        test ('Quantize a column', async () => {
+
+
+            const mixedDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/SampleMixedData.csv')
+            await mixedDataset.build()
+
+            expectTable(mixedDataset.data, `\
+┌─────────┬─────────────┬──────────────┬──────────┬───────────────┐
+│ (index) │ Neuroticism │ Extraversion │  Gender  │ MonthMeasured │
+├─────────┼─────────────┼──────────────┼──────────┼───────────────┤
+│    0    │  '2.47917'  │  '4.20833'   │  'Male'  │   'January'   │
+│    1    │  '2.60417'  │   '3.1875'   │  'Male'  │  'February'   │
+│    2    │  '2.52083'  │  '2.89583'   │  'Male'  │    'March'    │
+│    3    │  '3.29167'  │  '3.29167'   │ 'Female' │    'April'    │
+│    4    │  '3.02083'  │  '3.29167'   │ 'Female' │     'May'     │
+│    5    │  '2.52083'  │  '3.29167'   │  'Male'  │    'June'     │
+│    6    │  '2.35417'  │  '4.41667'   │  'Male'  │    'July'     │
+│    7    │  '2.52083'  │    '3.5'     │  'Male'  │   'August'    │
+│    8    │  '3.10417'  │   '3.8125'   │  'Male'  │  'September'  │
+│    9    │  '2.6875'   │  '3.54708'   │  'Male'  │   'October'   │
+│   10    │   '2.625'   │  '3.45833'   │  'Male'  │  'November'   │
+│   11    │   '2.375'   │  '3.77083'   │  'Male'  │  'December'   │
+│   12    │  '3.0625'   │  '3.41667'   │  'Male'  │   'January'   │
+│   13    │   '3.125'   │  '2.52083'   │  'Male'  │  'February'   │
+│   14    │  '2.58333'  │  '3.02083'   │  'Male'  │    'March'    │
+└─────────┴─────────────┴──────────────┴──────────┴───────────────┘
+˅˅˅ 84 more rows`, 0, 15)
+
+
+        const quantizedData = dataset.Dataset._splitDataByQuantilesOfColumn( mixedDataset.data, 'Neuroticism', 4, 1)
+        expect( quantizedData ).toTabulateAs(`\
+┌───────────────────┬───────────┬─────────────────────────────────────────────────────┐
+│ (iteration index) │    Key    │                       Values                        │
+├───────────────────┼───────────┼─────────────────────────────────────────────────────┤
+│         0         │ '3.4-3.9' │ [ [Object], [Object], [Object], ... 9 more items ]  │
+│         1         │ '2.8-3.3' │ [ [Object], [Object], [Object], ... 49 more items ] │
+│         2         │ '2.2-2.8' │ [ [Object], [Object], [Object], ... 27 more items ] │
+│         3         │ '1.6-2.2' │ [ [Object], [Object], [Object], ... 2 more items ]  │
+└───────────────────┴───────────┴─────────────────────────────────────────────────────┘`)
+
+            const quantileBoundariesVsQuantileNamesForNeuroticism =
+                dataset.Dataset._findBoundariesVsQuantileNamesInQuantiledData(quantizedData, 'Neuroticism')
+
+            expect( quantileBoundariesVsQuantileNamesForNeuroticism ).toTabulateAs(`\
+┌───────────────────┬───────────┬────────────────────────────────────────────────┐
+│ (iteration index) │    Key    │                     Values                     │
+├───────────────────┼───────────┼────────────────────────────────────────────────┤
+│         0         │ '3.4-3.9' │  Map { 'min' => '3.39583', 'max' => '3.875' }  │
+│         1         │ '2.8-3.3' │ Map { 'min' => '2.77083', 'max' => '3.3125' }  │
+│         2         │ '2.2-2.8' │  Map { 'min' => '2.20833', 'max' => '2.75' }   │
+│         3         │ '1.6-2.2' │ Map { 'min' => '1.64583', 'max' => '2.16667' } │
+└───────────────────┴───────────┴────────────────────────────────────────────────┘`)
+
+
+            const quantizedAndRenamedData = d3.group( mixedDataset.data,
+                d=> dataset.Dataset._translateValueToQuantileName(mixedDataset.data, 'Neuroticism', d['Neuroticism'])
+            )
+
+            expect( quantizedAndRenamedData ).toTabulateAs(`\
+┌───────────────────┬───────────┬─────────────────────────────────────────────────────┐
+│ (iteration index) │    Key    │                       Values                        │
+├───────────────────┼───────────┼─────────────────────────────────────────────────────┤
+│         0         │ '2.2-2.8' │ [ [Object], [Object], [Object], ... 27 more items ] │
+│         1         │ '2.8-3.3' │ [ [Object], [Object], [Object], ... 49 more items ] │
+│         2         │ '1.6-2.2' │ [ [Object], [Object], [Object], ... 2 more items ]  │
+│         3         │ '3.4-3.9' │ [ [Object], [Object], [Object], ... 9 more items ]  │
+└───────────────────┴───────────┴─────────────────────────────────────────────────────┘`)
+
+
+
+
+
+
+
+        })
+
+
+
 
 
 

@@ -163,6 +163,23 @@
             </div>
 
 
+            <!--Category Outline Thickness Slider-->
+            <div class="preference-control">
+
+                <p>Category outline thickness: <span id="category-outline-thickness-text">0.5</span>px</p>
+
+                <input type="range"
+                       class="slider"
+                       id=category-outline-thickness-slider
+                       value=0.5
+                       max=6
+                       min=0
+                       onchange="setCategoryOutlineThickness()"
+                >
+
+            </div>
+
+
         </div>
 
         <div class="navigator-area"></div>
@@ -188,9 +205,41 @@
             navigator2,
             navigator3,
             navigator4,
-            navigator5
-            // navigator6
+            navigator5,
+            // navigator6,
+            navigatorB1,
+            // navigatorB2,
+            navigatorB2
         ]
+
+        const darkenFilter =  document.createElement("DEFS");
+        darkenFilter.innerHTML = (`\
+ <filter id="darken">
+      <feColorMatrix
+          type='matrix'
+          values=".5   0   0   0   0
+                 0  .5   0   0   0
+                 0   0  .5   0   0
+                 0   0   0   1   0 "
+         />
+</filter>
+<filter id="glow">
+  <feColorMatrix type="matrix" values=
+     "0 0 0 red   0
+      0 0 0 green 0
+      0 0 0 blue  0
+      0 0 0 1     0"/>
+  <feGaussianBlur stdDeviation="number" result="coloredBlur"/>
+  <feMerge>
+    <feMergeNode in="coloredBlur"/>
+    <feMergeNode in="SourceGraphic"/>
+  </feMerge>
+</filter>`)
+        const svg = document.querySelector('SVG')
+        svg.appendChild(darkenFilter)
+
+        var myGlow = glow("myGlow").rgb("#0f0").stdDeviation(4);
+        svg.call(myGlow)
 
 
         // SET COLOR SCHEME //
@@ -249,6 +298,34 @@
                     .animationDuration( Number(animationDurationSlider.value) )
                     .update()
             } )
+
+        }
+
+        // CATEGORY OUTLINE SIZE SLIDER //
+        function setCategoryOutlineThickness() {
+
+            // Get slider value and text
+            const slider = document.getElementById('category-outline-thickness-slider')
+            const text = document.getElementById('category-outline-thickness-text')
+            const targetElements = document.getElementsByClassName('rectangle')
+
+            // Update displayed text
+            text.innerText = Number(slider.value)
+
+            // Change the value
+            Array.from(targetElements).forEach( (element) => {
+                element.style.outline = `${Number(slider.value)}px solid`
+            } )
+
+
+            // d3.selectAll('.rectangle')
+            //     .attr('outline', `3px solid green`)
+
+
+            // const appStyleSheet = document.styleSheets[2];
+            // const cssRules = appStyleSheet.cssRules || appStyleSheet.rules;
+            // cssRules[5].outline = `${Number(slider.value)}px solid`
+
 
         }
 

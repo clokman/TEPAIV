@@ -13,7 +13,8 @@ let mySvg = new container.Svg(15000, 15000, parentD3Element)
 
 
 //// NAVIGATOR ////
-const distanceBetweenNavigators = 1600
+const horizontalDistanceBetweenNavigators = 1600
+const verticalDistanceBetweenNavigators = 900
 
 // Navigator 1
 
@@ -49,7 +50,7 @@ navigator2.loadDataset(
 ).then(that => {
     that.update()
 
-    that.x( navigator1.x() + distanceBetweenNavigators )
+    that.x( navigator1.x() + horizontalDistanceBetweenNavigators )
         .colorSet('Titanic-2')
         .update()
 
@@ -77,7 +78,7 @@ navigator3.loadDataset(
 
     that
         .colorSet('Plasma')
-        .x( navigator2.x() + distanceBetweenNavigators )
+        .x( navigator2.x() + horizontalDistanceBetweenNavigators )
         .update()
 
     // navigator3.objects('panel-0').height(1500).update()
@@ -97,7 +98,7 @@ navigator4.loadDataset(
     that.update()
 
     that
-        .x( navigator3.x() + distanceBetweenNavigators )
+        .x( navigator3.x() + horizontalDistanceBetweenNavigators )
         .update()
 
     navigator4.objects('panel-0').yAxisLabels()
@@ -115,7 +116,7 @@ navigator5.loadDataset(
     that.update()
 
     that
-        .x( navigator4.x() + distanceBetweenNavigators )
+        .x( navigator4.x() + horizontalDistanceBetweenNavigators )
         .update()
 
     navigator5.objects('panel-0').height(750).update()
@@ -134,7 +135,7 @@ navigator5.loadDataset(
 //     that.update()
 //
 //     that
-//         .x( navigator5.x() + distanceBetweenNavigators )
+//         .x( navigator5.x() + horizontalDistanceBetweenNavigators )
 //         .update()
 //
 //     navigator6.objects('panel-0').height(7500).update()
@@ -143,8 +144,65 @@ navigator5.loadDataset(
 
 
 
+// Navigator B1
 
-    // myNavigator.objects('panel-0').objects('Ticket').colorScheme('Purples').update()
+const navigatorB1 = new navigator.Navigator()
+
+navigatorB1.loadDataset(
+    'http://localhost:3000/data/SampleMixedData.csv',
+    ['NAME']
+).then(that => {
+    that.update()
+
+    that.x( navigator5.x() + horizontalDistanceBetweenNavigators )
+        .colorSet('Titanic')
+        .update()
+
+    that.objects('panel-0-0')
+        .height(700)
+        // .y(verticalDistanceBetweenNavigators)
+        .update()
+
+    // CAPITALIZE CHART LABELS
+    navigatorB1.objects('panel-0').objects('Status')._chartLabelObject.text('STATUS').update()
+    navigatorB1.objects('panel-0').objects('Ticket')._chartLabelObject.text('TICKET').update()
+    navigatorB1.objects('panel-0').objects('Gender')._chartLabelObject.text('GENDER').update()
+})
+
+
+// Navigator B2
+
+const navigatorB2 = new navigator.Navigator()
+
+navigatorB2.loadDataset(
+    'http://localhost:3000/data/Wine/Wine-FiveColumns.csv',
+    ['NAME']
+).then(that => {
+    that.update()
+
+    that.x( navigatorB1.x() + horizontalDistanceBetweenNavigators )
+        .colorSet('Titanic')
+        .update()
+
+    that.objects('panel-0-0')
+        .height(700)
+        // .y(verticalDistanceBetweenNavigators)
+        .update()
+
+
+})
+
+
+
+
+
+
+
+
+
+
+
+// myNavigator.objects('panel-0').objects('Ticket').colorScheme('Purples').update()
     // myNavigator.objects('panel-0').objects('Status').colorScheme('Blues').update()
     // myNavigator.objects('panel-0').objects('Gender').colorScheme('Greens').update()
 

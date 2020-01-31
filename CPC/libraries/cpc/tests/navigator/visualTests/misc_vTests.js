@@ -92,24 +92,136 @@ myChart.chartLabel('MY CHART LABEL').update()
 
 
 // //// DATASET /////////////////////////////////////////////////////////////////
-//
-// let mySummaryPanel = new navigator.Panel()
-//     .x(400).update()
-//
-// const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv', 'Name')
-// titanicDataset.build()
-//     .then( () => {
-//
-//         const titanicSummary = titanicDataset.summarize()
-//
-//         const titanicStacks = new data.Stacks()
-//         titanicStacks.fromNestedMap(titanicSummary)
-//
-//         mySummaryPanel.bgFill('salmon').update()
-//         mySummaryPanel.stacks(titanicStacks).update()
-//     }
-//
-// )
+
+
+// Categorical data
+const titanicSummaryPanel = new navigator.Panel()
+    .bgText('Titanic summary')
+    .x(800)
+    .yAxisLabels(true)
+    .update()
+
+const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv', 'Name')
+titanicDataset.build()
+    .then( () => {
+
+        const titanicSummary = titanicDataset.summarize()
+
+        const titanicStacks = new data.Stacks()
+        titanicStacks.fromNestedMap(titanicSummary)
+
+        titanicSummaryPanel.stacks(titanicStacks).update()
+    }
+
+)
+
+
+// Continuous data
+const bigFiveSummaryPanel = new navigator.Panel()
+    .bgText('Big five summary')
+    .x(1100)
+    .yAxisLabels(true)
+    .update()
+
+
+
+
+// const bigFiveValueArrays = new Map()
+
+const bigFiveDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/BigFivePersonalityTraits-Small.csv', 'Name')
+bigFiveDataset.build()
+    .then( () => {
+
+        // const bigFiveDataset.
+
+        // const bigFiveSummary = bigFiveDataset.summarize()
+        //
+        // const bigFiveStacks = new data.Stacks()
+        // bigFiveStacks.fromNestedMap(bigFiveSummary)
+        //
+        // bigFiveSummaryPanel.stacks(bigFiveStacks).update()
+
+
+        // d3.csv("data.csv", function(error, data) {
+        //     color.domain(d3.keys(data[0]).filter(function(key) {
+        //         return key == "avg" || key == "additional_columns";
+        //     });
+        // });
+
+        // bigFiveDataset.columnNames.forEach( (columnName) => {
+        //
+        //     bigFiveDataset.data.filter( (columnKey) => {
+        //         return columnKey === columnName
+        //     })
+        //
+        // })
+
+
+
+        // var rowConverter = function(d) {
+        //         return {
+        //             Food: d.Food,  //No conversion
+        //             Deliciousness: parseFloat(d.Deliciousness)
+        //         };
+        //     }
+        //
+        //     d3.csv("food.csv", rowConverter, function(data) {
+        //         console.log(data);
+        //     });
+
+
+
+
+            bigFiveDataset.data.forEach( row => {
+
+            Object.keys(row).forEach( (columnName) => {
+                bigFiveValueArrays.set( columnName, [] )
+            })
+
+            Object.entries(row).forEach( (value, columnName) => {
+                bigFiveValueArrays
+                    .get( columnName )
+                    .push( value )
+            })
+        })
+
+
+
+
+    }
+
+)
+
+bigFiveDataset
+
+
+function splitToQuantiles(valuesArray, thresholds){
+
+    const split = d3.histogram()
+        .thresholds(3)
+        .domain([d3.min(valuesArray), d3.max(valuesArray)])
+
+    const splittedValues = split(valuesArray)
+
+    return splittedValues
+
+}
+
+
+
+
+
+
+const bigFiveSummaryPanel2 = new navigator.Panel()
+    .bgText('Big five summary 2')
+    .x(1400)
+    .yAxisLabels(true)
+    .update()
+
+
+
+
+
 
 
 
@@ -134,3 +246,17 @@ myChart.chartLabel('MY CHART LABEL').update()
 //         .width(1280)
 //         .update()
 // })
+
+
+
+
+
+const mixedDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/SampleMixedData.csv')
+mixedDataset.build()
+    .then( () => {
+
+        //...
+
+        }
+
+    )
