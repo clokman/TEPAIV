@@ -69,12 +69,9 @@ Array.prototype.containsMostlyNumbers = function (sampleSize=25, requiredRatioOf
         // ratioOfNonNumberElements <= tolerance
        if ( ratioOfNumbers >= requiredRatioOfNumbers ){
            judgment = true
-           console.log('test')
        }
        else {
            judgment = false
-           console.log('test')
-
        }
 
 
