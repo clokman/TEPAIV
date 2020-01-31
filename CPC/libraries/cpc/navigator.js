@@ -2563,6 +2563,8 @@
             this._colorScheme = 'Greys'  // TODO: Should be replaced with dynamic statement (e.g., this.colorScheme('Greys'))
             this._colorScale = null  // Dynamically populated by .colorScheme()
             this._showAbsoluteValues = false
+            this._strokeColor = 'rgba(255, 255, 255, 1.0)'
+            this._strokeWidth = '0.5px'
 
             // Private variables //
             this._container = super.selectSelf()
@@ -2747,6 +2749,8 @@
                         .y(end)
                         .height(start - end)
                         .width(this._width)
+                        .strokeColor(this._strokeColor)
+                        .strokeWidth(this._strokeWidth)
                         .id(eachCategoryId)
 
                     if ( this._showAbsoluteValues ) {
@@ -3228,25 +3232,43 @@
         }
 
 
-     showAbsoluteValues(value) {
-     
-         // Getter
-         if (!arguments.length){
-             return this._showAbsoluteValues
-         }
+        showAbsoluteValues(value) {
 
-         // Setter
-         else{
+             // Getter
+             if (!arguments.length){
+                 return this._showAbsoluteValues
+             }
 
-             value.mustBeOfType('Boolean')
-             this._showAbsoluteValues = value
-             
-             return this
-         }
-         
-     }
+             // Setter
+             else{
 
+                 value.mustBeOfType('Boolean')
+                 this._showAbsoluteValues = value
 
+                 return this
+             }
+
+        }
+
+        strokeColor(value){
+            if (!arguments.length) {
+                return this._strokeColor
+            }
+            else {
+                this._strokeColor = value
+                return this
+            }
+        }
+
+        strokeWidth(value){
+            if (!arguments.length) {
+                return this._strokeWidth
+            }
+            else {
+                this._strokeWidth = value
+                return this
+            }
+        }
     }
 
 

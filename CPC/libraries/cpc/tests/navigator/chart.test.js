@@ -409,6 +409,73 @@ describe ('ABSOLUTE VALUES: Toggle absolute values', () => {
 })
 
 
+
+//// STROKE WIDTH AND COLOR ///////////////////////////////////////////////////////////////
+
+describe ('Stroke width and color', () => {
+   
+        test ('Get', () => {
+        
+            initializeDomWithSvg()
+
+            const myChart = new navigator.Chart()
+
+            expect( myChart.strokeWidth() ).toBe( "0.5px" )
+            expect( myChart.strokeColor() ).toBe( "rgba(0, 0, 0, 1.0)" )
+
+        })
+
+        test ('Set', () => {
+
+            initializeDomWithSvg()
+
+            const myChart = new navigator.Chart()
+
+            expect( myChart.strokeWidth() ).not.toBe( "4px" )
+            expect( myChart.strokeColor() ).not.toBe( "brick" )
+
+            myChart
+                .strokeWidth('4px')
+                .strokeColor('brick')
+                .update()
+
+            expect( myChart.strokeWidth() ).toBe( '4px' )
+            expect( myChart.strokeColor() ).toBe( 'brick' )
+
+
+            // Check if changes are passed on to category objects
+            const strokeWidthsOfCharts = []
+            const strokeColorsOfCharts = []
+            myChart.objects().forEach( (chartObject, chartName) => {
+                
+                strokeWidthsOfCharts.push( chartObject.strokeWidth() )
+                strokeColorsOfCharts.push( chartObject.strokeColor() )
+                
+            })
+
+            expect( strokeWidthsOfCharts ).toTabulateAs(`\
+┌─────────┬────────┐
+│ (index) │ Values │
+├─────────┼────────┤
+│    0    │ '4px'  │
+│    1    │ '4px'  │
+│    2    │ '4px'  │
+└─────────┴────────┘`)
+
+            expect( strokeColorsOfCharts ).toTabulateAs(`\
+┌─────────┬─────────┐
+│ (index) │ Values  │
+├─────────┼─────────┤
+│    0    │ 'brick' │
+│    1    │ 'brick' │
+│    2    │ 'brick' │
+└─────────┴─────────┘`)
+
+        })
+
+})
+
+
 //// CATEGORY LABELS ///////////////////////////////////////////////////////////////
 
 test ('Get/TurnOn/TurnOff category labels', () => {
