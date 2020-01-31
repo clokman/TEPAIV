@@ -613,7 +613,6 @@ describe ('ABSOLUTE VALUES: Toggle absolute values in category captions', () => 
 test ('COLOR SCHEME SET: Set and get', async () => {
 
     //// PREPARE DOM AND PARENT ELEMENT ////
-
     // Clear JEST's DOM to prevent leftovers from previous tests
     document.body.innerHTML = ''
 
@@ -639,10 +638,12 @@ test ('COLOR SCHEME SET: Set and get', async () => {
 
     // Get initial color-related values
     expect( myNavigator.colorSet() ).toBe('Single-Hue')
-    actualInitialColorsOnCanvasForGenderCategory = myNavigator.objects('panel-0-0').objects('Gender').actualColors()
+    const actualInitialColorsOnCanvasForGenderCategory = myNavigator.objects('panel-0-0')
+        .objects('Gender').actualColors()
     expect( actualInitialColorsOnCanvasForGenderCategory ).toEqual([
         "rgb(34, 139, 69)", "rgb(115, 195, 120)"
     ])
+
 
     //// CHANGE COLOR SET ////
     myNavigator.colorSet( 'Greys' ).update()
@@ -652,7 +653,8 @@ test ('COLOR SCHEME SET: Set and get', async () => {
     expect ( myNavigator.objects('panel-0-0').objects('Gender').colorScheme() )
         .toBe( 'Greys')
     // Check the color of a category on DOM
-    const actualColorsOnCanvasForGenderCategory = myNavigator.objects('panel-0-0').objects('Gender').actualColors()
+    const actualColorsOnCanvasForGenderCategory =
+        myNavigator.objects('panel-0-0').objects('Gender').actualColors()
     expect ( actualColorsOnCanvasForGenderCategory )
         .toEqual(["rgb(80, 80, 80)", "rgb(151, 151, 151)"])
 
@@ -687,7 +689,7 @@ test ('COLOR SCHEME SET: Set and get', async () => {
 
 
 
-    //// CHANGE COLOR SET WHILE A CHILD PANELS EXIST ////
+    //// CHANGE COLOR SET WHILE A CHILD PANEL EXIST ////
 
     // Confirm that a child panel is open
     const numberOfOpenPanels = myNavigator.objects().size
