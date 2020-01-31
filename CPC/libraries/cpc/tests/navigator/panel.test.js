@@ -354,10 +354,7 @@ test ('Visualize a dataset manually by changing Stacks in Panel', async () => {
 
 test ('Create charts in the panel, and make sure that they are children and have the right attributes', () => {
 
-    // Clear JEST's DOM to prevent leftovers from previous tests
-    document.body.innerHTML = ''
-
-    const svg = new container.Svg()
+    initializeDomWithSvg()
 
     const myPanel = new navigator.Panel()
 
@@ -449,10 +446,8 @@ test ('Create charts in the panel, and make sure that they are children and have
 // TODO: Panel background tests completed
 test ('Initialize panel with a background rectangle', () => {
 
-    // Clear JEST's DOM to prevent leftovers from previous tests
-    document.body.innerHTML = ''
+    initializeDomWithSvg()
 
-    const svg = new container.Svg()
     const myPanel = new navigator.Panel
 
     // Verify that the panel background object is initiated
@@ -492,12 +487,7 @@ test ('Initialize panel with a background rectangle', () => {
 
 test ('YScale should initiate correctly', () => {
 
-
-    // Clear JEST's DOM to prevent leftovers from previous tests
-    document.body.innerHTML = ''
-
-    // Create svg
-    const svg = new container.Svg()
+    initializeDomWithSvg()
 
     // Create panel
     const myPanel = new navigator.Panel()
@@ -853,11 +843,7 @@ describe ('TOP ANCESTOR: Return selection of panel 0', () => {
 
     test('Get top ancestor (panel 0) via calling a method from deeper panels', () => {
 
-        // PREP //
-        // Clear JEST's DOM to prevent leftovers from previous tests
-        document.body.innerHTML = ''
-        // Create SVG
-        const mySvg = new container.Svg()
+        initializeDomWithSvg()
 
         // Add panel #0
         const panel0 = new navigator.NestedPanel()
@@ -888,11 +874,8 @@ describe ('TOP ANCESTOR: Return selection of panel 0', () => {
 
 test ('BG EXTENSION: Extend panel background leftward', () => {
 
-    // Clear JEST's DOM to prevent leftovers from previous tests
-    document.body.innerHTML = ''
-    // Create SVG
-    const mySvg = new container.Svg()
-        .height(1280)
+    initializeDomWithSvg()
+
     // Create panel
     const myPanel = new navigator.Panel()
         .x(300)
@@ -961,12 +944,8 @@ test ('BG EXTENSION: Extend panel background leftward', () => {
 test ('BG EXTENSION: Left and right extension together', () => {
 
     //// INITIALIZE ////
+    initializeDomWithSvg()
 
-    // Clear JEST's DOM to prevent leftovers from previous tests
-    document.body.innerHTML = ''
-    // Create SVG
-    const mySvg = new container.Svg()
-        .height(1280)
     // Create panel
     const myPanel = new navigator.Panel()
         .x(300)
@@ -994,11 +973,8 @@ test ('BG EXTENSION: Left and right extension together', () => {
 
 test ('LABELS: Toggle labels on y axis on/off', () => {
 
-    // Clear JEST's DOM to prevent leftovers from previous tests
-    document.body.innerHTML = ''
-    // Create SVG
-    const mySvg = new container.Svg()
-        .height(1280)
+    initializeDomWithSvg()
+
     // Create panel
     const myPanel = new navigator.Panel()
         .x(150)
@@ -1127,11 +1103,7 @@ test ('LABELS: Get the position of the farthest category label', () => {
 
 describe ('ABSOLUTE VALUES: Toggling absolute values should show counts instead of percentages', () => {
    
-    // PREP //
-    // Clear JEST's DOM to prevent leftovers from previous tests
-    document.body.innerHTML = ''
-    // Create SVG
-    const mySvg = new container.Svg()
+    initializeDomWithSvg()
 
     // Create panel
     const myPanel = new navigator.Panel()
@@ -1223,9 +1195,7 @@ describe ('ABSOLUTE VALUES: Toggling absolute values should show counts instead 
         // PREP //
         // NOTE: DO NOT DELETE THIS BLOCK. DOM must be re-prepped for this test with this block. Otherwise, jest becomes flaky in some environments.
         // Clear JEST's DOM to prevent leftovers from previous tests
-        document.body.innerHTML = ''
-        // Create SVG
-        const mySvg = new container.Svg()
+        initializeDomWithSvg()
 
         // Create panel
         const myPanel = new navigator.NestedPanel()
@@ -1343,11 +1313,7 @@ describe ('ABSOLUTE VALUES: Toggling absolute values should show counts instead 
 
         test('ADD CHILD: Two children should exist', () => {
 
-            // PREP //
-            // Clear JEST's DOM to prevent leftovers from previous tests
-            document.body.innerHTML = ''
-            // Create SVG
-            const mySvg = new container.Svg()
+            initializeDomWithSvg()
 
             // Add panel #0
             myNestedPanel = new navigator.NestedPanel()
@@ -1368,11 +1334,7 @@ describe ('ABSOLUTE VALUES: Toggling absolute values should show counts instead 
 
         test ('RESET VERTICAL INNER PADDING: Restore top and bottom inner padding', () => {
 
-            // PREP //
-            // Clear JEST's DOM to prevent leftovers from previous tests
-            document.body.innerHTML = ''
-            // Create SVG
-            const mySvg = new container.Svg()
+            initializeDomWithSvg()
 
             // Add panel #0
             myPanel = new navigator.Panel()
@@ -1420,11 +1382,7 @@ describe ('ABSOLUTE VALUES: Toggling absolute values should show counts instead 
 
         test ('Remove children panels one by one', () => {
 
-            // PREP //
-            // Clear JEST's DOM to prevent leftovers from previous tests
-            document.body.innerHTML = ''
-            // Create SVG
-            const mySvg = new container.Svg()
+            initializeDomWithSvg()
 
             // Add panel #0
             panelZero = new navigator.NestedPanel()
@@ -1470,11 +1428,8 @@ describe ('ABSOLUTE VALUES: Toggling absolute values should show counts instead 
 
         test ('Remove panel zero', () => {
 
-            // PREP //
-            // Clear JEST's DOM to prevent leftovers from previous tests
-            document.body.innerHTML = ''
-            // Create SVG
-            const mySvg = new container.Svg()
+            initializeDomWithSvg()
+
 
             // Add panel #0
             panelZero = new navigator.NestedPanel()
@@ -1513,10 +1468,8 @@ describe ('COLOR: Manage color themes', () => {
 
     test ('Assign color themes to charts in panel', () => {
 
-        // Clear JEST's DOM to prevent leftovers from previous tests
-        document.body.innerHTML = ''
-        // Create SVG
-        const mySvg = new container.Svg()
+        initializeDomWithSvg()
+
         // Create panel
         const myPanel = new navigator.Panel()
 
@@ -1689,10 +1642,8 @@ describe ('COLOR: Manage color themes', () => {
 
 test ('DEPTH INDEX: Get and set', () => {
 
-    // Clear JEST's DOM to prevent leftovers from previous tests
-    document.body.innerHTML = ''
-    // Create SVG
-    const mySvg = new container.Svg()
+    initializeDomWithSvg()
+
     // Create panel
     const myPanel = new navigator.NestedPanel()
 
@@ -1726,10 +1677,8 @@ test ('DEPTH INDEX: Get and set', () => {
 
 test ('DEPTH INDEX: Check automatic incrementation upon adding new panels', () => {
 
-    // Clear JEST's DOM to prevent leftovers from previous tests
-    document.body.innerHTML = ''
-    // Create SVG
-    const mySvg = new container.Svg()
+    initializeDomWithSvg()
+
     // Create panel
     const parentPanel = new navigator.NestedPanel()
     parentPanel.id('parent-panel').update()
@@ -1822,11 +1771,8 @@ test ('DEPTH INDEX: Check automatic incrementation upon adding new panels', () =
 
 describe ('ANIMATIONS: Switch to a panel on the same depth level using the quick switch animation', () => {
    
-    // PREP //
-    // Clear JEST's DOM to prevent leftovers from previous tests
-    document.body.innerHTML = ''
-    // Create SVG
-    const mySvg = new container.Svg()
+    initializeDomWithSvg()
+
     // Create panel
     const parentPanel = new navigator.NestedPanel()
     parentPanel.id('parent-panel').update()
@@ -1851,11 +1797,8 @@ describe ('ANIMATIONS: Switch to a panel on the same depth level using the quick
 
     test('SWITCH animation: Add panel ', () => {
 
-        // PREP //
-        // Clear JEST's DOM to prevent leftovers from previous tests
-        document.body.innerHTML = ''
-        // Create SVG
-        const mySvg = new container.Svg()
+        initializeDomWithSvg()
+
         // Create panel
         const parentPanel = new navigator.NestedPanel()
         parentPanel.id('parent-panel').update()
@@ -1916,12 +1859,7 @@ describe ('PANEL IDS: Panel IDs must be generated correctly', () => {
     
     test ('INIT: First panel id', () => {
 
-        // PREP //
-        // Clear JEST's DOM to prevent leftovers from previous tests
-        document.body.innerHTML = ''
-        // Create SVG
-        const mySvg = new container.Svg()
-
+        initializeDomWithSvg()
 
         const myPanel = new navigator.NestedPanel()
             .bgFill('#deebf7')
@@ -1938,11 +1876,7 @@ describe ('PANEL IDS: Panel IDs must be generated correctly', () => {
 
     test ('DEPTH 1 Siblings: Check ids of panels that spawned directly from panel 0', () => {
 
-        // PREP //
-        // Clear JEST's DOM to prevent leftovers from previous tests
-        document.body.innerHTML = ''
-        // Create SVG
-        const mySvg = new container.Svg()
+        initializeDomWithSvg()
 
         // Create panel 0
         const parentPanel = new navigator.NestedPanel()
@@ -1990,12 +1924,7 @@ describe ('PANEL IDS: Panel IDs must be generated correctly', () => {
 
     test ('DEPTH 2 Siblings: Check ids of panels that spawned from panel 1 (i.e., siblings spawned from a child of panel 0)', () => {
 
-        // PREP //
-        // Clear JEST's DOM to prevent leftovers from previous tests
-        document.body.innerHTML = ''
-        // Create SVG
-        const mySvg = new container.Svg()
-
+        initializeDomWithSvg()
 
         // Create panel 0
         const parentPanel = new navigator.NestedPanel()
@@ -2054,11 +1983,7 @@ describe ('PANEL IDS: Panel IDs must be generated correctly', () => {
 
     test ('REPLACE SINGLETON PANEL: A panels that replaces another panel should have the right IDs', () => {
 
-        // PREP //
-        // Clear JEST's DOM to prevent leftovers from previous tests
-        document.body.innerHTML = ''
-        // Create SVG
-        const mySvg = new container.Svg()
+        initializeDomWithSvg()
 
         jest.useFakeTimers()
 
@@ -2115,11 +2040,7 @@ describe ('PANEL IDS: Panel IDs must be generated correctly', () => {
 
     test ('REPLACE COMPARISON PANEL: A panel that replaces two sibling panels should have the right ID', () => {
 
-        // PREP //
-        // Clear JEST's DOM to prevent leftovers from previous tests
-        document.body.innerHTML = ''
-        // Create SVG
-        const mySvg = new container.Svg()
+        initializeDomWithSvg()
 
         jest.useFakeTimers()
 
@@ -2200,13 +2121,7 @@ describe ('PANEL IDS: Panel IDs must be generated correctly', () => {
     // During this refresh operation, the panel is recreated.
     // During the old panel should not be detected as an already existing panel (at least for the purpose of incrementing panel names).
 
-
-        // PREP //
-        // Clear JEST's DOM to prevent leftovers from previous tests
-        document.body.innerHTML = ''
-        // Create SVG
-        const mySvg = new container.Svg()
-
+        initializeDomWithSvg()
 
         // Create panel 0
         const parentPanel = new navigator.NestedPanel()
@@ -2249,11 +2164,7 @@ describe ('INFERENCES: Parent child relationships should be inferred correctly',
 
     test ('Panel-0: A single-standing panel-0 should have correct relationships inferred', () => {
 
-        // PREP //
-        // Clear JEST's DOM to prevent leftovers from previous tests
-        document.body.innerHTML = ''
-        // Create SVG
-        const mySvg = new container.Svg()
+        initializeDomWithSvg()
 
         jest.useFakeTimers()
 
@@ -2300,11 +2211,7 @@ describe ('INFERENCES: Parent child relationships should be inferred correctly',
 
     test ('Panel-1-0: A single child panel should have correct relationships inferred', () => {
 
-        // PREP //
-        // Clear JEST's DOM to prevent leftovers from previous tests
-        document.body.innerHTML = ''
-        // Create SVG
-        const mySvg = new container.Svg()
+        initializeDomWithSvg()
 
         jest.useFakeTimers()
 
@@ -2343,17 +2250,12 @@ describe ('INFERENCES: Parent child relationships should be inferred correctly',
         expect( panel1._leftSiblingObject ).toBe( null)
 
         expect( panel1.has.siblingObjectsOnRightSide ).toBe( null )
-
     })
 
 
     test ('Panel-2-0: A single grandchild panel should have correct relationships inferred', () => {
 
-        // PREP //
-        // Clear JEST's DOM to prevent leftovers from previous tests
-        document.body.innerHTML = ''
-        // Create SVG
-        const mySvg = new container.Svg()
+        initializeDomWithSvg()
 
         jest.useFakeTimers()
 
@@ -2405,11 +2307,7 @@ describe ('INFERENCES: Parent child relationships should be inferred correctly',
 
     test ('Panel-1-1: A child panel with sibling should have correct relationships', () => {
 
-        // PREP //
-        // Clear JEST's DOM to prevent leftovers from previous tests
-        document.body.innerHTML = ''
-        // Create SVG
-        const mySvg = new container.Svg()
+        initializeDomWithSvg()
 
         jest.useFakeTimers()
 
@@ -2505,11 +2403,7 @@ describe ('INFERENCES: Parent child relationships should be inferred correctly',
 
     test ('Panel-2-2: A grandchild panel with two siblings should have correct relationships inferred', () => {
 
-        // PREP //
-        // Clear JEST's DOM to prevent leftovers from previous tests
-        document.body.innerHTML = ''
-        // Create SVG
-        const mySvg = new container.Svg()
+        initializeDomWithSvg()
 
         jest.useFakeTimers()
 
@@ -2663,11 +2557,7 @@ describe ('INFERENCES: Parent child relationships should be inferred correctly',
 
     test ('A deep child panel whose parent has siblings should have correct relationships', () => {
 
-        // PREP //
-        // Clear JEST's DOM to prevent leftovers from previous tests
-        document.body.innerHTML = ''
-        // Create SVG
-        const mySvg = new container.Svg()
+        initializeDomWithSvg()
 
         jest.useFakeTimers()
 
@@ -2763,11 +2653,7 @@ describe ('animationDuration', () => {
 
     test ('Init: Animation times must be correctly set on initialization', ()  => {
 
-        // PREP //
-        // Clear JEST's DOM to prevent leftovers from previous tests
-        document.body.innerHTML = ''
-        // Create SVG
-        const mySvg = new container.Svg()
+        initializeDomWithSvg()
 
         jest.useFakeTimers()
 
@@ -2803,11 +2689,7 @@ describe ('animationDuration', () => {
 
     test ('Get/Set: Animation times must be correctly get/set ', ()  => {
 
-        // PREP //
-        // Clear JEST's DOM to prevent leftovers from previous tests
-        document.body.innerHTML = ''
-        // Create SVG
-        const mySvg = new container.Svg()
+        initializeDomWithSvg()
 
         jest.useFakeTimers()
 
@@ -2864,11 +2746,7 @@ describe ('animationDuration', () => {
 
     test ('Propagate: When an animation duration is set, it should be propagated to all children and parents', () => {
 
-        // PREP //
-        // Clear JEST's DOM to prevent leftovers from previous tests
-        document.body.innerHTML = ''
-        // Create SVG
-        const mySvg = new container.Svg()
+        initializeDomWithSvg()
 
         jest.useFakeTimers()
 
