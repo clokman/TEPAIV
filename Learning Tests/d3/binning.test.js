@@ -41,6 +41,7 @@ global.classUtils = require("../../CPC/libraries/utils/classUtils")
 global.arrayUtils = require("../../CPC/libraries/utils/arrayUtils")
 global.domUtils = require("../../CPC/libraries/utils/domUtils")
 global.stringUtils = require("../../CPC/libraries/utils/stringUtils")
+global.stringUtils = require("../../CPC/libraries/utils/statsUtils")
 
 //// MODULE BEING TESTED IN CURRENT FILE ////
 
@@ -708,6 +709,160 @@ describe ('Treat continuous data', () => {
     })
 
 
+
+    test ('Quantile vs Quantize scales on simple arrays', () => {
+
+        let array1 = [0,1,2,3,4,5,6,7,8,9,10]
+        let array2 = [40,30,20,10,50,60,70,90,80,100,0]
+
+
+        const quantizeScale4 = d3.scaleQuantize()
+            .domain( [0, 10] )
+            .range( ['A', 'B', 'C', 'D'] )
+
+        const quantizeScale5 = d3.scaleQuantize()
+            .domain( [0, 10] )
+            .range( ['A', 'B', 'C', 'D', 'E'] )
+
+
+        const quantileScale4 = d3.scaleQuantile()
+            .domain( [0, 10] )
+            .range( ['A', 'B', 'C', 'D'] )
+
+        const quantileScale5 = d3.scaleQuantile()
+            .domain( [0, 10] )
+            .range( ['A', 'B', 'C', 'D', 'E'] )
+
+
+
+        const array1Quantized4 = []
+        array1.forEach( (e) => {
+
+            const quantizedE = quantizeScale4(e)
+            array1Quantized4.push(quantizedE)
+
+        })
+
+        const array1Quantized5 = []
+        array1.forEach( (e) => {
+
+            const quantizedE = quantizeScale5(e)
+            array1Quantized5.push(quantizedE)
+
+        })
+
+
+        const array1Quantiled4 = []
+        array1.forEach( (e) => {
+
+            const quantiledE = quantileScale4(e)
+            array1Quantiled4.push(quantiledE)
+
+        })
+
+        const array1Quantiled5 = []
+
+        array1.forEach( (e) => {
+
+            const quantiledE = quantileScale5(e)
+            array1Quantiled5.push(quantiledE)
+
+        })
+
+
+        // Calculate quartiles
+        expect ( array1.quantile25() ).toBe( 2.5 )
+        expect ( array1.quantile50() ).toBe( 5 )
+        expect ( array1.quantile75() ).toBe( 7.5 )
+
+
+        // Use d3.quantize and quantile on data (with 4 bins)
+                                           // 0%           25%         50%          75%          100%
+                                           // |             |           |            |            |
+        expect( array1 ).toEqual(           [  0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10]  )
+        expect( array1Quantized4 ).toEqual( [ 'A', 'A', 'A', 'B', 'B', 'C', 'C', 'C', 'D', 'D', 'D'  ] )
+        expect( array1Quantiled4 ).toEqual( [ 'A', 'A', 'A', 'B', 'B', 'C', 'C', 'C', 'D', 'D', 'D' ] )
+
+
+        // Use d3.quantize and quantile on data (with 5 bins)
+                                           // 0%           25%         50%          75%          100%
+                                           // |             |           |            |            |
+        expect( array1 ).toEqual(           [  0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10]  )
+        expect( array1Quantized5 ).toEqual( [ 'A', 'A', 'B', 'B', 'C', 'C', 'D', 'D', 'E', 'E', 'E'  ] )
+        expect( array1Quantiled5 ).toEqual( [ 'A', 'A', 'B', 'B', 'C', 'C', 'D', 'D', 'E', 'E', 'E' ] )
+
+
+    })
+
+
+    test ('Quantile vs Quantize scales on dataset', async () => {
+
+        const mixedData = await d3.csv( 'http://localhost:3000/data/SampleMixedData.csv' )
+
+        expect( mixedData ).toTabulateAs(`\
+┌─────────┬─────────────┬──────────────┬──────────┬───────────────┐
+│ (index) │ Neuroticism │ Extraversion │  Gender  │ MonthMeasured │
+├─────────┼─────────────┼──────────────┼──────────┼───────────────┤
+│    0    │  '2.47917'  │  '4.20833'   │  'Male'  │   'January'   │
+│    1    │  '2.60417'  │   '3.1875'   │  'Male'  │  'February'   │
+│    2    │  '2.52083'  │  '2.89583'   │  'Male'  │    'March'    │
+│    3    │  '3.29167'  │  '3.29167'   │ 'Female' │    'April'    │
+│    4    │  '3.02083'  │  '3.29167'   │ 'Female' │     'May'     │
+└─────────┴─────────────┴──────────────┴──────────┴───────────────┘
+˅˅˅ 94 more rows`, 0, 5)
+
+        const outputCategories = d3.range(4)
+
+        const min =d3.min( mixedData, d => d['Extraversion'] )
+        const max =d3.max( mixedData, d => d['Extraversion'] )
+
+
+        const quantizeScale = d3.scaleQuantize()
+            .domain( [min, max] )
+            .range( outputCategories )
+
+        const quantileScale = d3.scaleQuantile()
+            .domain( [min, max] )
+            .range( outputCategories )
+
+
+        const quantileSummary = d3.rollup(mixedData,
+            v => v.length,
+            d => {
+                return quantizeScale(d.Extraversion)
+            }
+        )
+
+        expect( quantileSummary ).toTabulateAs(`\
+┌───────────────────┬─────┬────────┐
+│ (iteration index) │ Key │ Values │
+├───────────────────┼─────┼────────┤
+│         0         │  3  │   8    │
+│         1         │  1  │   38   │
+│         2         │  0  │   11   │
+│         3         │  2  │   42   │
+└───────────────────┴─────┴────────┘`)
+
+        const quantizeSummary = d3.rollup(mixedData,
+            v => v.length,
+            d => {
+                return quantileScale(d.Extraversion)
+            }
+        )
+
+        expect( quantizeSummary ).toTabulateAs(`\
+┌───────────────────┬─────┬────────┐
+│ (iteration index) │ Key │ Values │
+├───────────────────┼─────┼────────┤
+│         0         │  3  │   8    │
+│         1         │  1  │   38   │
+│         2         │  0  │   11   │
+│         3         │  2  │   42   │
+└───────────────────┴─────┴────────┘`)
+
+
+
+    })
 
 
 
