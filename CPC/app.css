@@ -15,6 +15,7 @@
 }
 
 
+
 .preferences-pane {
 
     display: flex;
@@ -69,3 +70,31 @@
     /*text-align: center;*/
 }
 
+
+
+.bridge {
+    /*border: 1px solid #000 !important;*/
+
+    /*outline: 0.5px solid;*/
+    /*outline-color: rgba(255
+   , 255, 255, .5);*/
+}
+
+.category .rectangle {
+    /*outline: 0.5px solid;*/
+    /*outline-color: rgba(255, 255, 255, .5);*/
+    transform-origin: 50% 50%;
+}
+
+.rectangle{
+    cursor:pointer;
+}
+
+.category .rectangle:hover {
+    /*filter:url("#glow");*/
+    fill:darkred;
+}
+
+text:hover {
+    user-select: none;
+}
