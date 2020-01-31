@@ -421,7 +421,7 @@ describe ('Stroke width and color', () => {
             const myChart = new navigator.Chart()
 
             expect( myChart.strokeWidth() ).toBe( "0.5px" )
-            expect( myChart.strokeColor() ).toBe( "rgba(0, 0, 0, 1.0)" )
+            expect( myChart.strokeColor() ).toBe( "rgba(255, 255, 255, 1.0)" )
 
         })
 
