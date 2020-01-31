@@ -1528,8 +1528,7 @@
             }
 
             if (!!thisPanel.objectToSpawnFrom) {
-                thisPanel._backgroundObject
-                    .fill( thisPanel.objectToSpawnFrom.fill()  )
+                thisPanel.bgFill( thisPanel.objectToSpawnFrom.fill() )
             }
 
             if (!!thisPanel.childrenPanels && !!thisPanel.childrenPanels.size){
