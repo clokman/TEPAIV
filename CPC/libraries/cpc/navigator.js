@@ -1639,7 +1639,9 @@
             }
 
 
-            if ( !this.has.parentWithAnotherChild ){
+            // If this panel is  the only child of a panel
+            if ( !this.has.parentWithAnotherChild
+              && this.has.parentPanel){
 
                 // Adjust parent panel
                 this._resetParentPanelAndPropagate()
