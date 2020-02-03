@@ -109,7 +109,9 @@
             <!--Color Scheme Dropdown-->
             <div class="preference-control">
                 <!--<p>ColorScheme</p>-->
-                <select class="ui dropdown" id="navigator-1-color-scheme-dropdown" onchange="setColorScheme()">
+                <select class="ui dropdown"
+                        id="navigator-1-color-scheme-dropdown"
+                        onchange="setColorScheme()">
 
                     <option value="">ColorScheme</option>
                     <option value=Single-Hue>Single-Hue</option>
@@ -163,21 +165,85 @@
             </div>
 
 
-            <!--Category Outline Thickness Slider-->
-            <div class="preference-control">
+            <!-- Stroke Width Slider-->
+            <div id="stroke-width-control" class="preference-control">
 
-                <p>Category outline thickness: <span id="category-outline-thickness-text">0.5</span>px</p>
+                <p>Stroke width: <span id="stroke-width-text">0.5</span>px</p>
 
                 <input type="range"
                        class="slider"
-                       id=category-outline-thickness-slider
+                       id=stroke-width-slider
                        value=0.5
                        max=6
                        min=0
-                       onchange="setCategoryOutlineThickness()"
+                       onchange="setStrokeWidth()"
                 >
 
+                <script>
+
+                    // STROKE WIDTH SLIDER //
+                    function setStrokeWidth() {
+
+                        // Get slider value and text
+                        const slider = document.getElementById('stroke-width-slider')
+                        const text = document.getElementById('stroke-width-text')
+
+                        // Update displayed text
+                        text.innerText = Number(slider.value)
+
+                        // Change the value
+                        allNavigators.forEach( (navigatorObject, navigatorName) => {
+
+                            navigatorObject
+                                .strokeWidth(`${Number(slider.value)}px`)
+                                .update()
+
+                        })
+
+                    }
+                </script>
+
+
             </div>
+
+            <!-- Stroke Width Slider-->
+            <div id="stroke-color-control" class="preference-control">
+
+                    <!--<p>ColorScheme</p>-->
+                    <select class="ui dropdown"
+                            id="stroke-color-dropdown"
+                            onchange="setStrokeColor()"
+                    >
+
+                        <option value="white">White</option>
+                        <option value="black">Black</option>
+
+                    </select>
+
+                    <script>
+                        function setStrokeColor(){
+
+                            // Get dropdown value
+                            const dropdown = document.getElementById("stroke-color-dropdown")
+                            const selectedValue = dropdown.value
+                            // const selectedValue = dropdown.options[dropdown.selectedIndex]
+
+                            // Change the value
+                            allNavigators.forEach( (navigatorObject, navigatorName) => {
+
+                                navigatorObject
+                                    .strokeColor(`${selectedValue}`)
+                                    .update()
+
+                            })
+
+                        }
+                    </script>
+
+            </div>
+
+
+
 
 
         </div>
@@ -196,7 +262,7 @@
 
 
 
-    <!--======================== INTERFACE LOGIC ========================-->
+    <!--==================== GENERAL INTERFACE LOGIC =====================-->
 
     <script>
 
@@ -231,7 +297,7 @@
         // SET COLOR SCHEME //
         function setColorScheme() {
 
-            // Get the checkbox
+            // Get dropdown value
             const dropdown = document.getElementById("navigator-1-color-scheme-dropdown")
             const selectedValue = dropdown.value
             // const selectedValue = dropdown.options[dropdown.selectedIndex]
@@ -287,33 +353,6 @@
 
         }
 
-        // CATEGORY OUTLINE SIZE SLIDER //
-        function setCategoryOutlineThickness() {
-
-            // Get slider value and text
-            const slider = document.getElementById('category-outline-thickness-slider')
-            const text = document.getElementById('category-outline-thickness-text')
-            const targetElements = document.getElementsByClassName('rectangle')
-
-            // Update displayed text
-            text.innerText = Number(slider.value)
-
-            // Change the value
-            Array.from(targetElements).forEach( (element) => {
-                element.style.outline = `${Number(slider.value)}px solid`
-            } )
-
-
-            // d3.selectAll('.rectangle')
-            //     .attr('outline', `3px solid green`)
-
-
-            // const appStyleSheet = document.styleSheets[2];
-            // const cssRules = appStyleSheet.cssRules || appStyleSheet.rules;
-            // cssRules[5].outline = `${Number(slider.value)}px solid`
-
-
-        }
 
 
     </script>
