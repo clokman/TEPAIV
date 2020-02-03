@@ -38,6 +38,8 @@
             this._colorSet = 'Single-Hue'
             this._showAbsoluteValues = false
             this._animationDuration = 600
+            this._strokeWidth = '0.5px'
+            this._strokeColor = 'rgba(255, 255, 255, 1.0)'
 
             this._currentPanelDepth = -1  // `-1`, so that the first panel can be labeled as `panel-0`
 
@@ -324,6 +326,8 @@
                     .showAbsoluteValues( this.showAbsoluteValues() )
                     .colorSet( this.colorSet() )
                     .animationDuration( this.animationDuration() )
+                    .strokeWidth( this.strokeWidth() )
+                    .strokeColor( this.strokeColor() )
             }
 
 
@@ -544,6 +548,29 @@
            }
            
        }
+
+        strokeWidth(value){
+
+            if (!arguments.length) {
+                return this._strokeWidth
+            }
+            else {
+                this._strokeWidth = value
+                return this
+            }
+        }
+
+        strokeColor(value){
+
+            if (!arguments.length) {
+                return this._strokeColor
+            }
+            else {
+                this._strokeColor = value
+                return this
+            }
+        }
+
 
     }
 

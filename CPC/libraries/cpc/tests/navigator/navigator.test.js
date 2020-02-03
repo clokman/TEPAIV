@@ -806,6 +806,29 @@ describe ('Stroke Properties ', () => {
 
             const myNavigator = await initializeDomWithTitanicTinyNavigator()
 
+            // Get default values
+            expect( myNavigator.strokeWidth() ).toBe( '0.5px' )
+            expect( myNavigator.strokeColor() ).toBe( 'rgba(255, 255, 255, 1.0)' )
+
+            // Set new values
+            myNavigator
+                .strokeWidth('4px')
+                .strokeColor('red')
+                .update()
+
+            // Confirm new values
+            expect( myNavigator.strokeWidth() ).toBe( '4px' )
+            expect( myNavigator.strokeColor() ).toBe( 'red' )
+
+
+            const panel0_0 = myNavigator.objects('panel-0-0')
+            expect( panel0_0.strokeWidth() ).toBe( '4px' )
+            expect( panel0_0.strokeColor() ).toBe( 'red' )
+
+
+
+            
+
 
         })
 
