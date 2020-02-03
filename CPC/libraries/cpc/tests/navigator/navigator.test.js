@@ -184,12 +184,12 @@ test ('Load a csv dataset to Navigator and verify that related calculations are 
 
     // Load a dataset
     await myNavigator.loadDataset(
-        'http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv',
+        'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
         ['Name']
     )
 
     // Verfiy  that the data is imported correctly
-    expect(myNavigator.datasetObject.data).toHaveLength(1309)
+    expect(myNavigator.datasetObject.data).toHaveLength(100)
     expectTable(myNavigator.datasetObject.data, `\
 ┌─────────┬─────────────┬────────────┬──────────┐
 │ (index) │   Ticket    │   Status   │  Gender  │
@@ -205,7 +205,7 @@ test ('Load a csv dataset to Navigator and verify that related calculations are 
 │    8    │ '1st class' │ 'Survived' │ 'Female' │
 │    9    │ '1st class' │   'Died'   │  'Male'  │
 └─────────┴─────────────┴────────────┴──────────┘
-˅˅˅ 1299 more rows`, 0, 10)
+˅˅˅ 90 more rows`, 0, 10)
 
 
     // Verify that the related flags are updated after loading data
@@ -215,7 +215,7 @@ test ('Load a csv dataset to Navigator and verify that related calculations are 
 
     // Verify that `this` is returned after loading data
     const returnedObject = await myNavigator.loadDataset(
-        'http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv',
+        'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
         ['Name']
     )
     returnedObjectType = returnedObject.constructor.name
@@ -266,7 +266,7 @@ test ('Update DOM after new data is loaded', async () => {
 
     // Load a dataset
     await myNavigator.loadDataset(
-        'http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv',
+        'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
         ['Name']
     )
 
@@ -396,7 +396,7 @@ test ('Clicking on a category must make a query and visualize query results with
 
     // Load a dataset
     await myNavigator.loadDataset(
-        'http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv',
+        'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
         ['Name']
     )
     myNavigator.update()
@@ -424,7 +424,7 @@ test ('Clicking on a category must make a query and visualize query results with
     const numberOfPanelsBeforeClicking = document.querySelectorAll('.panel').length
     expect(numberOfPanelsBeforeClicking).toBe(1)
     const numberOfCategoriesBeforeClicking = document.querySelectorAll('.category').length
-    expect(numberOfCategoriesBeforeClicking).toBe(7)
+    expect(numberOfCategoriesBeforeClicking).toBe(5)
 
 
     // Go forward: Click a category in panel 0
@@ -432,7 +432,7 @@ test ('Clicking on a category must make a query and visualize query results with
     const numberOfPanelsAfterFirstClick = document.querySelectorAll('.panel').length
     expect(numberOfPanelsAfterFirstClick).toBe(2)
     const numberOfCategoriesAfterFirstClick = document.querySelectorAll('.category').length
-    expect(numberOfCategoriesAfterFirstClick).toBe(12)
+    expect(numberOfCategoriesAfterFirstClick).toBe(8)
 
 
     // Go forward: Click a category in panel 1
@@ -440,14 +440,14 @@ test ('Clicking on a category must make a query and visualize query results with
     const numberOfPanelsAfterSecondClick = document.querySelectorAll('.panel').length
     expect(numberOfPanelsAfterSecondClick).toBe(3)
     const numberOfCategoriesAfterSecondClick = document.querySelectorAll('.category').length
-    expect(numberOfCategoriesAfterSecondClick).toBe(15)
+    expect(numberOfCategoriesAfterSecondClick).toBe(9)
 
     // Go backward: Click a category in panel 0 (should replace panel 2 and remove panel 3)
     domUtils.simulateClickOn('#panel-0-0 #Female')
     const numberOfPanelsAfterThirdClick = document.querySelectorAll('.panel').length
     expect(numberOfPanelsAfterThirdClick).toBe(2)
     const numberOfCategoriesAfterThirdClick = document.querySelectorAll('.category').length
-    expect(numberOfCategoriesAfterThirdClick).toBe(12)
+    expect(numberOfCategoriesAfterThirdClick).toBe(8)
 
 
 })
@@ -461,21 +461,7 @@ describe ('ABSOLUTE VALUES: Toggle absolute values in category captions', () => 
 
     test('GET/SET', async () => {
 
-        //// PREPARE DOM AND NAVIGATOR ////
-        // Clear JEST's DOM to prevent leftovers from previous tests
-        document.body.innerHTML = ''
-        // Create svg container
-        const svg = new container.Svg()
-        // Create an prepare navigator
-        const myNavigator = new navigator.Navigator()
-        //// Load a dataset into navigator
-        // Load a dataset
-        await myNavigator.loadDataset(
-            'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
-            ['Name']
-        )
-        myNavigator.update()
-
+        const myNavigator = await initializeDomWithTitanicTinyNavigator()
 
         // GET //
         expect( myNavigator.showAbsoluteValues() ).toBe( false )
@@ -493,20 +479,7 @@ describe ('ABSOLUTE VALUES: Toggle absolute values in category captions', () => 
 
     test ('DOM: Absolute values should toggle for all category captions on DOM', async () => {
 
-        //// PREPARE DOM AND NAVIGATOR ////
-        // Clear JEST's DOM to prevent leftovers from previous tests
-        document.body.innerHTML = ''
-        // Create svg container
-        const svg = new container.Svg()
-        // Create an prepare navigator
-        const myNavigator = new navigator.Navigator()
-        //// Load a dataset into navigator
-        // Load a dataset
-        await myNavigator.loadDataset(
-            'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
-            ['Name']
-        )
-        myNavigator.update()
+        const myNavigator = await initializeDomWithTitanicTinyNavigator()
 
 
         // Expand one panel
@@ -612,27 +585,7 @@ describe ('ABSOLUTE VALUES: Toggle absolute values in category captions', () => 
 
 test ('COLOR SCHEME SET: Set and get', async () => {
 
-    //// PREPARE DOM AND PARENT ELEMENT ////
-    // Clear JEST's DOM to prevent leftovers from previous tests
-    document.body.innerHTML = ''
-
-    // Create svg container
-    const svg = new container.Svg()
-
-    // Create Navigator object
-    const myNavigator = new navigator.Navigator()
-
-    //// Load a dataset into navigator
-
-    // Load a dataset
-    await myNavigator.loadDataset(
-        'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
-        ['Name']
-    )
-    myNavigator.update()
-
-
-
+    const myNavigator = await initializeDomWithTitanicTinyNavigator()
 
     //// GET COLOR SET ////
 
@@ -730,7 +683,7 @@ test ('COLOR SCHEME SET: Set and get', async () => {
 //
 //     // Load a dataset into Navigator
 //     await myNavigator.loadDataset(
-//         'http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv',
+//         'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
 //         ['Name']
 //     )
 //     myNavigator.update()
@@ -746,22 +699,7 @@ describe ('COMPARISON VIEW', () => {
 
     test ('DETECT MODIFIER: Detect which modifier key is pressed ', async () => {
 
-        // PREP //
-
-        // Clear JEST's DOM to prevent leftovers from previous tests
-        document.body.innerHTML = ''
-        // Create svg container
-        const svg = new container.Svg()
-        // Create Navigator object
-        const myNavigator = new navigator.Navigator()
-        //// Load a dataset into navigator
-        await myNavigator.loadDataset(
-            'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
-            ['Name']
-        ).then(that => {
-            that.update()
-
-        })
+        const myNavigator = await initializeDomWithTitanicTinyNavigator()
 
         // domUtils.simulateClickOn('#Male', 'shift' )
         // expect( myNavigator._modifierKeyPressedWithLastClick ).toBe( 'shift' )
@@ -798,19 +736,7 @@ describe ('get(): Inferences should be made correctly', () => {
    
     test ('panelZero: Should select panelZero correctly', async () => {
 
-        // Clear JEST's DOM to prevent leftovers from previous tests
-        document.body.innerHTML = ''
-        // Create svg container
-        const svg = new container.Svg()
-        // Create Navigator object
-        const myNavigator = new navigator.Navigator()
-        //// Load a dataset into navigator
-        await myNavigator.loadDataset(
-            'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
-            ['Name']
-        ).then(that => {
-            that.update()
-        })
+        const myNavigator = await initializeDomWithTitanicTinyNavigator()
 
         // Select panelZero
         let panelZero = myNavigator.get('panelZero')
@@ -841,20 +767,7 @@ describe ('Sibling Panel via Click', () => {
    
     test ('Add sibling', async () => {
 
-        // Clear JEST's DOM to prevent leftovers from previous tests
-        document.body.innerHTML = ''
-        // Create svg container
-        const svg = new container.Svg()
-        // Create Navigator object
-        const myNavigator = new navigator.Navigator()
-        //// Load a dataset into navigator
-        await myNavigator.loadDataset(
-            'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
-            ['Name']
-        ).then(that => {
-            that.update()
-        })
-
+        const myNavigator = await initializeDomWithTitanicTinyNavigator()
 
         // CLICK ON A CATEGORY
         domUtils.simulateClickOn('#Male' )
@@ -867,23 +780,11 @@ describe ('Sibling Panel via Click', () => {
         expect( numberOfPanels ).toBe(3)
 
     })
-    
-    
-    test ('Shift-Click as First Click: Shift-Clicking on a category that has no siblings should not cause a bug', async () => {
-        // Clear JEST's DOM to prevent leftovers from previous tests
-        document.body.innerHTML = ''
-        // Create svg container
-        const svg = new container.Svg()
-        // Create Navigator object
-        const myNavigator = new navigator.Navigator()
-        //// Load a dataset into navigator
-        await myNavigator.loadDataset(
-            'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
-            ['Name']
-        ).then(that => {
-            that.update()
-        })
 
+
+    test ('Shift-Click as First Click: Shift-Clicking on a category that has no siblings should not cause a bug', async () => {
+
+        const myNavigator = await initializeDomWithTitanicTinyNavigator()
 
         // SHIFT-CLICK ON A CATEGORY
         domUtils.simulateClickOn('#Male', 'shift' )
@@ -894,3 +795,35 @@ describe ('Sibling Panel via Click', () => {
     })
     
 })
+
+
+
+//// Stroke Properties  ///////////////////////////////////////////////////////////////
+
+describe ('Stroke Properties ', () => {
+   
+        test ('Stroke width and color', async () => {
+
+            const myNavigator = await initializeDomWithTitanicTinyNavigator()
+
+
+        })
+
+})
+
+async function initializeDomWithTitanicTinyNavigator() {
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+    // Create svg container
+    const svg = new container.Svg()
+    // Create Navigator object
+    const myNavigator = new navigator.Navigator()
+    //// Load a dataset into navigator
+    await myNavigator.loadDataset(
+        'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
+        ['Name']
+    ).then(that => {
+        that.update()
+    })
+    return myNavigator;
+}
