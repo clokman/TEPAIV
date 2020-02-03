@@ -2861,3 +2861,172 @@ describe ('animationDuration', () => {
     
     
 })
+
+
+//// Stroke Properties ///////////////////////////////////////////////////////////////
+
+
+describe ('Stroke', () => {
+
+        test ('Get/set stroke width and color', () => {
+
+            const panel0 = initializeDomWithPanelZero()
+
+            // GET //
+
+            expect( panel0.strokeWidth() ).toBe( '0.5px' )
+            expect( panel0.strokeColor() ).toBe( 'rgba(255, 255, 255, 1.0)' )
+
+            const {strokeWidths:defaultStrokeWidths, strokeColors:defaultStrokeColors} = getStrokeWidthsAndColors(panel0)
+
+            expect( defaultStrokeWidths ).toTabulateAs(`\
+┌───────────────────┬──────────┬─────────────┐
+│ (iteration index) │   Key    │   Values    │
+├───────────────────┼──────────┼─────────────┤
+│         0         │ 'gender' │ [ '0.5px' ] │
+│         1         │ 'class'  │ [ '0.5px' ] │
+│         2         │ 'status' │ [ '0.5px' ] │
+└───────────────────┴──────────┴─────────────┘`)
+
+            expect( defaultStrokeColors ).toTabulateAs(`\
+┌───────────────────┬──────────┬────────────────────────────────┐
+│ (iteration index) │   Key    │             Values             │
+├───────────────────┼──────────┼────────────────────────────────┤
+│         0         │ 'gender' │ [ 'rgba(255, 255, 255, 1.0)' ] │
+│         1         │ 'class'  │ [ 'rgba(255, 255, 255, 1.0)' ] │
+│         2         │ 'status' │ [ 'rgba(255, 255, 255, 1.0)' ] │
+└───────────────────┴──────────┴────────────────────────────────┘`)
+
+
+
+            // SET //
+
+            panel0.strokeWidth('4px')
+            panel0.strokeColor('black')
+            expect( panel0.strokeWidth() ).toBe( '4px' )
+            expect( panel0.strokeColor() ).toBe( 'black' )
+
+
+            panel0.update()
+
+            // Check if changes are passed on to charts in panel
+            const {strokeWidths:newStrokeWidths, strokeColors:newStrokeColors} = getStrokeWidthsAndColors(panel0)
+
+            expect( newStrokeWidths ).toTabulateAs(`\
+┌───────────────────┬──────────┬───────────┐
+│ (iteration index) │   Key    │  Values   │
+├───────────────────┼──────────┼───────────┤
+│         0         │ 'gender' │ [ '4px' ] │
+│         1         │ 'class'  │ [ '4px' ] │
+│         2         │ 'status' │ [ '4px' ] │
+└───────────────────┴──────────┴───────────┘`)
+            
+            expect( newStrokeColors ).toTabulateAs(`\
+┌───────────────────┬──────────┬─────────────┐
+│ (iteration index) │   Key    │   Values    │
+├───────────────────┼──────────┼─────────────┤
+│         0         │ 'gender' │ [ 'black' ] │
+│         1         │ 'class'  │ [ 'black' ] │
+│         2         │ 'status' │ [ 'black' ] │
+└───────────────────┴──────────┴─────────────┘`)
+
+        })
+
+    
+        test ("Child panels should inherit parent's stroke width and color", () => {
+        
+            const panel0_0 = initializeDomWithPanelZero()
+
+            // Check default values
+            expect( panel0_0.strokeWidth() ).toBe( '0.5px' )
+            expect( panel0_0.strokeColor() ).toBe( 'rgba(255, 255, 255, 1.0)' )
+
+
+            // Change values
+            panel0_0.strokeWidth( '4px' )
+            panel0_0.strokeColor( 'red' )
+
+            // Verify the change
+            expect( panel0_0.strokeWidth() ).toBe( '4px' )
+            expect( panel0_0.strokeColor() ).toBe( 'red' )
+
+
+            // Add child panel
+            const spawnObjectForChild1 = panel0_0.objects('gender').objects('female')
+            const panel1_0 = new navigator.NestedPanel(panel0_0, spawnObjectForChild1)
+
+            // Confirm that child's values are the same with parent
+            expect( panel1_0.strokeWidth() ).toBe( '4px' )
+            expect( panel1_0.strokeColor() ).toBe( 'red' )
+
+
+        })
+
+
+    function getStrokeWidthsAndColors(panel0) {
+
+        const strokeWidths = new Map()
+        const strokeColors = new Map()
+
+        panel0.objects().forEach((chartObject, chartName) => {
+
+            strokeWidths.set(chartName, [])
+                .get(chartName)
+                .push(chartObject.strokeWidth())
+
+            strokeColors.set(chartName, [])
+                .get(chartName)
+                .push(chartObject.strokeColor())
+        })
+        return {strokeWidths, strokeColors}
+    }
+
+
+})
+
+
+function initializeDomWithPanelZero() {
+
+    initializeDomWithSvg()
+
+    jest.useFakeTimers()
+
+    // Create panel 0
+    const panel0_0 = new navigator.NestedPanel()
+        .bgFill('#deebf7')
+        .x(200).y(25)
+        .yAxisLabels(true)
+        .update(0)
+    jest.runOnlyPendingTimers()
+
+    return panel0_0
+}
+
+
+function initializeDomWithPanelZeroChildAndGrandchild() {
+
+    const panel0_0 = initializeDomWithPanelZero()
+
+    // Create panel-1-0 (child)
+    const spawnObjectForPanel1_0 = panel0_0.objects('gender').objects('female')
+    const panel1_0 = new navigator.NestedPanel(panel0_0, spawnObjectForPanel1_0)
+    panel1_0.update()
+    jest.runOnlyPendingTimers()
+
+
+    // Create panel-2-0 (grandchild)
+    let panel2_0  // declaration must be outside the setTimer function
+    setTimeout(() => {
+        const spawnObjectForPanel2_0 = panel1_0.objects('class').objects('first-class')
+        panel2_0 = new navigator.NestedPanel(panel1_0, spawnObjectForPanel2_0)
+        panel2_0.update()
+
+    }, 1000)
+    jest.runOnlyPendingTimers()
+
+    return {panel0_0, panel1_0, panel2_0}
+
+
+
+
+}

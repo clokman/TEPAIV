@@ -590,7 +590,10 @@
 
                 paddingBetweenCharts: 0.05,  // proportion
 
-                bgFill: 'lightgray'
+                bgFill: 'lightgray',
+
+                strokeWidth: '0.5px',
+                strokeColor: 'rgba(255, 255, 255, 1.0)'
 
             }
 
@@ -602,6 +605,8 @@
 
             this._backgroundObject = null
 
+            this._strokeWidth = this._defaults.strokeWidth
+            this._strokeColor = this._defaults.strokeColor
 
             this._yAxisLabelsAreVisible = false
 
@@ -612,7 +617,6 @@
                 left: 100,
                 right: 0
             }
-
 
 
             this._x = this._defaults.x
@@ -712,6 +716,8 @@
                         .width( this._innerWidth() )
                         .height( this._chartHeights() )
                         .colorScheme( currentColorScheme )
+                        .strokeWidth( this._strokeWidth )
+                        .strokeColor( this._strokeColor )
 
                     i++
 
@@ -1267,6 +1273,30 @@
 
         }
 
+        strokeWidth(value){
+
+            if (!arguments.length) {
+                return this._strokeWidth
+            }
+            else {
+                this._strokeWidth = value
+                return this
+            }
+        }
+
+        strokeColor(value){
+
+            if (!arguments.length) {
+                return this._strokeColor
+            }
+            else {
+                this._strokeColor = value
+                return this
+            }
+        }
+
+
+
 
     }
 
@@ -1531,6 +1561,7 @@
                 thisPanel.bgFill( thisPanel.objectToSpawnFrom.fill() )
             }
 
+            // If there are child panels
             if (!!thisPanel.childrenPanels && !!thisPanel.childrenPanels.size){
                 thisPanel.childrenPanels.forEach( (childPanelObject, childPanelId) => {
 
@@ -1538,6 +1569,8 @@
                     childPanelObject
                         .showAbsoluteValues( this.showAbsoluteValues() )  // use of 'this' is not a mistake here
                         .colorSet( this.colorSet() )
+                        .strokeWidth( this.strokeWidth() )
+                        .strokeColor( this.strokeColor() )
 
                     if (childPanelObject._animation) {
                         childPanelObject.animationDuration ( this.animationDuration() )
