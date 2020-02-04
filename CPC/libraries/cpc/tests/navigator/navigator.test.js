@@ -826,10 +826,6 @@ describe ('Stroke Properties ', () => {
             expect( panel0_0.strokeColor() ).toBe( 'red' )
 
 
-
-            
-
-
         })
 
 })
