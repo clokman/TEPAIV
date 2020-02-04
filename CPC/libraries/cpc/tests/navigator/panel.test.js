@@ -2951,7 +2951,7 @@ describe ('Stroke', () => {
         })
 
     
-        test ("Child panels should inherit parent's stroke width and color", () => {
+        test ('Child panels should inherit parent\'s stroke width and color', () => {
         
             const panel0_0 = initializeDomWithPanelZero()
 
