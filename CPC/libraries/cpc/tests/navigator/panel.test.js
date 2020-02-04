@@ -2981,6 +2981,50 @@ describe ('Stroke', () => {
         })
 
 
+        test ('Backgrounds: Panel backgrounds should have the right stroke width and color', () => {
+
+            const {panel0_0, panel1_0, panel2_0} = initializeDomWithPanelZeroChildAndGrandchild()
+            const panels = [panel0_0, panel1_0, panel2_0]
+
+            // Check initial values
+            const {bgStrokeWidths:defaultBgRectStrokeWidths, bgStokeColors:defaultBgRectStrokeColors} = getPropertiesOfBgObjects(panels)
+            expect( defaultBgRectStrokeWidths ).toEqual( ["0.5px", "0.5px", "0.5px"] )
+            expect( defaultBgRectStrokeColors ).toEqual( ["rgba(255, 255, 255, 1.0)", "rgba(255, 255, 255, 1.0)", "rgba(255, 255, 255, 1.0)"] )
+
+
+            // Change values
+            panel0_0
+                .strokeWidth('4px')
+                .strokeColor('red')
+                .update(0)
+
+            // Confirm changes
+            const {bgStrokeWidths:newBgStrokeWidths, bgStokeColors:newBgStrokeColors} = getPropertiesOfBgObjects(panels)
+
+            expect( newBgStrokeWidths ).toEqual( ["4px", "4px", "4px"] )
+            expect( newBgStrokeColors ).toEqual( ["red", "red", "red"] )
+
+
+
+        })
+
+
+        function getPropertiesOfBgObjects(arrayOfPanelObjects) {
+
+            const bgStrokeWidths = []
+            const bgStokeColors = []
+            arrayOfPanelObjects.forEach( (panelObject) => {
+
+                const backgroundStokeWidth = panelObject._backgroundObject.strokeWidth()
+                const backgroundStokeColor = panelObject._backgroundObject.strokeColor()
+
+                bgStrokeWidths.push(backgroundStokeWidth)
+                bgStokeColors.push(backgroundStokeColor)
+
+            })
+            return {bgStrokeWidths, bgStokeColors}
+        }
+
 
 
 })

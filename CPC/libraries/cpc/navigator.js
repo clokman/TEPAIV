@@ -787,6 +787,8 @@
                 .fill( this._bgFill )
                 .text( this._bgText )
                 .textFill( this._bgTextFill )
+                .strokeWidth( this.strokeWidth() )
+                .strokeColor ( this.strokeColor() )
 
         }
 
