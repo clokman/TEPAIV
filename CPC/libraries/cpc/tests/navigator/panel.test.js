@@ -770,6 +770,209 @@ describe ('Getters and Setters', () => {
 
         })
 
+
+})
+
+
+//// Width ///////////////////////////////////////////////////////////////
+
+describe ('Width', () => {
+
+    test ('Get width', () => {
+
+        const {panelZero, childPanel, grandChildPanel} = initializeDomWith.panelZero.and.childAndGrandchild()
+
+        // Get default widths
+        expect( panelZero.width() ).toBe(100)
+        expect( childPanel.width() ).toBe(100)
+        expect( grandChildPanel.width() ).toBe(100)
+
+    })
+
+
+
+    test ('Children panel should shift rightward ', () => {
+
+        const {panelZero, childPanel, grandChildPanel} = initializeDomWith.panelZero.and.childAndGrandchild()
+
+        // Save default width
+        const defaultWidth = panelZero.width()
+
+        // Choose a new value for width
+        const newWidth = 225
+        expect( newWidth ).not.toBe( defaultWidth )
+
+        expect( _doChartsInPanelsOverlap(panelZero, childPanel) ).toBe( false )
+
+        // Modify width
+        panelZero.width( newWidth )
+
+        // Modification should have worked on the panel
+        expect( panelZero.width() ).toBe( newWidth )
+
+        // Other panels should not have changed with
+        expect( childPanel.width() ).toBe( defaultWidth )
+        expect( grandChildPanel.width() ).toBe( defaultWidth )
+
+        // Other panels should have shifted rightwards to accommodate
+        // ...the new width of the modified panel
+
+        expect( _doChartsInPanelsOverlap(panelZero, childPanel) ).toBe( false )
+        expect( _doChartsInPanelsOverlap(childPanel, grandChildPanel) ).toBe( false )
+
+    })
+
+
+    test ('Parent backgrounds should expand to accommodate new width', () => {
+
+        const {panelZero, childPanel, grandChildPanel} = initializeDomWith.panelZero.and.childAndGrandchild()
+
+        const panel0EncapsulatesPanel1 = () => panelZero.rightEdge() > childPanel.rightEdge()
+        const panel1EncapsulatesPanel2 = () => childPanel.rightEdge() > grandChildPanel.rightEdge()
+
+        // Initial state should have the right panel encapsulations
+        expect( panel0EncapsulatesPanel1() ).toBe(true)
+        expect( panel1EncapsulatesPanel2() ).toBe(true)
+
+
+        // Increase the width of a child panel
+        expect( grandChildPanel.width() ).not.toBe( 200 )
+        grandChildPanel.width(200).update(0)
+
+
+        // Post-modification state should also have the right panel encapsulations
+        expect( panel0EncapsulatesPanel1() ).toBe(true)
+        expect( panel1EncapsulatesPanel2() ).toBe(true)
+
+
+    })
+
+
+    test ('Siblings of parents should accommodate new width', () => {
+
+        jest.useFakeTimers()
+
+        const {
+            panelZero,
+            siblingPanel1, siblingPanel2, siblingPanel3,
+            childPanelOfSibling1, childPanelOfSibling2, childPanelOfSibling3
+        } = initializeDomWith.panelZero.and.twoSiblingChilrenThatEachHasOneChild()
+
+
+        // Modify deep child's width
+        expect( childPanelOfSibling1.width() ).not.toBe( 200 )
+        childPanelOfSibling1
+            .width( 200 )
+            .updateAllPanels()
+        jest.runOnlyPendingTimers()
+
+        // Sibling panels should not overlap
+        expect( siblingPanel1.rightEdge() < siblingPanel2.leftEdge() ).toBe( true )
+        expect( siblingPanel2.rightEdge() < siblingPanel3.leftEdge() ).toBe( true )
+
+        jest.runAllTimers()
+
+    })
+
+    test ('New children should initiate by taking the new width of parent into account', () => {
+
+        jest.useFakeTimers()
+
+        const panelZero = initializeDomWith.panelZero()
+
+        // Modify the width
+        expect( panelZero.width() ).not.toBe( 200 )
+        panelZero
+            .width(200)
+            .update(0)
+        jest.runOnlyPendingTimers()
+
+        // Add new panel
+        // Create child panel
+        const spawnObjectForChildPanel = panelZero.objects('gender').objects('female')
+        const childPanel = new navigator.NestedPanel(panelZero, spawnObjectForChildPanel)
+        childPanel
+            .bgText('childPanel')
+            .update(0)
+        jest.runOnlyPendingTimers()
+
+        jest.runAllTimers()
+
+        // There should be no overlaps
+        expect( panelZero.rightEdgeOfCharts() < childPanel.leftEdge() ).toBe( true )
+
+    })
+    
+    
+    test ('While they are initiating, new children of resized panels should push siblings of parents', () => {
+
+
+        const panelZero = initializeDomWith.panelZero()
+
+        // Resize panel zero
+        expect( panelZero.width() ).not.toBe( 200 )
+        panelZero
+            .width( 200 )
+            .update()
+
+        // Create the first sibling
+        let siblingPanel1
+        setTimeout( () => {
+            const spawnObjectForSiblingPanel1 = panelZero.objects('class').objects('first-class')
+            siblingPanel1 = new navigator.NestedPanel(panelZero, spawnObjectForSiblingPanel1)
+            siblingPanel1
+                .bgText('siblingPanel1')
+                .update(0)
+
+        }, 1000)
+        jest.runOnlyPendingTimers()
+
+
+        // Create the second sibling
+        let siblingPanel2
+        setTimeout( () => {
+            const spawnObjectForSiblingPanel2 = panelZero.objects('class').objects('second-class')
+            siblingPanel2 = new navigator.NestedPanel(panelZero, spawnObjectForSiblingPanel2, 'sibling')
+            siblingPanel2
+                .bgText('siblingPanel2')
+                .update(0)
+        }, 2000)
+        jest.runOnlyPendingTimers()
+
+        // Create a child of first sibling
+        let childPanelOfSibling1
+        setTimeout( () => {
+            let spawnObjectForChildPanelOfSibling1 = siblingPanel1.objects('gender').objects('male')
+            childPanelOfSibling1 = new navigator.NestedPanel(siblingPanel1, spawnObjectForChildPanelOfSibling1)
+            childPanelOfSibling1
+                .bgText('childPanelOfSibling1')
+                .update(0)
+        }, 4000)
+        jest.runOnlyPendingTimers()
+
+        writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/1.html')
+        expect( siblingPanel1.rightEdge() < siblingPanel2.leftEdge() ).toBe( true )
+        expect( childPanelOfSibling1.rightEdge() < siblingPanel2.leftEdge() ).toBe( true )
+
+
+
+
+    })
+    
+
+    function _doChartsInPanelsOverlap(panelA, panelB) {
+
+        const endPointOfChartsInPanelA = panelA.rightEdgeOfCharts()
+        const startingPointOfChartsInPanelB = panelB.leftEdgeOfCharts()
+
+        const panelAChartsEndBeforePanelBChartsStart = endPointOfChartsInPanelA < startingPointOfChartsInPanelB
+
+        const judgement = !panelAChartsEndBeforePanelBChartsStart
+        return judgement
+
+    }
+
+
 })
 
 

@@ -727,7 +727,7 @@
 
         _adjustAll(){
 
-            if (this._backgroundObject){
+            if ( !!this._backgroundObject ){
                 this._adjustBackgroundProperties()
             }
             this._adjustCategoryCaptions()
@@ -1332,8 +1332,6 @@
         }
 
 
-
-
     }
 
 
@@ -1480,7 +1478,7 @@
                            + siblingPanelOnLeftSide._outerPadding.right
                            + this._paddingBetweenSiblingPanels
 
-                        : this.parentPanel.x() + this._outerPadding.left,
+                        : this.parentPanel.x() + this.parentPanel.width(),
 
                     y: this.parentPanel.y() + this._outerPadding.top,
                     width: this.parentPanel.width() + this._outerPadding.right,
@@ -1522,7 +1520,7 @@
 
             const thereIsAChildPanel = (
                 !!thisPanel.childrenPanels
-                && thisPanel.childrenPanels.size
+                && !!thisPanel.childrenPanels.size
             )
 
 
@@ -1943,7 +1941,7 @@
 
                 rightwardSiblingsOfParent.forEach( ( siblingObjectOfParent, parentSiblingId ) => {
 
-                    const horizontalSpaceAddedByThisPanel = thisPanel.width() + thisPanel.parentPanel._innerPadding.right
+                    const horizontalSpaceAddedByThisPanel = thisPanel.postAnimationProperties.width + thisPanel.parentPanel._innerPadding.right
                     siblingObjectOfParent.x( siblingObjectOfParent.x() + horizontalSpaceAddedByThisPanel )
 
                 })
@@ -1986,6 +1984,71 @@
                         childPanelObject.x(newLocation)
 
                     })
+
+                    // BRIDGE object is not adjusted here because
+                    // ... it is managed by _adjustBridgeProperties method.
+
+                }
+
+                return this
+            }
+
+        }
+
+        width(value){
+
+            // Getter
+            if (!arguments.length){
+                return super.width()
+            }
+
+            // Setter
+            else{
+
+                // Save current width
+                const oldValue =  this.width()
+
+                // Find the x-coordinate difference this change will cause
+                const difference = this.has.beenFullyInstantiated
+                    ? value - oldValue
+                    : 0  // report no difference is this panel is just being created (because getting the difference between the default width and initial width is not desirable)
+
+                // Change width
+                super.width(value)
+
+                // Adjust child panels
+                if ( !!this.childrenPanels ){
+
+                    // Shift child panels to accommodate the difference
+                    this.childrenPanels.forEach( (childPanelObject, childPanelId) => {
+
+                        const oldLocation = childPanelObject.x()
+                        const newLocation = oldLocation + difference
+                        childPanelObject.x(newLocation)
+
+                    })
+
+                    // Adjust background extensions of parent panels to accommodate the new width
+                    const recursivelyAdjustParentPanelsAndTheirSiblings = (thisPanel=this) => {
+                        if (!!thisPanel.parentPanel){
+                            const parentPanel = thisPanel.parentPanel
+
+                            // Adjust background extensions of parent panels to accommodate the new width
+                            parentPanel
+                                .bgExtensionRight( parentPanel.bgExtensionRight() + difference )
+
+                            // Push parents of siblings rightward to make room for the new width
+                            if (!!parentPanel.has.siblingObjectsOnRightSide){
+                                parentPanel.has.siblingObjectsOnRightSide.forEach( (siblingObject) => {
+                                    siblingObject.x( siblingObject.x() + difference )
+                                    siblingObject.updateAllPanels()
+                                })
+                            }
+                            recursivelyAdjustParentPanelsAndTheirSiblings(parentPanel)
+                        }
+                    }
+                    recursivelyAdjustParentPanelsAndTheirSiblings()
+
 
                     // BRIDGE object is not adjusted here because
                     // ... it is managed by _adjustBridgeProperties method.
@@ -2083,7 +2146,7 @@
                 // Calculate variables
 
                 const rightEdgeOfPanelBeingAddedPanel =
-                    + this.postAnimationProperties.x  // because this.x() starts at a default location (e.g., off-screen)
+                    + this.postAnimationProperties.x  // because this.x() starts at a default location (e.g., off-screen) for the panel being added
                     + this.postAnimationProperties.width
 
 
@@ -2095,9 +2158,7 @@
 
                 const rightEdgeOfExistingRightmostSiblingOrSelf = (
                     !!existingRightmostSiblingOrSelfIfThereAreNoSiblings
-                        ? + existingRightmostSiblingOrSelfIfThereAreNoSiblings.x()
-                          + existingRightmostSiblingOrSelfIfThereAreNoSiblings.width()
-                          + existingRightmostSiblingOrSelfIfThereAreNoSiblings.bgExtensionRight()
+                        ? existingRightmostSiblingOrSelfIfThereAreNoSiblings.rightEdge()
                         : null
                 )
 
@@ -2125,7 +2186,7 @@
 
                 // Calculate the rightward bg extension value //
                 const newRightBgExtensionValueOfParent = (
-                    + newRightEdgeOfOfParentPanel
+                      newRightEdgeOfOfParentPanel
                     - rightmostEdgeOfParentPanelIfThereWereNoBgExtension
                     + thisPanel.parentPanel._innerPadding.right
                 )
