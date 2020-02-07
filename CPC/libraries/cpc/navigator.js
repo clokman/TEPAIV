@@ -637,12 +637,9 @@
 
             this._yAxisLabelsAreVisible = false
 
-
             this._outerPadding = {  // distance between parent and child panel in pixels
                 top: 15,
-                bottom: 38,
-                left: 100,
-                right: 0
+                bottom: 38
             }
 
 
@@ -1475,13 +1472,12 @@
 
                         ?    siblingPanelOnLeftSide.x()
                            + siblingPanelOnLeftSide.width()
-                           + siblingPanelOnLeftSide._outerPadding.right
                            + this._paddingBetweenSiblingPanels
 
                         : this.parentPanel.x() + this.parentPanel.width(),
 
                     y: this.parentPanel.y() + this._outerPadding.top,
-                    width: this.parentPanel.width() + this._outerPadding.right,
+                    width: this.parentPanel.width(),
                     height: this.parentPanel.height() - this._outerPadding.bottom
 
                 }
