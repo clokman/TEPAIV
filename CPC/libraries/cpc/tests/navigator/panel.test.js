@@ -43,6 +43,9 @@ global.arrayUtils = require("../../../utils/arrayUtils")
 global.classUtils = require("../../../utils/classUtils")
 global.stringUtils = require("../../../utils/stringUtils")
 
+// JEST EXTENSIONS //
+require("../../../../../JestUtils/jest-dom")
+
 // CPC CLASSES
 global.container = require("../../container")
 global.shape = require("../../shape")
@@ -2888,7 +2891,7 @@ describe ('Stroke', () => {
 
         test ('Get/set stroke width and color', () => {
 
-            const panel0 = initializeDomWithPanelZero()
+            const panel0 = initializeDomWith.panelZero()
 
             // GET //
 
@@ -2953,7 +2956,7 @@ describe ('Stroke', () => {
     
         test ('Child panels should inherit parent\'s stroke width and color', () => {
         
-            const panel0_0 = initializeDomWithPanelZero()
+            const panel0_0 = initializeDomWith.panelZero()
 
             // Check default values
             expect( panel0_0.strokeWidth() ).toBe( '0.5px' )
@@ -2983,8 +2986,8 @@ describe ('Stroke', () => {
 
         test ('Backgrounds: Panel backgrounds should have the right stroke width and color', () => {
 
-            const {panel0_0, panel1_0, panel2_0} = initializeDomWithPanelZeroChildAndGrandchild()
-            const panels = [panel0_0, panel1_0, panel2_0]
+            const {panelZero, childPanel, grandChildPanel} = initializeDomWith.panelZero.and.childAndGrandchild()
+            const panels = [panelZero, childPanel, grandChildPanel]
 
             // Check initial values
             const {bgStrokeWidths:defaultBgRectStrokeWidths, bgStokeColors:defaultBgRectStrokeColors} = getPropertiesOfBgObjects(panels)
@@ -2993,7 +2996,7 @@ describe ('Stroke', () => {
 
 
             // Change values
-            panel0_0
+            panelZero
                 .strokeWidth('4px')
                 .strokeColor('red')
                 .update(0)
@@ -3029,6 +3032,7 @@ describe ('Stroke', () => {
 
 })
 
+
 function getStrokeWidthsAndColors(panel0) {
 
     const strokeWidths = new Map()
@@ -3048,48 +3052,216 @@ function getStrokeWidthsAndColors(panel0) {
 }
 
 
-function initializeDomWithPanelZero() {
 
-    initializeDomWithSvg()
 
-    jest.useFakeTimers()
+let initializeDomWith = {
 
-    // Create panel 0
-    const panel0_0 = new navigator.NestedPanel()
-        .bgFill('#deebf7')
-        .x(200).y(25)
-        .yAxisLabels(true)
-        .update(0)
-    jest.runOnlyPendingTimers()
+    panelZero: function() {
 
-    return panel0_0
+        jest.useFakeTimers()
+
+        initializeDomWithSvg()
+
+
+        // Create panel 0
+        const panelZero = new navigator.NestedPanel()
+            .bgFill('#deebf7')
+            .x(200).y(25)
+            .yAxisLabels(true)
+            .bgText('panelZero')
+            .update(0)
+
+        jest.runAllTimers()
+
+        return panelZero
+    }
+
+}
+
+
+initializeDomWith.panelZero.and = {
+
+    child : function(){
+
+        jest.useFakeTimers()
+
+        const panelZero = initializeDomWith.panelZero()
+
+        // Create child panel
+        const spawnObjectForChildPanel = panelZero.objects('gender').objects('female')
+        const childPanel = new navigator.NestedPanel(panelZero, spawnObjectForChildPanel)
+        childPanel
+            .bgText('childPanel')
+            .update(0)
+
+        jest.runOnlyPendingTimers()
+
+        return {panelZero, childPanel}
+
+    },
+
+
+    childAndGrandchild: function() {
+
+        jest.useFakeTimers()
+
+        const {panelZero, childPanel} = initializeDomWith.panelZero.and.child()
+
+        jest.runOnlyPendingTimers()
+
+
+        // Create grandchild panel
+        let grandChildPanel  // declaration must be outside the setTimer function
+        setTimeout(() => {
+            const spawnObjectForGrandChildPanel = childPanel.objects('class').objects('first-class')
+            grandChildPanel = new navigator.NestedPanel(childPanel, spawnObjectForGrandChildPanel)
+            grandChildPanel
+                .bgText('grandChildPanel')
+                .update(0)
+
+        }, 1000)
+        jest.runOnlyPendingTimers()
+
+        jest.runAllTimers()
+
+        return {panelZero, childPanel, grandChildPanel}
+
+    },
+
+
+    threeSiblingChildren: function(){
+
+        jest.useFakeTimers()
+
+        const panelZero = initializeDomWith.panelZero()
+
+        // Create the first sibling
+        let siblingPanel1
+        setTimeout( () => {
+            const spawnObjectForSiblingPanel1 = panelZero.objects('class').objects('first-class')
+            siblingPanel1 = new navigator.NestedPanel(panelZero, spawnObjectForSiblingPanel1)
+            siblingPanel1
+                .bgText('siblingPanel1')
+                .update(0)
+
+        }, 1000)
+        jest.runOnlyPendingTimers()
+
+
+        // Create the second sibling
+        let siblingPanel2
+        setTimeout( () => {
+            const spawnObjectForSiblingPanel2 = panelZero.objects('class').objects('second-class')
+            siblingPanel2 = new navigator.NestedPanel(panelZero, spawnObjectForSiblingPanel2, 'sibling')
+            siblingPanel2
+                .bgText('siblingPanel2')
+                .update(0)
+        }, 2000)
+        jest.runOnlyPendingTimers()
+
+
+        // Create the third sibling
+        let siblingPanel3
+        setTimeout( () => {
+            const spawnObjectForSiblingPanel3 = panelZero.objects('class').objects('third-class')
+            siblingPanel3 = new navigator.NestedPanel(panelZero, spawnObjectForSiblingPanel3, 'sibling')
+            siblingPanel3
+                .bgText('siblingPanel3')
+                .update(0)
+        }, 3000)
+        jest.runOnlyPendingTimers()
+
+
+        jest.runAllTimers()
+
+        return {panelZero, siblingPanel1, siblingPanel2, siblingPanel3}
+    },
+
+
+    twoSiblingChilrenThatEachHasOneChild: function(){
+
+        jest.useFakeTimers()
+
+        const {panelZero, siblingPanel1, siblingPanel2, siblingPanel3} = initializeDomWith.panelZero.and.threeSiblingChildren()
+
+
+        // Create the child of first sibling
+        let childPanelOfSibling1
+        setTimeout( () => {
+            let spawnObjectForChildPanelOfSibling1 = siblingPanel1.objects('gender').objects('male')
+            childPanelOfSibling1 = new navigator.NestedPanel(siblingPanel1, spawnObjectForChildPanelOfSibling1)
+            childPanelOfSibling1
+                .bgText('childPanelOfSibling1')
+                .update(0)
+        }, 4000)
+        jest.runOnlyPendingTimers()
+
+
+        // Create the child of second sibling)
+        let childPanelOfSibling2
+        setTimeout( () => {
+            let spawnObjectForChildPanelOfSibling2 = siblingPanel2.objects('gender').objects('male')
+            childPanelOfSibling2 = new navigator.NestedPanel(siblingPanel2, spawnObjectForChildPanelOfSibling2)
+            childPanelOfSibling2
+                .bgText('childPanelOfSibling2')
+                .update(0)
+        }, 5000)
+        jest.runOnlyPendingTimers()
+
+
+        // Create the child of third sibling)
+        let childPanelOfSibling3
+        setTimeout( () => {
+            let spawnObjectForChildPanelOfSibling3 = siblingPanel3.objects('gender').objects('male')
+            childPanelOfSibling3 = new navigator.NestedPanel(siblingPanel3, spawnObjectForChildPanelOfSibling3)
+            childPanelOfSibling3
+                .bgText('childPanelOfSibling3')
+                .update(0)
+        }, 6000)
+        jest.runOnlyPendingTimers()
+
+
+        jest.runAllTimers()
+
+        return  {panelZero, siblingPanel1, siblingPanel2, siblingPanel3, childPanelOfSibling1, childPanelOfSibling2, childPanelOfSibling3}
+
+    }
+
 }
 
 
-function initializeDomWithPanelZeroChildAndGrandchild() {
 
-    const panel0_0 = initializeDomWithPanelZero()
+//// initializeDomWith... ///////////////////////////////////////////////////////////////
 
-    // Create panel-1-0 (child)
-    const spawnObjectForPanel1_0 = panel0_0.objects('gender').objects('female')
-    const panel1_0 = new navigator.NestedPanel(panel0_0, spawnObjectForPanel1_0)
-    panel1_0.update()
-    jest.runOnlyPendingTimers()
+describe ('initializeDomWith...', () => {
 
 
-    // Create panel-2-0 (grandchild)
-    let panel2_0  // declaration must be outside the setTimer function
-    setTimeout(() => {
-        const spawnObjectForPanel2_0 = panel1_0.objects('class').objects('first-class')
-        panel2_0 = new navigator.NestedPanel(panel1_0, spawnObjectForPanel2_0)
-        panel2_0.update()
+    test ('initializeDomWith.panelZero.and.child', () => {
+        // Uncomment to write html output to file
+        // initializeDomWith.panelZero.and.child()
+        // writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/initializeDomWith.panelZero.and.child.html')
+    })
 
-    }, 1000)
-    jest.runOnlyPendingTimers()
+    test ('initializeDomWith.panelZero.and.childAndGrandchild', () => {
+        // Uncomment to write html output to file
+        // initializeDomWith.panelZero.and.childAndGrandchild()
+        // writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/initializeDomWith.panelZero.and.childAndGrandchild.html')
+    })
 
-    return {panel0_0, panel1_0, panel2_0}
+    test ('initializeDomWith.panelZero.and.threeSiblingChildren', () => {
+        // Uncomment to write html output to file
+        // initializeDomWith.panelZero.and.threeSiblingChildren()
+        // writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/initializeDomWith.panelZero.and.threeSiblingChildren.html')
+    })
 
 
+    test ('initializeDomWith.panelZero.and.twoSiblingChilrenThatEachHasOneChild', () => {
+        // Uncomment to write html output to file
+        // initializeDomWith.panelZero.and.twoSiblingChilrenThatEachHasOneChild()
+        // writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/initializeDomWith.panelZero.and.twoSiblingChilrenThatEachHasOneChild.html')
+    })
 
 
-}
+})
+
+
