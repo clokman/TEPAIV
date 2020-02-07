@@ -660,10 +660,10 @@
             }
 
             // Formulas
-            this._innerX = () => this._x + this._innerPadding.left
-            this._innerY = () => this._y + this._innerPadding.top
-            this._innerWidth = () => this._width - this._innerPadding.left - this._innerPadding.right
-            this._innerHeight = () => this._height - this._innerPadding.top - this._innerPadding.bottom
+            this.innerX = () => this._x + this._innerPadding.left
+            this.innerY = () => this._y + this._innerPadding.top
+            this.innerWidth = () => this._width - this._innerPadding.left - this._innerPadding.right
+            this.innerHeight = () => this._height - this._innerPadding.top - this._innerPadding.bottom
             this.rightEdge = () => this.x() + this.width() + this.bgExtensionRight()
             this.leftEdge = () => this.x() - this.bgExtensionLeft()
             this.rightEdgeOfCharts = () => this.rightEdge() - this._innerPadding.right - this.bgExtensionRight()
@@ -742,9 +742,9 @@
                     const currentColorScheme = color.getChartSchemeBySchemeSetNameAndCircularIndex(this._colorTheme, i)
 
                     chartObject
-                        .x( this._innerX() )
+                        .x( this.innerX() )
                         .y( this._yScale(i) )
-                        .width( this._innerWidth() )
+                        .width( this.innerWidth() )
                         .height( this._chartHeights() )
                         .colorScheme( currentColorScheme )
                         .strokeWidth( this._strokeWidth )
@@ -807,10 +807,10 @@
                     const chart = new Chart(this.select())
                         .stack(eachStack)
                         .id(eachStackId)
-                        .x(this._innerX())
+                        .x(this.innerX())
                         .y(this._yScale(i))
                         .height(this._chartHeights())
-                        .width(this._innerWidth())
+                        .width(this.innerWidth())
                         .colorScheme(color.getChartSchemeBySchemeSetNameAndCircularIndex(this._colorTheme, i))
                         .update(0)
 
@@ -859,9 +859,9 @@
 
         _chartHeights() {
 
-            const totalPaddingBetweenCharts = this._innerHeight() * this._defaults.paddingBetweenCharts
+            const totalPaddingBetweenCharts = this.innerHeight() * this._defaults.paddingBetweenCharts
 
-            const chartHeights = (this._innerHeight() - totalPaddingBetweenCharts) / this._chartCount()
+            const chartHeights = (this.innerHeight() - totalPaddingBetweenCharts) / this._chartCount()
             const roundedChartHeights = Math.round(chartHeights)
 
             return roundedChartHeights
@@ -870,8 +870,8 @@
 
         _yScale(value) {
 
-            const rangeStart = this._innerY() + this._innerHeight()
-            const rangeEnd = this._innerY()
+            const rangeStart = this.innerY() + this.innerHeight()
+            const rangeEnd = this.innerY()
 
             const yScale = d3.scaleBand()
                 .domain(d3.range(this._chartCount()))
