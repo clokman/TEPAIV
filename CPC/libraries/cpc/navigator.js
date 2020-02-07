@@ -1469,7 +1469,7 @@
 
                 const siblingPanelOnLeftSide = this.has.parentWithRightmostChildPanelObject
 
-                this.postAnimationProperties = {
+                this.postCreationAnimationProperties = {
 
                     x: this.has.beenAddedAsSibling
 
@@ -1771,7 +1771,7 @@
                 const leftEdgeOfThisPanel = (
                     this.has.beenFullyInstantiated
                         ? this.x()
-                        : this.postAnimationProperties.x
+                        : this.postCreationAnimationProperties.x
                 )
                 const distanceBetweenThisPanelBackgroundAndParentPanelCharts = leftEdgeOfThisPanel - ( rightEdgeOfChartsInParentPanel)
 
@@ -1892,9 +1892,9 @@
 
                 // Move child panel cover on top of bridge
                 childPanelCover
-                    .x( this.postAnimationProperties.x )
+                    .x( this.postCreationAnimationProperties.x )
                     .y( this._bridgeObject.y() )
-                    .width( this.postAnimationProperties.width )
+                    .width( this.postCreationAnimationProperties.width )
                     .height( this._bridgeObject.height() )
                     .update( 0 )
 
@@ -1907,10 +1907,10 @@
             setTimeout(() => {
 
                 childPanelCover
-                    .x( this.postAnimationProperties.x )
-                    .y( this.postAnimationProperties.y )
-                    .height( this.postAnimationProperties.height )
-                    .width( this.postAnimationProperties.width )
+                    .x( this.postCreationAnimationProperties.x )
+                    .y( this.postCreationAnimationProperties.y )
+                    .height( this.postCreationAnimationProperties.height )
+                    .width( this.postCreationAnimationProperties.width )
                     .update( this._animation.duration.maximizePanelCover )
 
             }, this._animation.duration.extendBridge)  // do after bridge is extended
@@ -1922,10 +1922,10 @@
                 childPanelCover.remove()
 
                 // Modify current panel's properties to fit it to the room created in parent panel
-                this.x( this.postAnimationProperties.x )
-                    .y( this.postAnimationProperties.y )
-                    .width( this.postAnimationProperties.width )
-                    .height( this.postAnimationProperties.height )
+                this.x( this.postCreationAnimationProperties.x )
+                    .y( this.postCreationAnimationProperties.y )
+                    .width( this.postCreationAnimationProperties.width )
+                    .height( this.postCreationAnimationProperties.height )
                     .update( 0 )
 
             }, this._animation.duration.extendBridge + this._animation.duration.maximizePanelCover)  // do after bridge extended and cover is maximized
@@ -1941,7 +1941,7 @@
 
                 rightwardSiblingsOfParent.forEach( ( siblingObjectOfParent, parentSiblingId ) => {
 
-                    const horizontalSpaceAddedByThisPanel = thisPanel.postAnimationProperties.width + thisPanel.parentPanel._innerPadding.right
+                    const horizontalSpaceAddedByThisPanel = thisPanel.postCreationAnimationProperties.width + thisPanel.parentPanel._innerPadding.right
                     siblingObjectOfParent.x( siblingObjectOfParent.x() + horizontalSpaceAddedByThisPanel )
 
                 })
@@ -2146,8 +2146,8 @@
                 // Calculate variables
 
                 const rightEdgeOfPanelBeingAddedPanel =
-                    + this.postAnimationProperties.x  // because this.x() starts at a default location (e.g., off-screen) for the panel being added
-                    + this.postAnimationProperties.width
+                    + this.postCreationAnimationProperties.x  // because this.x() starts at a default location (e.g., off-screen) for the panel being added
+                    + this.postCreationAnimationProperties.width
 
 
                 const existingRightmostSiblingOrSelfIfThereAreNoSiblings = (
@@ -2492,7 +2492,7 @@
 
             // Change the color of the copy background
             siblingBackgroundCover
-                .width(this.postAnimationProperties.width)
+                .width(this.postCreationAnimationProperties.width)
                 .fill(this.objectToSpawnFrom.fill())
                 .update(duration)
 
