@@ -662,10 +662,17 @@
                 extraPaddingForLeftEdgeOfPanel0Bg: this._defaults.innerPadding.extraPaddingForLeftEdgeOfPanel0Bg
             }
 
+            // Formulas
             this._innerX = () => this._x + this._innerPadding.left
             this._innerY = () => this._y + this._innerPadding.top
             this._innerWidth = () => this._width - this._innerPadding.left - this._innerPadding.right
             this._innerHeight = () => this._height - this._innerPadding.top - this._innerPadding.bottom
+            this.rightEdge = () => this.x() + this.width() + this.bgExtensionRight()
+            this.leftEdge = () => this.x() - this.bgExtensionLeft()
+            this.rightEdgeOfCharts = () => this.rightEdge() - this._innerPadding.right - this.bgExtensionRight()
+            this.leftEdgeOfCharts = () => this.x() + this._innerPadding.left
+
+
 
             this._colorTheme = 'Single-Hue'
 

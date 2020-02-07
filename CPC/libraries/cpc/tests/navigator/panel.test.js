@@ -587,6 +587,117 @@ describe ('Value Inferences and Adjustments', () => {
 
     })
 
+    test ('Right edge', () => {
+
+        const {panelZero, childPanel, grandChildPanel} = initializeDomWith.panelZero.and.childAndGrandchild()
+
+        // Get right edges
+        expect( panelZero.rightEdge() ).toBe( 520 )
+        expect( childPanel.rightEdge() ).toBe( 510 )
+        expect( grandChildPanel.rightEdge() ).toBe( 500 )
+
+        // Get the actual right edges from DOM
+        const panelZeroXCoordinateOnDom = document.querySelector( '#panel-0-0 .background rect' ).getAttribute('x')
+        const panelZeroWidthOnDom = document.querySelector( '#panel-0-0 .background rect' ).getAttribute('width')
+
+        const panelOneXCoordinateOnDom = document.querySelector( '#panel-1-0 .background rect' ).getAttribute('x')
+        const panelOneWidthOnDom = document.querySelector( '#panel-1-0 .background rect' ).getAttribute('width')
+
+        const panelTwoXCoordinateOnDom = document.querySelector( '#panel-2-0 .background rect' ).getAttribute('x')
+        const panelTwoWidthOnDom = document.querySelector( '#panel-2-0 .background rect' ).getAttribute('width')
+
+        const panelZeroRightEdgeOnDom = Number(panelZeroXCoordinateOnDom) + Number(panelZeroWidthOnDom)
+        const panelOneRightEdgeOnDom = Number(panelOneXCoordinateOnDom) + Number(panelOneWidthOnDom)
+        const panelTwoRightEdgeOnDom = Number(panelTwoXCoordinateOnDom) + Number(panelTwoWidthOnDom)
+
+
+        expect( panelZero.rightEdge() ).toBe( panelZeroRightEdgeOnDom )
+        expect( childPanel.rightEdge() ).toBe( panelOneRightEdgeOnDom )
+        expect( grandChildPanel.rightEdge() ).toBe( panelTwoRightEdgeOnDom )
+
+    })
+
+
+    test ('Left edge', () => {
+
+        const {panelZero, childPanel, grandChildPanel} = initializeDomWith.panelZero.and.childAndGrandchild()
+
+        expect( panelZero.leftEdge() ).toBe( 97 )
+        expect( childPanel.leftEdge() ).toBe( 300 )
+        expect( grandChildPanel.leftEdge() ).toBe( 400 )
+
+
+
+        // Get the actual left edges from DOM
+        const panelZeroXCoordinateOnDom = document.querySelector( '#panel-0-0 .background rect' ).getAttribute('x')
+        const panelOneXCoordinateOnDom = document.querySelector( '#panel-1-0 .background rect' ).getAttribute('x')
+        const panelTwoXCoordinateOnDom = document.querySelector( '#panel-2-0 .background rect' ).getAttribute('x')
+
+        const panelZeroLeftEdgeOnDom = Number(panelZeroXCoordinateOnDom)
+        const panelOneLeftEdgeOnDom = Number(panelOneXCoordinateOnDom)
+        const panelTwoLeftEdgeOnDom = Number(panelTwoXCoordinateOnDom)
+
+        expect( panelZero.leftEdge() ).toBe( panelZeroLeftEdgeOnDom )
+        expect( childPanel.leftEdge() ).toBe( panelOneLeftEdgeOnDom )
+        expect( grandChildPanel.leftEdge() ).toBe( panelTwoLeftEdgeOnDom )
+
+    })
+    
+    test ('Get right edge of charts', () => {
+
+        const {panelZero, childPanel, grandChildPanel} = initializeDomWith.panelZero.and.childAndGrandchild()
+
+        expect( panelZero.rightEdgeOfCharts() ).toBe( 290 )
+        expect( childPanel.rightEdgeOfCharts() ).toBe( 390 )
+        expect( grandChildPanel.rightEdgeOfCharts() ).toBe( 490 )
+
+
+        const xCoordinateOfOneChartInPanel0_fromDom = document.querySelector( '#panel-0-0 .chart rect' ).getAttribute('x')
+        const widthOfOneChartInPanel0_fromDom = document.querySelector( '#panel-0-0 .chart rect' ).getAttribute('width')
+
+        const xCoordinateOfOneChartInPanel1_fromDom = document.querySelector( '#panel-1-0 .chart rect' ).getAttribute('x')
+        const widthOfOneChartInPanel1_fromDom = document.querySelector( '#panel-1-0 .chart rect' ).getAttribute('width')
+
+        const xCoordinateOfOneChartInPanel2_fromDom = document.querySelector( '#panel-2-0 .chart rect' ).getAttribute('x')
+        const widthOfOneChartInPanel2_fromDom = document.querySelector( '#panel-2-0 .chart rect' ).getAttribute('width')
+
+
+        const rightEdgeOfOneChartInPanel0_fromDom = Number( xCoordinateOfOneChartInPanel0_fromDom )  + Number( widthOfOneChartInPanel0_fromDom )
+        const rightEdgeOfOneChartInPanel1_fromDom = Number( xCoordinateOfOneChartInPanel1_fromDom )  + Number( widthOfOneChartInPanel1_fromDom )
+        const rightEdgeOfOneChartInPanel2_fromDom = Number( xCoordinateOfOneChartInPanel2_fromDom )  + Number( widthOfOneChartInPanel2_fromDom )
+
+        // Compare values calculated from the instance and from DOM
+        expect( panelZero.rightEdgeOfCharts() ).toBe( rightEdgeOfOneChartInPanel0_fromDom )
+        expect( childPanel.rightEdgeOfCharts() ).toBe( rightEdgeOfOneChartInPanel1_fromDom )
+        expect( grandChildPanel.rightEdgeOfCharts() ).toBe( rightEdgeOfOneChartInPanel2_fromDom )
+
+    })
+
+
+    test ('Get left edge of charts', () => {
+
+        const {panelZero, childPanel, grandChildPanel} = initializeDomWith.panelZero.and.childAndGrandchild()
+
+        expect( panelZero.leftEdgeOfCharts() ).toBe( 210 )
+        expect( childPanel.leftEdgeOfCharts() ).toBe( 310 )
+        expect( grandChildPanel.leftEdgeOfCharts() ).toBe( 410 )
+
+
+        const xCoordinateOfOneChartInPanel0_fromDom = document.querySelector( '#panel-0-0 .chart rect' ).getAttribute('x')
+        const xCoordinateOfOneChartInPanel1_fromDom = document.querySelector( '#panel-1-0 .chart rect' ).getAttribute('x')
+        const xCoordinateOfOneChartInPanel2_fromDom = document.querySelector( '#panel-2-0 .chart rect' ).getAttribute('x')
+
+        const leftEdgeOfOneChartInPanel0_fromDom = Number( xCoordinateOfOneChartInPanel0_fromDom )
+        const leftEdgeOfOneChartInPanel1_fromDom = Number( xCoordinateOfOneChartInPanel1_fromDom )
+        const leftEdgeOfOneChartInPanel2_fromDom = Number( xCoordinateOfOneChartInPanel2_fromDom )
+
+        // Compare values calculated from the instance and from DOM
+        expect( panelZero.leftEdgeOfCharts() ).toBe( leftEdgeOfOneChartInPanel0_fromDom )
+        expect( childPanel.leftEdgeOfCharts() ).toBe( leftEdgeOfOneChartInPanel1_fromDom )
+        expect( grandChildPanel.leftEdgeOfCharts() ).toBe( leftEdgeOfOneChartInPanel2_fromDom )
+
+    })
+
 })
 
 
