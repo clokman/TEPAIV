@@ -483,11 +483,11 @@
 
                 // Remove panels
                 this.objects().forEach( (panelObject, panelName) => {
-                    
+
                     if ( panelObject.depthIndex() > this._lastClickedPanelDepth ){
                         panelObject.remove()
                     }
-                    
+
                 })
 
                 // Clear object registry from the removed panels
@@ -499,20 +499,20 @@
 
 
         showAbsoluteValues(value) {
-        
+
             // Getter
             if (!arguments.length){
                 return this._showAbsoluteValues
             }
-        
+
             // Setter
             else{
                 value.mustBeOfType('Boolean')
                 this._showAbsoluteValues = value
-                
+
                 return this
             }
-            
+
         }
 
 
@@ -538,15 +538,15 @@
            if (!arguments.length){
                return this._animationDuration
            }
-       
+
            // Setter
            else{
                value.mustBeOfType('Number')
                this._animationDuration = value
-               
+
                return this
            }
-           
+
        }
 
         strokeWidth(value){
@@ -1135,7 +1135,7 @@
             if (!arguments.length){
                 return this._showAbsoluteValues
             }
-        
+
             // Setter
             else{
                 value.mustBeOfType('Boolean')
@@ -1144,7 +1144,7 @@
 
                 return this
             }
-            
+
         }
 
 
@@ -1502,7 +1502,7 @@
             setTimeout( () => {
                 this.has.beenFullyInstantiated = true
             }, this.animationDuration() )
-            
+
         }
 
 
@@ -2062,20 +2062,20 @@
 
 
         absoluteChartWidths(value) {
-        
+
             // Getter
             if (!arguments.length){
                 return this._absoluteChartWidths
             }
-        
+
             // Setter
             else{
                 value.mustBeOfType('Boolean')
                 this._absoluteChartWidths = value
-                
+
                 return this
             }
-            
+
         }
 
 
