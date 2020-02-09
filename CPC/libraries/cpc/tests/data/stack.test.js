@@ -526,6 +526,7 @@ test ('Convert a map object to a Stack', () => {
     const myStack = new data.Stack()
     myStack.fromShallowMap(myMap)
 
+
     expectTable(myStack.data().get('1st class'), `\
 ┌───────────────────┬──────────────┬─────────────┐
 │ (iteration index) │     Key      │   Values    │
@@ -560,3 +561,17 @@ test ('Convert a map object to a Stack', () => {
 
 })
 
+
+//// Statistics ///////////////////////////////////////////////////////////////
+
+describe ('Statistics', () => {
+   
+        test ('Total count in stack', () => {
+
+            const myStack = new data.Stack()
+
+            expect( myStack.total() ).toBe( 990 )
+
+        })
+
+})

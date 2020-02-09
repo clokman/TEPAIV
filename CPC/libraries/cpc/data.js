@@ -224,6 +224,20 @@ class Stack {
     }
 
 
+    total(){
+
+        let total = 0
+
+        this.data().forEach( (categoryData, categoryName) => {
+            
+            let count = categoryData.get('count')
+            total += count
+            
+        })
+
+        return total
+    }
+
     max(){
 
         let ends = []
