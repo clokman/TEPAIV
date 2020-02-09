@@ -3419,6 +3419,12 @@
                 return this
             }
         }
+
+        totalCount(){
+
+            return this.stack().totalCount()
+
+        }
     }
 
 

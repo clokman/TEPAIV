@@ -410,6 +410,24 @@ describe ('ABSOLUTE VALUES: Toggle absolute values', () => {
 
 
 
+
+//// Statistics ///////////////////////////////////////////////////////////////
+
+describe ('Statistics', () => {
+
+    test ('Total count', () => {
+
+        initializeDomWithSvg()
+        const myChart = new navigator.Chart()
+
+        expect( myChart.totalCount() ).toBe( 990 )
+
+
+    })
+
+})
+
+
 //// STROKE WIDTH AND COLOR ///////////////////////////////////////////////////////////////
 
 describe ('Stroke width and color', () => {
