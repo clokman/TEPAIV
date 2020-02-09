@@ -224,7 +224,7 @@ class Stack {
     }
 
 
-    total(){
+    totalCount(){
 
         let total = 0
 

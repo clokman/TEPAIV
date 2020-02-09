@@ -570,7 +570,7 @@ describe ('Statistics', () => {
 
             const myStack = new data.Stack()
 
-            expect( myStack.total() ).toBe( 990 )
+            expect( myStack.totalCount() ).toBe( 990 )
 
         })
 
