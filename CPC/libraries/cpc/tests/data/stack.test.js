@@ -566,12 +566,34 @@ test ('Convert a map object to a Stack', () => {
 
 describe ('Statistics', () => {
    
-        test ('Total count in stack', () => {
+        test ('Total counts in various example stack data', () => {
 
-            const myStack = new data.Stack()
-
+            // Generic example summary
+            const myStack = new data.Stack()  // populated with 'generic' stack
             expect( myStack.totalCount() ).toBe( 990 )
 
+            // Generic example summary with spaced names
+            myStack.populateWithExampleData('generic with spaces in category names')
+            expect( myStack.totalCount() ).toBe( 990 )
+
+            // Titanic gender summary
+            myStack.populateWithExampleData('gender')
+            expect( myStack.totalCount() ).toBe( 1309 )
+
+            // Titanic class summary
+            myStack.populateWithExampleData('class')
+            expect( myStack.totalCount() ).toBe( 1309 )
+
+            // Titanic status summary
+            myStack.populateWithExampleData('status')
+            expect( myStack.totalCount() ).toBe( 1309 )
+
         })
+
+
+
+
+
+
 
 })
