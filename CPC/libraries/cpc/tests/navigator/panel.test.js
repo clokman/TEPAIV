@@ -978,6 +978,43 @@ describe ('Width', () => {
 
 
 
+//// Absolute Chart Widths ///////////////////////////////////////////////////////////////
+
+describe ('Absolute Chart Widths', () => {
+   
+        test ('Set/get absolute chart widths', () => {
+        
+            const panelZero = initializeDomWith.panelZero()
+
+
+            // Default value should be false
+            expect( panelZero.absoluteChartWidths() ).toBe( false )
+
+            // Change value
+            panelZero.absoluteChartWidths(true)
+            expect( panelZero.absoluteChartWidths() ).toBe( true )
+
+
+        })
+
+
+        test ('When absolute chart widths are on, charts should have the right proportions on DOM', () => {
+
+            const {panelZero, childPanel} = initializeDomWith.panelZero.and.child()
+
+            // Turn on absolute chart widths
+            panelZero.absoluteChartWidths(true)
+
+            expect( panelZero.innerWidth() > childPanel.innerWidth() ).toBe( true )
+            // expect( panelZero.data )
+
+        })
+
+
+
+})
+
+
 //// Data Operations ///////////////////////////////////////////////////////////////
 
 describe ('Data Operations', () => {

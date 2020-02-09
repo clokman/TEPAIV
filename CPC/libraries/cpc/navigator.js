@@ -1346,6 +1346,10 @@
                 addAs: addAs
             }
 
+            // Parameters
+            this._absoluteChartWidths = false
+
+
 
             this.childrenPanels = new Map()
             this._bridgeObject = null
@@ -2055,6 +2059,25 @@
             }
 
         }
+
+
+        absoluteChartWidths(value) {
+        
+            // Getter
+            if (!arguments.length){
+                return this._absoluteChartWidths
+            }
+        
+            // Setter
+            else{
+                value.mustBeOfType('Boolean')
+                this._absoluteChartWidths = value
+                
+                return this
+            }
+            
+        }
+
 
         _recursivelyAdjustAndUpdateDOWNSTREAM(thisPanel=this, transitionDuration){
 
