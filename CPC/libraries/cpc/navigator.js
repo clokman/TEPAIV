@@ -2799,7 +2799,7 @@
 
             // Get data
             if (parameterIsNull) {
-                return this._domainStack.data()
+                return this._domainStack
             }
 
 

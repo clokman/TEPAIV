@@ -242,7 +242,7 @@ test ('Should get stack data', () => {
 
     const myChart = new navigator.Chart()
 
-    expect(myChart.stack().size).toBe(3)
+    expect(myChart.stack().data().size).toBe(3)
 
 })
 
@@ -252,7 +252,7 @@ test ('Should query the stack data', () => {
     const myChart = new navigator.Chart()
 
     // Get first, query later manually
-    expect(myChart.stack().get('category-1').get('label'))
+    expect(myChart.stack().data().get('category-1').get('label'))
         .toBe('Category One')
 
     // Directly query by giving a parameter to to method
@@ -283,9 +283,9 @@ test ('Should update stack data and also the related instance variables', () => 
     myChart.stack(myStack)
 
     // Probe to see if data is correctly updated
-    expect(myChart.stack().size).toBe(2)
+    expect(myChart.stack().data().size).toBe(2)
 
-    expect(myChart.stack().get('female').get('label'))
+    expect(myChart.stack().data().get('female').get('label'))
         .toBe('Female')
     expect(myChart.stack('female').get('start'))
         .toBe(64)
