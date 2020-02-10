@@ -1127,6 +1127,137 @@ describe ('Data Operations', () => {
     })
 
 
+    test ('Load data into panel', async () => {
+
+        // Create panel zero
+        const panelZero = new navigator.Panel()
+            .bgText('panelZero')
+            .update(0)
+
+        // Save a definitive property of exaple dataset for later comparison
+        const largestTotalCountOfExampleData =  panelZero.stacks().largestTotalCount()
+
+        // Load a dataset to panel
+        await panelZero
+            .loadDataset('http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv', 'Name')
+
+        // Data should have been loaded correctly
+        expect( panelZero.stacks().data() ).toTabulateAs(`\
+┌───────────────────┬──────────┬──────────────────────────────────────────────┐
+│ (iteration index) │   Key    │                    Values                    │
+├───────────────────┼──────────┼──────────────────────────────────────────────┤
+│         0         │ 'Ticket' │ Stack { _data: [Map], _scaleFunction: null } │
+│         1         │ 'Status' │ Stack { _data: [Map], _scaleFunction: null } │
+│         2         │ 'Gender' │ Stack { _data: [Map], _scaleFunction: null } │
+└───────────────────┴──────────┴──────────────────────────────────────────────┘`)
+
+        // The data should not be of the example dataset loaded to panel on initialization.
+        // Check this by comparing a definitive feature of the two datasets
+        expect ( largestTotalCountOfExampleData ).not.toBe( 100 )
+        expect ( panelZero.largestTotalCount() ).toBe( 100 )
+
+
+        // New dataset should be visualized on DOM
+        panelZero.update()
+        expect( panelZero.objects() ).toTabulateAs(`\
+┌───────────────────┬──────────┬─────────┐
+│ (iteration index) │   Key    │ Values  │
+├───────────────────┼──────────┼─────────┤
+│         0         │ 'Ticket' │ [Chart] │
+│         1         │ 'Status' │ [Chart] │
+│         2         │ 'Gender' │ [Chart] │
+└───────────────────┴──────────┴─────────┘`)
+
+
+    })
+
+    test ('Load a few datasets in tandem', async () => {
+
+        // Create panel zero
+        const panelZero = new navigator.Panel()
+            .bgText('panelZero')
+            .update(0)
+
+        // Load a dataset to panel
+        await panelZero.loadDataset('http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv', 'Name')
+
+        // Data should have been loaded correctly
+        expect( panelZero.stacks().data() ).toTabulateAs(`\
+┌───────────────────┬──────────┬──────────────────────────────────────────────┐
+│ (iteration index) │   Key    │                    Values                    │
+├───────────────────┼──────────┼──────────────────────────────────────────────┤
+│         0         │ 'Ticket' │ Stack { _data: [Map], _scaleFunction: null } │
+│         1         │ 'Status' │ Stack { _data: [Map], _scaleFunction: null } │
+│         2         │ 'Gender' │ Stack { _data: [Map], _scaleFunction: null } │
+└───────────────────┴──────────┴──────────────────────────────────────────────┘`)
+
+        // New dataset should be visualized on DOM
+        panelZero.update()
+        expect( panelZero.objects() ).toTabulateAs(`\
+┌───────────────────┬──────────┬─────────┐
+│ (iteration index) │   Key    │ Values  │
+├───────────────────┼──────────┼─────────┤
+│         0         │ 'Ticket' │ [Chart] │
+│         1         │ 'Status' │ [Chart] │
+│         2         │ 'Gender' │ [Chart] │
+└───────────────────┴──────────┴─────────┘`)
+
+
+        // Load another dataset
+        await panelZero.loadDataset('http://localhost:3000/libraries/cpc/tests/dataset/BigFivePersonalityTraits-Small.csv', 'Name')
+
+        // Data should have been loaded correctly
+        expect( panelZero.stacks().data() ).toTabulateAs(`\
+┌───────────────────┬─────────────────────┬──────────────────────────────────────────────┐
+│ (iteration index) │         Key         │                    Values                    │
+├───────────────────┼─────────────────────┼──────────────────────────────────────────────┤
+│         0         │    'Neuroticism'    │ Stack { _data: [Map], _scaleFunction: null } │
+│         1         │   'Extraversion'    │ Stack { _data: [Map], _scaleFunction: null } │
+│         2         │     'Openness'      │ Stack { _data: [Map], _scaleFunction: null } │
+│         3         │   'Agreeableness'   │ Stack { _data: [Map], _scaleFunction: null } │
+│         4         │ 'Conscientiousness' │ Stack { _data: [Map], _scaleFunction: null } │
+└───────────────────┴─────────────────────┴──────────────────────────────────────────────┘`)
+
+        // New dataset should be visualized on DOM
+        panelZero.update()
+        expect( panelZero.objects() ).toTabulateAs(`\
+┌───────────────────┬─────────────────────┬─────────┐
+│ (iteration index) │         Key         │ Values  │
+├───────────────────┼─────────────────────┼─────────┤
+│         0         │    'Neuroticism'    │ [Chart] │
+│         1         │   'Extraversion'    │ [Chart] │
+│         2         │     'Openness'      │ [Chart] │
+│         3         │   'Agreeableness'   │ [Chart] │
+│         4         │ 'Conscientiousness' │ [Chart] │
+└───────────────────┴─────────────────────┴─────────┘`)
+
+        // Load the first dataset back
+        await panelZero.loadDataset('http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv', 'Name')
+
+        // Data should have been loaded correctly
+        expect( panelZero.stacks().data() ).toTabulateAs(`\
+┌───────────────────┬──────────┬──────────────────────────────────────────────┐
+│ (iteration index) │   Key    │                    Values                    │
+├───────────────────┼──────────┼──────────────────────────────────────────────┤
+│         0         │ 'Ticket' │ Stack { _data: [Map], _scaleFunction: null } │
+│         1         │ 'Status' │ Stack { _data: [Map], _scaleFunction: null } │
+│         2         │ 'Gender' │ Stack { _data: [Map], _scaleFunction: null } │
+└───────────────────┴──────────┴──────────────────────────────────────────────┘`)
+
+        // New dataset should be visualized on DOM
+        panelZero.update()
+        expect( panelZero.objects() ).toTabulateAs(`\
+┌───────────────────┬──────────┬─────────┐
+│ (iteration index) │   Key    │ Values  │
+├───────────────────┼──────────┼─────────┤
+│         0         │ 'Ticket' │ [Chart] │
+│         1         │ 'Status' │ [Chart] │
+│         2         │ 'Gender' │ [Chart] │
+└───────────────────┴──────────┴─────────┘`)
+
+    })
+
+
 })
 
 

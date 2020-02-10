@@ -722,6 +722,29 @@
         }
 
 
+        /**
+         * When testing this functionality an async test should be used
+         * @param {string} path
+         * @param {string} omitColumns
+         */
+        async loadDataset(path, omitColumns){
+
+            // Load data to Dataset object
+            const datasetObject = new dataset.Dataset(path, omitColumns)
+            await datasetObject.build()
+
+            // Generate stacks from dataset object
+            const datasetSummary = datasetObject.summarize()
+            const stacksObject = new data.Stacks()
+            stacksObject.fromNestedMap(datasetSummary)
+
+            // Load Stacks object into panel
+            this.stacks(stacksObject)
+
+            return this
+        }
+
+
         _adjustAll(){
 
             if ( !!this._backgroundObject ){
