@@ -422,7 +422,6 @@ describe ('Statistics', () => {
 
         expect( myChart.totalCount() ).toBe( 990 )
 
-
     })
 
 })

@@ -192,7 +192,6 @@ bigFiveDataset.build()
 
 )
 
-bigFiveDataset
 
 
 function splitToQuantiles(valuesArray, thresholds){
