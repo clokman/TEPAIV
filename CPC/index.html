@@ -103,7 +103,32 @@
             <div class="preference-control ui checkbox">
                 <input type="checkbox" name="example" id="checkbox1" onclick="toggleAbsoluteValues()">
                 <label>Show absolute values</label>
+
+
+                <script>
+
+                    function toggleAbsoluteValues() {
+
+                        // Get the checkbox element
+                        const checkBox1 = document.getElementById("checkbox1")
+
+                        // Toggle labels based on checkbox status
+                        allNavigators.forEach( (navigator) => {
+
+                            if (checkBox1.checked === true ){
+                                navigator.showAbsoluteValues(true)
+                            } else {
+                                navigator.showAbsoluteValues(false)
+                            }
+
+                            navigator.update()
+                        })
+
+                    }
+                </script>
+
             </div>
+
 
 
             <!--Color Scheme Dropdown-->
@@ -144,6 +169,26 @@
                     <option value='CubehelixDefault'>CubehelixDefault</option>
                     <option value='Plasma'>Plasma</option>
                 </select>
+
+                <script>
+
+                    function setColorScheme() {
+
+                        // Get dropdown value
+                        const dropdown = document.getElementById("navigator-1-color-scheme-dropdown")
+                        const selectedValue = dropdown.value
+                        // const selectedValue = dropdown.options[dropdown.selectedIndex]
+
+                        allNavigators.forEach( (navigator) => {
+                            navigator
+                                .colorSet(selectedValue)
+                                .update()
+                        })
+
+                    }
+
+                </script>
+
             </div>
 
 
@@ -161,6 +206,30 @@
                        min=100
                        onchange="setAnimationDuration()"
                 >
+
+
+                <script>
+
+                    function setAnimationDuration() {
+
+                        // Get slider value and text
+                        const animationDurationSlider = document.getElementById('animation-duration-slider')
+                        const animationDurationText = document.getElementById('animation-duration-text')
+
+                        // Update animation duration text
+                        animationDurationText.innerText = Number(animationDurationSlider.value)
+
+                        // Change animation duration
+                        allNavigators.forEach( (navigator) => {
+
+                            navigator
+                                .animationDuration( Number(animationDurationSlider.value) )
+                                .update()
+                        } )
+
+                    }
+
+                </script>
 
             </div>
 
@@ -292,68 +361,6 @@
 </filter>`)
         const svg = document.querySelector('SVG')
         svg.appendChild(darkenFilter)
-
-
-
-        // SET COLOR SCHEME //
-        function setColorScheme() {
-
-            // Get dropdown value
-            const dropdown = document.getElementById("navigator-1-color-scheme-dropdown")
-            const selectedValue = dropdown.value
-            // const selectedValue = dropdown.options[dropdown.selectedIndex]
-
-            allNavigators.forEach( (navigator) => {
-                navigator
-                    .colorSet(selectedValue)
-                    .update()
-            })
-
-        }
-
-
-        // TOGGLE ABSOLUTE VALUES CHECKBOX //
-        function toggleAbsoluteValues() {
-
-            // Get the checkbox element
-            const checkBox1 = document.getElementById("checkbox1")
-
-            // Toggle labels based on checkbox status
-            allNavigators.forEach( (navigator) => {
-
-                if (checkBox1.checked === true ){
-                    navigator.showAbsoluteValues(true)
-                } else {
-                    navigator.showAbsoluteValues(false)
-                }
-
-                navigator.update()
-            })
-
-        }
-
-
-
-        // ANIMATION DURATION SLIDER //
-        function setAnimationDuration() {
-
-            // Get slider value and text
-            const animationDurationSlider = document.getElementById('animation-duration-slider')
-            const animationDurationText = document.getElementById('animation-duration-text')
-
-            // Update animation duration text
-            animationDurationText.innerText = Number(animationDurationSlider.value)
-
-            // Change animation duration
-            allNavigators.forEach( (navigator) => {
-
-                navigator
-                    .animationDuration( Number(animationDurationSlider.value) )
-                    .update()
-            } )
-
-        }
-
 
 
     </script>
