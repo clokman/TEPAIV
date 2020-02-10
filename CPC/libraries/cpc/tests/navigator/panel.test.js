@@ -1127,7 +1127,7 @@ describe ('Data Operations', () => {
     })
 
 
-    test ('Load data into panel', async () => {
+    test ('Load dataset into panel', async () => {
 
         // Create panel zero
         const panelZero = new navigator.Panel()
