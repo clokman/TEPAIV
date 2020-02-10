@@ -708,6 +708,4 @@ setTimeout( async () => {
 // }, timeStep.next() )
 
 
-
-
-p12_panel0_0.describe('LOAD DATA')
+p12_panel0_0.describe('LOAD DATA: Should load a few datasets in tandem and update category proportions each time')
