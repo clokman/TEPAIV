@@ -724,10 +724,12 @@
 
         /**
          * When testing this functionality an async test should be used
+         * WARNING: Panel or NestedPanel does not have query capabilities!
+         *  Therefore, the lack of a `loadDataset` method is intentional.
          * @param {string} path
          * @param {string} omitColumns
          */
-        async loadDataset(path, omitColumns){
+        async summarizeDataset(path, omitColumns){
 
             // Load data to Dataset object
             const datasetObject = new dataset.Dataset(path, omitColumns)
@@ -1616,10 +1618,12 @@
                 thisPanel.animationDuration( this.animationDuration() )  // use of `this` is intentional
             }
 
+            // Adjust bridge
             if (!!thisPanel._bridgeObject) {
                 thisPanel._adjustBridgeProperties()
             }
 
+            // Adjust background color
             if (!!thisPanel.objectToSpawnFrom) {
                 thisPanel.bgFill( thisPanel.objectToSpawnFrom.fill() )
             }

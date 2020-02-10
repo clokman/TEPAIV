@@ -680,28 +680,28 @@ const p12_panel0_0 = new navigator.NestedPanel()
     .update(0)
 
 setTimeout( async () => {
-    await p12_panel0_0.loadDataset(
+    await p12_panel0_0.summarizeDataset(
         'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
         'Name')
     p12_panel0_0.update()
 }, timeStep.next() )
 
 setTimeout( async () => {
-    await p12_panel0_0.loadDataset(
+    await p12_panel0_0.summarizeDataset(
         'http://localhost:3000/libraries/cpc/tests/dataset/BigFivePersonalityTraits-Small.csv',
         'Name')
     p12_panel0_0.update()
 }, timeStep.next() )
 
 // setTimeout( async () => {
-//     await p12_panel0_0.loadDataset(
+//     await p12_panel0_0.summarizeDataset(
 //         'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
 //         'Name')
 //     p12_panel0_0.update()
 // }, timeStep.next() )
 
 // setTimeout( async () => {
-//     await p12_panel0_0.loadDataset(
+//     await p12_panel0_0.summarizeDataset(
 //         'http://localhost:3000/libraries/cpc/tests/dataset/SampleMixedData.csv',
 //         'Name')
 //     p12_panel0_0.update()

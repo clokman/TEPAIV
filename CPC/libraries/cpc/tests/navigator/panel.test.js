@@ -1127,7 +1127,7 @@ describe ('Data Operations', () => {
     })
 
 
-    test ('Load dataset into panel', async () => {
+    test ('Summarize a dataset with panel', async () => {
 
         // Create panel zero
         const panelZero = new navigator.Panel()
@@ -1137,11 +1137,12 @@ describe ('Data Operations', () => {
         // Save a definitive property of exaple dataset for later comparison
         const largestTotalCountOfExampleData =  panelZero.stacks().largestTotalCount()
 
-        // Load a dataset to panel
+        // Summarize a dataset with panel
         await panelZero
-            .loadDataset('http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv', 'Name')
+            .summarizeDataset('http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv', 'Name')
+        panelZero.update()
 
-        // Data should have been loaded correctly
+        // Data should have been summarized correctly
         expect( panelZero.stacks().data() ).toTabulateAs(`\
 ┌───────────────────┬──────────┬──────────────────────────────────────────────┐
 │ (iteration index) │   Key    │                    Values                    │
@@ -1151,6 +1152,15 @@ describe ('Data Operations', () => {
 │         2         │ 'Gender' │ Stack { _data: [Map], _scaleFunction: null } │
 └───────────────────┴──────────┴──────────────────────────────────────────────┘`)
 
+        // Check an example summary element
+        expect ( panelZero.stacks('Gender').data() ).toTabulateAs(`\
+┌───────────────────┬──────────┬───────────────────────────────────────────────────────────────────────────────────────────┐
+│ (iteration index) │   Key    │                                          Values                                           │
+├───────────────────┼──────────┼───────────────────────────────────────────────────────────────────────────────────────────┤
+│         0         │ 'Female' │ Map { 'label' => 'Female', 'count' => 49, 'percentage' => 49, 'start' => 0, 'end' => 49 } │
+│         1         │  'Male'  │ Map { 'label' => 'Male', 'count' => 51, 'percentage' => 51, 'start' => 49, 'end' => 100 } │
+└───────────────────┴──────────┴───────────────────────────────────────────────────────────────────────────────────────────┘`)
+
         // The data should not be of the example dataset loaded to panel on initialization.
         // Check this by comparing a definitive feature of the two datasets
         expect ( largestTotalCountOfExampleData ).not.toBe( 100 )
@@ -1158,7 +1168,6 @@ describe ('Data Operations', () => {
 
 
         // New dataset should be visualized on DOM
-        panelZero.update()
         expect( panelZero.objects() ).toTabulateAs(`\
 ┌───────────────────┬──────────┬─────────┐
 │ (iteration index) │   Key    │ Values  │
@@ -1171,18 +1180,18 @@ describe ('Data Operations', () => {
     })
 
 
-    test ('Load a few datasets in tandem', async () => {
+    test ('Summarize a few datasets in the same panel in succession', async () => {
 
         // Create panel zero
         const panelZero = new navigator.Panel()
             .bgText('panelZero')
             .update(0)
 
-        // Load a dataset to panel
-        await panelZero.loadDataset('http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv', 'Name')
+        // Summarize a dataset with panel
+        await panelZero.summarizeDataset('http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv', 'Name')
         panelZero.update()
 
-        // Data should have been loaded correctly
+        // Data should have been summarized correctly
         expect( panelZero.stacks().data() ).toTabulateAs(`\
 ┌───────────────────┬──────────┬──────────────────────────────────────────────┐
 │ (iteration index) │   Key    │                    Values                    │
@@ -1191,6 +1200,16 @@ describe ('Data Operations', () => {
 │         1         │ 'Status' │ Stack { _data: [Map], _scaleFunction: null } │
 │         2         │ 'Gender' │ Stack { _data: [Map], _scaleFunction: null } │
 └───────────────────┴──────────┴──────────────────────────────────────────────┘`)
+
+        // Check an example summary element
+        expect ( panelZero.stacks('Gender').data() ).toTabulateAs(`\
+┌───────────────────┬──────────┬───────────────────────────────────────────────────────────────────────────────────────────┐
+│ (iteration index) │   Key    │                                          Values                                           │
+├───────────────────┼──────────┼───────────────────────────────────────────────────────────────────────────────────────────┤
+│         0         │ 'Female' │ Map { 'label' => 'Female', 'count' => 49, 'percentage' => 49, 'start' => 0, 'end' => 49 } │
+│         1         │  'Male'  │ Map { 'label' => 'Male', 'count' => 51, 'percentage' => 51, 'start' => 49, 'end' => 100 } │
+└───────────────────┴──────────┴───────────────────────────────────────────────────────────────────────────────────────────┘`)
+
 
         // New dataset should be visualized on DOM
         expect( panelZero.objects() ).toTabulateAs(`\
@@ -1203,11 +1222,11 @@ describe ('Data Operations', () => {
 └───────────────────┴──────────┴─────────┘`)
 
 
-        // Load another dataset
-        await panelZero.loadDataset('http://localhost:3000/libraries/cpc/tests/dataset/BigFivePersonalityTraits-Small.csv', 'Name')
+        // Summarize another dataset
+        await panelZero.summarizeDataset('http://localhost:3000/libraries/cpc/tests/dataset/BigFivePersonalityTraits-Small.csv', 'Name')
         panelZero.update()
 
-        // Data should have been loaded correctly
+        // Data should have been summarized correctly
         expect( panelZero.stacks().data() ).toTabulateAs(`\
 ┌───────────────────┬─────────────────────┬──────────────────────────────────────────────┐
 │ (iteration index) │         Key         │                    Values                    │
@@ -1231,8 +1250,8 @@ describe ('Data Operations', () => {
 │         4         │ 'Conscientiousness' │ [Chart] │
 └───────────────────┴─────────────────────┴─────────┘`)
 
-        // Load the first dataset back
-        await panelZero.loadDataset('http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv', 'Name')
+        // Summarize the first dataset again
+        await panelZero.summarizeDataset('http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv', 'Name')
         panelZero.update()
 
         // Data should have been loaded correctly
