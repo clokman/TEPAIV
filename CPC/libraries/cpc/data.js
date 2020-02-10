@@ -105,6 +105,17 @@ class Stacks{
 
     }
 
+    largestTotalCount(){
+
+        const totalCountsInStacks = []
+        this.data().forEach( (stackObject, stackName) => {
+            const totalCount = stackObject.totalCount()
+            totalCountsInStacks.push( totalCount )
+        })
+
+        const largestTotalCount = _.max( totalCountsInStacks )
+        return largestTotalCount
+    }
 
 
 }

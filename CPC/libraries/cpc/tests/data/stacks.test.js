@@ -326,4 +326,19 @@ test ('Convert a nested map object to a Stack', () => {
 
 
 
+//// Statistics ///////////////////////////////////////////////////////////////
+
+describe ('Statistics', () => {
+
+        test ('Largest total count in stacks', () => {
+
+            // Create a Stacks object
+            const myStacks = new data.Stacks()
+            myStacks.populateWithExampleData()
+
+            expect( myStacks.largestTotalCount() ).toBe( 1309 )
+
+        })
+
+})
 
