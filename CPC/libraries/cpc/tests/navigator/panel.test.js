@@ -1131,6 +1131,20 @@ describe ('Data Operations', () => {
 
 
 
+//// Statistics ///////////////////////////////////////////////////////////////
+
+describe ('Statistics', () => {
+
+        test ('Largest count in panel', () => {
+
+            const myPanel = new navigator.Panel()
+
+            expect( myPanel.largestTotalCount() ).toBe( 1309 )
+
+        })
+
+})
+
 //// Nested Panel Initialization ///////////////////////////////////////////////////////////////
 
 describe ('Nested Panel Instantiation', () => {

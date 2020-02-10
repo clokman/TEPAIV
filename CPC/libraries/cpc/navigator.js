@@ -1329,6 +1329,12 @@
         }
 
 
+        largestTotalCount(){
+
+            return this.stacks().largestTotalCount()
+
+        }
+
     }
 
 
