@@ -153,7 +153,7 @@ describe ('Instantiation', () => {
 
 
         // Probe the initial sample data
-        expect(myPanel.stacks().size).toBe(3)
+        expect(myPanel.stacks().data().size).toBe(3)
         expect(myPanel.stacks('gender').data('male').get('label')).toEqual('Male')
         expect(myPanel.stacks('class').data('first-class').get('label')).toEqual('First Class')
         expect(myPanel.stacks('status').data('survived').get('percentage')).toEqual(38)
@@ -164,7 +164,7 @@ describe ('Instantiation', () => {
 
 
         // Probe the initial data visually
-        expectTable(myPanel.stacks(), `\
+        expectTable(myPanel.stacks().data(), `\
 ┌───────────────────┬──────────┬──────────────────────────────────────────────┐
 │ (iteration index) │   Key    │                    Values                    │
 ├───────────────────┼──────────┼──────────────────────────────────────────────┤
@@ -280,7 +280,7 @@ describe ('Instantiation', () => {
 
         // Import the new stacks object to be panel's new data
         myPanel.stacks(titanicStacks).update()
-        expectTable(myPanel.stacks(), `\
+        expectTable(myPanel.stacks().data(), `\
 ┌───────────────────┬──────────┬──────────────────────────────────────────────┐
 │ (iteration index) │   Key    │                    Values                    │
 ├───────────────────┼──────────┼──────────────────────────────────────────────┤
@@ -1025,14 +1025,14 @@ describe ('Data Operations', () => {
         const myPanel = new navigator.Panel()
 
         // Verify individual stack sizes
-        expect(myPanel.stacks().get('gender').data().size).toBe(2)
-        expect(myPanel.stacks().get('status').data().size).toBe(2)
-        expect(myPanel.stacks().get('class').data().size).toBe(3)
+        expect(myPanel.stacks().data().get('gender').data().size).toBe(2)
+        expect(myPanel.stacks().data().get('status').data().size).toBe(2)
+        expect(myPanel.stacks().data().get('class').data().size).toBe(3)
 
         // // Probe individual stack data
-        expect(myPanel.stacks().get('gender').data('male').get('label')).toBe('Male')
-        expect(myPanel.stacks().get('status').data('died').get('start')).toBe(38)
-        expect(myPanel.stacks().get('class').data('second-class').get('percentage')).toBe(21)
+        expect(myPanel.stacks().data().get('gender').data('male').get('label')).toBe('Male')
+        expect(myPanel.stacks().data().get('status').data('died').get('start')).toBe(38)
+        expect(myPanel.stacks().data().get('class').data('second-class').get('percentage')).toBe(21)
 
     })
 
@@ -1042,7 +1042,7 @@ describe ('Data Operations', () => {
         const myPanel = new navigator.Panel()
 
         // Get first, query later manually
-        expect(myPanel.stacks().get('gender').data().get('male').get('label'))
+        expect(myPanel.stacks().data().get('gender').data().get('male').get('label'))
             .toBe('Male')
 
         // Directly query by giving a parameter to to method
@@ -1057,7 +1057,7 @@ describe ('Data Operations', () => {
         const myPanel = new navigator.Panel()
 
         // View initial example data
-        expectTable(myPanel.stacks(), `\
+        expectTable(myPanel.stacks().data(), `\
 ┌───────────────────┬──────────┬──────────────────────────────────────────────┐
 │ (iteration index) │   Key    │                    Values                    │
 ├───────────────────┼──────────┼──────────────────────────────────────────────┤
@@ -1090,7 +1090,7 @@ describe ('Data Operations', () => {
         // Replace stacks in Panel
         myPanel.stacks(replacementStacks)
 
-        expectTable(myPanel.stacks(), `\
+        expectTable(myPanel.stacks().data(), `\
 ┌───────────────────┬─────────────┬──────────────────────────────────────────────┐
 │ (iteration index) │     Key     │                    Values                    │
 ├───────────────────┼─────────────┼──────────────────────────────────────────────┤
@@ -1099,7 +1099,7 @@ describe ('Data Operations', () => {
 └───────────────────┴─────────────┴──────────────────────────────────────────────┘`)
 
         // Probe further to see if data is correctly updated
-        expect(myPanel.stacks().size).toBe(2)
+        expect(myPanel.stacks().data().size).toBe(2)
 
         expect(myPanel.stacks('generic-1').data('category-1').get('label'))
             .toBe('Category One')
@@ -1117,8 +1117,8 @@ describe ('Data Operations', () => {
 
 
         // Do a manual check on the updated private stack variable in the instance
-        expect(myPanel.stacks().size).toBe(2)
-        expect(myPanel.stacks().get('generic-2').data('category-2').get('label'))
+        expect(myPanel.stacks().data().size).toBe(2)
+        expect(myPanel.stacks().data().get('generic-2').data('category-2').get('label'))
             .toBe('Category Two')
 
         // Check if other stacks-related variables are currectly updated after change of stacks

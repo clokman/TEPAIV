@@ -335,7 +335,7 @@ test ('Update DOM after new data is loaded', async () => {
     const panelObjectOfPanelZero = myNavigator.objects('panel-0-0')
     const stacksInFirstPanel = panelObjectOfPanelZero.stacks()
     
-    expectTable(stacksInFirstPanel, `\
+    expectTable(stacksInFirstPanel.data(), `\
 ┌───────────────────┬──────────┬──────────────────────────────────────────────┐
 │ (iteration index) │   Key    │                    Values                    │
 ├───────────────────┼──────────┼──────────────────────────────────────────────┤

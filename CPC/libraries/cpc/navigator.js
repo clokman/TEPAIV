@@ -801,7 +801,7 @@
 
             // loop //
             let i = 0
-            this.stacks().forEach(
+            this.stacks().data().forEach(
                 (eachStack, eachStackId) => {
 
                     const chart = new Chart(this.select())
@@ -853,7 +853,7 @@
 
 
         _chartCount() {
-            return this.stacks().size
+            return this.stacks().data().size
         }
 
 
@@ -1008,7 +1008,7 @@
 
             // Get data
             if (parameterIsNull) {
-                return this._stacks.data()
+                return this._stacks
             }
 
 
