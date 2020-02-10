@@ -802,10 +802,10 @@
             // loop //
             let i = 0
             this.stacks().data().forEach(
-                (eachStack, eachStackId) => {
+                (eachStackObject, eachStackId) => {
 
                     const chart = new Chart(this.select())
-                        .stack(eachStack)
+                        .stack(eachStackObject)
                         .id(eachStackId)
                         .x(this.innerX())
                         .y(this._yScale(i))
