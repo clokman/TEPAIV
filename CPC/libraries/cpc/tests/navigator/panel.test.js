@@ -1168,8 +1168,8 @@ describe ('Data Operations', () => {
 │         2         │ 'Gender' │ [Chart] │
 └───────────────────┴──────────┴─────────┘`)
 
-
     })
+
 
     test ('Load a few datasets in tandem', async () => {
 
@@ -1180,6 +1180,7 @@ describe ('Data Operations', () => {
 
         // Load a dataset to panel
         await panelZero.loadDataset('http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv', 'Name')
+        panelZero.update()
 
         // Data should have been loaded correctly
         expect( panelZero.stacks().data() ).toTabulateAs(`\
@@ -1192,7 +1193,6 @@ describe ('Data Operations', () => {
 └───────────────────┴──────────┴──────────────────────────────────────────────┘`)
 
         // New dataset should be visualized on DOM
-        panelZero.update()
         expect( panelZero.objects() ).toTabulateAs(`\
 ┌───────────────────┬──────────┬─────────┐
 │ (iteration index) │   Key    │ Values  │
@@ -1205,6 +1205,7 @@ describe ('Data Operations', () => {
 
         // Load another dataset
         await panelZero.loadDataset('http://localhost:3000/libraries/cpc/tests/dataset/BigFivePersonalityTraits-Small.csv', 'Name')
+        panelZero.update()
 
         // Data should have been loaded correctly
         expect( panelZero.stacks().data() ).toTabulateAs(`\
@@ -1219,7 +1220,6 @@ describe ('Data Operations', () => {
 └───────────────────┴─────────────────────┴──────────────────────────────────────────────┘`)
 
         // New dataset should be visualized on DOM
-        panelZero.update()
         expect( panelZero.objects() ).toTabulateAs(`\
 ┌───────────────────┬─────────────────────┬─────────┐
 │ (iteration index) │         Key         │ Values  │
@@ -1233,6 +1233,7 @@ describe ('Data Operations', () => {
 
         // Load the first dataset back
         await panelZero.loadDataset('http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv', 'Name')
+        panelZero.update()
 
         // Data should have been loaded correctly
         expect( panelZero.stacks().data() ).toTabulateAs(`\
@@ -1245,7 +1246,6 @@ describe ('Data Operations', () => {
 └───────────────────┴──────────┴──────────────────────────────────────────────┘`)
 
         // New dataset should be visualized on DOM
-        panelZero.update()
         expect( panelZero.objects() ).toTabulateAs(`\
 ┌───────────────────┬──────────┬─────────┐
 │ (iteration index) │   Key    │ Values  │
