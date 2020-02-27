@@ -518,6 +518,8 @@
             this._textAlignment = 'center'
             this._textFill = 'white'
 
+            this.minWidthForTextDisplay = 30  // px
+            this.minHeightForTextDisplay = 20  // px
 
             // Private Parameters //
             this._textPadding = 10        // for text at corners or edges
@@ -551,8 +553,25 @@
         _initializeText(){
 
             this._calculateAndAdjustTextPositionProperties()
+            this._calculateAndAdjustTextVisiblity()
 
-            this._textObject.fill(this._textFill).class('rectangle-caption')
+            this._textObject
+                .fill( this._textFill )
+                .class( 'rectangle-caption' )
+
+        }
+
+
+        update(transitionDuration=500) {
+
+            super.update(transitionDuration)
+
+            // If rectangle is too small, make text invisible; otherwise make it visible
+            const textShouldBeHidden = this.width() < this.minWidthForTextDisplay || this.height() < this.minHeightForTextDisplay
+            if ( !!this._textObject ){
+                this._calculateAndAdjustTextVisiblity()
+                this._textObject.update(transitionDuration)
+            }
 
         }
 
@@ -709,6 +728,17 @@
         }
 
 
+        _calculateAndAdjustTextVisiblity(){
+
+            const textShouldBeHidden = this.width() < this.minWidthForTextDisplay || this.height() < this.minHeightForTextDisplay
+            if ( !!this._textObject ){
+                if ( textShouldBeHidden ){ this._textObject.visibility('hidden') }
+                if ( !textShouldBeHidden ){ this._textObject.visibility('visible') }
+            }
+
+        }
+
+
         _calculateAndAdjustTextPositionProperties(textAlignment=this._textAlignment){
 
             if (textAlignment === 'top-left'){
@@ -768,6 +798,8 @@
             }
 
         }
+
+
 
 
     }

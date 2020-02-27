@@ -373,13 +373,18 @@ describe ('Text', () => {
         expect( myCaptionedRectangle._textObject.visibility() ).toBe( 'hidden' )
         expect( text.getAttribute('visibility') ).toBe('hidden')
 
+
+        // Make the rectangle height large enough for text again
+        myCaptionedRectangle
+            .height(50)
+            .update()
+
+        // Text should now be visible again
+        expect( myCaptionedRectangle._textObject.visibility() ).toBe( 'visible' )
+        expect( text.getAttribute('visibility') ).toBe('visible')
+
     })
 
-    test ('Too small init', () => {
-    
-        
-        
-    })
-    
+
 })
 
