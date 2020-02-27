@@ -255,6 +255,7 @@
             this._rotate = 0
             this._textAnchor = 'start'
             this._dominantBaseline = 'hanging'
+            this._visibility = 'visible'
 
 
             // Initialize //
@@ -280,6 +281,7 @@
                 .attr('font-weight', this._fontWeight)
                 .attr('text-anchor', this._textAnchor)
                 .attr('dominant-baseline', this._dominantBaseline)
+                .attr('visibility', this._visibility)
 
         }
 
@@ -301,6 +303,7 @@
                 .attr('transform', `rotate( ${this._rotate}, ${this._x}, ${this._y} )`)
                 .attr('text-anchor', this._textAnchor)
                 .attr('dominant-baseline', this._dominantBaseline)
+                .attr('visibility', this._visibility)
 
             return this
 
@@ -472,6 +475,23 @@
 
                 return this
             }
+        }
+        
+        visibility(value) {
+        
+            // Getter
+            if (!arguments.length){
+                return this._visibility
+            }
+        
+            // Setter
+            else{
+                value.mustBeOfType('String')
+                this._visibility = value
+                
+                return this
+            }
+            
         }
 
     }

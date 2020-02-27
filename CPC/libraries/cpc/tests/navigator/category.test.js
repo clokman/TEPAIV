@@ -36,6 +36,8 @@ global.classUtils = require("../../../utils/classUtils")
 global.container = require("../../container")
 global.shape = require("../../shape")
 global.stringUtils = require("../../../utils/stringUtils")
+global.domUtils = require("../../../utils/domUtils")
+global.domUtils = require("../../../utils/errorUtils")
 global.data = require("../../../cpc/data")
 
 
@@ -521,3 +523,4 @@ test ('Get/set label color', () => {
     expect(labelElement.getAttribute('fill')).toBe('salmon')
 
 })
+

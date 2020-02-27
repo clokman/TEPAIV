@@ -33,6 +33,7 @@ global.classUtils = require("../../../utils/classUtils")
 global.container = require("../../container")
 global.shape = require("../../shape")
 global.stringUtils = require("../../../utils/stringUtils")
+global.errorUtils = require("../../../utils/errorUtils")
 global.data = require("../../../cpc/data")
 
 require("../../../../../JestUtils/jest-dom")
@@ -322,3 +323,63 @@ describe ('Getters and setters ', () => {
 
 
 })
+
+
+
+// TEXT ///////////////////////////////////////////////////////////////
+
+describe ('Text', () => {
+
+    test ('Text should disappear when the recangle is too small', () => {
+
+        initializeDomWithSvg()
+        // Create category
+        const myCaptionedRectangle = new shape.CaptionedRectangle()
+
+        // Text should be initially visible
+        expect( myCaptionedRectangle._textObject.visibility() ).toBe( 'visible' )
+        const text = document.querySelector( 'text' )
+        expect( text ).not.toBe(  )
+        expect( text.getAttribute('visibility') ).toBe('visible')
+        expect( text.innerHTML ).toBe( 'Text' )
+
+
+        // Make the rectangle WIDTH too small for text
+        myCaptionedRectangle
+            .width(10)
+            .update()
+
+        // Text should now be hidden
+        expect( myCaptionedRectangle._textObject.visibility() ).toBe( 'hidden' )
+        expect( text.getAttribute('visibility') ).toBe('hidden')
+
+
+        // Make the width large enough for text again
+        myCaptionedRectangle
+            .width(50)
+            .update()
+        
+        // Text should now be visible again
+        expect( myCaptionedRectangle._textObject.visibility() ).toBe( 'visible' )
+        expect( text.getAttribute('visibility') ).toBe('visible')
+
+
+        // Make the rectangle HEIGHT too small
+        myCaptionedRectangle
+            .height(10)
+            .update()
+
+        // Text should now be hidden
+        expect( myCaptionedRectangle._textObject.visibility() ).toBe( 'hidden' )
+        expect( text.getAttribute('visibility') ).toBe('hidden')
+
+    })
+
+    test ('Too small init', () => {
+    
+        
+        
+    })
+    
+})
+

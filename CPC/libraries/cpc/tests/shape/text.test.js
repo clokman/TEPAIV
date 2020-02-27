@@ -30,7 +30,11 @@ global.container = require("../../container")
 global.shape = require("../../shape")
 global.stringUtils = require("../../../utils/stringUtils")
 global.jsUtils = require("../../../utils/jsUtils")
+global.errorUtils = require("../../../utils/errorUtils")
 global.data = require("../../../cpc/data")
+
+require("../../../../../JestUtils/jest-dom")
+
 
 //// MODULES BEING TESTED ////
 const datasets = require("../../../../data/datasets")
@@ -507,5 +511,39 @@ test ('WIDTH: Get text width in pixels', () => {
 
     // Get text width in pixels  (this test can't be more specific due to canvas being mocked)
     expect( myText.width() ).not.toBeNull()
+
+})
+
+
+//// Visibility ///////////////////////////////////////////////////////////////
+
+describe ('Visibility', () => {
+   
+        test ('Get/set visibility', () => {
+
+            // Create a text object
+            initializeDomWithSvg()
+            const myText = new shape.Text()
+
+            // Text should initialize visible
+            expect( myText.visibility() ).toBe( 'visible' )
+
+            // Check if text is indeed visible on DOM
+            const textElement = document.querySelector( 'text' )
+            expect( textElement ).not.toBe(  )
+            expect( textElement.getAttribute('visibility') ).toBe('visible')
+            expect( textElement.innerHTML ).toBe( 'Text' )
+
+            // Toggle visibility
+            myText
+                .visibility( 'hidden' )
+                .update()
+
+            // Text should exist but NOT be visible on DOM
+            expect( textElement ).not.toBe(  )
+            expect( textElement.getAttribute('visibility') ).toBe('hidden')
+            expect( textElement.innerHTML ).toBe( 'Text' )
+
+        })
 
 })
