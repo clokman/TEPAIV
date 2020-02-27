@@ -550,7 +550,7 @@
 
         _initializeText(){
 
-            this._calculateAndUpdateTextPositionProperties()
+            this._calculateAndAdjustTextPositionProperties()
 
             this._textObject.fill(this._textFill).class('rectangle-caption')
 
@@ -591,7 +591,7 @@
                 this._rectangleObject.x(value)
 
                 // Recalculate percentage text position based on new rectangle parameters
-                this._calculateAndUpdateTextPositionProperties()
+                this._calculateAndAdjustTextPositionProperties()
 
                 return this
             }
@@ -614,7 +614,7 @@
                 // Update y value of rectangle
                 this._rectangleObject.y(value)
 
-                this._calculateAndUpdateTextPositionProperties()
+                this._calculateAndAdjustTextPositionProperties()
 
                 return this
             }
@@ -629,7 +629,7 @@
             else {
                 this._width = value
                 this._rectangleObject.width(value)
-                this._calculateAndUpdateTextPositionProperties()
+                this._calculateAndAdjustTextPositionProperties()
                 return this
             }
         }
@@ -643,7 +643,7 @@
             else {
                 this._height = value
                 this._rectangleObject.height(value)
-                this._calculateAndUpdateTextPositionProperties()
+                this._calculateAndAdjustTextPositionProperties()
                 return this
             }
         }
@@ -701,7 +701,7 @@
             else{
                 this._textAlignment = value
 
-                this._calculateAndUpdateTextPositionProperties()
+                this._calculateAndAdjustTextPositionProperties()
 
                 return this
             }
@@ -709,7 +709,7 @@
         }
 
 
-        _calculateAndUpdateTextPositionProperties(textAlignment=this._textAlignment){
+        _calculateAndAdjustTextPositionProperties(textAlignment=this._textAlignment){
 
             if (textAlignment === 'top-left'){
                 this._textObject
