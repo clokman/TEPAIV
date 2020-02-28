@@ -29,6 +29,7 @@
             this._fill = 'gray'
             this._strokeWidth = '1px'
             this._strokeColor = 'rgba(0, 0, 0, 0.0)'
+            this._visibility = 'visible'
             this._htmlClass = null
             this._htmlId = null
             this._data = [null]
@@ -72,6 +73,23 @@
                 this._strokeWidth = value
                 return this
             }
+        }
+
+        visibility(value) {
+
+            // Getter
+            if (!arguments.length){
+                return this._visibility
+            }
+
+            // Setter
+            else{
+                value.mustBeOfType('String')
+                this._visibility = value
+
+                return this
+            }
+
         }
 
 
@@ -169,36 +187,18 @@
 
         update(transitionDuration=500) {
 
-            // let isNodeEnvironment = false
-            // if (typeof exports === 'object' && typeof module !== 'undefined'){
-            //     isNodeEnvironment = true
-            // }
-
-            // if (!isNodeEnvironment){
-                this._selection
-                    .transition().duration(transitionDuration)
-                    .attr('class', this._htmlClass)
-                    .attr('id', this._htmlId)
-                    .attr('x', this._x)
-                    .attr('y', this._y)
-                    .attr('width', this._width)
-                    .attr('height', this._height)
-                    .attr('fill', this._fill)
-                    .attr('stroke', this._strokeColor)
-                    .attr('stroke-width', this._strokeWidth)
-
-            // }
-
-            // if (isNodeEnvironment){
-            //     this._selection
-            //         .attr('class', this._htmlClass)
-            //         .attr('id', this._htmlId)
-            //         .attr('x', this._x)
-            //         .attr('y', this._y)
-            //         .attr('width', this._width)
-            //         .attr('height', this._height)
-            //         .attr('fill', this._fill)
-            // }
+            this._selection
+                .transition().duration(transitionDuration)
+                .attr('fill', this._fill)
+                .attr('stroke', this._strokeColor)
+                .attr('stroke-width', this._strokeWidth)
+                .attr('visibility', this._visibility)
+                .attr('x', this._x)
+                .attr('y', this._y)
+                .attr('class', this._htmlClass)
+                .attr('id', this._htmlId)
+                .attr('width', this._width)
+                .attr('height', this._height)
 
             return this
         }
@@ -255,7 +255,6 @@
             this._rotate = 0
             this._textAnchor = 'start'
             this._dominantBaseline = 'hanging'
-            this._visibility = 'visible'
 
 
             // Initialize //
@@ -476,23 +475,7 @@
                 return this
             }
         }
-        
-        visibility(value) {
-        
-            // Getter
-            if (!arguments.length){
-                return this._visibility
-            }
-        
-            // Setter
-            else{
-                value.mustBeOfType('String')
-                this._visibility = value
-                
-                return this
-            }
-            
-        }
+
 
     }
 
