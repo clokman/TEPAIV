@@ -857,7 +857,7 @@ describe ('Width', () => {
             panelZero,
             siblingPanel1, siblingPanel2, siblingPanel3,
             childPanelOfSibling1, childPanelOfSibling2, childPanelOfSibling3
-        } = initializeDomWith.panelZero.and.twoSiblingChilrenThatEachHasOneChild()
+        } = initializeDomWith.panelZero.and.twoSiblingChildrenThatEachHasOneChild()
 
 
         // Modify deep child's width
@@ -1011,6 +1011,43 @@ describe ('Width', () => {
     })
 
 
+    test ('When the width of a deeply nested panel that has siblings change, backgrounds of parent panels should update correctly', () => {
+
+        jest.useFakeTimers()
+
+        // TODO [FEB]: The issue is solved but this is not the correct test. A new `initializeDomWith.etc` should be created.
+        const {panelZero, siblingPanel1, siblingPanel2, siblingPanel3} =
+            initializeDomWith.panelZero.and.threeSiblingChildren()
+
+        // Formulas
+        const panelZeroBackgroundEndsAtCorrectLocation = () => panelZero.rightEdge() === siblingPanel3.rightEdge() + panelZero._innerPadding.right
+
+        // Check initial locations and establish that the formula for checking correct location works
+        expect( panelZeroBackgroundEndsAtCorrectLocation() ).toBeTruthy()
+
+
+        // Change width of parent panel (it should propagate to its children)
+        expect( siblingPanel1.width() ).not.toBe( 50 )
+        panelZero.width(50).update()
+
+        jest.runOnlyPendingTimers()
+        jest.runAllTimers()
+
+        writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/1.html')
+
+        expect( panelZeroBackgroundEndsAtCorrectLocation() ).toBeTruthy()
+
+
+    })
+    
+    test ('When the width of the deeply nested grandchildren of two sibling panels change, inter-panel distances should be correct ', () => {
+    
+        initializeDomWith.panelZero.and.twoSiblingChildrenThatEachHasOneChild()
+
+        //TODO [FEB]: This scenario leads to panels not being updated correctly.
+        // Therefore, this test MUST be written
+
+    })
 
 
     // HELPER FUNCTION(S) //
@@ -3834,7 +3871,7 @@ initializeDomWith.panelZero.and = {
     },
 
 
-    twoSiblingChilrenThatEachHasOneChild: function(){
+    twoSiblingChildrenThatEachHasOneChild: function(){
 
         jest.useFakeTimers()
 
@@ -3911,10 +3948,10 @@ describe ('initializeDomWith...', () => {
     })
 
 
-    test ('initializeDomWith.panelZero.and.twoSiblingChilrenThatEachHasOneChild', () => {
+    test ('initializeDomWith.panelZero.and.twoSiblingChildrenThatEachHasOneChild', () => {
         // Uncomment to write html output to file
-        // initializeDomWith.panelZero.and.twoSiblingChilrenThatEachHasOneChild()
-        // writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/initializeDomWith.panelZero.and.twoSiblingChilrenThatEachHasOneChild.html')
+        // initializeDomWith.panelZero.and.twoSiblingChildrenThatEachHasOneChild()
+        // writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/initializeDomWith.panelZero.and.twoSiblingChildrenThatEachHasOneChild.html')
     })
 
 
