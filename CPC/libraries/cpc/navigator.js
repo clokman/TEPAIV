@@ -2079,6 +2079,16 @@
                 // Change width
                 super.width(value)
 
+                // this._inferParentChildRelationships()
+
+                // Adjust siblings
+                if ( !!this.has.siblingObjectsOnRightSide ){
+                    this.has.siblingObjectsOnRightSide.forEach( (siblingObject) => {
+                        siblingObject.x( siblingObject.x() + difference )
+                    })
+                }
+
+
                 // Adjust child panels
                 if ( !!this.childrenPanels.size ){
 

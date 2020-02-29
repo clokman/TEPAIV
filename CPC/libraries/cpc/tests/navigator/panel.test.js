@@ -985,8 +985,40 @@ describe ('Width', () => {
     })
 
 
+    test ('When width of a panel is changed, its sibling panels should move to accommodate this change', () => {
+
+        jest.useFakeTimers()
+
+        const {panelZero, siblingPanel1, siblingPanel2, siblingPanel3} =
+            initializeDomWith.panelZero.and.threeSiblingChildren()
+
+        // Check initial locations and establish that the formula for checking correct location works
+        expect( twoSiblingsAreRightNextToEachOther( siblingPanel1, siblingPanel2 ) ).toBeTruthy()
+        expect( twoSiblingsAreRightNextToEachOther( siblingPanel2, siblingPanel3 ) ).toBeTruthy()
+
+
+        // Change width of parent panel (it should propagate to its children)
+        expect( siblingPanel1.width() ).not.toBe( 50 )
+        panelZero.width(50).update()
+
+        jest.runOnlyPendingTimers()
+        jest.runAllTimers()
+
+        // Check final locations
+        expect( twoSiblingsAreRightNextToEachOther( siblingPanel1, siblingPanel2 ) ).toBeTruthy()
+        expect( twoSiblingsAreRightNextToEachOther( siblingPanel2, siblingPanel3 ) ).toBeTruthy()
+
+    })
+
+
+
+
     // HELPER FUNCTION(S) //
 
+    // Formulas
+    const twoSiblingsAreRightNextToEachOther = (leftSibling, rightSibling) => rightSibling.leftEdge() === leftSibling.rightEdge() + leftSibling._paddingBetweenSiblingPanels
+
+    // Methods
     function _doChartsInPanelsOverlap(panelA, panelB) {
 
         const endPointOfChartsInPanelA = panelA.rightEdgeOfCharts()
