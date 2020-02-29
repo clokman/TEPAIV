@@ -18,7 +18,7 @@
     <link rel="stylesheet" type="text/css" href="libraries/external/semantic/dist/semantic.min.css">
     <script src="libraries/external/jquery-3.1.1.min.js"></script>
     <script src="libraries/external/semantic/dist/semantic.min.js"></script>
-
+    
 
     <!--     VUE     -->
     <!-- Vue development version, includes helpful console warnings -->
@@ -102,7 +102,7 @@
             <!--Absolute Values Checkbox-->
             <div class="preference-control ui checkbox">
                 <input type="checkbox" name="example" id="checkbox1" onclick="toggleAbsoluteValues()">
-                <label>Show absolute values</label>
+                <label>Absolute values</label>
 
 
                 <script>
@@ -129,6 +129,70 @@
 
             </div>
 
+
+
+
+            <!--Absolute Chart Widths Checkbox-->
+            <div class="preference-control ui checkbox">
+                <input type="checkbox" name="example" id="absolute-chart-widths-checkbox" onclick="toggleAbsoluteChartWidths()">
+                <label>Absolute chart widths</label>
+
+
+                <script>
+
+                    function toggleAbsoluteChartWidths() {
+
+                        // Get the checkbox element
+                        const checkBox1 = document.getElementById("absolute-chart-widths-checkbox")
+
+                        // Toggle labels based on checkbox status
+                        allNavigators.forEach( navigator => {
+
+                            if (checkBox1.checked === true ){
+                                navigator.showAbsoluteChartWidths(true)
+                            } else {
+                                navigator.showAbsoluteChartWidths(false)
+                            }
+
+                            navigator.update()
+                        })
+
+                    }
+                </script>
+
+            </div>
+
+
+            <!-- MUST TODO: (POST-MEETING)-->
+            <!--Show Category Texts Checkbox-->
+            <div class="preference-control ui checkbox">
+                <input type="checkbox" name="example" id="show-category-texts-checkbox" onclick="toggleCategoryTexts()">
+                <label>Hide category texts</label>
+
+
+                <script>
+
+                    function toggleCategoryTexts() {
+
+                        // Get the checkbox element
+                        const checkBox1 = document.getElementById("show-category-texts-checkbox")
+
+                        allNavigators.forEach( navigator => {
+
+                            if (checkBox1.checked === true ){
+                                navigator.showCategoryCaptions = true
+                            } else {
+                                navigator.showCategoryCaptions = false
+                            }
+
+                            navigator.update()
+                        })
+
+
+                    }
+                </script>
+
+            </div>
 
 
             <!--Color Scheme Dropdown-->

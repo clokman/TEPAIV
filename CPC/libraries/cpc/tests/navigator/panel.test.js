@@ -778,6 +778,7 @@ describe ('Getters and Setters', () => {
 
 describe ('Width', () => {
 
+
     test ('Get width', () => {
 
         const {panelZero, childPanel, grandChildPanel} = initializeDomWith.panelZero.and.childAndGrandchild()
@@ -958,7 +959,33 @@ describe ('Width', () => {
 
 
     })
-    
+
+
+    test ('When the new width of a parent propagates to siblings, sibling panels should move while resizing, so that they stay within the parent panel', () => {
+
+        jest.useFakeTimers()
+
+        const {panelZero, siblingPanel1, siblingPanel2, siblingPanel3} =
+            initializeDomWith.panelZero.and.threeSiblingChildren()
+
+        // Change width of parent panel (it should propagate to its children)
+        expect( panelZero.width() ).not.toBe( 50 )
+        panelZero.width(50).update()
+
+        jest.runOnlyPendingTimers()
+
+        const sibling1IsWithinPanelZero = siblingPanel1.rightEdge() < panelZero.rightEdge()
+        const sibling2IsWithinPanelZero = siblingPanel2.rightEdge() < panelZero.rightEdge()
+        const sibling3IsWithinPanelZero = siblingPanel3.rightEdge() < panelZero.rightEdge()
+
+        expect( sibling1IsWithinPanelZero ).toBe( true )
+        expect( sibling2IsWithinPanelZero ).toBe( true )
+        expect( sibling3IsWithinPanelZero ).toBe( true )
+
+    })
+
+
+    // HELPER FUNCTION(S) //
 
     function _doChartsInPanelsOverlap(panelA, panelB) {
 
@@ -988,28 +1015,110 @@ describe ('Absolute Chart Widths', () => {
 
 
             // Default value should be false
-            expect( panelZero.absoluteChartWidths() ).toBe( false )
+            expect( panelZero.showAbsoluteChartWidths() ).toBe( false )
 
             // Change value
-            panelZero.absoluteChartWidths(true)
-            expect( panelZero.absoluteChartWidths() ).toBe( true )
+            panelZero.showAbsoluteChartWidths(true)
+            expect( panelZero.showAbsoluteChartWidths() ).toBe( true )
 
 
         })
 
 
-        test ('When absolute chart widths are on, charts should have the right proportions on DOM', () => {
+        test ('When absolute chart widths are on, charts should have the right width relative to the chart widths in parents', async () => {
 
-            const {panelZero, childPanel} = initializeDomWith.panelZero.and.child()
+            jest.useFakeTimers()
+
+            initializeDomWithSvg()
+
+            // Add panelZero
+            const panelZero = new navigator.NestedPanel()
+
+            // Summarize a dataset in panel0
+            await panelZero.summarizeDataset(
+                'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv', 'Name')
+            panelZero.update()
+
+            // Add child panel
+            const spawnObjectForChildPanel = panelZero.objects('Gender').objects('Female')
+            const childPanel = new navigator.NestedPanel(panelZero, spawnObjectForChildPanel)
+
+            // Summarize a dataset in child panel
+            await childPanel.summarizeDataset(
+                'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny-malesOnly.csv', 'Name')
+            childPanel.update(0)
+            jest.runOnlyPendingTimers()
+
+
 
             // Turn on absolute chart widths
-            panelZero.absoluteChartWidths(true)
+            panelZero
+                .showAbsoluteChartWidths(true)
+                .update(0)
+            jest.runOnlyPendingTimers()
 
-            expect( panelZero.innerWidth() > childPanel.innerWidth() ).toBe( true )
-            // expect( panelZero.data )
+            // No overaps should have occurred
+            expect( panelZero.largestTotalCount() > childPanel.largestTotalCount()  ).toBe( true )
+            expect( panelZero.width() > childPanel.width()  ).toBe( true )
 
         })
 
+
+        test ('Toggling absolute chart widths when there are two sibling panels should not cause overlapping panels', async () => {
+
+            jest.useFakeTimers()
+
+            initializeDomWithSvg()
+
+            // Add panelZero
+            const panelZero = new navigator.NestedPanel()
+
+            // Summarize a dataset in panel0
+            await panelZero.summarizeDataset(
+                'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv', 'Name')
+            panelZero.update()
+
+            // Add the first sibling panel
+            const spawnObjectForSiblingPanel1 = panelZero.objects('Gender').objects('Female')
+            const siblingPanel1 = new navigator.NestedPanel(panelZero, spawnObjectForSiblingPanel1)
+
+            // Summarize a dataset in child panel
+            await siblingPanel1.summarizeDataset(
+                'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny-malesOnly.csv', 'Name')
+            siblingPanel1.update(0)
+            jest.runOnlyPendingTimers()
+
+
+            // Add the second sibling panel
+            const spawnObjectForSiblingPanel2 = panelZero.objects('Gender').objects('Male')
+            const siblingPanel2 = new navigator.NestedPanel(panelZero, spawnObjectForSiblingPanel2, 'sibling')
+
+            // Summarize a dataset in child panel
+            await siblingPanel2.summarizeDataset(
+                'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny-malesOnly.csv', 'Name')
+            siblingPanel2.update(0)
+            jest.runOnlyPendingTimers()
+
+
+            writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/1.html')
+
+            // Turn on absolute chart widths
+            panelZero
+                .showAbsoluteChartWidths(true)
+                .update(0)
+            jest.runOnlyPendingTimers()
+
+            writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/2.html')
+
+
+            // No overaps should have occurred
+            panelZeroContainsSibling1 = panelZero.rightEdge() > siblingPanel1.rightEdge()
+            panelZeroContainsSibling2 = panelZero.rightEdge() > siblingPanel2.rightEdge()
+
+            expect( panelZeroContainsSibling1 ).toBe( true )
+            expect( panelZeroContainsSibling2 ).toBe( true )
+
+        })
 
 
 })

@@ -37,6 +37,7 @@
 
             this._colorSet = 'Single-Hue'
             this._showAbsoluteValues = false
+            this._showAbsoluteChartWidths = false
             this._animationDuration = 600
             this._strokeWidth = '0.5px'
             this._strokeColor = 'rgba(255, 255, 255, 1.0)'
@@ -324,6 +325,7 @@
             if (!!panelZero){
                 panelZero
                     .showAbsoluteValues( this.showAbsoluteValues() )
+                    .showAbsoluteChartWidths( this.showAbsoluteChartWidths() )
                     .colorSet( this.colorSet() )
                     .animationDuration( this.animationDuration() )
                     .strokeWidth( this.strokeWidth() )
@@ -515,6 +517,24 @@
 
         }
 
+        
+        showAbsoluteChartWidths(value) {
+        
+            // Getter
+            if (!arguments.length){
+                return this._showAbsoluteChartWidths
+            }
+        
+            // Setter
+            else{
+                value.mustBeOfType('Boolean')
+                this._showAbsoluteChartWidths = value
+                
+                return this
+            }
+            
+        }
+
 
         colorSet(value){
 
@@ -668,13 +688,12 @@
             this.leftEdge = () => this.x() - this.bgExtensionLeft()
             this.rightEdgeOfCharts = () => this.rightEdge() - this._innerPadding.right - this.bgExtensionRight()
             this.leftEdgeOfCharts = () => this.x() + this._innerPadding.left
-
+            this.absoluteWidthOfChildPanel = (childPanelObject) => this._width *  (childPanelObject.largestTotalCount() / this.largestTotalCount() ) + this._innerPadding.left + this._innerPadding.right
 
 
             this._colorTheme = 'Single-Hue'
 
             this._showAbsoluteValues = false
-
 
             this._stacks = new data.Stacks()
             this._populateWithExampleData()
@@ -1378,7 +1397,7 @@
             }
 
             // Parameters
-            this._absoluteChartWidths = false
+            this._showAbsoluteChartWidths = false
 
 
 
@@ -1570,6 +1589,7 @@
 
             super.update(transitionDuration)
 
+
             if (thereIsAChildPanel){
                 thisPanel.childrenPanels.forEach( (childPanelObject, childPanelName) => {
 
@@ -1628,6 +1648,7 @@
                 thisPanel.bgFill( thisPanel.objectToSpawnFrom.fill() )
             }
 
+
             // If there are child panels
             if (!!thisPanel.childrenPanels && !!thisPanel.childrenPanels.size){
                 thisPanel.childrenPanels.forEach( (childPanelObject, childPanelId) => {
@@ -1635,9 +1656,18 @@
                     // Propagate values that need to be passed to child
                     childPanelObject
                         .showAbsoluteValues( this.showAbsoluteValues() )  // use of 'this' is not a mistake here
+                        .showAbsoluteChartWidths( this.showAbsoluteChartWidths() )
                         .colorSet( this.colorSet() )
                         .strokeWidth( this.strokeWidth() )
                         .strokeColor( this.strokeColor() )
+
+
+                    // Set absolute chart widths if necessary
+                    const newWidth = childPanelObject.showAbsoluteChartWidths()
+                        ? thisPanel.absoluteWidthOfChildPanel( childPanelObject )
+                        : thisPanel._width
+                    childPanelObject.width( newWidth )
+
 
                     if (childPanelObject._animation) {
                         childPanelObject.animationDuration ( this.animationDuration() )
@@ -2057,7 +2087,7 @@
 
                         const oldLocation = childPanelObject.x()
                         const newLocation = oldLocation + difference
-                        childPanelObject.x(newLocation)
+                        childPanelObject.x( newLocation )
 
                     })
 
@@ -2074,13 +2104,13 @@
                             if (!!parentPanel.has.siblingObjectsOnRightSide){
                                 parentPanel.has.siblingObjectsOnRightSide.forEach( (siblingObject) => {
                                     siblingObject.x( siblingObject.x() + difference )
-                                    siblingObject.updateAllPanels()
                                 })
                             }
                             recursivelyAdjustParentPanelsAndTheirSiblings(parentPanel)
                         }
                     }
                     recursivelyAdjustParentPanelsAndTheirSiblings()
+
 
 
                     // BRIDGE object is not adjusted here because
@@ -2094,17 +2124,17 @@
         }
 
 
-        absoluteChartWidths(value) {
+        showAbsoluteChartWidths(value) {
 
             // Getter
             if (!arguments.length){
-                return this._absoluteChartWidths
+                return this._showAbsoluteChartWidths
             }
 
             // Setter
             else{
                 value.mustBeOfType('Boolean')
-                this._absoluteChartWidths = value
+                this._showAbsoluteChartWidths = value
 
                 return this
             }

@@ -580,6 +580,41 @@ describe ('ABSOLUTE VALUES: Toggle absolute values in category captions', () => 
 
 
 
+
+//// ABSOLUTE PANEL SIZES ///////////////////////////////////////////////////////////////
+
+describe ('Absolute chart widths', () => {
+   
+        test ('Get/set', async() => {
+
+            jest.useFakeTimers()
+
+            const myNavigator = await initializeDomWithTitanicTinyNavigator()
+
+            // Get default state in navigator
+            expect( myNavigator.showAbsoluteChartWidths() ).toBe( false )
+            // Get default state in first panel of navigator
+            expect( myNavigator.objects('panel-0-0').showAbsoluteChartWidths() )
+                .toBe( false )
+
+
+            // Set value
+            myNavigator
+                .showAbsoluteChartWidths( true )
+                .update()
+
+            // Check new value in navigator
+            expect( myNavigator.showAbsoluteChartWidths() ).toBe( true )
+            // Check new value in first panel
+            expect( myNavigator.objects('panel-0-0').showAbsoluteChartWidths() )
+                .toBe( true )
+
+        })
+
+
+})
+
+
 //// COLOR SETS  //////////////////////////////////////////////////////////////////////////
 
 
