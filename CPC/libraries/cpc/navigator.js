@@ -2006,7 +2006,7 @@
 
                 super.x(value)
 
-                if ( !!this.childrenPanels ){
+                if ( !!this.childrenPanels.size ){
 
                     const difference = value - oldValue
 
@@ -2050,7 +2050,7 @@
                 super.width(value)
 
                 // Adjust child panels
-                if ( !!this.childrenPanels ){
+                if ( !!this.childrenPanels.size ){
 
                     // Shift child panels to accommodate the difference
                     this.childrenPanels.forEach( (childPanelObject, childPanelId) => {
