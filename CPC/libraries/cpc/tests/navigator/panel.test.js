@@ -3913,6 +3913,37 @@ initializeDomWith.panelZero.and = {
 
         return  {panelZero, siblingPanel1, siblingPanel2, siblingPanel3, childPanelOfSibling1, childPanelOfSibling2, childPanelOfSibling3}
 
+    },
+
+    childThatHasTwoSiblingChildren: function () {
+
+        jest.useFakeTimers()
+
+        const {panelZero, childPanel, grandChildPanel:grandChildPanel1} = initializeDomWith.panelZero.and.childAndGrandchild()
+
+        jest.runOnlyPendingTimers()
+
+        // Change the label of a grandchild to fit to this recipe
+        grandChildPanel1
+            .bgText('grandChildPanel1')
+            .update(0)
+
+        // Create a second grandchild panel as a sibling to the first one
+        let grandChildPanel2  // declaration must be outside the setTimer function
+        setTimeout(() => {
+            const spawnObjectForGrandChildPanel = childPanel.objects('class').objects('second-class')
+            grandChildPanel2 = new navigator.NestedPanel(childPanel, spawnObjectForGrandChildPanel, 'sibling')
+            grandChildPanel2
+                .bgText('grandChildPanel2')
+                .update(0)
+
+        }, 1000)
+        jest.runOnlyPendingTimers()
+
+        jest.runAllTimers()
+
+        return {panelZero, childPanel, grandChildPanel1, grandChildPanel2}
+
     }
 
 }
@@ -3947,6 +3978,13 @@ describe ('initializeDomWith...', () => {
         // Uncomment to write html output to file
         // initializeDomWith.panelZero.and.twoSiblingChildrenThatEachHasOneChild()
         // writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/initializeDomWith.panelZero.and.twoSiblingChildrenThatEachHasOneChild.html')
+    })
+
+
+    test ('initializeDomWith.panelZero.and.childThatHasTwoSiblingChildren', () => {
+        // Uncomment to write html output to file
+        // initializeDomWith.panelZero.and.childThatHasTwoSiblingChildren()
+        // writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/initializeDomWith.panelZero.and.childThatHasTwoSiblingChildren.html')
     })
 
 
