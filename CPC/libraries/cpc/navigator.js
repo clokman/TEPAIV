@@ -2088,6 +2088,26 @@
                     })
                 }
 
+                // Adjust background extensions of parent panels to accommodate the new width
+                const recursivelyAdjustParentPanelsAndTheirSiblings = (thisPanel=this) => {
+                    if (!!thisPanel.parentPanel){
+                        const parentPanel = thisPanel.parentPanel
+
+                        // Adjust background extensions of parent panels to accommodate the new width
+                        parentPanel
+                            .bgExtensionRight( parentPanel.bgExtensionRight() + difference )
+
+                        // Push parents of siblings rightward to make room for the new width
+                        if (!!parentPanel.has.siblingObjectsOnRightSide){
+                            parentPanel.has.siblingObjectsOnRightSide.forEach( (siblingObject) => {
+                                siblingObject.x( siblingObject.x() + difference )
+                            })
+                        }
+                        recursivelyAdjustParentPanelsAndTheirSiblings(parentPanel)
+                    }
+                }
+                recursivelyAdjustParentPanelsAndTheirSiblings()
+
 
                 // Adjust child panels
                 if ( !!this.childrenPanels.size ){
@@ -2100,28 +2120,6 @@
                         childPanelObject.x( newLocation )
 
                     })
-
-                    // Adjust background extensions of parent panels to accommodate the new width
-                    const recursivelyAdjustParentPanelsAndTheirSiblings = (thisPanel=this) => {
-                        if (!!thisPanel.parentPanel){
-                            const parentPanel = thisPanel.parentPanel
-
-                            // Adjust background extensions of parent panels to accommodate the new width
-                            parentPanel
-                                .bgExtensionRight( parentPanel.bgExtensionRight() + difference )
-
-                            // Push parents of siblings rightward to make room for the new width
-                            if (!!parentPanel.has.siblingObjectsOnRightSide){
-                                parentPanel.has.siblingObjectsOnRightSide.forEach( (siblingObject) => {
-                                    siblingObject.x( siblingObject.x() + difference )
-                                })
-                            }
-                            recursivelyAdjustParentPanelsAndTheirSiblings(parentPanel)
-                        }
-                    }
-                    recursivelyAdjustParentPanelsAndTheirSiblings()
-
-
 
                     // BRIDGE object is not adjusted here because
                     // ... it is managed by _adjustBridgeProperties method.

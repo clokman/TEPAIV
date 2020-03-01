@@ -996,7 +996,7 @@ describe ('Width', () => {
         expect( twoSiblingsAreRightNextToEachOther( siblingPanel2, siblingPanel3 ) ).toBeTruthy()
 
 
-        // Change width of parent panel (it should propagate to its children)
+        // Change width of parent panel
         expect( siblingPanel1.width() ).not.toBe( 50 )
         panelZero.width(50).update()
 
@@ -1014,20 +1014,21 @@ describe ('Width', () => {
 
         jest.useFakeTimers()
 
-        // TODO [FEB]: The issue is solved but this is not the correct test. A new `initializeDomWith.etc` should be created.
-        const {panelZero, siblingPanel1, siblingPanel2, siblingPanel3} =
-            initializeDomWith.panelZero.and.threeSiblingChildren()
+        const {panelZero, childPanel, grandChildPanel1, grandChildPanel2} =
+            initializeDomWith.panelZero.and.childThatHasTwoSiblingChildren()
+
 
         // Formulas
-        const panelZeroBackgroundEndsAtCorrectLocation = () => panelZero.rightEdge() === siblingPanel3.rightEdge() + panelZero._innerPadding.right
+        const panelZeroBackgroundEndsAtCorrectLocation = () => panelZero.rightEdge() === grandChildPanel2.rightEdge() + childPanel._innerPadding.right + panelZero._innerPadding.right
+        const childPanelBackgroundEndsAtCorrectLocation = () => childPanel.rightEdge() === grandChildPanel2.rightEdge() + childPanel._innerPadding.right
 
         // Check initial locations and establish that the formula for checking correct location works
         expect( panelZeroBackgroundEndsAtCorrectLocation() ).toBeTruthy()
+        expect( childPanelBackgroundEndsAtCorrectLocation() ).toBeTruthy()
 
-
-        // Change width of parent panel (it should propagate to its children)
-        expect( siblingPanel1.width() ).not.toBe( 50 )
-        panelZero.width(50).update()
+        // Change width of LEFT grandchild sibling
+        expect( grandChildPanel1.width() ).not.toBe( 50 )
+        grandChildPanel1.width(50).update()
 
         jest.runOnlyPendingTimers()
         jest.runAllTimers()
@@ -1035,7 +1036,22 @@ describe ('Width', () => {
         writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/1.html')
 
         expect( panelZeroBackgroundEndsAtCorrectLocation() ).toBeTruthy()
+        expect( childPanelBackgroundEndsAtCorrectLocation() ).toBeTruthy()
 
+
+        // Change width of RIGHT grandchild sibling
+        expect( grandChildPanel1.width() ).not.toBe( 150 )
+        grandChildPanel1.width(150).update()  // TODO [FEB]: This statement actually does not do anything! (see wrdom output.)
+                                              //   The .width() only seem to change panel-0-0 (and propagate correctly to children)
+                                              //   But .width() does not change any panels deeper than panel-0-0
+
+        jest.runOnlyPendingTimers()
+        jest.runAllTimers()
+
+        writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/2.html')
+
+        expect( panelZeroBackgroundEndsAtCorrectLocation() ).toBeTruthy()
+        expect( childPanelBackgroundEndsAtCorrectLocation() ).toBeTruthy()
 
     })
     
@@ -1045,8 +1061,10 @@ describe ('Width', () => {
 
         //TODO [FEB]: This scenario leads to panels not being updated correctly.
         // Therefore, this test MUST be written
+        // UPDATE: It now works, but test MUST be written anyway
 
     })
+
 
 
     // HELPER FUNCTION(S) //
