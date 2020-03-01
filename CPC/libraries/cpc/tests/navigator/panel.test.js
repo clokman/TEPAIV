@@ -951,7 +951,6 @@ describe ('Width', () => {
         }, 4000)
         jest.runOnlyPendingTimers()
 
-        writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/1.html')
         expect( siblingPanel1.rightEdge() < siblingPanel2.leftEdge() ).toBe( true )
         expect( childPanelOfSibling1.rightEdge() < siblingPanel2.leftEdge() ).toBe( true )
 
@@ -1169,15 +1168,11 @@ describe ('Absolute Chart Widths', () => {
             jest.runOnlyPendingTimers()
 
 
-            writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/1.html')
-
             // Turn on absolute chart widths
             panelZero
                 .showAbsoluteChartWidths(true)
                 .update(0)
             jest.runOnlyPendingTimers()
-
-            writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/2.html')
 
 
             // No overaps should have occurred
