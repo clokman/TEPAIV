@@ -31,7 +31,8 @@ global.shape = require("../../shape")
 global.stringUtils = require("../../../utils/stringUtils")
 global.data = require("../../../cpc/data")
 
-require("../../../../../JestUtils/jest-dom")
+const jestDom = require("../../../../../JestUtils/jest-dom")
+const initializeDomWithSvg = jestDom.initializeDomWithSvg
 
 //// MODULES BEING TESTED ////
 const datasets = require("../../../../data/datasets")

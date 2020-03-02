@@ -14,9 +14,12 @@ if (typeof Object.fromEntries !== 'function') {
 
 
 //// NODE-ONLY DEPENDENCIES ////
-require("../../../../../JestUtils/jest-console")
-require("../../../../../JestUtils/jest-dom")
+const jestConsole = require("../../../../../JestUtils/jest-console")
+expectTable = jestConsole.expectTable
 
+const jestDom = require("../../../../../JestUtils/jest-dom")
+initializeDomWithSvg = jestDom.initializeDomWithSvg
+writeDomToFile = jestDom.writeDomToFile
 
 //// UMD DEPENDENCIES ////
 

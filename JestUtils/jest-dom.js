@@ -1,4 +1,4 @@
-writeDomToFile = function (path){
+const writeDomToFile = function (path){
 
     fs = require('fs')
     $ = require('./external/jquery-3.1.1.min')
@@ -8,7 +8,7 @@ writeDomToFile = function (path){
 
 }
 
-initializeDomWithSvg = function (){
+const initializeDomWithSvg = function (){
 
     jest.useFakeTimers()
 

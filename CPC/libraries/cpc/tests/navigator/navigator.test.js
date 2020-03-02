@@ -14,7 +14,10 @@ if (typeof Object.fromEntries !== 'function') {
 
 
 //// PURE NODE DEPENDENCIES ////
-require('../../../../../JestUtils/jest-console')
+const jestConsole = require('../../../../../JestUtils/jest-console')
+const expectTable = jestConsole.expectTable
+
+
 require('../../../../../JestUtils/jest-dom')
 
 

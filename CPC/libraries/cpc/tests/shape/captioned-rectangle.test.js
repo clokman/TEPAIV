@@ -15,7 +15,9 @@ if (typeof Object.fromEntries !== 'function') {
 
 //// PURE NODE DEPENDENCIES ////
 require('../../../../../JestUtils/jest-console')
-require('../../../../../JestUtils/jest-dom')
+
+const jestDom = require('../../../../../JestUtils/jest-dom')
+const initializeDomWithSvg = jestDom.initializeDomWithSvg
 
 
 //// UMD DEPENDENCIES ////

@@ -14,7 +14,9 @@ if (typeof Object.fromEntries !== 'function') {
 
 
 //// PURE NODE DEPENDENCIES ////
-require('../../../../JestUtils/jest-console')
+const jestConsole = require('../../../../JestUtils/jest-console')
+const clearConsoleHistory = jestConsole.clearConsoleHistory
+const expectConsoleHistory = jestConsole.expectConsoleHistory
 
 
 //// UMD DEPENDENCIES ////

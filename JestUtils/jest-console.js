@@ -1,6 +1,6 @@
 
-consoleHistory = ''
-lastConsoleOutput = ''
+let consoleHistory = ''
+let lastConsoleOutput = ''
 
 // Reroute console to jest.fn
 console["log"] = jest.fn(input => {
@@ -35,7 +35,7 @@ expect.extend({
 
 
 
-expectTable = function (tabularData, expectedOutput, startAt, maxRows){
+const expectTable = function (tabularData, expectedOutput, startAt, maxRows){
 
     const consoleOutput = _printVariableAsFormattedTable(tabularData, startAt, maxRows)
     expect(consoleOutput).toBe(expectedOutput)
@@ -43,7 +43,7 @@ expectTable = function (tabularData, expectedOutput, startAt, maxRows){
 }
 
 
-_printVariableAsFormattedTable = function(tabularData, startAt, maxRows) {
+const _printVariableAsFormattedTable = function(tabularData, startAt, maxRows) {
 
     let consolePrefix = ''
         , consolePostfix = ''
@@ -70,7 +70,7 @@ _printVariableAsFormattedTable = function(tabularData, startAt, maxRows) {
 }
 
 
-expectLog = function(variable, expectedOutput, format='single-line'){
+const expectLog = function(variable, expectedOutput, format='single-line'){
 
     console.log(variable)
 
@@ -85,12 +85,12 @@ expectLog = function(variable, expectedOutput, format='single-line'){
 }
 
 
-expectConsoleHistory = function(expectedHistory){
+const expectConsoleHistory = function(expectedHistory){
     expect(consoleHistory).toBe(expectedHistory)
 }
 
 
-clearConsoleHistory = function () {
+const clearConsoleHistory = function () {
     consoleHistory = ''
 }
 

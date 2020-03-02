@@ -13,7 +13,8 @@ if (typeof Object.fromEntries !== 'function') {
 }
 
 //// TESTING LIBRARIES ////
-require("../../../../../JestUtils/jest-console")
+jestConsole = require("../../../../../JestUtils/jest-console")
+expectTable = jestConsole.expectTable
 
 //// REQUIREMENTS ////
 

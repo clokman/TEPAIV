@@ -11,7 +11,8 @@ if (typeof Object.fromEntries !== 'function') {
 }
 
 // NODE-ONLY DEPENDENCIES //
-require("../../../../../JestUtils/jest-console")
+const jestConsole = require("../../../../../JestUtils/jest-console")
+expectTable = jestConsole.expectTable
 
 
 // UMD DEPENDENCIES //
