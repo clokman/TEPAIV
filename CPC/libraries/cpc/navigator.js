@@ -9,7 +9,7 @@
 //////////////////////////////////////////////////////////////////////////////////////
 
 
-// Module content goes here.
+    // Module content goes here.
     const version = "3.0"
 
 
@@ -37,7 +37,7 @@
 
             this._colorSet = 'Single-Hue'
             this._showAbsoluteValues = false
-            this._showAbsoluteChartWidths = false
+            this._showAbsoluteChartWidths = NestedPanel.initializeWith.absoluteChartWidths
             this._animationDuration = 600
             this._strokeWidth = '0.5px'
             this._strokeColor = 'rgba(255, 255, 255, 1.0)'
@@ -198,10 +198,10 @@
 
 
 
-                    // this._goingDeeper = clickedPanelDepth === this._currentPanelDepth
-                    // this._stayingAtSameLevel = clickedPanelDepth === this._currentPanelDepth - 1
-                    // this._goingUpward = clickedPanelDepth === this._currentPanelDepth - 2  // TODO: This MUST be changed from a magic number to a generalizable algorithm
-                    // callback.call(this)  // execute the callback statement
+            // this._goingDeeper = clickedPanelDepth === this._currentPanelDepth
+            // this._stayingAtSameLevel = clickedPanelDepth === this._currentPanelDepth - 1
+            // this._goingUpward = clickedPanelDepth === this._currentPanelDepth - 2  // TODO: This MUST be changed from a magic number to a generalizable algorithm
+            // callback.call(this)  // execute the callback statement
 
 
             // this._whenACategoryIsClicked(callback)  // keep listening
@@ -245,7 +245,7 @@
 
                     this._whenACategoryIsClicked(callback)  // keep listening
 
-            })
+                })
 
         }
 
@@ -440,7 +440,7 @@
 
             // Create the new child panel as the child of the last clicked panel
             const totalDurationOfChildPanelInitializationAnimations = (
-                  childPanelObject._animation.duration.extendBridge
+                childPanelObject._animation.duration.extendBridge
                 + childPanelObject._animation.duration.maximizePanelCover
             )
 
@@ -517,22 +517,22 @@
 
         }
 
-        
+
         showAbsoluteChartWidths(value) {
-        
+
             // Getter
             if (!arguments.length){
                 return this._showAbsoluteChartWidths
             }
-        
+
             // Setter
             else{
                 value.mustBeOfType('Boolean')
                 this._showAbsoluteChartWidths = value
-                
+
                 return this
             }
-            
+
         }
 
 
@@ -552,22 +552,22 @@
             }
         }
 
-       animationDuration(value) {
+        animationDuration(value) {
 
-           // Getter
-           if (!arguments.length){
-               return this._animationDuration
-           }
+            // Getter
+            if (!arguments.length){
+                return this._animationDuration
+            }
 
-           // Setter
-           else{
-               value.mustBeOfType('Number')
-               this._animationDuration = value
+            // Setter
+            else{
+                value.mustBeOfType('Number')
+                this._animationDuration = value
 
-               return this
-           }
+                return this
+            }
 
-       }
+        }
 
         strokeWidth(value){
 
@@ -593,6 +593,8 @@
 
 
     }
+
+
 
 
     /**
@@ -1384,6 +1386,11 @@
 
     class NestedPanel extends Panel {
 
+        static initializeWith = {
+            ...super.initializeWith,
+            absoluteChartWidths: false
+        }
+
         constructor(parentContainerSelectionOrObject, objectToSpawnFrom, addAs='singleton') {
 
             // Superclass Init //
@@ -1397,8 +1404,10 @@
             }
 
             // Parameters
-            this._showAbsoluteChartWidths = false
+            this._showAbsoluteChartWidths = this.constructor.initializeWith.absoluteChartWidths
 
+            // Formulas
+            this.absoluteWidthOfChildPanel = (childPanelObject) => this._width *  (childPanelObject.largestTotalCount() / this.largestTotalCount() ) + this._innerPadding.left + this._innerPadding.right
 
 
             this.childrenPanels = new Map()
@@ -2735,6 +2744,7 @@
 
 
     }
+
 
 
     /**

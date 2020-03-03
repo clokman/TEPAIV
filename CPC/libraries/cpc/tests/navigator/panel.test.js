@@ -514,6 +514,43 @@ describe ('Instantiation', () => {
 })
 
 
+//// Preferences ///////////////////////////////////////////////////////////////
+
+describe ('Class properties: initializeWith)', () => {
+
+
+
+    test ('Initialize nested panel with absolute chart widths', () => {
+
+            const {panelZero: panelZeroNonAbsolute, childPanel: childPanelNonAbsolute} =
+                initializeDomWith.panelZero.and.child()
+
+            // Check initialization values for absolute chart widths
+            expect( navigator.NestedPanel.initializeWith.absoluteChartWidths ).toBeFalsy()
+            expect( panelZeroNonAbsolute.showAbsoluteChartWidths() ).toBeFalsy()
+            expect( childPanelNonAbsolute.showAbsoluteChartWidths() ).toBeFalsy()
+
+            // Change initialization values
+            navigator.NestedPanel.initializeWith.absoluteChartWidths = true
+
+            // Create new panels with the new values
+            const {panelZero: panelZeroAbsolute, childPanel: childPanelAbsolute} = initializeDomWith.panelZero.and.child()
+
+            // The new panels should have the new initialization values
+            expect( panelZeroAbsolute.showAbsoluteChartWidths() ).toBeTruthy()
+            expect( childPanelAbsolute.showAbsoluteChartWidths() ).toBeTruthy()
+
+
+            // Set the flag to its default value (so that other tests start with the default value)
+            navigator.NestedPanel.initializeWith.absoluteChartWidths = false
+
+
+        })
+
+    
+})
+
+
 //// Inferences and Adjustments ///////////////////////////////////////////////////////////////
 
 describe ('Value Inferences and Adjustments', () => {
