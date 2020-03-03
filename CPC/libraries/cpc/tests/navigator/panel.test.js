@@ -511,6 +511,24 @@ describe ('Instantiation', () => {
 
     })
 
+    
+    // test ('Initialize with data', () => {
+    //
+    //     initializeDomWithSvg()
+    //
+    //
+    //     expect( navigator.Panel.initializeWith.data ).toBe( 'example' )
+    //     navigator.Panel.initializeWith.data = 'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv'
+    //
+    //     // Create panel
+    //     const myPanel = new navigator.Panel()
+    //         .id('my-panel')
+    //         .update()
+    //
+    //
+    // })
+    //
+    
 })
 
 
@@ -1241,6 +1259,54 @@ describe ('Absolute Chart Widths', () => {
             expect( panelZeroContainsSibling2 ).toBe( true )
 
         })
+
+
+
+         // TODO [FEB]
+        test ('When absolute chart widths are enabled, newly created panels should initialize correctly', async () => {
+
+            jest.useFakeTimers()
+
+            initializeDomWithSvg()
+
+            // Add panelZero
+            const panelZero = new navigator.NestedPanel()
+
+
+            // Summarize a dataset in panel0
+            await panelZero.summarizeDataset(
+                'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv', 'Name')
+            panelZero.update()
+
+            // Turn on absolute chart widths
+            panelZero
+                .showAbsoluteChartWidths(true)
+                .update(0)
+            jest.runOnlyPendingTimers()
+
+
+            // Add child panel
+            const spawnObjectForSiblingPanel1 = panelZero.objects('Gender').objects('Female')
+            const childPanel = new navigator.NestedPanel(panelZero, spawnObjectForSiblingPanel1)
+
+            // Summarize a dataset in child panel
+            await childPanel.summarizeDataset(
+                'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny-malesOnly.csv', 'Name')
+            childPanel.update(0)
+            jest.runOnlyPendingTimers()
+
+
+            // Formulas
+            const panelZeroBackgroundEndsAtCorrectLocation = () => panelZero.rightEdge() === childPanel.rightEdge() + panelZero._innerPadding.right
+
+            writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/1.html')
+
+            expect( panelZeroBackgroundEndsAtCorrectLocation() ).toBeTruthy()
+
+
+
+        })
+
 
 
 })

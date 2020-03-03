@@ -605,6 +605,10 @@
      */
     class Panel extends container.Group {
 
+        // Not yet supported in Node and Jest //
+        static initializeWith = {
+            data: ''
+        }
 
         constructor(parentContainerSelectionOrObject) {
 
@@ -690,7 +694,6 @@
             this.leftEdge = () => this.x() - this.bgExtensionLeft()
             this.rightEdgeOfCharts = () => this.rightEdge() - this._innerPadding.right - this.bgExtensionRight()
             this.leftEdgeOfCharts = () => this.x() + this._innerPadding.left
-            this.absoluteWidthOfChildPanel = (childPanelObject) => this._width *  (childPanelObject.largestTotalCount() / this.largestTotalCount() ) + this._innerPadding.left + this._innerPadding.right
 
 
             this._colorTheme = 'Single-Hue'
@@ -1608,8 +1611,6 @@
                 })
             }
 
-
-
             return this
 
         }
@@ -1740,6 +1741,15 @@
             }
 
 
+            // if ( this.showAbsoluteChartWidths() ){
+            //     setTimeout( () => {
+            //
+            //         this._recursivelyAdjustBackgroundsIfTheyAreErroneousInAbsoluteChartWidthsMode()
+            //         this.updateAllPanels()
+            //
+            //     }, this.animationDuration() )
+            // }
+
             // Register the current object as a child of its parent panel
             const nameOfThisPanel = this.id()
             this.parentPanel.childrenPanels.set(nameOfThisPanel, this)
@@ -1747,6 +1757,7 @@
             // Set color set to be inherited from parent
             this.colorSet( this.parentPanel.colorSet() )
             this.showAbsoluteValues( this.parentPanel.showAbsoluteValues() )
+
 
         }
 
@@ -1962,7 +1973,7 @@
                 this._bridgeObject
                     .update( 0 )
 
-                // Move child panel cover on top of bridge
+                // Move child panel cover next to bridge
                 childPanelCover
                     .x( this.postCreationAnimationProperties.x )
                     .y( this._bridgeObject.y() )
@@ -2097,7 +2108,7 @@
                     })
                 }
 
-                // Adjust background extensions of parent panels to accommodate the new width
+                // Adjust parent panels to accommodate the new width
                 const recursivelyAdjustParentPanelsAndTheirSiblings = (thisPanel=this) => {
                     if (!!thisPanel.parentPanel){
                         const parentPanel = thisPanel.parentPanel
@@ -2105,6 +2116,7 @@
                         // Adjust background extensions of parent panels to accommodate the new width
                         parentPanel
                             .bgExtensionRight( parentPanel.bgExtensionRight() + difference )
+
 
                         // Push parents of siblings rightward to make room for the new width
                         if (!!parentPanel.has.siblingObjectsOnRightSide){
@@ -2157,6 +2169,32 @@
             }
 
         }
+
+
+        // _recursivelyAdjustBackgroundsIfTheyAreErroneousInAbsoluteChartWidthsMode(thisPanel=this ){
+        //
+        //     if ( thisPanel.has.parentPanel ){
+        //
+        //         const parentPanel = thisPanel.parentPanel
+        //
+        //         // Correct background extensions in case of errors
+        //         const locationBgExtensionOfParentShouldEnd = thisPanel.rightEdge() + parentPanel._innerPadding.right
+        //         const locationParentPanelActuallyEnds = parentPanel.rightEdge()
+        //         const parentBgExtensionCorrectionValue = locationBgExtensionOfParentShouldEnd - locationParentPanelActuallyEnds
+        //
+        //         parentPanel
+        //             .bgExtensionRight( parentPanel.bgExtensionRight() + parentBgExtensionCorrectionValue )
+        //
+        //
+        //         thisPanel._recursivelyAdjustBackgroundsIfTheyAreErroneousInAbsoluteChartWidthsMode( thisPanel.parentPanel )
+        //
+        //
+        //     }
+        //
+        //
+        //
+        // }
+
 
 
         _recursivelyAdjustAndUpdateDOWNSTREAM(thisPanel=this, transitionDuration){
