@@ -37,7 +37,7 @@
 
             this._colorSet = 'Single-Hue'
             this._showAbsoluteValues = false
-            this._showAbsoluteChartWidths = NestedPanel.initializeWith.absoluteChartWidths
+            this._showAbsoluteChartWidths = false
             this._animationDuration = 600
             this._strokeWidth = '0.5px'
             this._strokeColor = 'rgba(255, 255, 255, 1.0)'
@@ -1397,9 +1397,6 @@
 
     class NestedPanel extends Panel {
 
-        static initializeWith = {
-            absoluteChartWidths: false
-        }
 
         constructor(parentContainerSelectionOrObject, objectToSpawnFrom, addAs='singleton') {
 
@@ -1414,7 +1411,7 @@
             }
 
             // Parameters
-            this._showAbsoluteChartWidths = this.constructor.initializeWith.absoluteChartWidths
+            this._showAbsoluteChartWidths = false
 
             // Formulas
             this.absoluteWidthOfChildPanel = (childPanelObject) => this._width *  (childPanelObject.largestTotalCount() / this.largestTotalCount() ) + this._innerPadding.left + this._innerPadding.right

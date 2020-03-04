@@ -16,7 +16,6 @@
     "semantic-ui": "^2.4.2"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.8.3",
     "jest": "^24.9.0",
     "jest-canvas-mock": "^2.2.0",
     "node-fetch-polyfill": "^2.0.6",
