@@ -605,15 +605,14 @@
      */
     class Panel extends container.Group {
 
-        // Not yet supported in Node and Jest //
-        static initializeWith = {
-            data: ''
-        }
-
         constructor(parentContainerSelectionOrObject) {
 
             // Superclass Init //
             super(parentContainerSelectionOrObject)
+
+
+            this.dataPath = null
+            this.omittedColumns = null
 
 
             this.class('panel')
@@ -695,28 +694,37 @@
             this.rightEdgeOfCharts = () => this.rightEdge() - this._innerPadding.right - this.bgExtensionRight()
             this.leftEdgeOfCharts = () => this.x() + this._innerPadding.left
 
-
             this._colorTheme = 'Single-Hue'
 
             this._showAbsoluteValues = false
 
             this._stacks = new data.Stacks()
-            this._populateWithExampleData()
 
-            this._awaitingDomUpdateAfterDataChange = false
-
+        }
 
 
-            // Initialize //
+        /**
+         * Besides allowing loading datasets asynchronously, this async block separates
+         * initialization of the Panel instance from drawing it on DOM. This way, instance parameters
+         * can be modified before the panel is drawn on DOM for the first time.
+         */
+        async build() {
+
+            // Load data into panel
+            if ( !!this.dataPath ) {
+                await this.summarizeDataset( this.dataPath, this.omittedColumns)
+            } else {
+                this._populateWithExampleData()
+            }
+
+            // Draw the panel //
             // TODO: Container.objects() implementation SHOULD be changed so that _backgroundObject and _bridgeObject would also be included in objects()
             this._createBackgroundObject()
 
             this._createChartsBasedOnStacksData()
 
             this.update(0)
-
         }
-
 
         remove(){
 
@@ -1390,7 +1398,6 @@
     class NestedPanel extends Panel {
 
         static initializeWith = {
-            ...super.initializeWith,
             absoluteChartWidths: false
         }
 
@@ -1418,7 +1425,7 @@
 
 
             this.class('panel')
-                .update()
+                // .update()   // `update()` commented out during init-build split
 
             this.objectToSpawnFrom = this.arguments.objectToSpawnFrom
 
@@ -1501,7 +1508,7 @@
                     ? `panel-${ this.depthIndex() }-${ this.has.parentWithNumberOfChildren }`
                     : `panel-${ this.depthIndex() }-${ 0 }`
                 : 'panel-0-0'
-            this.id(panelId).update(0)
+            this.id(panelId)//.update(0)  //   // `update()` commented out during init-build split
 
 
             // Add defaults for the NestedPanel to the defaults property of Panel
@@ -1517,7 +1524,7 @@
             if (this.has.parentPanel) {
 
                 this.x(  0 - this.width() - this.x() )
-                    .update(0)  // start off-screen
+                    // .update(0)  // start off-screen  // `update()` commented out during init-build split
 
 
                 if (this.objectToSpawnFrom){
@@ -1549,24 +1556,36 @@
                 }
             }
 
-            // Update the single panel that is created by superclass so that the
-            // ... properties unique to NestedPanel are updated and reflected to DOM
-            this.update(0)
+            this.has.beenFullyInstantiated = false
 
-            // Create as a child panel
-            if (this.has.parentPanel) {
-                this._inferSpawnAnimationType()
-                this._embedAsChildPanel()
-                this._adjustAllPanels()
-            }
-
-
-            setTimeout( () => {
-                this.has.beenFullyInstantiated = true
-            }, this.animationDuration() )
+            this.build()  // TODO [FEB]: This line removed to realize init-build separation
 
         }
 
+
+        build() {
+
+            super.build()
+
+            // Update the single panel that is created by superclass so that the
+            // ... properties unique to NestedPanel are updated and reflected to DOM
+            // this.update(0)  // `update()` commented out during init-build split
+
+            // Create as a child panel
+             if (this.has.parentPanel) {
+                 this._inferSpawnAnimationType()
+                 this._embedAsChildPanel()
+                 this._adjustAllPanels()
+            }
+
+
+            setTimeout(() => {
+                // this.updateAllPanels()  // if an update needs to be added to the end, this could be a harmless way to do it (i.e., without cutting a previous update operation in half)
+                this.has.beenFullyInstantiated = true
+            }, this.animationDuration())
+
+
+        }
 
         updateAllPanels(transitionDuration) {
 
