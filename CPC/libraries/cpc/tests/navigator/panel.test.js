@@ -538,10 +538,10 @@ describe ('Instantiation', () => {
 
 //// Preferences ///////////////////////////////////////////////////////////////
 
-describe ('Class properties: initializeWith)', () => {
+describe ('Custom initialization)', () => {
 
-
-    test ('Initialize panel with data', async () => {
+    
+    test ('Initialize panel with custom DATA (i.e., Stacks)', () => {
 
         // Initialize without specifying a dataset
         const panelZeroWithoutSpecifiedData = new navigator.Panel()
@@ -560,12 +560,56 @@ describe ('Class properties: initializeWith)', () => {
         // Initialize with specified dataset
         const panelZeroWithSpecifiedData = new navigator.Panel()
 
-        panelZeroWithSpecifiedData.dataPath = 'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv'
-        panelZeroWithSpecifiedData.omittedColumns = ['Ticket']
+        // Create replacement data (i.e., stacks)
+        const replacementStack1 =  new data.Stack()
+            .populateWithExampleData('generic')
+        const replacementStack2 =  new data.Stack()
+            .populateWithExampleData('generic')
+        const replacementStacks = new data.Stacks()
+            .clear()
+            .add('generic-1', replacementStack1)
+            .add('generic-2', replacementStack2)
 
-        await panelZeroWithSpecifiedData.build()
 
-        expect( panelZeroWithSpecifiedData.dataPath ).toBe( 'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv' )
+        // Load new data into the panel
+        panelZeroWithSpecifiedData.stacks(replacementStacks)
+
+        // Build the panel using the new data
+        panelZeroWithSpecifiedData.build()
+
+        expect( panelZeroWithSpecifiedData._stacks.data() ).toTabulateAs(`\
+┌───────────────────┬─────────────┬──────────────────────────────────────────────┐
+│ (iteration index) │     Key     │                    Values                    │
+├───────────────────┼─────────────┼──────────────────────────────────────────────┤
+│         0         │ 'generic-1' │ Stack { _data: [Map], _scaleFunction: null } │
+│         1         │ 'generic-2' │ Stack { _data: [Map], _scaleFunction: null } │
+└───────────────────┴─────────────┴──────────────────────────────────────────────┘`)
+
+
+
+    })
+    
+    
+    test ('Initialize panel with custom DATASET (i.e., not data or stacks)', async () => {
+
+        // Initialize without specifying a dataset
+        const panelZeroWithoutSpecifiedData = new navigator.Panel()
+        panelZeroWithoutSpecifiedData.build()
+
+        // Check initialization values for data
+        expect( panelZeroWithoutSpecifiedData._stacks.data() ).toTabulateAs(`\
+┌───────────────────┬──────────┬──────────────────────────────────────────────┐
+│ (iteration index) │   Key    │                    Values                    │
+├───────────────────┼──────────┼──────────────────────────────────────────────┤
+│         0         │ 'gender' │ Stack { _data: [Map], _scaleFunction: null } │
+│         1         │ 'class'  │ Stack { _data: [Map], _scaleFunction: null } │
+│         2         │ 'status' │ Stack { _data: [Map], _scaleFunction: null } │
+└───────────────────┴──────────┴──────────────────────────────────────────────┘`)
+
+        // Initialize with specified dataset
+        const panelZeroWithSpecifiedData = new navigator.Panel()
+        await panelZeroWithSpecifiedData.summarizeDataset('http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv', ['Ticket'])
+        panelZeroWithSpecifiedData.build()
 
         expect( panelZeroWithSpecifiedData._stacks.data() ).toTabulateAs(`\
 ┌───────────────────┬──────────┬──────────────────────────────────────────────┐
@@ -876,7 +920,7 @@ describe ('Data Operations', () => {
         // Create panel zero
         const panelZero = new navigator.Panel()
             .bgText('panelZero')
-            .update(0)
+            .build()
 
         // Save a definitive property of exaple dataset for later comparison
         const largestTotalCountOfExampleData =  panelZero.stacks().largestTotalCount()

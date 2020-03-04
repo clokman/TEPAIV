@@ -84,7 +84,7 @@
                 .bgText('Dataset')
                 .bgTextFill('white')
                 .height(600)   // TODO: Magic number removed
-                .update()
+                .build()
 
             panelObject.yAxisLabels(true) // TODO: Why is this not chainable with the setters above?
 
@@ -431,11 +431,18 @@
             let childPanelObject
 
             if (!childIsASibling){
-                childPanelObject = new NestedPanel(this._lastClickedPanelObject, this._lastClickedCategoryObject)
+                childPanelObject = new NestedPanel(
+                    this._lastClickedPanelObject,
+                    this._lastClickedCategoryObject
+                ).build()
             }
 
             if (childIsASibling){
-                childPanelObject = new NestedPanel(this._lastClickedPanelObject, this._lastClickedCategoryObject, 'sibling')
+                childPanelObject = new NestedPanel(
+                    this._lastClickedPanelObject,
+                    this._lastClickedCategoryObject,
+                    'sibling'
+                ).build()
             }
 
             // Create the new child panel as the child of the last clicked panel
@@ -611,10 +618,6 @@
             super(parentContainerSelectionOrObject)
 
 
-            this.dataPath = null
-            this.omittedColumns = null
-
-
             this.class('panel')
                 .update()
 
@@ -698,7 +701,7 @@
 
             this._showAbsoluteValues = false
 
-            this._stacks = new data.Stacks()
+            this._stacks = null
 
         }
 
@@ -708,12 +711,10 @@
          * initialization of the Panel instance from drawing it on DOM. This way, instance parameters
          * can be modified before the panel is drawn on DOM for the first time.
          */
-        async build() {
+        build() {
 
-            // Load data into panel
-            if ( !!this.dataPath ) {
-                await this.summarizeDataset( this.dataPath, this.omittedColumns)
-            } else {
+            // If no data specified, build panel with example data
+            if ( !this.stacks() ) {
                 this._populateWithExampleData()
             }
 
@@ -724,6 +725,8 @@
             this._createChartsBasedOnStacksData()
 
             this.update(0)
+
+            return this
         }
 
         remove(){
@@ -1555,8 +1558,6 @@
 
             this.has.beenFullyInstantiated = false
 
-            this.build()  // TODO [FEB]: This line removed to realize init-build separation
-
         }
 
 
@@ -1581,7 +1582,7 @@
                 this.has.beenFullyInstantiated = true
             }, this.animationDuration())
 
-
+            return this
         }
 
         updateAllPanels(transitionDuration) {

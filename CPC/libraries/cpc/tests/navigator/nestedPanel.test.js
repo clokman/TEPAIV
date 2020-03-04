@@ -124,12 +124,16 @@ describe ('Nested Panel Instantiation', () => {
 
         // Create parent panel
         const parentPanel = new navigator.NestedPanel(mySvg)
-        parentPanel.id('parent-panel').update()
+        parentPanel
+            .id('parent-panel')
+            .build()
 
         // Create a child panel that spawns from a category in parent panel
         const objectToSpawnFrom = parentPanel.objects('gender').objects('male')
         const childPanel = new navigator.NestedPanel(parentPanel, objectToSpawnFrom)
-        childPanel.id('child-panel').update()
+        childPanel
+            .id('child-panel')
+            .build()
 
         // Child panel should refer to a category as its spawn source
         const classOfObjectToSpawnFrom = childPanel.objectToSpawnFrom.constructor.name
@@ -159,7 +163,6 @@ describe ('Nested Panel Instantiation', () => {
 
     test ('Throw error if no spawn source is specified', () => {
 
-
         // Clear JEST's DOM to prevent leftovers from previous tests
         document.body.innerHTML = ''
 
@@ -170,12 +173,17 @@ describe ('Nested Panel Instantiation', () => {
 
         // Create parent panel
         const parentPanel = new navigator.NestedPanel(mySvg)  // no need to specify a spawn source if no parent is specified
-        parentPanel.id('parent-panel').update()
+        parentPanel
+            .id('parent-panel')
+            .build()
 
         // Create a child panel that spawns from a category in parent panel
-        objectToSpawnFrom = parentPanel.objects('gender').objects('male')
+        const objectToSpawnFrom = parentPanel.objects('gender').objects('male')
         const legitimateChildPanel = new navigator.NestedPanel(parentPanel, objectToSpawnFrom)  // spawn source must be specified if a parent panel is specified
-        legitimateChildPanel.id('child-panel').update()
+
+        legitimateChildPanel
+            .id('child-panel')
+            .build()
 
 
         // Try to create a child panel without specifying a spawn source (expect error)
@@ -186,6 +194,67 @@ describe ('Nested Panel Instantiation', () => {
 
 
     })
+    
+})
+
+
+
+//// Custom Initialization ///////////////////////////////////////////////////////////////
+
+describe ('Custom Initialization', () => {
+
+    test ('Initialize with custom dataset', async () => {
+
+        // Initialize without specifying a dataset
+        const panelZeroWithoutSpecifiedData = new navigator.NestedPanel()
+        panelZeroWithoutSpecifiedData.build()
+
+        // Check initialization values for data
+        expect( panelZeroWithoutSpecifiedData._stacks.data() ).toTabulateAs(`\
+┌───────────────────┬──────────┬──────────────────────────────────────────────┐
+│ (iteration index) │   Key    │                    Values                    │
+├───────────────────┼──────────┼──────────────────────────────────────────────┤
+│         0         │ 'gender' │ Stack { _data: [Map], _scaleFunction: null } │
+│         1         │ 'class'  │ Stack { _data: [Map], _scaleFunction: null } │
+│         2         │ 'status' │ Stack { _data: [Map], _scaleFunction: null } │
+└───────────────────┴──────────┴──────────────────────────────────────────────┘`)
+
+        // Initialize with specified dataset
+        const panelZeroWithSpecifiedData = new navigator.NestedPanel()
+        await panelZeroWithSpecifiedData.summarizeDataset(
+            'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv'
+        )
+        panelZeroWithSpecifiedData.build()
+
+        // Check initialization data
+        expect( panelZeroWithSpecifiedData._stacks.data() ).toTabulateAs(`\
+┌───────────────────┬──────────┬──────────────────────────────────────────────┐
+│ (iteration index) │   Key    │                    Values                    │
+├───────────────────┼──────────┼──────────────────────────────────────────────┤
+│         0         │ 'Ticket' │ Stack { _data: [Map], _scaleFunction: null } │
+│         1         │ 'Status' │ Stack { _data: [Map], _scaleFunction: null } │
+│         2         │ 'Gender' │ Stack { _data: [Map], _scaleFunction: null } │
+│         3         │  'Name'  │ Stack { _data: [Map], _scaleFunction: null } │
+└───────────────────┴──────────┴──────────────────────────────────────────────┘`)
+
+        // Initialize with specified dataset
+        const panelZeroWithSpecifiedDataAndOmittedColumns = new navigator.NestedPanel()
+        await panelZeroWithSpecifiedDataAndOmittedColumns.summarizeDataset(
+            'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
+            ['Ticket']
+        )
+        panelZeroWithSpecifiedDataAndOmittedColumns.build()
+
+        expect( panelZeroWithSpecifiedDataAndOmittedColumns._stacks.data() ).toTabulateAs(`\
+┌───────────────────┬──────────┬──────────────────────────────────────────────┐
+│ (iteration index) │   Key    │                    Values                    │
+├───────────────────┼──────────┼──────────────────────────────────────────────┤
+│         0         │ 'Status' │ Stack { _data: [Map], _scaleFunction: null } │
+│         1         │ 'Gender' │ Stack { _data: [Map], _scaleFunction: null } │
+│         2         │  'Name'  │ Stack { _data: [Map], _scaleFunction: null } │
+└───────────────────┴──────────┴──────────────────────────────────────────────┘`)
+    })
+
 
 })
 
@@ -283,6 +352,7 @@ describe ('Width', () => {
             .updateAllPanels()
         jest.runOnlyPendingTimers()
 
+
         // Sibling panels should not overlap
         expect( siblingPanel1.rightEdge() < siblingPanel2.leftEdge() ).toBe( true )
         expect( siblingPanel2.rightEdge() < siblingPanel3.leftEdge() ).toBe( true )
@@ -312,7 +382,7 @@ describe ('Width', () => {
         const childPanel = new navigator.NestedPanel(panelZero, spawnObjectForChildPanel)
         childPanel
             .bgText('childPanel')
-            .update(0)
+            .build()
         jest.runOnlyPendingTimers()
 
         jest.runAllTimers()
@@ -332,7 +402,7 @@ describe ('Width', () => {
         expect( panelZero.width() ).not.toBe( 200 )
         panelZero
             .width( 200 )
-            .update()
+            .build()
 
         // Create the first sibling
         let siblingPanel1
@@ -341,7 +411,7 @@ describe ('Width', () => {
             siblingPanel1 = new navigator.NestedPanel(panelZero, spawnObjectForSiblingPanel1)
             siblingPanel1
                 .bgText('siblingPanel1')
-                .update(0)
+                .build()
 
         }, 1000)
         jest.runOnlyPendingTimers()
@@ -354,7 +424,7 @@ describe ('Width', () => {
             siblingPanel2 = new navigator.NestedPanel(panelZero, spawnObjectForSiblingPanel2, 'sibling')
             siblingPanel2
                 .bgText('siblingPanel2')
-                .update(0)
+                .build()
         }, 2000)
         jest.runOnlyPendingTimers()
 
@@ -365,7 +435,7 @@ describe ('Width', () => {
             childPanelOfSibling1 = new navigator.NestedPanel(siblingPanel1, spawnObjectForChildPanelOfSibling1)
             childPanelOfSibling1
                 .bgText('childPanelOfSibling1')
-                .update(0)
+                .build()
         }, 4000)
         jest.runOnlyPendingTimers()
 
@@ -509,14 +579,18 @@ describe ('Width', () => {
 
 
 
-
 //// Spatial Inferences ///////////////////////////////////////////////////////////////
 
 describe ('Spatial Inferences', () => {
 
     test ('Right edge', () => {
 
+        jest.useFakeTimers()
+
         const {panelZero, childPanel, grandChildPanel} = initializeDomWith.panelZero.and.childAndGrandchild()
+
+        jest.runAllTimers()
+        jest.runOnlyPendingTimers()
 
         // Get right edges
         expect( panelZero.rightEdge() ).toBe( 520 )
@@ -632,7 +706,7 @@ describe ('Spatial Inferences', () => {
 
 //// Absolute vaules ///////////////////////////////////////////////////////////////
 
-describe ('Absolute vaules', () => {
+describe ('Absolute values', () => {
 
     test ('DOM and Propagation to Child Panels: Both parent and child panels should update on DOM properly after each toggle', () => {
 
@@ -642,14 +716,13 @@ describe ('Absolute vaules', () => {
         initializeDomWithSvg()
 
         // Create panel
-        const myPanel = new navigator.NestedPanel()
+        const myPanel = new navigator.NestedPanel().build()
 
 
         // Crete a child panel
         const spawnSourceObjectForChild1 = myPanel.objects('gender').objects('female')
         spawnSourceObjectForChild1.fill('salmon')
-        const childPanel = new navigator.NestedPanel(myPanel, spawnSourceObjectForChild1, 0)
-
+        const childPanel = new navigator.NestedPanel(myPanel, spawnSourceObjectForChild1, 0).build()
 
 
         // Check initial captions of parent and child panel on DOM
@@ -750,6 +823,8 @@ describe ('Absolute vaules', () => {
 
 })
 
+
+
 //// Absolute Chart Widths ///////////////////////////////////////////////////////////////
 
 
@@ -757,7 +832,7 @@ describe ('Absolute Chart Widths', () => {
 
     test ('Set/get absolute chart widths', () => {
 
-        const panelZero = initializeDomWith.panelZero()
+        const panelZero = initializeDomWith.panelZero().build()
 
 
         // Default value should be false
@@ -778,7 +853,7 @@ describe ('Absolute Chart Widths', () => {
         initializeDomWithSvg()
 
         // Add panelZero
-        const panelZero = new navigator.NestedPanel()
+        const panelZero = new navigator.NestedPanel().build()
 
         // Summarize a dataset in panel0
         await panelZero.summarizeDataset(
@@ -787,7 +862,7 @@ describe ('Absolute Chart Widths', () => {
 
         // Add child panel
         const spawnObjectForChildPanel = panelZero.objects('Gender').objects('Female')
-        const childPanel = new navigator.NestedPanel(panelZero, spawnObjectForChildPanel)
+        const childPanel = new navigator.NestedPanel(panelZero, spawnObjectForChildPanel).build()
 
         // Summarize a dataset in child panel
         await childPanel.summarizeDataset(
@@ -817,7 +892,7 @@ describe ('Absolute Chart Widths', () => {
         initializeDomWithSvg()
 
         // Add panelZero
-        const panelZero = new navigator.NestedPanel()
+        const panelZero = new navigator.NestedPanel().build()
 
         // Summarize a dataset in panel0
         await panelZero.summarizeDataset(
@@ -826,7 +901,7 @@ describe ('Absolute Chart Widths', () => {
 
         // Add the first sibling panel
         const spawnObjectForSiblingPanel1 = panelZero.objects('Gender').objects('Female')
-        const siblingPanel1 = new navigator.NestedPanel(panelZero, spawnObjectForSiblingPanel1)
+        const siblingPanel1 = new navigator.NestedPanel(panelZero, spawnObjectForSiblingPanel1).build()
 
         // Summarize a dataset in child panel
         await siblingPanel1.summarizeDataset(
@@ -837,7 +912,7 @@ describe ('Absolute Chart Widths', () => {
 
         // Add the second sibling panel
         const spawnObjectForSiblingPanel2 = panelZero.objects('Gender').objects('Male')
-        const siblingPanel2 = new navigator.NestedPanel(panelZero, spawnObjectForSiblingPanel2, 'sibling')
+        const siblingPanel2 = new navigator.NestedPanel(panelZero, spawnObjectForSiblingPanel2, 'sibling').build()
 
         // Summarize a dataset in child panel
         await siblingPanel2.summarizeDataset(
@@ -871,7 +946,7 @@ describe ('Absolute Chart Widths', () => {
         initializeDomWithSvg()
 
         // Add panelZero
-        const panelZero = new navigator.NestedPanel()
+        const panelZero = new navigator.NestedPanel().build()
 
 
         // Summarize a dataset in panel0
@@ -888,7 +963,7 @@ describe ('Absolute Chart Widths', () => {
 
         // Add child panel
         const spawnObjectForSiblingPanel1 = panelZero.objects('Gender').objects('Female')
-        const childPanel = new navigator.NestedPanel(panelZero, spawnObjectForSiblingPanel1)
+        const childPanel = new navigator.NestedPanel(panelZero, spawnObjectForSiblingPanel1).build()
 
         // Summarize a dataset in child panel
         await childPanel.summarizeDataset(
@@ -923,8 +998,7 @@ describe ('Depth index', () => {
         initializeDomWithSvg()
 
         // Create panel
-        const myPanel = new navigator.NestedPanel()
-
+        const myPanel = new navigator.NestedPanel().build()
 
 
         //// GET DEPTH INDEX ////
@@ -960,7 +1034,7 @@ describe ('Depth index', () => {
 
         // Create panel
         const parentPanel = new navigator.NestedPanel()
-        parentPanel.id('parent-panel').update()
+        parentPanel.id('parent-panel').build()
 
 
 
@@ -981,7 +1055,7 @@ describe ('Depth index', () => {
         // Create a child panel
         let objectToSpawnFrom = parentPanel.objects('gender').objects('male')
         const childPanel = new navigator.NestedPanel(parentPanel, objectToSpawnFrom)  // spawn source must be specified if a parent panel is specified
-        childPanel.id('child-panel').update()
+        childPanel.id('child-panel').build()
 
         // Check the depth indexes
         expect( parentPanel.depthIndex() ).toBe( 0 )
@@ -999,7 +1073,7 @@ describe ('Depth index', () => {
         // Create a grandchild panel
         objectToSpawnFrom = childPanel.objects('status').objects('survived')
         const grandChildPanel = new navigator.NestedPanel(childPanel, objectToSpawnFrom)  // spawn source must be specified if a parent panel is specified
-        grandChildPanel.id('grandchild-panel').update()
+        grandChildPanel.id('grandchild-panel').build()
 
         // Check the depth indexes
         expect( parentPanel.depthIndex() ).toBe( 0 )
@@ -1030,7 +1104,7 @@ describe ('Depth index', () => {
         // Add a child panel
         objectToSpawnFrom = parentPanel.objects('gender').objects('female')
         const childPanel2 = new navigator.NestedPanel(parentPanel, objectToSpawnFrom)  // spawn source must be specified if a parent panel is specified
-        childPanel2.id('child-panel2').update()
+        childPanel2.id('child-panel2').build()
 
         // Check depth indexes
         expect( parentPanel.depthIndex() ).toBe( 0 )
@@ -1047,6 +1121,8 @@ describe ('Depth index', () => {
 
 })
 
+
+
 //// ADD CHILD PANELS ///////////////////////////////////////////////////////////////
 
 describe ('Add Child Panels: Should add child panels correctly', () => {
@@ -1056,13 +1132,13 @@ describe ('Add Child Panels: Should add child panels correctly', () => {
         initializeDomWithSvg()
 
         // Add panel #0
-        myNestedPanel = new navigator.NestedPanel()
+        myNestedPanel = new navigator.NestedPanel().build()
         // Add child panel #1
         spawnObjectForChild1 = myNestedPanel.objects('gender').objects('female')
-        myChildPanel1 = new navigator.NestedPanel(myNestedPanel, spawnObjectForChild1)
+        myChildPanel1 = new navigator.NestedPanel(myNestedPanel, spawnObjectForChild1).build()
         // Add child panel #2
         spawnObjectForChild2 = myChildPanel1.objects('gender').objects('male')
-        myChildPanel2 = new navigator.NestedPanel(myChildPanel1, spawnObjectForChild2)
+        myChildPanel2 = new navigator.NestedPanel(myChildPanel1, spawnObjectForChild2).build()
 
 
         // Check the number of panels on DOM
@@ -1113,22 +1189,24 @@ describe ('Add Child Panels: Should add child panels correctly', () => {
 })
 
 
+
 //// REMOVE CHILD PANELS ///////////////////////////////////////////////////////////////
 
 describe ('Remove: Remove child panels and panel zero', () => {
+
 
     test ('Remove children panels one by one', () => {
 
         initializeDomWithSvg()
 
         // Add panel #0
-        panelZero = new navigator.NestedPanel()
+        const panelZero = new navigator.NestedPanel().build()
         // Add child panel #1
-        spawnObjectForChild1 = panelZero.objects('gender').objects('female')
-        childPanel1 = new navigator.NestedPanel(panelZero, spawnObjectForChild1)
+        const spawnObjectForChild1 = panelZero.objects('gender').objects('female')
+        const childPanel1 = new navigator.NestedPanel(panelZero, spawnObjectForChild1).build()
         // Add child panel #2
-        spawnObjectForChild2 = childPanel1.objects('gender').objects('male')
-        childPanel2 = new navigator.NestedPanel(childPanel1, spawnObjectForChild2)
+        const spawnObjectForChild2 = childPanel1.objects('gender').objects('male')
+        const childPanel2 = new navigator.NestedPanel(childPanel1, spawnObjectForChild2).build()
 
 
         // Get initial number of panels
@@ -1162,20 +1240,19 @@ describe ('Remove: Remove child panels and panel zero', () => {
     })
 
 
-
     test ('Remove panel zero', () => {
 
         initializeDomWithSvg()
 
 
         // Add panel #0
-        const panelZero = new navigator.NestedPanel()
+        const panelZero = new navigator.NestedPanel().build()
         // Add child panel #1
         const spawnObjectForChild1 = panelZero.objects('gender').objects('female')
-        const childPanel1 = new navigator.NestedPanel(panelZero, spawnObjectForChild1)
+        const childPanel1 = new navigator.NestedPanel(panelZero, spawnObjectForChild1).build()
         // Add child panel #2
         const spawnObjectForChild2 = childPanel1.objects('gender').objects('male')
-        const childPanel2 = new navigator.NestedPanel(childPanel1, spawnObjectForChild2)
+        const childPanel2 = new navigator.NestedPanel(childPanel1, spawnObjectForChild2).build()
 
 
         // Get initial number of panels
@@ -1192,9 +1269,6 @@ describe ('Remove: Remove child panels and panel zero', () => {
     })
 
 
-
-
-
 })
 
 
@@ -1204,19 +1278,18 @@ describe ('Remove: Remove child panels and panel zero', () => {
 describe ('Animations: Switch to a panel on the same depth level using the quick switch animation', () => {
 
 
-
     test('Extend animation: Add panel ', () => {
 
         initializeDomWithSvg()
         // Create panel
         const parentPanel = new navigator.NestedPanel()
-        parentPanel.id('parent-panel').update()
+        parentPanel.id('parent-panel').build()
 
 
         // Create a child panel
         let objectToSpawnFrom = parentPanel.objects('gender').objects('male')
         const childPanel = new navigator.NestedPanel( parentPanel, objectToSpawnFrom )  // spawn source must be specified if a parent panel is specified
-        childPanel.id('child-panel').update()
+        childPanel.id('child-panel').build()
 
         // Count the number of panels on DOM after the animation
         const allPanels = document.querySelectorAll( '.panel' )
@@ -1226,20 +1299,18 @@ describe ('Animations: Switch to a panel on the same depth level using the quick
     })
 
 
-
     test('Switch Animation: Add panel ', () => {
 
         initializeDomWithSvg()
         // Create panel
         const parentPanel = new navigator.NestedPanel()
-        parentPanel.id('parent-panel').update()
-
+        parentPanel.id('parent-panel').build()
 
 
         // Create a child panel
         let objectToSpawnFrom = parentPanel.objects('gender').objects('female')
         const childPanel = new navigator.NestedPanel( parentPanel, objectToSpawnFrom )  // spawn source must be specified if a parent panel is specified
-        childPanel.id('child-panel').update()
+        childPanel.id('child-panel').build()
 
         // Count the number of panels on DOM after the animation
         const allPanels = document.querySelectorAll( '.panel' )
@@ -1315,7 +1386,7 @@ describe ('Panel IDs: Panel IDs must be generated correctly', () => {
             .bgFill('#deebf7')
             .x(200).y(25)
             .yAxisLabels(true)
-            .update(0)
+            .build()
 
 
         // SIBLING #1.1 //
@@ -1323,7 +1394,7 @@ describe ('Panel IDs: Panel IDs must be generated correctly', () => {
         const spawnObjectForSiblingPanel1 = parentPanel.objects('gender').objects('female')
 
         const siblingPanel1 = new navigator.NestedPanel(parentPanel, spawnObjectForSiblingPanel1)
-        siblingPanel1.update()
+        siblingPanel1.build()
 
         // Check the newly created sibling panel's ID
         expect( siblingPanel1.id() ).toBe( 'panel-1-0' )
@@ -1334,7 +1405,7 @@ describe ('Panel IDs: Panel IDs must be generated correctly', () => {
         const spawnObjectForSiblingPanel2 = parentPanel.objects('gender').objects('male')
 
         const siblingPanel2 = new navigator.NestedPanel(parentPanel, spawnObjectForSiblingPanel2, 'sibling')
-        siblingPanel2.update()
+        siblingPanel2.build()
 
         // Check the newly created sibling panel's ID
         expect( siblingPanel2.id() ).toBe( 'panel-1-1' )
@@ -1345,7 +1416,7 @@ describe ('Panel IDs: Panel IDs must be generated correctly', () => {
         const spawnObjectForSiblingPanel3 = parentPanel.objects('status').objects('died')
 
         const siblingPanel3 = new navigator.NestedPanel(parentPanel, spawnObjectForSiblingPanel3, 'sibling')
-        siblingPanel3.update()
+        siblingPanel3.build()
 
         // Check the newly created sibling panel's ID
         expect( siblingPanel3.id() ).toBe( 'panel-1-2' )
@@ -1363,7 +1434,7 @@ describe ('Panel IDs: Panel IDs must be generated correctly', () => {
             .bgFill('#deebf7')
             .x(200).y(25)
             .yAxisLabels(true)
-            .update(0)
+            .build()
 
 
         // Create panel 1
@@ -1371,7 +1442,7 @@ describe ('Panel IDs: Panel IDs must be generated correctly', () => {
         const spawnObjectForChildPanel = parentPanel.objects('gender').objects('female')
 
         const childPanel = new navigator.NestedPanel(parentPanel, spawnObjectForChildPanel)
-        childPanel.update()
+        childPanel.build()
 
         // Check the newly created child panel's ID
         expect( childPanel.id() ).toBe( 'panel-1-0' )
@@ -1382,7 +1453,7 @@ describe ('Panel IDs: Panel IDs must be generated correctly', () => {
         const spawnObjectForSiblingPanel1 = childPanel.objects('gender').objects('female')
 
         const siblingPanel1 = new navigator.NestedPanel(childPanel, spawnObjectForSiblingPanel1)
-        siblingPanel1.update()
+        siblingPanel1.build()
 
         // Check the newly created sibling panel's ID
         expect( siblingPanel1.id() ).toBe( 'panel-2-0' )
@@ -1393,7 +1464,7 @@ describe ('Panel IDs: Panel IDs must be generated correctly', () => {
         const spawnObjectForSiblingPanel2 = childPanel.objects('gender').objects('male')
 
         const siblingPanel2 = new navigator.NestedPanel(childPanel, spawnObjectForSiblingPanel2, 'sibling')
-        siblingPanel2.update()
+        siblingPanel2.build()
 
         // Check the newly created sibling panel's ID
         expect( siblingPanel2.id() ).toBe( 'panel-2-1' )
@@ -1404,7 +1475,7 @@ describe ('Panel IDs: Panel IDs must be generated correctly', () => {
         const spawnObjectForSiblingPanel3 = childPanel.objects('status').objects('died')
 
         const siblingPanel3 = new navigator.NestedPanel(childPanel, spawnObjectForSiblingPanel3, 'sibling')
-        siblingPanel3.update()
+        siblingPanel3.build()
 
         // Check the newly created sibling panel's ID
         expect( siblingPanel3.id() ).toBe( 'panel-2-2' )
@@ -1425,7 +1496,7 @@ describe ('Panel IDs: Panel IDs must be generated correctly', () => {
             .bgFill('#deebf7')
             .x(200).y(25)
             .yAxisLabels(true)
-            .update(0)
+            .build(0)
 
 
 
@@ -1437,7 +1508,7 @@ describe ('Panel IDs: Panel IDs must be generated correctly', () => {
             const spawnObjectForPanel1_0 = panel0_0.objects('gender').objects('female')
 
             panel1_0 = new navigator.NestedPanel(panel0_0, spawnObjectForPanel1_0)
-            panel1_0.update()
+            panel1_0.build()
 
         }, 1000)
 
@@ -1457,7 +1528,7 @@ describe ('Panel IDs: Panel IDs must be generated correctly', () => {
             const spawnObjectForSecondPanel1_0 = panel0_0.objects('gender').objects('male')
 
             replacementPanel1_0 = new navigator.NestedPanel(panel0_0, spawnObjectForSecondPanel1_0)
-            replacementPanel1_0.update()
+            replacementPanel1_0.build()
 
         }, 2000 )
 
@@ -1482,7 +1553,7 @@ describe ('Panel IDs: Panel IDs must be generated correctly', () => {
             .bgFill('#deebf7')
             .x(200).y(25)
             .yAxisLabels(true)
-            .update(0)
+            .build()
 
 
 
@@ -1494,7 +1565,7 @@ describe ('Panel IDs: Panel IDs must be generated correctly', () => {
             const spawnObjectForPanel1_0 = panel0_0.objects('gender').objects('female')
 
             panel1_0 = new navigator.NestedPanel(panel0_0, spawnObjectForPanel1_0)
-            panel1_0.update()
+            panel1_0.build()
 
         }, 1000)
 
@@ -1514,7 +1585,7 @@ describe ('Panel IDs: Panel IDs must be generated correctly', () => {
             const spawnObjectForSiblingPanel1_1 = panel0_0.objects('gender').objects('male')
 
             panel1_1 = new navigator.NestedPanel(panel0_0, spawnObjectForSiblingPanel1_1, 'sibling')
-            panel1_1.update()
+            panel1_1.build()
 
         }, 2000)
 
@@ -1535,7 +1606,7 @@ describe ('Panel IDs: Panel IDs must be generated correctly', () => {
             const spawnObjectForSecondPanel1_0 = panel0_0.objects('gender').objects('male')
 
             replacementPanel1_0 = new navigator.NestedPanel(panel0_0, spawnObjectForSecondPanel1_0)
-            replacementPanel1_0.update()
+            replacementPanel1_0.build()
 
         }, 2000 )
 
@@ -1560,7 +1631,7 @@ describe ('Panel IDs: Panel IDs must be generated correctly', () => {
             .bgFill('#deebf7')
             .x(200).y(25)
             .yAxisLabels(true)
-            .update(0)
+            .build(0)
 
 
         // Create panel 1
@@ -1568,7 +1639,7 @@ describe ('Panel IDs: Panel IDs must be generated correctly', () => {
         const spawnObjectForChildPanel = parentPanel.objects('gender').objects('female')
 
         const childPanel = new navigator.NestedPanel(parentPanel, spawnObjectForChildPanel)
-        childPanel.update()
+        childPanel.build()
 
         // Check the newly created child panel's ID
         expect( childPanel.id() ).toBe( 'panel-1-0' )
@@ -1578,7 +1649,7 @@ describe ('Panel IDs: Panel IDs must be generated correctly', () => {
         // Re-Create (refresh) panel 1
 
         const childPanel2 = new navigator.NestedPanel(parentPanel, spawnObjectForChildPanel)
-        childPanel2.update()
+        childPanel2.build()
 
         // Check the newly created child panel's ID
         expect( childPanel2.id() ).toBe( 'panel-1-0' )
@@ -1605,7 +1676,7 @@ describe ('Ancestry Inferences: Parent child relationships should be inferred co
             .bgFill('#deebf7')
             .x(200).y(25)
             .yAxisLabels(true)
-            .update(0)
+            .build()
         jest.runOnlyPendingTimers()
 
         // Check inferred relationships for panel-0
@@ -1631,6 +1702,7 @@ describe ('Ancestry Inferences: Parent child relationships should be inferred co
         // Create child panel
         spawnObjectForChildPanel = panel0.objects('gender').objects('female')
         childPanel = new navigator.NestedPanel(panel0, spawnObjectForChildPanel)
+        childPanel.build()
         childPanel.updateAllPanels()
         jest.runOnlyPendingTimers()
 
@@ -1653,13 +1725,14 @@ describe ('Ancestry Inferences: Parent child relationships should be inferred co
             .bgFill('#deebf7')
             .x(200).y(25)
             .yAxisLabels(true)
-            .update(0)
+            .build(0)
         jest.runOnlyPendingTimers()
 
 
         // Create panel-1
         let spawnObjectForPanel1 = panel0.objects('gender').objects('female')
         const panel1 = new navigator.NestedPanel(panel0, spawnObjectForPanel1)
+        panel1.build()
         panel1.updateAllPanels()
         jest.runOnlyPendingTimers()
 
@@ -1697,13 +1770,14 @@ describe ('Ancestry Inferences: Parent child relationships should be inferred co
             .bgFill('#deebf7')
             .x(200).y(25)
             .yAxisLabels(true)
-            .update(0)
+            .build()
         jest.runOnlyPendingTimers()
 
 
         // Create panel-1
         const spawnObjectForPanel1 = panel0.objects('gender').objects('female')
         const panel1 = new navigator.NestedPanel(panel0, spawnObjectForPanel1)
+        panel1.build()
         panel1.updateAllPanels()
         jest.runOnlyPendingTimers()
 
@@ -1711,6 +1785,7 @@ describe ('Ancestry Inferences: Parent child relationships should be inferred co
         // Create panel-2
         const spawnObjectForPanel2 = panel0.objects('gender').objects('female')
         const panel2 = new navigator.NestedPanel(panel1, spawnObjectForPanel2)
+        panel2.build()
         panel2.updateAllPanels()
         jest.runOnlyPendingTimers()
 
@@ -1750,13 +1825,14 @@ describe ('Ancestry Inferences: Parent child relationships should be inferred co
             .bgFill('#deebf7')
             .x(200).y(25)
             .yAxisLabels(true)
-            .update(0)
+            .build()
         jest.runOnlyPendingTimers()
 
 
         // Create panel-1-0 (first sibling)
         const spawnObjectForPanel1_0 = panel0.objects('gender').objects('female')
         const panel1_0 = new navigator.NestedPanel(panel0, spawnObjectForPanel1_0)
+        panel1_0.build()
         panel1_0.updateAllPanels()
         jest.runOnlyPendingTimers()
 
@@ -1785,6 +1861,7 @@ describe ('Ancestry Inferences: Parent child relationships should be inferred co
         // Create panel-1-1 (second sibling)
         const spawnObjectForPanel1_1 = panel0.objects('gender').objects('male')
         const panel1_1 = new navigator.NestedPanel(panel0, spawnObjectForPanel1_1, 'sibling')
+        panel1_1.build()
         panel1_1.updateAllPanels()
         jest.runOnlyPendingTimers()
 
@@ -1845,14 +1922,14 @@ describe ('Ancestry Inferences: Parent child relationships should be inferred co
             .bgFill('#deebf7')
             .x(200).y(25)
             .yAxisLabels(true)
-            .update(0)
+            .build()
         jest.runOnlyPendingTimers()
 
 
         // Create panel-1-0
         const spawnObjectForPanel1_0 = panel0.objects('gender').objects('female')
         const panel1_0 = new navigator.NestedPanel(panel0, spawnObjectForPanel1_0)
-        panel1_0.update()
+        panel1_0.build()
         jest.runOnlyPendingTimers()
 
 
@@ -1863,7 +1940,7 @@ describe ('Ancestry Inferences: Parent child relationships should be inferred co
         setTimeout( () => {
             const spawnObjectForPanel2_0 = panel1_0.objects('class').objects('first-class')
             panel2_0 = new navigator.NestedPanel(panel1_0, spawnObjectForPanel2_0)
-            panel2_0.update()
+            panel2_0.build()
         }, 1000)
         jest.runOnlyPendingTimers()
 
@@ -1895,7 +1972,7 @@ describe ('Ancestry Inferences: Parent child relationships should be inferred co
         setTimeout( () => {
             const spawnObjectForPanel2_1 = panel1_0.objects('class').objects('second-class')
             panel2_1 = new navigator.NestedPanel(panel1_0, spawnObjectForPanel2_1, 'sibling')
-            panel2_1.update()
+            panel2_1.build()
 
         }, 2000)
         jest.runOnlyPendingTimers()
@@ -1928,7 +2005,7 @@ describe ('Ancestry Inferences: Parent child relationships should be inferred co
         setTimeout( () => {
             const spawnObjectForPanel2_2 = panel1_0.objects('class').objects('third-class')
             panel2_2 = new navigator.NestedPanel(panel1_0, spawnObjectForPanel2_2, 'sibling')
-            panel2_2.update()
+            panel2_2.build()
         }, 3000)
         jest.runOnlyPendingTimers()
         panel2_2.updateAllPanels()
@@ -1997,7 +2074,7 @@ describe ('Ancestry Inferences: Parent child relationships should be inferred co
             .bgFill('#deebf7')
             .x(200).y(25)
             .yAxisLabels(true)
-            .update(0)
+            .build(0)
         jest.runOnlyPendingTimers()
 
 
@@ -2006,6 +2083,7 @@ describe ('Ancestry Inferences: Parent child relationships should be inferred co
         setTimeout( () => {
             const spawnObjectForPanel1_0 = panel0.objects('gender').objects('female')
             panel1_0 = new navigator.NestedPanel(panel0, spawnObjectForPanel1_0)
+            panel1_0.build()
         }, 1000)
         jest.runOnlyPendingTimers()
 
@@ -2016,6 +2094,7 @@ describe ('Ancestry Inferences: Parent child relationships should be inferred co
         setTimeout( () => {
             const spawnObjectForPanel1_1 = panel0.objects('gender').objects('male')
             panel1_1 = new navigator.NestedPanel(panel0, spawnObjectForPanel1_1, 'sibling')
+            panel1_1.build()
         }, 2000)
         jest.runOnlyPendingTimers()
 
@@ -2025,6 +2104,7 @@ describe ('Ancestry Inferences: Parent child relationships should be inferred co
             // Create panel-1-2 (third sibling)
             const spawnObjectForPanel1_2 = panel0.objects('class').objects('first-class')
             panel1_2 = new navigator.NestedPanel(panel0, spawnObjectForPanel1_2, 'sibling')
+            panel1_2.build()
             // panel1_2.updateAll()
         }, 4000)
         jest.runOnlyPendingTimers()
@@ -2035,6 +2115,7 @@ describe ('Ancestry Inferences: Parent child relationships should be inferred co
         setTimeout( () => {
             let spawnObjectForPanel2_0_of_1_0 = panel1_0.objects('gender').objects('male')
             panel2_0_of_1_0 = new navigator.NestedPanel(panel1_0, spawnObjectForPanel2_0_of_1_0)
+            panel2_0_of_1_0.build()
         }, 3000)
         jest.runOnlyPendingTimers()
 
@@ -2081,15 +2162,15 @@ describe ('Ancestry Inferences: Parent child relationships should be inferred co
 
         // Add panel #0
         const panel0 = new navigator.NestedPanel()
-        panel0.id('panel-zero').update()
+        panel0.id('panel-zero').build()
         // Add child panel #1
         const spawnObjectForChild1 = panel0.objects('gender').objects('female')
         const childPanel1 = new navigator.NestedPanel(panel0, spawnObjectForChild1)
-        childPanel1.id('child-panel-1').update()
+        childPanel1.id('child-panel-1').build()
         // Add child panel #2
         const spawnObjectForChild2 = childPanel1.objects('gender').objects('male')
         const childPanel2 = new navigator.NestedPanel(childPanel1, spawnObjectForChild2)
-        childPanel2.id('child-panel-2').update()
+        childPanel2.id('child-panel-2').build()
 
 
         // Get panel zero
@@ -2102,6 +2183,7 @@ describe ('Ancestry Inferences: Parent child relationships should be inferred co
 
 
 })
+
 
 
 //// ANIMATION TIMES ///////////////////////////////////////////////////////////////
@@ -2211,13 +2293,13 @@ describe ('animationDuration', () => {
             .bgFill('#deebf7')
             .x(200).y(25)
             .yAxisLabels(true)
-            .update(0)
+            .build(0)
         jest.runOnlyPendingTimers()
 
         // Create panel-1-0 (child)
         const spawnObjectForPanel1_0 = panel0.objects('gender').objects('female')
         const panel1_0 = new navigator.NestedPanel(panel0, spawnObjectForPanel1_0)
-        panel1_0.update()
+        panel1_0.build()
         jest.runOnlyPendingTimers()
 
 
@@ -2226,7 +2308,7 @@ describe ('animationDuration', () => {
         setTimeout( () => {
             const spawnObjectForPanel2_0 = panel1_0.objects('class').objects('first-class')
             panel2_0 = new navigator.NestedPanel(panel1_0, spawnObjectForPanel2_0)
-            panel2_0.update()
+            panel2_0.build()
         }, 1000)
         jest.runOnlyPendingTimers()
 
@@ -2235,7 +2317,7 @@ describe ('animationDuration', () => {
         setTimeout( () => {
             const spawnObjectForPanel2_1 = panel1_0.objects('class').objects('second-class')
             panel2_1 = new navigator.NestedPanel(panel1_0, spawnObjectForPanel2_1, 'sibling')
-            panel2_1.update()
+            panel2_1.build()
 
         }, 2000)
         jest.runOnlyPendingTimers()
@@ -2384,7 +2466,7 @@ describe ('Stroke', () => {
     })
 
 
-    test ('Child panels should inherit parent\'s stroke width and color', () => {
+    test ("Child panels should inherit parent's stroke width and color", () => {
 
         const panel0_0 = initializeDomWith.panelZero()
 
@@ -2405,6 +2487,7 @@ describe ('Stroke', () => {
         // Add child panel
         const spawnObjectForChild1 = panel0_0.objects('gender').objects('female')
         const panel1_0 = new navigator.NestedPanel(panel0_0, spawnObjectForChild1)
+        panel1_0.build()
 
         // Confirm that child's values are the same with parent
         expect( panel1_0.strokeWidth() ).toBe( '4px' )
@@ -2462,7 +2545,6 @@ describe ('Stroke', () => {
 
 
 
-
 //// Color Themes ///////////////////////////////////////////////////////////////
 
 describe ('Color Themes', () => {
@@ -2475,11 +2557,14 @@ describe ('Color Themes', () => {
         const mySvg = new container.Svg()
         // Create parent panel
         const panelZero = new navigator.NestedPanel(mySvg)  // no need to specify a spawn source if no parent is specified
-        panelZero.colorSet('Viridis').update()
+        panelZero
+            .colorSet('Viridis')
+            .build()
 
         // Make a child panel
         const spawnObjectForChild1 = panelZero.objects('gender').objects('female')
         const childPanel1 = new navigator.NestedPanel(panelZero, spawnObjectForChild1)
+        childPanel1.build()
 
         // Child should not have its own color scheme, but one based on parent
         let panelZeroColorSet = panelZero.colorSet()
@@ -2511,7 +2596,6 @@ describe ('Color Themes', () => {
 
 
 })
-
 
 
 
@@ -2554,7 +2638,7 @@ let initializeDomWith = {
             .x(200).y(25)
             .yAxisLabels(true)
             .bgText('panelZero')
-            .update(0)
+            .build()
 
         jest.runAllTimers()
 
@@ -2577,7 +2661,7 @@ initializeDomWith.panelZero.and = {
         const childPanel = new navigator.NestedPanel(panelZero, spawnObjectForChildPanel)
         childPanel
             .bgText('childPanel')
-            .update(0)
+            .build()
 
         jest.runOnlyPendingTimers()
 
@@ -2597,12 +2681,12 @@ initializeDomWith.panelZero.and = {
 
         // Create grandchild panel
         let grandChildPanel  // declaration must be outside the setTimer function
-        setTimeout(() => {
+        setTimeout(  () => {
             const spawnObjectForGrandChildPanel = childPanel.objects('class').objects('first-class')
             grandChildPanel = new navigator.NestedPanel(childPanel, spawnObjectForGrandChildPanel)
             grandChildPanel
                 .bgText('grandChildPanel')
-                .update(0)
+                .build()
 
         }, 1000)
         jest.runOnlyPendingTimers()
@@ -2622,12 +2706,12 @@ initializeDomWith.panelZero.and = {
 
         // Create the first sibling
         let siblingPanel1
-        setTimeout( () => {
+        setTimeout(  () => {
             const spawnObjectForSiblingPanel1 = panelZero.objects('class').objects('first-class')
             siblingPanel1 = new navigator.NestedPanel(panelZero, spawnObjectForSiblingPanel1)
             siblingPanel1
                 .bgText('siblingPanel1')
-                .update(0)
+                .build()
 
         }, 1000)
         jest.runOnlyPendingTimers()
@@ -2635,24 +2719,24 @@ initializeDomWith.panelZero.and = {
 
         // Create the second sibling
         let siblingPanel2
-        setTimeout( () => {
+        setTimeout(  () => {
             const spawnObjectForSiblingPanel2 = panelZero.objects('class').objects('second-class')
             siblingPanel2 = new navigator.NestedPanel(panelZero, spawnObjectForSiblingPanel2, 'sibling')
             siblingPanel2
                 .bgText('siblingPanel2')
-                .update(0)
+                .build()
         }, 2000)
         jest.runOnlyPendingTimers()
 
 
         // Create the third sibling
         let siblingPanel3
-        setTimeout( () => {
+        setTimeout(  () => {
             const spawnObjectForSiblingPanel3 = panelZero.objects('class').objects('third-class')
             siblingPanel3 = new navigator.NestedPanel(panelZero, spawnObjectForSiblingPanel3, 'sibling')
             siblingPanel3
                 .bgText('siblingPanel3')
-                .update(0)
+                .build()
         }, 3000)
         jest.runOnlyPendingTimers()
 
@@ -2672,36 +2756,36 @@ initializeDomWith.panelZero.and = {
 
         // Create the child of first sibling
         let childPanelOfSibling1
-        setTimeout( () => {
+        setTimeout(  () => {
             let spawnObjectForChildPanelOfSibling1 = siblingPanel1.objects('gender').objects('male')
             childPanelOfSibling1 = new navigator.NestedPanel(siblingPanel1, spawnObjectForChildPanelOfSibling1)
             childPanelOfSibling1
                 .bgText('childPanelOfSibling1')
-                .update(0)
+                .build()
         }, 4000)
         jest.runOnlyPendingTimers()
 
 
         // Create the child of second sibling)
         let childPanelOfSibling2
-        setTimeout( () => {
+        setTimeout(  () => {
             let spawnObjectForChildPanelOfSibling2 = siblingPanel2.objects('gender').objects('male')
             childPanelOfSibling2 = new navigator.NestedPanel(siblingPanel2, spawnObjectForChildPanelOfSibling2)
             childPanelOfSibling2
                 .bgText('childPanelOfSibling2')
-                .update(0)
+                .build()
         }, 5000)
         jest.runOnlyPendingTimers()
 
 
         // Create the child of third sibling)
         let childPanelOfSibling3
-        setTimeout( () => {
+        setTimeout(  () => {
             let spawnObjectForChildPanelOfSibling3 = siblingPanel3.objects('gender').objects('male')
             childPanelOfSibling3 = new navigator.NestedPanel(siblingPanel3, spawnObjectForChildPanelOfSibling3)
             childPanelOfSibling3
                 .bgText('childPanelOfSibling3')
-                .update(0)
+                .build()
         }, 6000)
         jest.runOnlyPendingTimers()
 
@@ -2711,6 +2795,7 @@ initializeDomWith.panelZero.and = {
         return  {panelZero, siblingPanel1, siblingPanel2, siblingPanel3, childPanelOfSibling1, childPanelOfSibling2, childPanelOfSibling3}
 
     },
+
 
     childThatHasTwoSiblingChildren: function () {
 
@@ -2723,7 +2808,7 @@ initializeDomWith.panelZero.and = {
         // Change the label of a grandchild to fit to this recipe
         grandChildPanel1
             .bgText('grandChildPanel1')
-            .update(0)
+            .update()
 
         // Create a second grandchild panel as a sibling to the first one
         let grandChildPanel2  // declaration must be outside the setTimer function
@@ -2732,7 +2817,7 @@ initializeDomWith.panelZero.and = {
             grandChildPanel2 = new navigator.NestedPanel(childPanel, spawnObjectForGrandChildPanel, 'sibling')
             grandChildPanel2
                 .bgText('grandChildPanel2')
-                .update(0)
+                .build()
 
         }, 1000)
         jest.runOnlyPendingTimers()
