@@ -16,7 +16,11 @@ if (typeof Object.fromEntries !== 'function') {
 //...
 
 //// MODULES BEING TESTED ////
-require('../jest-console')
+const jestConsole = require('../jest-console')
+const expectTable = jestConsole.expectTable
+const expectLog = jestConsole.expectLog
+const clearConsoleHistory = jestConsole.clearConsoleHistory
+const expectConsoleHistory = jestConsole.expectConsoleHistory
 
 
 global.d3 = {
@@ -55,7 +59,6 @@ test ('Tabulate variable and compare with expected output using a function', () 
 })
 
 
-
 test ('Truncate table output', () => {
 
     const titanicDataset = [
@@ -87,7 +90,6 @@ test ('Truncate table output', () => {
 ˅˅˅ 3 more rows`, 0, 2)
 
 })
-
 
 
 
@@ -158,16 +160,14 @@ test ('expectLog()', () => {
 
 test ('clearConsoleHistory()', () => {
 
-    consoleHistory = ''
-
     console.log('a')
-    expect(consoleHistory).toBe('a')
+    expect( jestConsole.getConsoleHistory() ).toBe( 'a' )
 
     clearConsoleHistory()
-    expect(consoleHistory).toBe('')
+    expect( jestConsole.getConsoleHistory() ).toBe( '' )
 
     console.log('b')
-    expect(consoleHistory).toBe('b')
+    expect( jestConsole.getConsoleHistory() ).toBe( 'b' )
 
 })
 

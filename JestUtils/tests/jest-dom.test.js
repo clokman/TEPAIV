@@ -21,7 +21,8 @@ global._ = require("../external/lodash")
 global.$ = require("../external/jquery-3.1.1.min")
 
 //// MODULES BEING TESTED ////
-require('../jest-dom')
+const jestDom = require('../jest-dom')
+const writeDomToFile = jestDom.writeDomToFile
 
 
 
