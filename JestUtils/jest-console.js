@@ -1,12 +1,34 @@
 
+
 let consoleHistory = ''
 let lastConsoleOutput = ''
 
-// Reroute console to jest.fn
-console["log"] = jest.fn(input => {
-    lastConsoleOutput = input
-    consoleHistory += input
+beforeEach( () => {
+
+    // Clear any possible leftovers from previous tests
+    clearConsoleHistory()
+    lastConsoleOutput = ''
+
+    // Reroute console to jest.fn (i.e., mock console.log)
+    console.log = jest.fn( argument => {
+        lastConsoleOutput = argument
+        consoleHistory += argument
+    })
+
+    console.warn = jest.fn( argument => {
+        lastConsoleOutput = argument
+        consoleHistory += argument
+    })
+
 })
+
+const originalConsoleLog = console.log
+const originalConsoleWarn = console.warn
+
+afterEach( () => {
+    console.log = originalConsoleLog
+    console.warn = originalConsoleWarn
+})  // restore the original functions after each test
 
 
 expect.extend({
@@ -90,13 +112,19 @@ const expectConsoleHistory = function(expectedHistory){
 }
 
 
+const getConsoleHistory = function(){
+    return consoleHistory
+}
+
 const clearConsoleHistory = function () {
     consoleHistory = ''
 }
 
 
+
 exports.expectTable = expectTable
 exports.expectLog = expectLog
+exports.getConsoleHistory = getConsoleHistory
 exports.clearConsoleHistory = clearConsoleHistory
 exports.expectConsoleHistory = expectConsoleHistory
 exports.consoleHistory = consoleHistory

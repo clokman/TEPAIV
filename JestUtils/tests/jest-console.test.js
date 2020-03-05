@@ -198,3 +198,14 @@ second log\
 
 })
 
+
+
+test ('Mocking warnings', () => {
+
+    expectConsoleHistory('')
+
+    console.warn('Warning: This is a warning!')
+
+    expectConsoleHistory('Warning: This is a warning!')
+
+})
