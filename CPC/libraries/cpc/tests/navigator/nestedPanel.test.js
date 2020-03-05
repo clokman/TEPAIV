@@ -13,14 +13,6 @@ if (typeof Object.fromEntries !== 'function') {
 }
 
 
-//// NODE-ONLY DEPENDENCIES ////
-const jestConsole = require("../../../../../JestUtils/jest-console")
-expectTable = jestConsole.expectTable
-
-const jestDom = require("../../../../../JestUtils/jest-dom")
-initializeDomWithSvg = jestDom.initializeDomWithSvg
-writeDomToFile = jestDom.writeDomToFile
-
 //// UMD DEPENDENCIES ////
 
 // D3 //
@@ -47,6 +39,11 @@ global.classUtils = require("../../../utils/classUtils")
 global.stringUtils = require("../../../utils/stringUtils")
 
 // JEST EXTENSIONS //
+const jestConsole = require("../../../../../JestUtils/jest-console")
+    , expectConsoleHistory = jestConsole.expectConsoleHistory
+const jestDom = require("../../../../../JestUtils/jest-dom")
+    , initializeDomWithSvg = jestDom.initializeDomWithSvg
+    , writeDomToFile = jestDom.writeDomToFile
 require("../../../../../JestUtils/jest-dom")
 
 // CPC CLASSES
@@ -58,7 +55,6 @@ global.dataset = require("../../../cpc/dataset")
 
 //// MODULE(S) BEING TESTED ////
 const navigator = require("../../navigator")
-
 
 
 
@@ -187,9 +183,17 @@ describe ('Nested Panel Instantiation', () => {
 
 
         // Try to create a child panel without specifying a spawn source (expect error)
+
+        const parentPanel2 = new navigator.NestedPanel(mySvg) // no need to specify a spawn source if no parent is specified
+        parentPanel2.build()   // no errors returned
+
+        const bridgelessChildPanel = new navigator.NestedPanel(parentPanel2)
+        expectConsoleHistory(
+            'Warning: The parent of the panel being created is NestedPanel object, but no spawn source specified. Build will likely fail. To fix this, a spawn source should be specified either in arguments (during instance intitialization) or by assigning a value to ".arguments.objectToSpawnFrom" property (after instance initiation).Warning: The parent of the panel being created is NestedPanel object, but no spawn source specified. Build will likely fail. To fix this, a spawn source should be specified either in arguments (during instance intitialization) or by assigning a value to ".arguments.objectToSpawnFrom" property (after instance initiation).'
+        )   // cannot specify a parent panel without spawn source)
+
         expect( () => {
-            const parentPanel2 = new navigator.NestedPanel(mySvg)  // no need to specify a spawn source if no parent is specified
-            const illegitimateChildPanel = new navigator.NestedPanel(parentPanel2)   // cannot specify a parent panel without spawn source
+            bridgelessChildPanel.build()
         } ).toThrow("The panel is specified to be a child of another panel, but no object is specified as spawn source (missing argument).")
 
 
@@ -934,52 +938,6 @@ describe ('Absolute Chart Widths', () => {
 
         expect( panelZeroContainsSibling1 ).toBe( true )
         expect( panelZeroContainsSibling2 ).toBe( true )
-
-    })
-
-
-    // TODO [FEB]
-    test ('When absolute chart widths are enabled, newly created panels should initialize correctly', async () => {
-
-        jest.useFakeTimers()
-
-        initializeDomWithSvg()
-
-        // Add panelZero
-        const panelZero = new navigator.NestedPanel().build()
-
-
-        // Summarize a dataset in panel0
-        await panelZero.summarizeDataset(
-            'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv', 'Name')
-        panelZero.update()
-
-        // Turn on absolute chart widths
-        panelZero
-            .showAbsoluteChartWidths(true)
-            .update(0)
-        jest.runOnlyPendingTimers()
-
-
-        // Add child panel
-        const spawnObjectForSiblingPanel1 = panelZero.objects('Gender').objects('Female')
-        const childPanel = new navigator.NestedPanel(panelZero, spawnObjectForSiblingPanel1).build()
-
-        // Summarize a dataset in child panel
-        await childPanel.summarizeDataset(
-            'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny-malesOnly.csv', 'Name')
-        childPanel.update(0)
-        jest.runOnlyPendingTimers()
-
-
-        // Formulas
-        const panelZeroBackgroundEndsAtCorrectLocation = () => panelZero.rightEdge() === childPanel.rightEdge() + panelZero._innerPadding.right
-
-        writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/1.html')
-
-        expect( panelZeroBackgroundEndsAtCorrectLocation() ).toBeTruthy()
-
-
 
     })
 

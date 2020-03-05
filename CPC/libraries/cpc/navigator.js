@@ -1413,6 +1413,13 @@
                 addAs: addAs
             }
 
+            // Warn if a parent panel is specified but no spawn object is given
+            if ( !!this.arguments.parentContainerSelectionOrObject &&  // has a parent container/object
+                this.arguments.parentContainerSelectionOrObject.hasType('NestedPanel') &&   // which is a nested panel
+                !this.objectToSpawnFrom){  // and no spawn object is specified
+                console.warn('Warning: The parent of the panel being created is NestedPanel object, but no spawn source specified. Build will likely fail. To fix this, a spawn source should be specified either in arguments (during instance intitialization) or by assigning a value to ".arguments.objectToSpawnFrom" property (after instance initiation).')
+            }
+
             // Parameters
             this._showAbsoluteChartWidths = false
 
