@@ -2349,14 +2349,14 @@
                 let newRightEdgeOfOfParentPanel
 
                 if( recursingForThePanelBeingAdded ){
-                    newRightEdgeOfOfParentPanel = rightEdgeOfPanelBeingAddedPanel
+                    newRightEdgeOfOfParentPanel = rightEdgeOfPanelBeingAddedPanel + thisPanel.parentPanel._innerPadding.right
                 }
 
                 if( recursingForAParentOfPanelBeingAdded ){
                     // bear in mind that the parent panel's bgExtension is already expanded ...
                     // before this iteration of recursion (while `recursingForThePanelBeingAdded`).
                     // So, there is no need to include `rightEdgeOfPanelBeingAddedPanel` or new panel's width
-                    newRightEdgeOfOfParentPanel = rightEdgeOfExistingRightmostSiblingOrSelf
+                    newRightEdgeOfOfParentPanel = rightEdgeOfExistingRightmostSiblingOrSelf + thisPanel.parentPanel._innerPadding.right
                 }
 
 
@@ -2365,7 +2365,6 @@
                 const newRightBgExtensionValueOfParent = (
                       newRightEdgeOfOfParentPanel
                     - rightmostEdgeOfParentPanelIfThereWereNoBgExtension
-                    + thisPanel.parentPanel._innerPadding.right
                 )
 
                 // Set bg extension of parent  //
