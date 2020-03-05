@@ -1470,8 +1470,15 @@
                 }
             }
 
-            this._inferAnimationDurations()
 
+            // Add defaults for the NestedPanel to the defaults property of Panel
+            // NOTE: Defaults should ONLY be called to get default values, and not current values
+            this._defaults.paddingBetweenSiblingPanels = 5  // in pixels
+
+            this._paddingBetweenSiblingPanels = this._defaults.paddingBetweenSiblingPanels
+
+
+            // Inferences (mainly parent-child relationships, which are to be calculated by `_inferParentChildRelationships()` method
             this.has = {
                 // childPanel: false, // Not supported. Should be calculated manually, real-time
                 sibling: false,
@@ -1489,6 +1496,16 @@
                 parentWithIdenticalChild: false,
                 beenFullyInstantiated: false
             }
+
+
+        }
+
+
+        build() {
+
+            // Infer animation durations
+            this._inferAnimationDurations()
+
             // At this point in code, this panel is still not added to parent panel
             // Therefore, inferences are form a state where this panel is not yet in the picture
             this._inferParentChildRelationships()
@@ -1498,36 +1515,40 @@
             this._leftSiblingObject = this.has.parentWithRightmostChildPanelObject
 
 
-            if (this.has.parentPanel && !objectToSpawnFrom) {
+
+            // Throw error if no parent specified
+            if (this.has.parentPanel && !this.objectToSpawnFrom) {
                 throw Error('The panel is specified to be a child of another panel, but no object is specified as spawn source (missing argument).')
             }
 
             this._numberOfAlreadyExistingSiblingsBeforeAddingThisPanel =
                 this.has.parentWithNumberOfChildren
 
+            // Assign  depth index value
             this._depthIndexValue = this.has.parentPanel
                 ? this.parentPanel.depthIndex() + 1
                 : 0
 
+
+            // Automatically generate and assign panel id
             const panelId =
-                this.has.parentPanel
-                ? this.has.beenAddedAsSibling
-                    ? `panel-${ this.depthIndex() }-${ this.has.parentWithNumberOfChildren }`
-                    : `panel-${ this.depthIndex() }-${ 0 }`
-                : 'panel-0-0'
+                !!this.id()       // if an id is provided by user
+                    ? this.id()   // use that id
+                    : this.has.parentPanel
+                        ? this.has.beenAddedAsSibling
+                            ? `panel-${ this.depthIndex() }-${ this.has.parentWithNumberOfChildren }`
+                            : `panel-${ this.depthIndex() }-${ 0 }`
+                        : 'panel-0-0'  // if there is no user-assigned id nor parent panel, give this id
             this.id(panelId)//.update(0)  //   // `update()` commented out during init-build split
 
 
-            // Add defaults for the NestedPanel to the defaults property of Panel
-            // NOTE: Defaults should ONLY be called to get default values, and not current values
-            this._defaults.paddingBetweenSiblingPanels = 5  // in pixels
-
-            this._paddingBetweenSiblingPanels = this._defaults.paddingBetweenSiblingPanels
-
+            // Automatically assign background color base on the parent (if there is one)
             this._bgFill = this.has.parentPanel
                 ? this.objectToSpawnFrom.fill()
                 : this._defaults.bgFill
 
+
+            // Set properties based on parent
             if (this.has.parentPanel) {
 
                 this.x(  0 - this.width() - this.x() )
@@ -1563,12 +1584,6 @@
                 }
             }
 
-            this.has.beenFullyInstantiated = false
-
-        }
-
-
-        build() {
 
             super.build()
 
@@ -1591,6 +1606,7 @@
 
             return this
         }
+
 
         updateAllPanels(transitionDuration) {
 
