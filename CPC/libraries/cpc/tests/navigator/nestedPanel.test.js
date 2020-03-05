@@ -1327,7 +1327,7 @@ describe ('Panel IDs: Panel IDs must be generated correctly', () => {
             .x(200)
             .y(25)
             // .yAxisLabels(true)
-            .update(0)
+            .build()
 
 
         expect( myPanel.id() ).toBe( 'panel-0-0' )
