@@ -175,21 +175,21 @@ describe ('Nested Panel Instantiation', () => {
 
         // Create a child panel that spawns from a category in parent panel
         const objectToSpawnFrom = parentPanel.objects('gender').objects('male')
-        const legitimateChildPanel = new navigator.NestedPanel(parentPanel, objectToSpawnFrom)  // spawn source must be specified if a parent panel is specified
+        const childPanelWithBridgeSpecified = new navigator.NestedPanel(parentPanel, objectToSpawnFrom)  // spawn source must be specified if a parent panel is specified
+        expectConsoleHistory('')
 
-        legitimateChildPanel
+        childPanelWithBridgeSpecified
             .id('child-panel')
             .build()
 
 
         // Try to create a child panel without specifying a spawn source (expect error)
-
         const parentPanel2 = new navigator.NestedPanel(mySvg) // no need to specify a spawn source if no parent is specified
         parentPanel2.build()   // no errors returned
 
         const bridgelessChildPanel = new navigator.NestedPanel(parentPanel2)
         expectConsoleHistory(
-            'Warning: The parent of the panel being created is NestedPanel object, but no spawn source specified. Build will likely fail. To fix this, a spawn source should be specified either in arguments (during instance intitialization) or by assigning a value to ".arguments.objectToSpawnFrom" property (after instance initiation).Warning: The parent of the panel being created is NestedPanel object, but no spawn source specified. Build will likely fail. To fix this, a spawn source should be specified either in arguments (during instance intitialization) or by assigning a value to ".arguments.objectToSpawnFrom" property (after instance initiation).'
+            "Warning: The parent of the panel being created is NestedPanel object, but no spawn source specified. Build will likely fail. To fix this, a spawn source should be specified either in arguments (during instance intitialization) or by assigning a value to \".arguments.objectToSpawnFrom\" property (after instance initiation)."
         )   // cannot specify a parent panel without spawn source)
 
         expect( () => {
