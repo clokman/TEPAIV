@@ -51,7 +51,7 @@ myPanel = new navigator.Panel()
     .bgFill('#deebf7')
     .x(200).y(yCoordinateOfTestRow2)
     .yAxisLabels(true)
-    .update()
+    .build()
 
 myPanel.yAxisLabels()
 
@@ -60,7 +60,7 @@ myPanel2 = new navigator.Panel()
     .bgText('myPanel2')
     .bgFill('#deebf7')
     .x(50).y(yCoordinateOfTestRow3)
-    .update()
+    .build()
 myPanel2.objects('gender').colorScheme('Blues').update()
 myPanel2.objects('class').colorScheme('RdPu').update()
 myPanel2.objects('status').colorScheme('Oranges').update()
@@ -70,7 +70,7 @@ myPanel3 = new navigator.Panel()
     .bgText('myPanel3')
     .bgFill('#deebf7')
     .x(175).y(yCoordinateOfTestRow3)
-    .update()
+    .build()
 myPanel3.objects('gender').colorScheme('YlGn').update()
 myPanel3.objects('class').colorScheme('YlGnBu').update()
 myPanel3.objects('status').colorScheme('BuPu').update()
@@ -80,7 +80,7 @@ myPanel4 = new navigator.Panel()
     .bgText('myPanel4')
     .bgFill('#deebf7')
     .x(300).y(yCoordinateOfTestRow3)
-    .update()
+    .build()
 myPanel4.objects('gender').colorScheme('Greys').update()
 myPanel4.objects('class').colorScheme('Greys').update()
 myPanel4.objects('status').colorScheme('Greys').update()
@@ -95,7 +95,7 @@ nestedPanel = new navigator.NestedPanel()
     .bgText('nestedPanel')
     .colorSet('Viridis')
     .x(25).y(yCoordinateOfTestRow1)
-    .update(0)
+    .build()
 
 
 // Embed child panel 1
@@ -106,7 +106,7 @@ childPanel1 = new navigator.NestedPanel(nestedPanel, spawnObjectForChild1)
 childPanel1
     .id('child-panel-1')
     .bgText('child-panel-1')
-    .update()
+    .build()
 
 
 // EMBED child panel 2
@@ -118,7 +118,7 @@ setTimeout(() => {
     childPanel2
         .id('child-panel-2')
         .bgText('child-panel-2')
-        .update()
+        .build()
 
 },1000)
 
@@ -132,7 +132,7 @@ setTimeout(() => {
     childPanel3
         .id('child-panel-3')
         .bgText('child-panel-3')
-        .update()
+        .build()
 
 },2000)
 
@@ -163,7 +163,7 @@ setTimeout( () => {
     childPanel4
         .id('child-panel-4')
         .bgText('child-panel-4')
-        .update()
+        .build()
 
 }, 5000)
 
@@ -185,7 +185,7 @@ setTimeout( () => {
     childPanel5
         .id('child-panel-5')
         .bgText('child-panel-5')
-        .update()
+        .build()
 
 }, 7000)
 
@@ -200,7 +200,7 @@ setTimeout( () => {
     childPanel6
         .id('child-panel-6')
         .bgText('child-panel-6')
-        .update()
+        .build()
 
 }, 8000)
 
@@ -214,7 +214,7 @@ setTimeout( () => {
     childPanel7
         .id('child-panel-7')
         .bgText('child-panel-7')
-        .update()
+        .build()
 
 }, 9000)
 
@@ -239,7 +239,7 @@ comparisonPanel = new navigator.NestedPanel()
     .colorSet('Viridis')
     .x(650).y(yCoordinateOfTestRow1)
     .yAxisLabels(true)
-    .update(0)
+    .build()
 
 
 spawnObjectForComparisonChild1 = comparisonPanel.objects('gender').objects('female')
@@ -247,7 +247,7 @@ spawnObjectForComparisonChild1 = comparisonPanel.objects('gender').objects('fema
 comparisonChild1 = new navigator.NestedPanel(comparisonPanel, spawnObjectForComparisonChild1)
 comparisonChild1
     .bgText('comp.Ch.1')
-    .update()
+    .build()
 
 
 setTimeout( () => {
@@ -256,7 +256,7 @@ setTimeout( () => {
     comparisonChild2 = new navigator.NestedPanel(comparisonPanel, spawnObjectForComparisonChild2, 'sibling')
     comparisonChild2
         .bgText('comp.Ch.2')
-        .update()
+        .build()
 
 }, 1500)
 
@@ -267,7 +267,7 @@ setTimeout( () => {
     comparisonChild3 = new navigator.NestedPanel(comparisonPanel, spawnObjectForComparisonChild3, 'sibling')
     comparisonChild3
         .bgText('comp.Ch.3')
-        .update()
+        .build()
 
 }, 3500)
 
@@ -286,21 +286,21 @@ const p8_panel0_0 = new navigator.NestedPanel()
     .bgText('p8_panel0_0 (removals test)')
     .x(650).y(yCoordinateOfTestRow2)
     .yAxisLabels(true)
-    .update(0)
+    .build()
 
 p8_panel0_0.describe('Removals')
 
 // Create panel-1-0
 const spawnObjectForP8_panel1_0 = p8_panel0_0.objects('gender').objects('female')
 const p8_panel1_0 = new navigator.NestedPanel(p8_panel0_0, spawnObjectForP8_panel1_0)
-p8_panel1_0.update()
+p8_panel1_0.build()
 
 // Create panel-2-0
 let carPanel2_0
 setTimeout( () => {
     const spawnObjectForP8_panel2_0 = p8_panel1_0.objects('class').objects('first-class')
     p8_panel2_0 = new navigator.NestedPanel(p8_panel1_0, spawnObjectForP8_panel2_0)
-    p8_panel2_0.update()
+    p8_panel2_0.build()
 }, 1000)
 
 
@@ -309,7 +309,7 @@ let p8_panel2_1
 setTimeout( () => {
     const spawnObjectForCarPanel2_1 = p8_panel1_0.objects('class').objects('second-class')
     p8_panel2_1 = new navigator.NestedPanel(p8_panel1_0, spawnObjectForCarPanel2_1, 'sibling')
-    p8_panel2_1.update()
+    p8_panel2_1.build()
 }, 3000)
 
 
@@ -318,7 +318,7 @@ setTimeout( () => {
     // Create panel-2-2
     const spawnObjectForP8_panel2_2 = p8_panel1_0.objects('class').objects('third-class')
     p8_panel2_2 = new navigator.NestedPanel(p8_panel1_0, spawnObjectForP8_panel2_2, 'sibling')
-    p8_panel2_2.update()
+    p8_panel2_2.build()
 }, 4000)
 setTimeout( () => {p8_panel2_1.remove()}, 5000)
 setTimeout( () => {p8_panel2_2.remove()}, 6000)
@@ -344,7 +344,7 @@ compPan2 = new navigator.NestedPanel()
     .colorSet('Viridis')
     .x(1250).y(yCoordinateOfTestRow1)
     .yAxisLabels(true)
-    .update(0)
+    .build()
 
 compPan2.describe(`'Lateral switch in comparison view: Died' category should NOT have buggy bridge at the end.`);
 
@@ -358,7 +358,7 @@ setTimeout( () => {
     gen1sib1 = new navigator.NestedPanel(compPan2, spawnObjectForGen1sib1)
     gen1sib1
         .bgText('gen1sib1')
-        .update(500)
+        .build()
 
 }, timeStep.next() )
 
@@ -370,7 +370,7 @@ setTimeout( () => {
     gen1sib2 = new navigator.NestedPanel(compPan2, spawnObjectForGen1sib2, 'sibling')
     gen1sib2
         .bgText('gen1sib2')
-        .update(500)
+        .build()
 
 }, timeStep.next() )
 
@@ -385,7 +385,7 @@ setTimeout( () => {
     gen2sing1 = new navigator.NestedPanel(compPan2, spawnObjectForGen2sing1)
     gen2sing1
         .bgText('gen2sing1')
-        .update(500)
+        .build()
 
 }, timeStep.next() )
 
@@ -399,7 +399,7 @@ setTimeout( () => {
     gen2sib1 = new navigator.NestedPanel(compPan2, spawnObjectForGen2sib1)
     gen2sib1
         .bgText('gen2sib1')
-        .update(500)
+        .build()
 
 }, timeStep.next() )
 
@@ -411,7 +411,7 @@ setTimeout( () => {
     gen2sib2 = new navigator.NestedPanel(compPan2, spawnObjectForGen2sib2, 'sibling')
     gen2sib2
         .bgText('gen2sib2')
-        .update(500)
+        .build()
 
 }, timeStep.next() )
 
@@ -424,7 +424,7 @@ setTimeout( () => {
     gen2sing2 = new navigator.NestedPanel(compPan2, spawnObjectForGen2sing2)
     gen2sing2
         .bgText('gen2sing2')
-        .update(500)
+        .build()
 
 }, timeStep.next() )
 
@@ -452,7 +452,7 @@ p7_panel0_0 = new navigator.NestedPanel()
     .x(1250)
     .y(yCoordinateOfTestRow2)
     .yAxisLabels(true)
-    .update(0)
+    .build()
 
 p7_panel0_0.describe(`'COMPARISON VIEW: DEEP EXPANSION OF INNER SIBLING: Outer sibling should move rightward and backgrounds should look correct in the end.`);
 
@@ -466,7 +466,7 @@ setTimeout( () => {
     P7_panel1_0 = new navigator.NestedPanel(p7_panel0_0, spawnObjectForP7_panel1_0)
     P7_panel1_0
         .bgText('P7_panel1_0')
-        .update(500)
+        .build()
 
 }, timeStep.next() )
 
@@ -480,7 +480,7 @@ setTimeout( () => {
     P7_panel_1_1 = new navigator.NestedPanel(p7_panel0_0, spawnObjectForP7_panel1_1, 'sibling')
     P7_panel_1_1
         .bgText('P7_panel_1_1')
-        .update(500)
+        .build()
 
 }, timeStep.next() )
 
@@ -493,7 +493,7 @@ setTimeout( () => {
     P7_panel_1_0__1 = new navigator.NestedPanel(P7_panel1_0, spawnObjectForP7_panel1_1)
     P7_panel_1_0__1
         .bgText('P7_panel_1_0__1')
-        .update(500)
+        .build()
 
 }, timeStep.next() )
 
@@ -518,7 +518,7 @@ panel9_0 = new navigator.NestedPanel()
     .colorSet('Viridis')
     .x(1900).y(yCoordinateOfTestRow1)
     .yAxisLabels(true)
-    .update(0)
+    .build()
 
 panel9_0.describe(`'Expansion of outer panel should shrink previous panels properly, and not lead to extra right BG extension for the panel 0 background.`);
 
@@ -531,7 +531,7 @@ setTimeout( () => {
     p9_panel1_0 = new navigator.NestedPanel(panel9_0, spawnObjectForP9_Panel1_0)
     p9_panel1_0
         .bgText('p9_panel1_0')
-        .update(500)
+        .build()
 
 }, timeStep.next() )
 
@@ -542,7 +542,7 @@ setTimeout( () => {
     p9_panel1_1 = new navigator.NestedPanel(panel9_0, spawnObjectForP9_Panel1_1, 'sibling')
     p9_panel1_1
         .bgText('p9_panel1_1')
-        .update(500)
+        .build()
 
 }, timeStep.next() )
 
@@ -555,7 +555,7 @@ setTimeout( () => {
     p9_panel1_1__0 = new navigator.NestedPanel(p9_panel1_1, spawnObjectForP9_Panel1_1__0)
     p9_panel1_1__0
         .bgText('p9_panel1_1__0')
-        .update(500)
+        .build()
 
 }, timeStep.next() )
 
@@ -572,7 +572,7 @@ const p10_panel0_0 = new navigator.NestedPanel()
     .bgText('p10_panel0_0')
     .x(2750).y(yCoordinateOfTestRow1)
     .yAxisLabels(true)
-    .update(0)
+    .build()
 
 p10_panel0_0.describe('DEEP EXTENSION: Backgrounds should look OK after adding many children panels')
 
@@ -582,7 +582,7 @@ const spawnObjectForP10_Panel1_0 = p10_panel0_0.objects('gender').objects('femal
 const p10_panel1_0 = new navigator.NestedPanel(p10_panel0_0, spawnObjectForP10_Panel1_0)
 p10_panel1_0
     .bgText('p10_panel1_0')
-    .update()
+    .build()
 
 // Create panel-2-0
 let p10_panel2_0
@@ -591,7 +591,7 @@ setTimeout( () => {
     p10_panel2_0 = new navigator.NestedPanel(p10_panel1_0, spawnObjectForP10_Panel2_0)
     p10_panel2_0
         .bgText('p10_panel2_0')
-        .update()
+        .build()
 }, timeStep.next() )
 
 
@@ -602,7 +602,7 @@ setTimeout( () => {
     p10_panel3_0 = new navigator.NestedPanel(p10_panel2_0, spawnObjectForP10_Panel3_0)
     p10_panel3_0
         .bgText('p10_panel3_0')
-        .update()
+        .build()
 }, timeStep.next() )
 
 
@@ -620,7 +620,7 @@ const p11_panel0_0 = new navigator.NestedPanel()
     .x(2750).y(yCoordinateOfTestRow2)
     .yAxisLabels(true)
     .bgText( 'p11_panel0_0' )
-    .update(0)
+    .build()
 
 
 p11_panel0_0.describe('COMPARISON VIEW: BACKGROUNDS: Backgrounds should look OK in the end.')
@@ -631,7 +631,7 @@ const spawnObjectForP11_Panel1_0 = p11_panel0_0.objects('gender').objects('femal
 const p11_panel1_0 = new navigator.NestedPanel(p11_panel0_0, spawnObjectForP11_Panel1_0)
 p11_panel1_0
     .bgText( 'p11_panel1_0' )
-    .update()
+    .build()
 
 
 // Create panel-2-0
@@ -641,7 +641,7 @@ setTimeout( () => {
     p11_panel2_0 = new navigator.NestedPanel(p11_panel1_0, spawnObjectForP11_panel2_0)
     p11_panel2_0
         .bgText( 'p11_panel2_0' )
-        .update()
+        .build()
 }, timeStep.next() )
 
 
@@ -652,7 +652,7 @@ setTimeout( () => {
     p11_panel2_1 = new navigator.NestedPanel(p11_panel1_0, spawnObjectForP11_panel2_1, 'sibling')
     p11_panel2_1
         .bgText( 'p11_panel2_1' )
-        .update()
+        .build()
 }, timeStep.next() )
 
 // // Create panel-2-2
@@ -662,7 +662,7 @@ setTimeout( () => {
 //     p11_panel2_2 = new navigator.NestedPanel(p11_panel1_0, spawnObjectForP11_panel2_2, 'sibling')
 //     p11_panel2_2
 //         .bgText( 'p11_panel2_2' )
-//         .update()
+//         .build()
 // }, timeStep.next() )
 
 
@@ -677,7 +677,7 @@ const p12_panel0_0 = new navigator.NestedPanel()
     .bgText('p12_panel0_0')
     .x(3500).y(yCoordinateOfTestRow1)
     .yAxisLabels(true)
-    .update(0)
+    .build()
 
 setTimeout( async () => {
     await p12_panel0_0.summarizeDataset(
