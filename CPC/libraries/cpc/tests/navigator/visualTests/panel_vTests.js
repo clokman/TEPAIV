@@ -709,3 +709,45 @@ setTimeout( async () => {
 
 
 p12_panel0_0.describe('LOAD DATA: Should load a few datasets in tandem and update category proportions each time')
+
+
+
+
+
+//// PANEL: ABSOLUTE CHART WIDTHS ///////////////////////////////////////////////////
+
+timeStep.reset()
+timeStep.stepDuration = 2000
+
+// Create panel-0-0
+const p14_panel0_0 = new navigator.NestedPanel()
+    .bgFill('#deebf7')
+    .bgText('p14_panel0_0')
+    .x(4250)
+    .y(yCoordinateOfTestRow1)
+    .yAxisLabels(true)
+    .bgText( 'p14_panel0_0' )
+    .animationDuration( 3000 )
+    .showAbsoluteChartWidths(true)
+    .build()
+
+
+p14_panel0_0.describe('INITIATE WITH ABSOLUTE WIDTHS: Panel edges and backgrounds should look OK in the end.')
+
+setTimeout( async () => {
+    // Create panel-1-0
+    const spawnObjectForP14_Panel1_0 = p14_panel0_0.objects('gender').objects('female')
+    const p14_panel1_0 = new navigator.NestedPanel(p14_panel0_0, spawnObjectForP14_Panel1_0)
+
+    // Summarize a dataset in panel0
+    await p14_panel1_0
+        .summarizeDataset(
+            'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
+            'Name'
+        )
+    p14_panel1_0
+        .bgText( 'p14_panel1_0' )
+        // .showAbsoluteChartWidths(true)
+        .build()
+
+}, timeStep.next() )

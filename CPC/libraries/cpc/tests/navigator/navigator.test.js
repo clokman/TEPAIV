@@ -16,10 +16,12 @@ if (typeof Object.fromEntries !== 'function') {
 //// PURE NODE DEPENDENCIES ////
 const jestConsole = require('../../../../../JestUtils/jest-console')
 const expectTable = jestConsole.expectTable
+const expectConsoleHistory = jestConsole.expectConsoleHistory
+const destroyWarnings = jestConsole.destroyWarnings
 
 
-require('../../../../../JestUtils/jest-dom')
-
+const jestDom = require('../../../../../JestUtils/jest-dom')
+    , writeDomToFile = jestDom.writeDomToFile
 
 //// UMD DEPENDENCIES ////
 global.$ = require('../../../external/jquery-3.1.1.min')
@@ -614,6 +616,45 @@ describe ('Absolute chart widths', () => {
 
         })
 
+
+        test ('Children panels should initiate at correct locations and with correct width in absolute mode ', async () => {
+
+            jest.useFakeTimers()
+
+            const myNavigator = await initializeDomWithTitanicTinyNavigator()
+
+            jest.runOnlyPendingTimers()
+
+            // Get default state in navigator
+            expect( myNavigator.showAbsoluteChartWidths() ).toBe( false )
+
+            // Set value
+            myNavigator
+                .showAbsoluteChartWidths( true )
+                .update()
+
+            jest.runOnlyPendingTimers()
+            jest.runAllTimers()
+
+            domUtils.simulateClickOn('#panel-0-0 #Male')
+            jest.runOnlyPendingTimers()
+
+
+
+            const panelZero = myNavigator.objects('panel-0-0')
+            const childPanel = myNavigator.objects('panel-1-0')
+
+            jest.runAllTimers()
+
+            // Formulas
+            const childPanelEndsAtCorrectLocation = () => childPanel.rightEdge() === panelZero.leftEdge() + panelZero.bgExtensionLeft() + panelZero.width() + childPanel.width()
+            const panelZeroBackgroundEndsAtCorrectLocation = () => panelZero.rightEdge() === childPanel.rightEdge() + panelZero._innerPadding.right
+
+
+            expect( childPanelEndsAtCorrectLocation() ).toBeTruthy()
+            expect( panelZeroBackgroundEndsAtCorrectLocation() ).toBeTruthy()
+
+        })
 
 })
 

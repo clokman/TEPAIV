@@ -834,110 +834,207 @@ describe ('Absolute values', () => {
 
 describe ('Absolute Chart Widths', () => {
 
-    test ('Set/get absolute chart widths', () => {
 
-        const panelZero = initializeDomWith.panelZero().build()
+    describe ('Init with absolute widths', () => {
+
+        // TODO [FEB]
+        test ('When absolute chart widths are enabled, newly created panels should initialize correctly', async () => {
+
+            jest.useFakeTimers()
+
+            initializeDomWithSvg()
+
+            // Add panelZero
+            const panelZero = new navigator.NestedPanel()  // do not `build()` yet
+
+            // Summarize a dataset in panel0
+            await panelZero.summarizeDataset(
+                'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv', 'Name')
+            panelZero.update()
+
+            // Turn on absolute chart widths
+            panelZero.showAbsoluteChartWidths(true)
+
+            panelZero.build()
+
+            jest.runOnlyPendingTimers()
 
 
-        // Default value should be false
-        expect( panelZero.showAbsoluteChartWidths() ).toBe( false )
+            // Add child panel
+            const spawnObjectForSiblingPanel1 = panelZero.objects('Gender').objects('Female')
+            const childPanel = new navigator.NestedPanel(panelZero, spawnObjectForSiblingPanel1)  // do not build yet
 
-        // Change value
-        panelZero.showAbsoluteChartWidths(true)
-        expect( panelZero.showAbsoluteChartWidths() ).toBe( true )
+            // Summarize a dataset in child panel
+            await childPanel.summarizeDataset(
+                'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny-malesOnly.csv', 'Name')
 
+            childPanel.build()
+            jest.runOnlyPendingTimers()
+
+
+            // Formulas
+            const childPanelEndsAtCorrectLocation = () => childPanel.rightEdge() === panelZero.leftEdge() + panelZero.width() + childPanel.width()
+            const panelZeroBackgroundEndsAtCorrectLocation = () => panelZero.rightEdge() === childPanel.rightEdge() + panelZero._innerPadding.right
+
+            expect( childPanelEndsAtCorrectLocation() ).toBeTruthy()
+            expect( panelZeroBackgroundEndsAtCorrectLocation() ).toBeTruthy()
+
+
+
+        })
+
+        test ('Enabling absolute chart widths but not providing any data during init should give a warning during build', async () => {
+
+            jest.useFakeTimers()
+
+            const panelZero = initializeDomWith.panelZero()
+
+            jest.runOnlyPendingTimers()
+
+            // Get the default state of absolute chart widths
+            expect( panelZero.showAbsoluteChartWidths() ).toBe( false )
+
+            // Enable absolute chart widths
+            panelZero
+                .showAbsoluteChartWidths( true )
+                .build()
+
+            // Create child panel
+            const spawnObjectForChildPanel = panelZero.objects('gender').objects('female')
+            const childPanel = new navigator.NestedPanel(panelZero, spawnObjectForChildPanel)
+            childPanel.showAbsoluteChartWidths(true)
+
+            jest.runOnlyPendingTimers()
+            jest.runAllTimers()
+
+            expectConsoleHistory('')
+
+            childPanel.build()
+
+            expectConsoleHistory(`\
+[Build warning]: "showAbsoluteChartWidths()" is set to "true" but no data is provided during NestedPanel instance initialization. 
+                    In this scenario, the NestedPanel is initiated with example data and it may not really visualize absolute values. 
+                    Importantly, build parameters are calculated from this example data. If some other data is provided to the 
+                    NestePanel after the build operation with example data, animation glitches may occur. To display absolute values 
+                    correctly, a "Stacks" object should be provided as data before building the NestedPanel.`)
+
+            destroyWarnings()
+
+        })
 
     })
 
 
-    test ('When absolute chart widths are on, charts should have the right width relative to the chart widths in parents', async () => {
-
-        jest.useFakeTimers()
-
-        initializeDomWithSvg()
-
-        // Add panelZero
-        const panelZero = new navigator.NestedPanel().build()
-
-        // Summarize a dataset in panel0
-        await panelZero.summarizeDataset(
-            'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv', 'Name')
-        panelZero.update()
-
-        // Add child panel
-        const spawnObjectForChildPanel = panelZero.objects('Gender').objects('Female')
-        const childPanel = new navigator.NestedPanel(panelZero, spawnObjectForChildPanel).build()
-
-        // Summarize a dataset in child panel
-        await childPanel.summarizeDataset(
-            'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny-malesOnly.csv', 'Name')
-        childPanel.update(0)
-        jest.runOnlyPendingTimers()
+    describe ('Setting absolute widths post-build', () => {
 
 
+        test ('Set/get absolute chart widths', () => {
 
-        // Turn on absolute chart widths
-        panelZero
-            .showAbsoluteChartWidths(true)
-            .update(0)
-        jest.runOnlyPendingTimers()
-
-        // No overaps should have occurred
-        expect( panelZero.largestTotalCount() > childPanel.largestTotalCount()  ).toBe( true )
-        expect( panelZero.width() > childPanel.width()  ).toBe( true )
-
-    })
+            const panelZero = initializeDomWith.panelZero()
 
 
-    test ('Toggling absolute chart widths when there are two sibling panels should not cause overlapping panels', async () => {
+            // Default value should be false
+            expect( panelZero.showAbsoluteChartWidths() ).toBe( false )
 
-        jest.useFakeTimers()
-
-        initializeDomWithSvg()
-
-        // Add panelZero
-        const panelZero = new navigator.NestedPanel().build()
-
-        // Summarize a dataset in panel0
-        await panelZero.summarizeDataset(
-            'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv', 'Name')
-        panelZero.update()
-
-        // Add the first sibling panel
-        const spawnObjectForSiblingPanel1 = panelZero.objects('Gender').objects('Female')
-        const siblingPanel1 = new navigator.NestedPanel(panelZero, spawnObjectForSiblingPanel1).build()
-
-        // Summarize a dataset in child panel
-        await siblingPanel1.summarizeDataset(
-            'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny-malesOnly.csv', 'Name')
-        siblingPanel1.update(0)
-        jest.runOnlyPendingTimers()
+            // Change value
+            panelZero.showAbsoluteChartWidths(true)
+            expect( panelZero.showAbsoluteChartWidths() ).toBe( true )
 
 
-        // Add the second sibling panel
-        const spawnObjectForSiblingPanel2 = panelZero.objects('Gender').objects('Male')
-        const siblingPanel2 = new navigator.NestedPanel(panelZero, spawnObjectForSiblingPanel2, 'sibling').build()
-
-        // Summarize a dataset in child panel
-        await siblingPanel2.summarizeDataset(
-            'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny-malesOnly.csv', 'Name')
-        siblingPanel2.update(0)
-        jest.runOnlyPendingTimers()
+        })
 
 
-        // Turn on absolute chart widths
-        panelZero
-            .showAbsoluteChartWidths(true)
-            .update(0)
-        jest.runOnlyPendingTimers()
+        test ('When absolute chart widths are on, charts should have the right width relative to the chart widths in parents', async () => {
+
+            jest.useFakeTimers()
+
+            initializeDomWithSvg()
+
+            // Add panelZero
+            const panelZero = new navigator.NestedPanel().build()
+
+            // Summarize a dataset in panel0
+            await panelZero.summarizeDataset(
+                'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv', 'Name')
+            panelZero.update()
+
+            // Add child panel
+            const spawnObjectForChildPanel = panelZero.objects('Gender').objects('Female')
+            const childPanel = new navigator.NestedPanel(panelZero, spawnObjectForChildPanel).build()
+
+            // Summarize a dataset in child panel
+            await childPanel.summarizeDataset(
+                'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny-malesOnly.csv', 'Name')
+            childPanel.update(0)
+            jest.runOnlyPendingTimers()
 
 
-        // No overaps should have occurred
-        panelZeroContainsSibling1 = panelZero.rightEdge() > siblingPanel1.rightEdge()
-        panelZeroContainsSibling2 = panelZero.rightEdge() > siblingPanel2.rightEdge()
 
-        expect( panelZeroContainsSibling1 ).toBe( true )
-        expect( panelZeroContainsSibling2 ).toBe( true )
+            // Turn on absolute chart widths
+            panelZero
+                .showAbsoluteChartWidths(true)
+                .update(0)
+            jest.runOnlyPendingTimers()
+
+            // No overaps should have occurred
+            expect( panelZero.largestTotalCount() > childPanel.largestTotalCount()  ).toBe( true )
+            expect( panelZero.width() > childPanel.width()  ).toBe( true )
+
+        })
+
+
+        test ('Toggling absolute chart widths when there are two sibling panels should not cause overlapping panels', async () => {
+
+            jest.useFakeTimers()
+
+            initializeDomWithSvg()
+
+            // Add panelZero
+            const panelZero = new navigator.NestedPanel().build()
+
+            // Summarize a dataset in panel0
+            await panelZero.summarizeDataset(
+                'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv', 'Name')
+            panelZero.update()
+
+            // Add the first sibling panel
+            const spawnObjectForSiblingPanel1 = panelZero.objects('Gender').objects('Female')
+            const siblingPanel1 = new navigator.NestedPanel(panelZero, spawnObjectForSiblingPanel1).build()
+
+            // Summarize a dataset in child panel
+            await siblingPanel1.summarizeDataset(
+                'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny-malesOnly.csv', 'Name')
+            siblingPanel1.update(0)
+            jest.runOnlyPendingTimers()
+
+
+            // Add the second sibling panel
+            const spawnObjectForSiblingPanel2 = panelZero.objects('Gender').objects('Male')
+            const siblingPanel2 = new navigator.NestedPanel(panelZero, spawnObjectForSiblingPanel2, 'sibling').build()
+
+            // Summarize a dataset in child panel
+            await siblingPanel2.summarizeDataset(
+                'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny-malesOnly.csv', 'Name')
+            siblingPanel2.update(0)
+            jest.runOnlyPendingTimers()
+
+
+            // Turn on absolute chart widths
+            panelZero
+                .showAbsoluteChartWidths(true)
+                .update(0)
+            jest.runOnlyPendingTimers()
+
+
+            // No overaps should have occurred
+            panelZeroContainsSibling1 = panelZero.rightEdge() > siblingPanel1.rightEdge()
+            panelZeroContainsSibling2 = panelZero.rightEdge() > siblingPanel2.rightEdge()
+
+            expect( panelZeroContainsSibling1 ).toBe( true )
+            expect( panelZeroContainsSibling2 ).toBe( true )
+
+        })
+
 
     })
 

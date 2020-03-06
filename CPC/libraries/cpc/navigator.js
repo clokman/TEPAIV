@@ -81,6 +81,7 @@
 
             const panelObject = new NestedPanel(this.select())
                 .stacks(summaryStacks)
+                .showAbsoluteChartWidths( this.showAbsoluteChartWidths() )
                 .bgText('Dataset')
                 .bgTextFill('white')
                 .height(600)   // TODO: Magic number removed
@@ -434,7 +435,11 @@
                 childPanelObject = new NestedPanel(
                     this._lastClickedPanelObject,
                     this._lastClickedCategoryObject
-                ).build()
+                )
+
+                childPanelObject
+                    .stacks(drilldownResultStacks)
+                    .build()
             }
 
             if (childIsASibling){
@@ -442,7 +447,11 @@
                     this._lastClickedPanelObject,
                     this._lastClickedCategoryObject,
                     'sibling'
-                ).build()
+                )
+
+                childPanelObject
+                    .stacks(drilldownResultStacks)
+                    .build()
             }
 
             // Create the new child panel as the child of the last clicked panel
@@ -452,7 +461,6 @@
             )
 
             childPanelObject
-                .stacks(drilldownResultStacks)
                 .bgText(this._lastClickedCategoryName)
                 .bgTextFill('white')
                 .update(totalDurationOfChildPanelInitializationAnimations)  // If too short, update duration cuts off animation times in Panel object.
@@ -711,7 +719,7 @@
          * initialization of the Panel instance from drawing it on DOM. This way, instance parameters
          * can be modified before the panel is drawn on DOM for the first time.
          */
-        build() {
+        build( ) {
 
             // If no data specified, build panel with example data
             if ( !this.stacks() ) {
@@ -1424,7 +1432,11 @@
             this._showAbsoluteChartWidths = false
 
             // Formulas
-            this.absoluteWidthOfChildPanel = (childPanelObject) => this._width *  (childPanelObject.largestTotalCount() / this.largestTotalCount() ) + this._innerPadding.left + this._innerPadding.right
+            this.absoluteWidthOfChildPanel = (childPanelObject) => {
+                const width = this._width *  (childPanelObject.largestTotalCount() / this.largestTotalCount() ) + this._innerPadding.left + this._innerPadding.right
+                const roundedWidth = _.round(width, 1)
+                return roundedWidth
+            }
 
 
             this.childrenPanels = new Map()
@@ -1554,6 +1566,33 @@
                 this.x(  0 - this.width() - this.x() )
                     // .update(0)  // start off-screen  // `update()` commented out during init-build split
 
+                const shouldShowAbsoluteChartWidths = this.showAbsoluteChartWidths() || this.parentPanel.showAbsoluteChartWidths()
+                if ( shouldShowAbsoluteChartWidths  ){
+                    this.showAbsoluteChartWidths(true)
+                }
+
+                const dataIsProvidedDuringInit = !!this.stacks()
+
+                if ( shouldShowAbsoluteChartWidths && !dataIsProvidedDuringInit  ) {
+
+                    // Warn if absolute chart widths is asked for but no data is provided during init
+                    console.warn(`[Build warning]: "showAbsoluteChartWidths()" is set to "true" but no data is provided during NestedPanel instance initialization. 
+                    In this scenario, the NestedPanel is initiated with example data and it may not really visualize absolute values. 
+                    Importantly, build parameters are calculated from this example data. If some other data is provided to the 
+                    NestePanel after the build operation with example data, animation glitches may occur. To display absolute values 
+                    correctly, a "Stacks" object should be provided as data before building the NestedPanel.`)
+
+                    // If no data specified, build panel with example data
+                    if ( !this.stacks() ) {
+                        this._populateWithExampleData()
+                    }
+                }
+
+
+                this._width = this.showAbsoluteChartWidths() ||
+                ( !!this.parentPanel && this.parentPanel.showAbsoluteChartWidths() )
+                    ? this.parentPanel.absoluteWidthOfChildPanel( this )
+                    : this.parentPanel.width()
 
                 if (this.objectToSpawnFrom){
 
@@ -1578,7 +1617,7 @@
                         : this.parentPanel.x() + this.parentPanel.width(),
 
                     y: this.parentPanel.y() + this._outerPadding.top,
-                    width: this.parentPanel.width(),
+                    width: this.width(),
                     height: this.parentPanel.height() - this._outerPadding.bottom
 
                 }
@@ -1586,7 +1625,6 @@
 
 
             super.build()
-
             // Update the single panel that is created by superclass so that the
             // ... properties unique to NestedPanel are updated and reflected to DOM
             // this.update(0)  // `update()` commented out during init-build split
