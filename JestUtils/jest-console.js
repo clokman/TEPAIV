@@ -2,6 +2,7 @@
 
 let consoleHistory = ''
 let lastConsoleOutput = ''
+let _warningsReceived = []
 
 beforeEach( () => {
 
@@ -18,6 +19,8 @@ beforeEach( () => {
     console.warn = jest.fn( argument => {
         lastConsoleOutput = argument
         consoleHistory += argument
+
+        _warningsReceived.push(argument)
     })
 
 })
@@ -26,9 +29,18 @@ const originalConsoleLog = console.log
 const originalConsoleWarn = console.warn
 
 afterEach( () => {
+
+    // restore the original functions after each test
     console.log = originalConsoleLog
     console.warn = originalConsoleWarn
-})  // restore the original functions after each test
+
+    // print warnings to console
+    _warningsReceived.forEach( (warning) => {
+        console.warn(warning)
+    })
+
+
+})
 
 
 expect.extend({
@@ -120,12 +132,23 @@ const clearConsoleHistory = function () {
     consoleHistory = ''
 }
 
+/**
+ * To prevent warnings from being printed to JEST test results.
+ * If a warning is deliberately generated in a test is part of the pass condition for a test,
+ * this method should be used to clear warnings history, so that no warnings are printed to
+ * test results.
+ */
+destroyWarnings = function () {
+    _warningsReceived = []
+}
+
 
 
 exports.expectTable = expectTable
 exports.expectLog = expectLog
 exports.getConsoleHistory = getConsoleHistory
 exports.clearConsoleHistory = clearConsoleHistory
+exports.destroyWarnings = destroyWarnings
 exports.expectConsoleHistory = expectConsoleHistory
 exports.consoleHistory = consoleHistory
 exports.lastConsoleOutput = lastConsoleOutput

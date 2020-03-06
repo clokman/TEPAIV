@@ -21,6 +21,7 @@ const expectTable = jestConsole.expectTable
 const expectLog = jestConsole.expectLog
 const clearConsoleHistory = jestConsole.clearConsoleHistory
 const expectConsoleHistory = jestConsole.expectConsoleHistory
+const destroyWarnings = jestConsole.destroyWarnings
 
 
 global.d3 = {
@@ -207,5 +208,7 @@ test ('Mocking warnings', () => {
     console.warn('Warning: This is a warning!')
 
     expectConsoleHistory('Warning: This is a warning!')
+
+    destroyWarnings()
 
 })
