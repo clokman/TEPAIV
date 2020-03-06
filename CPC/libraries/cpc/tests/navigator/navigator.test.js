@@ -869,10 +869,13 @@ describe ('Stroke Properties ', () => {
 })
 
 async function initializeDomWithTitanicTinyNavigator() {
+
+    jest.useFakeTimers()
+
     // Clear JEST's DOM to prevent leftovers from previous tests
     document.body.innerHTML = ''
     // Create svg container
-    const svg = new container.Svg()
+    const svg = new container.Svg(1200, 900)
     // Create Navigator object
     const myNavigator = new navigator.Navigator()
     //// Load a dataset into navigator
@@ -880,7 +883,19 @@ async function initializeDomWithTitanicTinyNavigator() {
         'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
         ['Name']
     ).then(that => {
-        that.update()
+
+        that.update(0)
+
+        setTimeout( () => {
+
+            that.objects('panel-0-0').x(200).update(0)
+
+        }, that.animationDuration() )
+        
     })
-    return myNavigator;
+
+    jest.runOnlyPendingTimers()
+    jest.runAllTimers()
+
+    return myNavigator
 }
