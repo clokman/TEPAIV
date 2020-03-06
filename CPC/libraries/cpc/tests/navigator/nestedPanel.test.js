@@ -203,9 +203,9 @@ describe ('Nested Panel Instantiation', () => {
 
 
 
-//// Custom Initialization ///////////////////////////////////////////////////////////////
+//// Data ///////////////////////////////////////////////////////////////
 
-describe ('Custom Initialization', () => {
+describe ('Data', () => {
 
     test ('Initialize with custom dataset', async () => {
 

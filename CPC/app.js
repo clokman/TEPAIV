@@ -10,6 +10,7 @@ const parentD3Element = d3.select( '.navigator-area' )
 
 let mySvg = new container.Svg(15000, 15000, parentD3Element)
 
+
 //// NAVIGATOR ////
 const horizontalDistanceBetweenNavigators = 1600
 const verticalDistanceBetweenNavigators = 900
@@ -113,7 +114,9 @@ navigator5.loadDataset(
         .x( navigator4.x() + horizontalDistanceBetweenNavigators )
         .update()
 
-    navigator5.objects('panel-0-0').height(750).update()
+    navigator5.objects('panel-0-0')
+        .height(750)
+        .update()
 
 })
 
@@ -132,7 +135,9 @@ navigator5.loadDataset(
 //         .x( navigator5.x() + horizontalDistanceBetweenNavigators )
 //         .update()
 //
-//     navigator6.objects('panel-0').height(7500).update()
+//     navigator6.objects('panel-0')
+//         .height(7500)
+//         .update()
 
 // })
 
