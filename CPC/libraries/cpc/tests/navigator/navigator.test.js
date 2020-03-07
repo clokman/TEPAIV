@@ -461,10 +461,10 @@ test ('Clicking on a category must make a query and visualize query results with
 
 //// ABSOLUTE VALUES ///////////////////////////////////////////////////////////////
 
-describe ('ABSOLUTE VALUES: Toggle absolute values in category captions', () => {
+describe ('Absolute values: Toggle absolute values in category captions', () => {
 
 
-    test('GET/SET', async () => {
+    test('Get/set', async () => {
 
         const myNavigator = await initializeDomWithTitanicTinyNavigator()
 
@@ -482,7 +482,7 @@ describe ('ABSOLUTE VALUES: Toggle absolute values in category captions', () => 
     })
 
 
-    test ('DOM: Absolute values should toggle for all category captions on DOM', async () => {
+    test ('Dom: Absolute values should toggle for all category captions on DOM', async () => {
 
         const myNavigator = await initializeDomWithTitanicTinyNavigator()
 
@@ -662,7 +662,7 @@ describe ('Absolute chart widths', () => {
 //// COLOR SETS  //////////////////////////////////////////////////////////////////////////
 
 
-test ('COLOR SCHEME SET: Set and get', async () => {
+test ('Color scheme set: Set and get', async () => {
 
     const myNavigator = await initializeDomWithTitanicTinyNavigator()
 
@@ -774,9 +774,9 @@ test ('COLOR SCHEME SET: Set and get', async () => {
 
 //// COMPARISON VIEW ///////////////////////////////////////////////////////////////
 
-describe ('COMPARISON VIEW', () => {
+describe ('Comparison view', () => {
 
-    test ('DETECT MODIFIER: Detect which modifier key is pressed ', async () => {
+    test ('Detect modifier: Detect which modifier key is pressed ', async () => {
 
         const myNavigator = await initializeDomWithTitanicTinyNavigator()
 
