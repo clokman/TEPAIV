@@ -431,15 +431,14 @@
 
             let childPanelObject
 
+
+            // Create the new child panel as the child of the last clicked panel
+
             if (!childIsASibling){
                 childPanelObject = new NestedPanel(
                     this._lastClickedPanelObject,
                     this._lastClickedCategoryObject
                 )
-
-                childPanelObject
-                    .stacks(drilldownResultStacks)
-                    .build()
             }
 
             if (childIsASibling){
@@ -448,13 +447,12 @@
                     this._lastClickedCategoryObject,
                     'sibling'
                 )
-
-                childPanelObject
-                    .stacks(drilldownResultStacks)
-                    .build()
             }
 
-            // Create the new child panel as the child of the last clicked panel
+            childPanelObject
+                .stacks(drilldownResultStacks)
+                .build()
+
             const totalDurationOfChildPanelInitializationAnimations = (
                 childPanelObject._animation.duration.extendBridge
                 + childPanelObject._animation.duration.maximizePanelCover
