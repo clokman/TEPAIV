@@ -1420,6 +1420,19 @@
             }
 
 
+            // Infer objects from arguments
+
+            this.objectToSpawnFrom = this.arguments.objectToSpawnFrom
+
+            // Do not move this block to _inferParentChildRelationships method. This inference must be done before the _inferParentChildRelationships() inferences.
+            this.parentPanel = (
+                this.arguments.parentContainerSelectionOrObject
+                && this.arguments.parentContainerSelectionOrObject.hasType( this.hasType() )
+            )
+                ? parentContainerSelectionOrObject
+                : null
+
+
             // Parameters
             this._showAbsoluteChartWidths = false
 
@@ -1438,15 +1451,6 @@
             this.class('panel')
                 // .update()   // `update()` commented out during init-build split
 
-            this.objectToSpawnFrom = this.arguments.objectToSpawnFrom
-
-            // This inference must be done separately from others, and first. Do not move to _inferParentChildRelationships method.
-            this.parentPanel = (
-                this.arguments.parentContainerSelectionOrObject
-                && this.arguments.parentContainerSelectionOrObject.hasType( this.hasType() )
-            )
-                ? parentContainerSelectionOrObject
-                : null
 
             this._animation = {
 
