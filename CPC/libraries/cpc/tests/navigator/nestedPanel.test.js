@@ -188,9 +188,7 @@ describe ('Nested Panel Instantiation', () => {
         parentPanel2.build()   // no errors returned
 
         const bridgelessChildPanel = new navigator.NestedPanel(parentPanel2)
-        expectConsoleHistory(
-            "Warning: The parent of the panel being created is NestedPanel object, but no spawn source specified. Build will likely fail. To fix this, a spawn source should be specified either in arguments (during instance intitialization) or by assigning a value to \".arguments.objectToSpawnFrom\" property (after instance initiation)."
-        )   // cannot specify a parent panel without spawn source)
+
 
         expect( () => {
             bridgelessChildPanel.build()
