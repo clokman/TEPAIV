@@ -1160,12 +1160,13 @@ describe ('Handling continous data', () => {
         })
 
 
+
         test ('When a dataset with continuous column(s) is initialized, continuous values should automatically be discretized using quantiles', async () => {
 
-            const mixedDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/SampleMixedData.csv')
-            await mixedDataset.build()
+                const mixedDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/SampleMixedData.csv')
+                await mixedDataset.build()
 
-            expect( mixedDataset.data ).toTabulateAs(`\
+                expect( mixedDataset.data ).toTabulateAs(`\
 ┌─────────┬─────────────┬──────────────┬──────────┬───────────────┐
 │ (index) │ Neuroticism │ Extraversion │  Gender  │ MonthMeasured │
 ├─────────┼─────────────┼──────────────┼──────────┼───────────────┤
@@ -1187,7 +1188,7 @@ describe ('Handling continous data', () => {
 └─────────┴─────────────┴──────────────┴──────────┴───────────────┘
 ˅˅˅ 84 more rows`, 0, 15)
 
-        })
+            })
 
 
         test ('If a Dataset is built without discretization, it should still be possible to call transformContinuousColumnsToQuantiles() method for discretizing the data after the built', async () => {
