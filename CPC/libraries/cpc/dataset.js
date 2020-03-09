@@ -312,22 +312,21 @@ const version = "1.0"
     }
 
 
-    // TODO [FEB]: Renamed to calculateQuantileCutoffValuesOfColumn
-     calculateQuantileValuesOfColumn(continuousColumnName, numberOfQuantiles) {
+     calculateQuantileCutoffValuesOfColumn(continuousColumnName, numberOfQuantiles) {
 
-         const requestedQuantilePercentages = Dataset.calculateQuantileCutoffPercentages(numberOfQuantiles)
+         const requestedQuantileCutoffPercentages = Dataset.calculateQuantileCutoffPercentages(numberOfQuantiles)
 
          const cleanedAndSortedColumn = this.data.map( d => d[continuousColumnName] )
                  .filter( d => d !== null && !isNaN(d) )
                  .sort( d3.ascending )
 
-         const quantileValuesOfColumn = []
-         requestedQuantilePercentages.forEach( (quantilePercentage) => {
-             const quantileValue = d3.quantile(cleanedAndSortedColumn, quantilePercentage)
-             quantileValuesOfColumn.push(quantileValue)
+         const quantileCutoffValuesOfColumn = []
+         requestedQuantileCutoffPercentages.forEach( (quantileCutoffPercentage) => {
+             const quantileCutoffValue = d3.quantile(cleanedAndSortedColumn, quantileCutoffPercentage)
+             quantileCutoffValuesOfColumn.push(quantileCutoffValue)
          })
 
-         return quantileValuesOfColumn
+         return quantileCutoffValuesOfColumn
      }
 
 
@@ -354,9 +353,9 @@ const version = "1.0"
          const quantileCutoffPercentages = []
          d3.range(numberOfQuantiles + 1).forEach((i) => {
 
-             const quantilePercentage = i * percentageStep
+             const quantileCutoffPercentage = i * percentageStep
 
-             quantileCutoffPercentages.push( quantilePercentage )
+             quantileCutoffPercentages.push( quantileCutoffPercentage )
          })
          return quantileCutoffPercentages
      }

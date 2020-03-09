@@ -1129,11 +1129,11 @@ describe ('Handling continous data', () => {
                 mixedDataset.transformContinuousColumns.toQuantiles = false
                 await mixedDataset.build()
 
-                const neuroticismQuantileValues = mixedDataset.calculateQuantileValuesOfColumn('Neuroticism', 4)
-                const extraversionQuantileValues = mixedDataset.calculateQuantileValuesOfColumn('Extraversion', 4)
+                const neuroticismQuantileCutoffValues = mixedDataset.calculateQuantileCutoffValuesOfColumn('Neuroticism', 4)
+                const extraversionQuantileCutoffValues = mixedDataset.calculateQuantileCutoffValuesOfColumn('Extraversion', 4)
 
-                expect( neuroticismQuantileValues ).toEqual( [1.64583, 2.59375, 2.875, 3.114585, 3.875] )
-                expect( extraversionQuantileValues ).toEqual( [2.52083, 3.28125, 3.47917, 3.65625, 4.41667] )
+                expect( neuroticismQuantileCutoffValues ).toEqual( [1.64583, 2.59375, 2.875, 3.114585, 3.875] )
+                expect( extraversionQuantileCutoffValues ).toEqual( [2.52083, 3.28125, 3.47917, 3.65625, 4.41667] )
 
                 // Confirm that the values are mathematically correct
 
@@ -1145,13 +1145,13 @@ describe ('Handling continous data', () => {
                 const extraversionMedian = d3.median(mixedDataset.data, d=>d['Extraversion'])
                 const extraversionMax = d3.max(mixedDataset.data, d=>d['Extraversion'])
 
-                expect( neuroticismMin === String( neuroticismQuantileValues[0] )).toBeTruthy()  // d3 returns string values from d3.max and d3.min
-                expect( neuroticismMedian === neuroticismQuantileValues[2] ).toBeTruthy()
-                expect( neuroticismMax === String( neuroticismQuantileValues[4] ) ).toBeTruthy()
+                expect( neuroticismMin === String( neuroticismQuantileCutoffValues[0] )).toBeTruthy()  // d3 returns string values from d3.max and d3.min
+                expect( neuroticismMedian === neuroticismQuantileCutoffValues[2] ).toBeTruthy()
+                expect( neuroticismMax === String( neuroticismQuantileCutoffValues[4] ) ).toBeTruthy()
 
-                expect( extraversionMin === String( extraversionQuantileValues[0] ) ).toBeTruthy()
-                expect( extraversionMedian === extraversionQuantileValues[2] ).toBeTruthy()
-                expect( extraversionMax === String( extraversionQuantileValues[4] ) ).toBeTruthy()
+                expect( extraversionMin === String( extraversionQuantileCutoffValues[0] ) ).toBeTruthy()
+                expect( extraversionMedian === extraversionQuantileCutoffValues[2] ).toBeTruthy()
+                expect( extraversionMax === String( extraversionQuantileCutoffValues[4] ) ).toBeTruthy()
 
             })
 
