@@ -60,9 +60,11 @@ const navigator = require("../../navigator")
 //// UNIT TESTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-//// INSTANTIATION ////////////////////////////////////////////////////////////////////////
+//// Instantiation ///////////////////////////////////////////////////////////////
 
-test ('Instantiate Navigator class (no parent object specified)', async () => {
+describe ('Instantiation', () => {
+
+    test ('Instantiate Navigator class (no parent object specified)', async () => {
 
     // Clear JEST's DOM to prevent leftovers from previous tests
     document.body.innerHTML = ''
@@ -97,12 +99,10 @@ test ('Instantiate Navigator class (no parent object specified)', async () => {
         .id
     expect(parentId).toBe('topmost-svg')
 
-})
+    })
 
 
-
-
-test ('Instantiate Navigator class as a child of a Svg class object',  () => {
+    test ('Instantiate Navigator class as a child of a Svg class object',  () => {
 
     // Clear JEST's DOM to prevent leftovers from previous tests
     document.body.innerHTML = ''
@@ -124,12 +124,10 @@ test ('Instantiate Navigator class as a child of a Svg class object',  () => {
     expect(parentId).toBe('topmost-svg')
 
 
-})
+    })
 
 
-
-
-test ('Instantiate Navigator class as a child of a Group class object',  () => {
+    test ('Instantiate Navigator class as a child of a Group class object',  () => {
 
     // Clear JEST's DOM to prevent leftovers from previous tests
     document.body.innerHTML = ''
@@ -164,12 +162,10 @@ test ('Instantiate Navigator class as a child of a Group class object',  () => {
         .id
     expect(grandParentId).toBe('topmost-svg')
 
-})
+    })
 
 
-
-
-test ('Load a csv dataset to Navigator and verify that related calculations are made', async () => {
+    test ('Load a csv dataset to Navigator and verify that related calculations are made', async () => {
 
     // Clear JEST's DOM to prevent leftovers from previous tests
     document.body.innerHTML = ''
@@ -226,108 +222,111 @@ test ('Load a csv dataset to Navigator and verify that related calculations are 
     returnedObjectType = returnedObject.constructor.name
     expect(returnedObjectType).toBe('Navigator')
 
+    })
+
 })
-
-
-
 
 
 
 //// LOADING DATA ////////////////////////////////////////////////////////////////////////
 
 
-test ('Update DOM after new data is loaded', async () => {
+//// Loading Data ///////////////////////////////////////////////////////////////
 
-    // Clear JEST's DOM to prevent leftovers from previous tests
-    document.body.innerHTML = ''
+describe ('Loading Data', () => {
 
-    // Create svg container
-    const svg = new container.Svg()
-    svg.select()
-        .attr('id', 'topmost-svg')   // setting id with d3, because Svg does not have an id method at the time of writing this test
+    test ('Update DOM after new data is loaded', async () => {
 
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
 
-
-
-    //// CREATE A NAVIGATOR OBJECT AND VERIFY IT EXISTS ON DOM ////
-
-    // Create Navigator object and tag it for later selectability
-    const myNavigator = new navigator.Navigator()
-    myNavigator.id('my-navigator').update()
-
-
-    // Verify that DOM only has a Navigator element in it
-    const elementsInSvg = document.getElementById('topmost-svg').children
-    expect(elementsInSvg.length).toBe(1)
-    expect(elementsInSvg[0].id).toBe('my-navigator')
+        // Create svg container
+        const svg = new container.Svg()
+        svg.select()
+            .attr('id', 'topmost-svg')   // setting id with d3, because Svg does not have an id method at the time of writing this test
 
 
 
 
-    //// LOAD A DATASET INTO NAVIGATOR ////
+        //// CREATE A NAVIGATOR OBJECT AND VERIFY IT EXISTS ON DOM ////
 
-    // Check initial state of dataset-related flags
-    expect(myNavigator._awaitingDomUpdateAfterDataChange).toBe(false)
+        // Create Navigator object and tag it for later selectability
+        const myNavigator = new navigator.Navigator()
+        myNavigator.id('my-navigator').update()
 
-    // Load a dataset
-    await myNavigator.loadDataset(
-        'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
-        ['Name']
-    )
 
-    // Verify that the data-related flags are switched after loading data
-    expect(myNavigator._awaitingDomUpdateAfterDataChange).toBe(true)
+        // Verify that DOM only has a Navigator element in it
+        const elementsInSvg = document.getElementById('topmost-svg').children
+        expect(elementsInSvg.length).toBe(1)
+        expect(elementsInSvg[0].id).toBe('my-navigator')
 
 
 
 
-    //// CONFIRM THE CREATION OF PANEL ON DOM AS A CHILD OF NAVIGATOR ELEMENT //
+        //// LOAD A DATASET INTO NAVIGATOR ////
 
-    // Verify that navigator element has no Panels in it prior to calling .update()
-    let numberOfPanelElementsInNavigator
-    numberOfPanelElementsInNavigator = document
-        .getElementById('my-navigator')
-        .getElementsByClassName('panel')
-        .length
-    expect(numberOfPanelElementsInNavigator).toBe(0)
+        // Check initial state of dataset-related flags
+        expect(myNavigator._awaitingDomUpdateAfterDataChange).toBe(false)
 
+        // Load a dataset
+        await myNavigator.loadDataset(
+            'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
+            ['Name']
+        )
 
-    // Update DOM
-    myNavigator.update()
-
-
-    // Verify that a Panel is created in DOM as Navigator's child after update() is called
-    numberOfPanelElementsInNavigator = document
-        .getElementById('my-navigator')
-        .getElementsByClassName('panel')
-        .length
-    expect(numberOfPanelElementsInNavigator).toBe(1)
-
-
-    // Verify that the created panel has the right id and class
-    const panelElement = document
-        .getElementById('my-navigator')
-        .getElementsByClassName('panel')[0]
-    const panelElementId = panelElement.getAttribute('id')
-    const panelElementClass = panelElement.getAttribute('class')
-    const panelElementDepth = panelElement.getAttribute('depth')
-
-    expect(panelElementId).toBe('panel-0-0')
-    expect(panelElementClass).toBe('panel')
-
-
-    // Verify that the data-related flags are switched after update()
-    expect(myNavigator._awaitingDomUpdateAfterDataChange).toBe(false)
+        // Verify that the data-related flags are switched after loading data
+        expect(myNavigator._awaitingDomUpdateAfterDataChange).toBe(true)
 
 
 
 
+        //// CONFIRM THE CREATION OF PANEL ON DOM AS A CHILD OF NAVIGATOR ELEMENT //
 
-    //// CONFIRM THAT NAVIGATOR OBJECT NOW CONTAINS THE PANEL OBJECT IN THE BACK END ////
+        // Verify that navigator element has no Panels in it prior to calling .update()
+        let numberOfPanelElementsInNavigator
+        numberOfPanelElementsInNavigator = document
+            .getElementById('my-navigator')
+            .getElementsByClassName('panel')
+            .length
+        expect(numberOfPanelElementsInNavigator).toBe(0)
 
-    const objectsInNavigator = myNavigator.objects()
 
-    expectTable(objectsInNavigator, `\
+        // Update DOM
+        myNavigator.update()
+
+
+        // Verify that a Panel is created in DOM as Navigator's child after update() is called
+        numberOfPanelElementsInNavigator = document
+            .getElementById('my-navigator')
+            .getElementsByClassName('panel')
+            .length
+        expect(numberOfPanelElementsInNavigator).toBe(1)
+
+
+        // Verify that the created panel has the right id and class
+        const panelElement = document
+            .getElementById('my-navigator')
+            .getElementsByClassName('panel')[0]
+        const panelElementId = panelElement.getAttribute('id')
+        const panelElementClass = panelElement.getAttribute('class')
+        const panelElementDepth = panelElement.getAttribute('depth')
+
+        expect(panelElementId).toBe('panel-0-0')
+        expect(panelElementClass).toBe('panel')
+
+
+        // Verify that the data-related flags are switched after update()
+        expect(myNavigator._awaitingDomUpdateAfterDataChange).toBe(false)
+
+
+
+
+
+        //// CONFIRM THAT NAVIGATOR OBJECT NOW CONTAINS THE PANEL OBJECT IN THE BACK END ////
+
+        const objectsInNavigator = myNavigator.objects()
+
+        expectTable(objectsInNavigator, `\
 ┌───────────────────┬─────────────┬───────────────┐
 │ (iteration index) │     Key     │    Values     │
 ├───────────────────┼─────────────┼───────────────┤
@@ -336,11 +335,11 @@ test ('Update DOM after new data is loaded', async () => {
 
 
 
-    //// VERIFY THE FIRST PANEL IN NAVIGATOR CONTAINS A SUMMARY OF THE LOADED DATASET ////
-    const panelObjectOfPanelZero = myNavigator.objects('panel-0-0')
-    const stacksInFirstPanel = panelObjectOfPanelZero.stacks()
-    
-    expectTable(stacksInFirstPanel.data(), `\
+        //// VERIFY THE FIRST PANEL IN NAVIGATOR CONTAINS A SUMMARY OF THE LOADED DATASET ////
+        const panelObjectOfPanelZero = myNavigator.objects('panel-0-0')
+        const stacksInFirstPanel = panelObjectOfPanelZero.stacks()
+
+        expectTable(stacksInFirstPanel.data(), `\
 ┌───────────────────┬──────────┬──────────────────────────────────────────────┐
 │ (iteration index) │   Key    │                    Values                    │
 ├───────────────────┼──────────┼──────────────────────────────────────────────┤
@@ -353,115 +352,117 @@ test ('Update DOM after new data is loaded', async () => {
 
 
 
-    /// VERIFY CHAIN SYNTAX COMPATIBILITY ////
+        /// VERIFY CHAIN SYNTAX COMPATIBILITY ////
 
-    // Verify that `this` is returned after updating DOM
-    const returnedObject = myNavigator.update()
-        , typeOfReturnedObject = returnedObject.constructor.name
+        // Verify that `this` is returned after updating DOM
+        const returnedObject = myNavigator.update()
+            , typeOfReturnedObject = returnedObject.constructor.name
 
-    expect(typeOfReturnedObject).toBe('Navigator')
-
-})
-
-
-
-
-
-
-//// INTERACTIVITY ////////////////////////////////////////////////////////////////////////
-
-
-test ('Clicking on a category must make a query and visualize query results with a new panel', async () => {
-
-
-    //// PREPARE DOM AND PARENT ELEMENT ////
-
-    // Clear JEST's DOM to prevent leftovers from previous tests
-    document.body.innerHTML = ''
-
-    // Create svg container
-    const svg = new container.Svg()
-    svg.select()
-        .attr('id', 'topmost-svg')   // setting id with d3, because Svg does not have an id method at the time of writing this test
-
-
-
-    //// CREATE A NAVIGATOR OBJECT ////
-
-    // Create Navigator object and tag it for later selectability
-    const myNavigator = new navigator.Navigator()
-    myNavigator.id('my-navigator').update()
-
-
-
-    //// LOAD A DATASET INTO NAVIGATOR ////
-
-    // Check initial state of dataset-related flags
-    expect(myNavigator._awaitingDomUpdateAfterDataChange).toBe(false)
-
-    // Load a dataset
-    await myNavigator.loadDataset(
-        'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
-        ['Name']
-    )
-    myNavigator.update()
-
-
-    //// LISTEN FOR CLICKS ////
-
-    let clickDetected = false   // variable for diagnostics
-    document.addEventListener('click', function(event){
-
-        let clickedOnRectangle = event.target.matches('rect')
-            , clickedOnText = event.target.matches('text')
-            , clickedOnCategory = event.target.parentNode.matches('.category')
-
-        if (clickedOnCategory && (clickedOnRectangle || clickedOnText) ){
-            clickDetected = true
-        }
+        expect(typeOfReturnedObject).toBe('Navigator')
 
     })
 
+})
 
 
-    //// TEST CLICKS ////
 
-    const numberOfPanelsBeforeClicking = document.querySelectorAll('.panel').length
-    expect(numberOfPanelsBeforeClicking).toBe(1)
-    const numberOfCategoriesBeforeClicking = document.querySelectorAll('.category').length
-    expect(numberOfCategoriesBeforeClicking).toBe(5)
+//// Interactivity ////////////////////////////////////////////////////////////////////////
 
+describe ('Interactivity', () => {
 
-    // Go forward: Click a category in panel 0
-    domUtils.simulateClickOn('#panel-0-0 #Male')
-    const numberOfPanelsAfterFirstClick = document.querySelectorAll('.panel').length
-    expect(numberOfPanelsAfterFirstClick).toBe(2)
-    const numberOfCategoriesAfterFirstClick = document.querySelectorAll('.category').length
-    expect(numberOfCategoriesAfterFirstClick).toBe(8)
+    test ('Clicking on a category must make a query and visualize query results with a new panel', async () => {
 
 
-    // Go forward: Click a category in panel 1
-    domUtils.simulateClickOn('#panel-1-0 #Survived')
-    const numberOfPanelsAfterSecondClick = document.querySelectorAll('.panel').length
-    expect(numberOfPanelsAfterSecondClick).toBe(3)
-    const numberOfCategoriesAfterSecondClick = document.querySelectorAll('.category').length
-    expect(numberOfCategoriesAfterSecondClick).toBe(9)
+        //// PREPARE DOM AND PARENT ELEMENT ////
 
-    // Go backward: Click a category in panel 0 (should replace panel 2 and remove panel 3)
-    domUtils.simulateClickOn('#panel-0-0 #Female')
-    const numberOfPanelsAfterThirdClick = document.querySelectorAll('.panel').length
-    expect(numberOfPanelsAfterThirdClick).toBe(2)
-    const numberOfCategoriesAfterThirdClick = document.querySelectorAll('.category').length
-    expect(numberOfCategoriesAfterThirdClick).toBe(8)
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
 
+        // Create svg container
+        const svg = new container.Svg()
+        svg.select()
+            .attr('id', 'topmost-svg')   // setting id with d3, because Svg does not have an id method at the time of writing this test
+
+
+
+        //// CREATE A NAVIGATOR OBJECT ////
+
+        // Create Navigator object and tag it for later selectability
+        const myNavigator = new navigator.Navigator()
+        myNavigator.id('my-navigator').update()
+
+
+
+        //// LOAD A DATASET INTO NAVIGATOR ////
+
+        // Check initial state of dataset-related flags
+        expect(myNavigator._awaitingDomUpdateAfterDataChange).toBe(false)
+
+        // Load a dataset
+        await myNavigator.loadDataset(
+            'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
+            ['Name']
+        )
+        myNavigator.update()
+
+
+        //// LISTEN FOR CLICKS ////
+
+        let clickDetected = false   // variable for diagnostics
+        document.addEventListener('click', function(event){
+
+            let clickedOnRectangle = event.target.matches('rect')
+                , clickedOnText = event.target.matches('text')
+                , clickedOnCategory = event.target.parentNode.matches('.category')
+
+            if (clickedOnCategory && (clickedOnRectangle || clickedOnText) ){
+                clickDetected = true
+            }
+
+        })
+
+
+
+        //// TEST CLICKS ////
+
+        const numberOfPanelsBeforeClicking = document.querySelectorAll('.panel').length
+        expect(numberOfPanelsBeforeClicking).toBe(1)
+        const numberOfCategoriesBeforeClicking = document.querySelectorAll('.category').length
+        expect(numberOfCategoriesBeforeClicking).toBe(5)
+
+
+        // Go forward: Click a category in panel 0
+        domUtils.simulateClickOn('#panel-0-0 #Male')
+        const numberOfPanelsAfterFirstClick = document.querySelectorAll('.panel').length
+        expect(numberOfPanelsAfterFirstClick).toBe(2)
+        const numberOfCategoriesAfterFirstClick = document.querySelectorAll('.category').length
+        expect(numberOfCategoriesAfterFirstClick).toBe(8)
+
+
+        // Go forward: Click a category in panel 1
+        domUtils.simulateClickOn('#panel-1-0 #Survived')
+        const numberOfPanelsAfterSecondClick = document.querySelectorAll('.panel').length
+        expect(numberOfPanelsAfterSecondClick).toBe(3)
+        const numberOfCategoriesAfterSecondClick = document.querySelectorAll('.category').length
+        expect(numberOfCategoriesAfterSecondClick).toBe(9)
+
+        // Go backward: Click a category in panel 0 (should replace panel 2 and remove panel 3)
+        domUtils.simulateClickOn('#panel-0-0 #Female')
+        const numberOfPanelsAfterThirdClick = document.querySelectorAll('.panel').length
+        expect(numberOfPanelsAfterThirdClick).toBe(2)
+        const numberOfCategoriesAfterThirdClick = document.querySelectorAll('.category').length
+        expect(numberOfCategoriesAfterThirdClick).toBe(8)
+
+
+    })
 
 })
 
 
 
-//// ABSOLUTE VALUES ///////////////////////////////////////////////////////////////
+//// Absolute Values ///////////////////////////////////////////////////////////////
 
-describe ('Absolute values: Toggle absolute values in category captions', () => {
+describe ('Absolute Values: Toggle absolute values in category captions', () => {
 
 
     test('Get/set', async () => {
@@ -577,18 +578,14 @@ describe ('Absolute values: Toggle absolute values in category captions', () => 
 
     })
 
-
-
-
-
+    
 })
 
 
 
+//// Absolute Panel Sizes ///////////////////////////////////////////////////////////////
 
-//// ABSOLUTE PANEL SIZES ///////////////////////////////////////////////////////////////
-
-describe ('Absolute chart widths', () => {
+describe ('Absolute Chart Widths', () => {
    
         test ('Get/set', async() => {
 
@@ -659,92 +656,115 @@ describe ('Absolute chart widths', () => {
 })
 
 
-//// COLOR SETS  //////////////////////////////////////////////////////////////////////////
 
 
-test ('Color scheme set: Set and get', async () => {
+//// Continuous Data ///////////////////////////////////////////////////////////////
 
-    const myNavigator = await initializeDomWithTitanicTinyNavigator()
+describe ('Continuous Data', () => {
 
-    //// GET COLOR SET ////
+        test ('When specified in preferences, quartile names should be shown instead of quartile percentage ranges', async () => {
 
-    // Get initial color-related values
-    expect( myNavigator.colorSet() ).toBe('Single-Hue')
-    const actualInitialColorsOnCanvasForGenderCategory = myNavigator.objects('panel-0-0')
-        .objects('Gender').actualColors()
-    expect( actualInitialColorsOnCanvasForGenderCategory ).toEqual([
-        "rgb(34, 139, 69)", "rgb(115, 195, 120)"
-    ])
+            jest.useFakeTimers()
 
+            const myNavigator = await initializeDomWithTitanicTinyNavigator()
 
-    //// CHANGE COLOR SET ////
-    myNavigator.colorSet( 'Greys' ).update()
+            // myNavigator.
 
-    // Check if the new color set is set in one of the chart objects within the navigator
-    expect( myNavigator.colorSet() ).toBe('Greys')
-    expect ( myNavigator.objects('panel-0-0').objects('Gender').colorScheme() )
-        .toBe( 'Greys')
-    // Check the color of a category on DOM
-    const actualColorsOnCanvasForGenderCategory =
-        myNavigator.objects('panel-0-0').objects('Gender').actualColors()
-    expect ( actualColorsOnCanvasForGenderCategory )
-        .toEqual(["rgb(80, 80, 80)", "rgb(151, 151, 151)"])
+        })
+
+})
 
 
+//// Color Sets ///////////////////////////////////////////////////////////////
+
+describe ('Color Sets', () => {
+
+    test ('Color scheme set: Set and get', async () => {
+
+        const myNavigator = await initializeDomWithTitanicTinyNavigator()
+
+        //// GET COLOR SET ////
+
+        // Get initial color-related values
+        expect( myNavigator.colorSet() ).toBe('Single-Hue')
+        const actualInitialColorsOnCanvasForGenderCategory = myNavigator.objects('panel-0-0')
+            .objects('Gender').actualColors()
+        expect( actualInitialColorsOnCanvasForGenderCategory ).toEqual([
+            "rgb(34, 139, 69)", "rgb(115, 195, 120)"
+        ])
 
 
-    //// ENSURE THAT CATEGORIES IN CHILD PANELS HAVE THE SAME COLORS WITH THEIR COUNTERPARTS IN PARENT PANELS ////
+        //// CHANGE COLOR SET ////
+        myNavigator.colorSet( 'Greys' ).update()
 
-    // Check the number of panels before click
-    const numberOfPanelsBeforeClick = document.querySelectorAll('.panel').length
-    expect(numberOfPanelsBeforeClick).toBe(1)
-
-    // Go deeper in Navigator: Click a category in panel 0
-    domUtils.simulateClickOn('#panel-0-0 #Male')
-
-    // Check the number of panels before click
-    const numberOfPanelsAfterFirstClick = document.querySelectorAll('.panel').length
-    expect(numberOfPanelsAfterFirstClick).toBe(2)
-
-
-    // After the click: Check the color of an arbitrary category of PANEL-0 on DOM
-    const actualColorsOnDomForGenderCategoryInPanelZeroAfterClick = myNavigator.objects('panel-0-0').objects('Gender').actualColors()
-    expect ( actualColorsOnDomForGenderCategoryInPanelZeroAfterClick )
-        .toEqual(["rgb(80, 80, 80)", "rgb(151, 151, 151)"])
-
-
-    // After the click: Check the color of an arbitrary category of PANEL-1 on DOM
-    const actualColorsOnDomForGenderCategoryInPanelOneAfterClick = myNavigator.objects('panel-0-0').objects('Gender').actualColors()
-    expect ( actualColorsOnDomForGenderCategoryInPanelZeroAfterClick )
-        .toEqual(["rgb(80, 80, 80)", "rgb(151, 151, 151)"])
+        // Check if the new color set is set in one of the chart objects within the navigator
+        expect( myNavigator.colorSet() ).toBe('Greys')
+        expect ( myNavigator.objects('panel-0-0').objects('Gender').colorScheme() )
+            .toBe( 'Greys')
+        // Check the color of a category on DOM
+        const actualColorsOnCanvasForGenderCategory =
+            myNavigator.objects('panel-0-0').objects('Gender').actualColors()
+        expect ( actualColorsOnCanvasForGenderCategory )
+            .toEqual(["rgb(80, 80, 80)", "rgb(151, 151, 151)"])
 
 
 
 
-    //// CHANGE COLOR SET WHILE A CHILD PANEL EXIST ////
+        //// ENSURE THAT CATEGORIES IN CHILD PANELS HAVE THE SAME COLORS WITH THEIR COUNTERPARTS IN PARENT PANELS ////
 
-    // Confirm that a child panel is open
-    const numberOfOpenPanels = myNavigator.objects().size
-    expect( numberOfOpenPanels ).toBe( 2 )
+        // Check the number of panels before click
+        const numberOfPanelsBeforeClick = document.querySelectorAll('.panel').length
+        expect(numberOfPanelsBeforeClick).toBe(1)
 
-    // Change color set
-    myNavigator.colorSet('Reds').update()
+        // Go deeper in Navigator: Click a category in panel 0
+        domUtils.simulateClickOn('#panel-0-0 #Male')
 
-    // After the click: Confirm that the child panel's background and bridge colors matches the color of the category this child panel is spawned from
-    const bgColorOfChildPanelAfterColorSetChange = myNavigator.objects('panel-1-0')._backgroundObject.fill()
-    const bgColorOfBridgeAfterColorSetChange = myNavigator.objects('panel-1-0')._bridgeObject.fill()
-    const colorOfCategoryThatChildPanelSpawnedFrom = myNavigator.objects('panel-1-0').objectToSpawnFrom.fill()
+        // Check the number of panels before click
+        const numberOfPanelsAfterFirstClick = document.querySelectorAll('.panel').length
+        expect(numberOfPanelsAfterFirstClick).toBe(2)
 
-    expect( bgColorOfChildPanelAfterColorSetChange )
-        .toBe( colorOfCategoryThatChildPanelSpawnedFrom )
 
-    expect( bgColorOfBridgeAfterColorSetChange )
-        .toBe( colorOfCategoryThatChildPanelSpawnedFrom )
+        // After the click: Check the color of an arbitrary category of PANEL-0 on DOM
+        const actualColorsOnDomForGenderCategoryInPanelZeroAfterClick = myNavigator.objects('panel-0-0').objects('Gender').actualColors()
+        expect ( actualColorsOnDomForGenderCategoryInPanelZeroAfterClick )
+            .toEqual(["rgb(80, 80, 80)", "rgb(151, 151, 151)"])
+
+
+        // After the click: Check the color of an arbitrary category of PANEL-1 on DOM
+        const actualColorsOnDomForGenderCategoryInPanelOneAfterClick = myNavigator.objects('panel-0-0').objects('Gender').actualColors()
+        expect ( actualColorsOnDomForGenderCategoryInPanelZeroAfterClick )
+            .toEqual(["rgb(80, 80, 80)", "rgb(151, 151, 151)"])
+
+
+
+
+        //// CHANGE COLOR SET WHILE A CHILD PANEL EXIST ////
+
+        // Confirm that a child panel is open
+        const numberOfOpenPanels = myNavigator.objects().size
+        expect( numberOfOpenPanels ).toBe( 2 )
+
+        // Change color set
+        myNavigator.colorSet('Reds').update()
+
+        // After the click: Confirm that the child panel's background and bridge colors matches the color of the category this child panel is spawned from
+        const bgColorOfChildPanelAfterColorSetChange = myNavigator.objects('panel-1-0')._backgroundObject.fill()
+        const bgColorOfBridgeAfterColorSetChange = myNavigator.objects('panel-1-0')._bridgeObject.fill()
+        const colorOfCategoryThatChildPanelSpawnedFrom = myNavigator.objects('panel-1-0').objectToSpawnFrom.fill()
+
+        expect( bgColorOfChildPanelAfterColorSetChange )
+            .toBe( colorOfCategoryThatChildPanelSpawnedFrom )
+
+        expect( bgColorOfBridgeAfterColorSetChange )
+            .toBe( colorOfCategoryThatChildPanelSpawnedFrom )
+    })
+
+
 })
 
 
 
-//// LABELS ////////////////////////////////////////////////////////////////////////
+//// Labels ////////////////////////////////////////////////////////////////////////
 
 
 // TODO: Navigator panels tested (if necessary)
@@ -772,9 +792,9 @@ test ('Color scheme set: Set and get', async () => {
 
 
 
-//// COMPARISON VIEW ///////////////////////////////////////////////////////////////
+//// Comparison View ///////////////////////////////////////////////////////////////
 
-describe ('Comparison view', () => {
+describe ('Comparison View', () => {
 
     test ('Detect modifier: Detect which modifier key is pressed ', async () => {
 
@@ -809,7 +829,7 @@ describe ('Comparison view', () => {
 
 
 
-//// HAS ///////////////////////////////////////////////////////////////
+//// Has ///////////////////////////////////////////////////////////////
 
 describe ('get(): Inferences should be made correctly', () => {
    
@@ -840,7 +860,7 @@ describe ('get(): Inferences should be made correctly', () => {
 
 
 
-//// SIBLING PANEL ///////////////////////////////////////////////////////////////
+//// Sibling Panel ///////////////////////////////////////////////////////////////
 
 describe ('Sibling Panel via Click', () => {
    
@@ -909,6 +929,13 @@ describe ('Stroke Properties ', () => {
 
 })
 
+
+
+
+
+
+//// Helper Functions  ///////////////////////////////////////////////////////////////
+
 async function initializeDomWithTitanicTinyNavigator() {
 
     jest.useFakeTimers()
@@ -940,3 +967,6 @@ async function initializeDomWithTitanicTinyNavigator() {
 
     return myNavigator
 }
+
+
+
