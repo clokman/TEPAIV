@@ -35,7 +35,6 @@ const dataset = require("../../dataset")
 
 
 
-
 //// UNIT TESTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -182,16 +181,17 @@ describe ('Initialization', () => {
     )
 
 
-    test ('Continuous data: Read continuous data', async () => {
+    test ('Continuous data: Read continuous data without discretization', async () => {
 
-        const bigFiveDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/BigFivePersonalityTraits-Small.csv')
-        await bigFiveDataset.build()
+        const bigFiveDatasetContinous = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/BigFivePersonalityTraits-Small.csv')
+        bigFiveDatasetContinous.transformContinuousData.toQuantiles = false
+        await bigFiveDatasetContinous.build()
 
 
-        expect(bigFiveDataset.data).toBeDefined()
-        expect(bigFiveDataset.data).toHaveLength(99)
+        expect(bigFiveDatasetContinous.data).toBeDefined()
+        expect(bigFiveDatasetContinous.data).toHaveLength(99)
 
-        expectTable(bigFiveDataset.data, `\
+        expectTable(bigFiveDatasetContinous.data, `\
 ┌─────────┬─────────────┬──────────────┬───────────┬───────────────┬───────────────────┐
 │ (index) │ Neuroticism │ Extraversion │ Openness  │ Agreeableness │ Conscientiousness │
 ├─────────┼─────────────┼──────────────┼───────────┼───────────────┼───────────────────┤
@@ -210,6 +210,38 @@ describe ('Initialization', () => {
 │   12    │  '3.0625'   │  '3.41667'   │ '3.77083' │   '3.8125'    │      '3.125'      │
 │   13    │   '3.125'   │  '2.52083'   │ '2.64583' │    '3.75'     │     '3.20833'     │
 │   14    │  '2.58333'  │  '3.02083'   │   '3.5'   │   '3.41667'   │     '3.58333'     │
+└─────────┴─────────────┴──────────────┴───────────┴───────────────┴───────────────────┘
+˅˅˅ 84 more rows`, 0, 15)
+    })
+
+    test ('Continuous data: Read continuous data with discretization', async () => {
+
+        const bigFiveDatasetDiscretized = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/BigFivePersonalityTraits-Small.csv')
+        await bigFiveDatasetDiscretized.build()
+
+
+        expect(bigFiveDatasetDiscretized.data).toBeDefined()
+        expect(bigFiveDatasetDiscretized.data).toHaveLength(99)
+
+        expectTable(bigFiveDatasetDiscretized.data, `\
+┌─────────┬─────────────┬──────────────┬───────────┬───────────────┬───────────────────┐
+│ (index) │ Neuroticism │ Extraversion │ Openness  │ Agreeableness │ Conscientiousness │
+├─────────┼─────────────┼──────────────┼───────────┼───────────────┼───────────────────┤
+│    0    │   '0-25%'   │  '75-100%'   │ '75-100%' │   '75-100%'   │     '75-100%'     │
+│    1    │  '25-50%'   │   '0-25%'    │ '75-100%' │   '25-50%'    │     '50-75%'      │
+│    2    │  '25-50%'   │   '0-25%'    │ '25-50%'  │    '0-25%'    │     '75-100%'     │
+│    3    │  '50-75%'   │   '50-75%'   │ '25-50%'  │    '0-25%'    │      '0-25%'      │
+│    4    │  '50-75%'   │   '25-50%'   │ '75-100%' │    '0-25%'    │     '25-50%'      │
+│    5    │   '0-25%'   │   '25-50%'   │ '25-50%'  │   '75-100%'   │      '0-25%'      │
+│    6    │   '0-25%'   │  '75-100%'   │ '75-100%' │    '0-25%'    │     '50-75%'      │
+│    7    │   '0-25%'   │   '50-75%'   │  '0-25%'  │   '75-100%'   │     '25-50%'      │
+│    8    │  '75-100%'  │  '75-100%'   │ '75-100%' │   '75-100%'   │     '25-50%'      │
+│    9    │  '25-50%'   │   '50-75%'   │ '50-75%'  │   '25-50%'    │     '25-50%'      │
+│   10    │  '25-50%'   │   '25-50%'   │  '0-25%'  │   '50-75%'    │     '50-75%'      │
+│   11    │   '0-25%'   │  '75-100%'   │  '0-25%'  │   '50-75%'    │     '75-100%'     │
+│   12    │  '50-75%'   │   '25-50%'   │ '50-75%'  │   '75-100%'   │     '50-75%'      │
+│   13    │  '75-100%'  │   '0-25%'    │  '0-25%'  │   '75-100%'   │     '50-75%'      │
+│   14    │   '0-25%'   │   '0-25%'    │ '25-50%'  │   '50-75%'    │     '75-100%'     │
 └─────────┴─────────────┴──────────────┴───────────┴───────────────┴───────────────────┘
 ˅˅˅ 84 more rows`, 0, 15)
     })
@@ -276,6 +308,7 @@ describe ('Inferences', () => {
 
 
         const mixedDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/SampleMixedData.csv')
+        mixedDataset.transformContinuousData.toQuantiles = false
         await mixedDataset.build()
 
         expectTable(mixedDataset.data, `\
@@ -321,6 +354,8 @@ describe ('Inferences', () => {
 
 
         const mixedDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/SampleMixedData.csv')
+        mixedDataset.transformContinuousData.toQuantiles = false
+
         await mixedDataset.build()
 
         expectTable(mixedDataset.data, `\
@@ -1053,6 +1088,7 @@ describe ('Summarizing', () => {
     test ('lvl0 continuous drilldownAndSummarize: drilldownAndSummarize level 0 continuous data', async () => {
 
         const mixedDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/SampleMixedData.csv')
+        mixedDataset.transformContinuousData.toQuantiles = false
         await mixedDataset.build()
 
         expectTable(mixedDataset.data, `\
@@ -1094,6 +1130,7 @@ describe ('Summarizing', () => {
     test ('Lvl1 continuous drilldownAndSummarize: drilldownAndSummarize Level 1 continuous data', async () => {
 
         const mixedDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/SampleMixedData.csv')
+        mixedDataset.transformContinuousData.toQuantiles = false
         await mixedDataset.build()
 
         expectTable(mixedDataset.data, `\
@@ -1177,17 +1214,171 @@ describe ('Summarizing', () => {
 
 
 
-//// QUANTIZING ///////////////////////////////////////////////////////////////
+//// Continuous Data ///////////////////////////////////////////////////////////////
 
-describe ('Quantizing', () => {
 
-        test ('Quantize a column', async () => {
+describe ('Handling continous data', () => {
 
+
+        describe ('Utility methods', () => {
+
+
+            test ('When number of quantiles is provided, the quantile cutoff points should be calculated', () => {
+
+                const cutoffPointsForFourQuantiles = dataset.Dataset.calculateQuantileCutoffPercentages( 4 )
+                expect( cutoffPointsForFourQuantiles ).toEqual( [0, 0.25, 0.5, 0.75, 1] )
+
+                const cutoffPointsForThreeQuantiles = dataset.Dataset.calculateQuantileCutoffPercentages( 3 )
+                expect( cutoffPointsForThreeQuantiles ).toEqual( [0, 0.33333333333333337, 0.6666666666666667, 1] )
+
+                const cutoffPointsForFiveQuantiles = dataset.Dataset.calculateQuantileCutoffPercentages( 5 )
+                expect( cutoffPointsForFiveQuantiles ).toEqual( [0, 0.2, 0.4, 0.6000000000000001, 0.8, 1] )
+
+            })
+
+
+            test ('Get names of continuous columns', async () => {
+
+                const mixedDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/SampleMixedData.csv')
+                mixedDataset.transformContinuousData.toQuantiles = false
+                await mixedDataset.build()
+
+                expect( mixedDataset.getNamesOfContinuousColumns() ).toEqual( ["Neuroticism", "Extraversion"] )
+
+            })
+
+
+            test ('Calculate quantiles of a column', async () => {
+
+                const mixedDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/SampleMixedData.csv')
+                mixedDataset.transformContinuousData.toQuantiles = false
+                await mixedDataset.build()
+
+                const neuroticismQuantileValues = mixedDataset.calculateQuantileValuesOfColumn('Neuroticism', 4)
+                const extraversionQuantileValues = mixedDataset.calculateQuantileValuesOfColumn('Extraversion', 4)
+
+                expect( neuroticismQuantileValues ).toEqual( [1.64583, 2.59375, 2.875, 3.114585, 3.875] )
+                expect( extraversionQuantileValues ).toEqual( [2.52083, 3.28125, 3.47917, 3.65625, 4.41667] )
+
+                // Confirm that the values are mathematically correct
+
+                const neuroticismMin = d3.min(mixedDataset.data, d=>d['Neuroticism'])
+                const neuroticismMedian = d3.median(mixedDataset.data, d=>d['Neuroticism'])
+                const neuroticismMax = d3.max(mixedDataset.data, d=>d['Neuroticism'])
+
+                const extraversionMin = d3.min(mixedDataset.data, d=>d['Extraversion'])
+                const extraversionMedian = d3.median(mixedDataset.data, d=>d['Extraversion'])
+                const extraversionMax = d3.max(mixedDataset.data, d=>d['Extraversion'])
+
+                expect( neuroticismMin === String( neuroticismQuantileValues[0] )).toBeTruthy()  // d3 returns string values from d3.max and d3.min
+                expect( neuroticismMedian === neuroticismQuantileValues[2] ).toBeTruthy()
+                expect( neuroticismMax === String( neuroticismQuantileValues[4] ) ).toBeTruthy()
+
+                expect( extraversionMin === String( extraversionQuantileValues[0] ) ).toBeTruthy()
+                expect( extraversionMedian === extraversionQuantileValues[2] ).toBeTruthy()
+                expect( extraversionMax === String( extraversionQuantileValues[4] ) ).toBeTruthy()
+
+            })
+
+
+
+        })
+
+
+        test ('When a dataset with continuous column(s) is initialized, continuous values should automatically be discretized using quantiles', async () => {
 
             const mixedDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/SampleMixedData.csv')
             await mixedDataset.build()
 
-            expectTable(mixedDataset.data, `\
+            expect( mixedDataset.data ).toTabulateAs(`\
+┌─────────┬─────────────┬──────────────┬──────────┬───────────────┐
+│ (index) │ Neuroticism │ Extraversion │  Gender  │ MonthMeasured │
+├─────────┼─────────────┼──────────────┼──────────┼───────────────┤
+│    0    │   '0-25%'   │  '75-100%'   │  'Male'  │   'January'   │
+│    1    │  '25-50%'   │   '0-25%'    │  'Male'  │  'February'   │
+│    2    │   '0-25%'   │   '0-25%'    │  'Male'  │    'March'    │
+│    3    │  '75-100%'  │   '25-50%'   │ 'Female' │    'April'    │
+│    4    │  '50-75%'   │   '25-50%'   │ 'Female' │     'May'     │
+│    5    │   '0-25%'   │   '25-50%'   │  'Male'  │    'June'     │
+│    6    │   '0-25%'   │  '75-100%'   │  'Male'  │    'July'     │
+│    7    │   '0-25%'   │   '50-75%'   │  'Male'  │   'August'    │
+│    8    │  '50-75%'   │  '75-100%'   │  'Male'  │  'September'  │
+│    9    │  '25-50%'   │   '50-75%'   │  'Male'  │   'October'   │
+│   10    │  '25-50%'   │   '25-50%'   │  'Male'  │  'November'   │
+│   11    │   '0-25%'   │  '75-100%'   │  'Male'  │  'December'   │
+│   12    │  '50-75%'   │   '25-50%'   │  'Male'  │   'January'   │
+│   13    │  '75-100%'  │   '0-25%'    │  'Male'  │  'February'   │
+│   14    │   '0-25%'   │   '0-25%'    │  'Male'  │    'March'    │
+└─────────┴─────────────┴──────────────┴──────────┴───────────────┘
+˅˅˅ 84 more rows`, 0, 15)
+
+        })
+
+
+        test ('If a Dataset is built without discretization, it should still be possible to call convertContinuousColumnsToCategorical() method for discretizing the data after the built', async () => {
+
+        const mixedDatasetWithoutDiscretization = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/SampleMixedData.csv')
+        mixedDatasetWithoutDiscretization.transformContinuousData.toQuantiles = false
+        await mixedDatasetWithoutDiscretization.build()
+
+        expect( mixedDatasetWithoutDiscretization.data ).toTabulateAs(`\
+┌─────────┬─────────────┬──────────────┬──────────┬───────────────┐
+│ (index) │ Neuroticism │ Extraversion │  Gender  │ MonthMeasured │
+├─────────┼─────────────┼──────────────┼──────────┼───────────────┤
+│    0    │  '2.47917'  │  '4.20833'   │  'Male'  │   'January'   │
+│    1    │  '2.60417'  │   '3.1875'   │  'Male'  │  'February'   │
+│    2    │  '2.52083'  │  '2.89583'   │  'Male'  │    'March'    │
+│    3    │  '3.29167'  │  '3.29167'   │ 'Female' │    'April'    │
+│    4    │  '3.02083'  │  '3.29167'   │ 'Female' │     'May'     │
+│    5    │  '2.52083'  │  '3.29167'   │  'Male'  │    'June'     │
+│    6    │  '2.35417'  │  '4.41667'   │  'Male'  │    'July'     │
+│    7    │  '2.52083'  │    '3.5'     │  'Male'  │   'August'    │
+│    8    │  '3.10417'  │   '3.8125'   │  'Male'  │  'September'  │
+│    9    │  '2.6875'   │  '3.54708'   │  'Male'  │   'October'   │
+│   10    │   '2.625'   │  '3.45833'   │  'Male'  │  'November'   │
+│   11    │   '2.375'   │  '3.77083'   │  'Male'  │  'December'   │
+│   12    │  '3.0625'   │  '3.41667'   │  'Male'  │   'January'   │
+│   13    │   '3.125'   │  '2.52083'   │  'Male'  │  'February'   │
+│   14    │  '2.58333'  │  '3.02083'   │  'Male'  │    'March'    │
+└─────────┴─────────────┴──────────────┴──────────┴───────────────┘
+˅˅˅ 84 more rows`, 0, 15)
+
+        mixedDatasetWithoutDiscretization.convertContinuousColumnsToCategorical( 4, 1 )
+        expect( mixedDatasetWithoutDiscretization.data ).toTabulateAs(`\
+┌─────────┬─────────────┬──────────────┬──────────┬───────────────┐
+│ (index) │ Neuroticism │ Extraversion │  Gender  │ MonthMeasured │
+├─────────┼─────────────┼──────────────┼──────────┼───────────────┤
+│    0    │   '0-25%'   │  '75-100%'   │  'Male'  │   'January'   │
+│    1    │  '25-50%'   │   '0-25%'    │  'Male'  │  'February'   │
+│    2    │   '0-25%'   │   '0-25%'    │  'Male'  │    'March'    │
+│    3    │  '75-100%'  │   '25-50%'   │ 'Female' │    'April'    │
+│    4    │  '50-75%'   │   '25-50%'   │ 'Female' │     'May'     │
+│    5    │   '0-25%'   │   '25-50%'   │  'Male'  │    'June'     │
+│    6    │   '0-25%'   │  '75-100%'   │  'Male'  │    'July'     │
+│    7    │   '0-25%'   │   '50-75%'   │  'Male'  │   'August'    │
+│    8    │  '50-75%'   │  '75-100%'   │  'Male'  │  'September'  │
+│    9    │  '25-50%'   │   '50-75%'   │  'Male'  │   'October'   │
+│   10    │  '25-50%'   │   '25-50%'   │  'Male'  │  'November'   │
+│   11    │   '0-25%'   │  '75-100%'   │  'Male'  │  'December'   │
+│   12    │  '50-75%'   │   '25-50%'   │  'Male'  │   'January'   │
+│   13    │  '75-100%'  │   '0-25%'    │  'Male'  │  'February'   │
+│   14    │   '0-25%'   │   '0-25%'    │  'Male'  │    'March'    │
+└─────────┴─────────────┴──────────────┴──────────┴───────────────┘
+˅˅˅ 84 more rows`, 0, 15)
+
+    })
+
+
+        describe ('Obsolete methods', () => {
+
+            test ('Quantize a column', async () => {
+
+
+                const mixedDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/SampleMixedData.csv')
+                mixedDataset.transformContinuousData.toQuantiles = false
+                await mixedDataset.build()
+
+                expectTable(mixedDataset.data, `\
 ┌─────────┬─────────────┬──────────────┬──────────┬───────────────┐
 │ (index) │ Neuroticism │ Extraversion │  Gender  │ MonthMeasured │
 ├─────────┼─────────────┼──────────────┼──────────┼───────────────┤
@@ -1210,8 +1401,8 @@ describe ('Quantizing', () => {
 ˅˅˅ 84 more rows`, 0, 15)
 
 
-        const quantizedData = dataset.Dataset._splitDataByQuantilesOfColumn( mixedDataset.data, 'Neuroticism', 4, 1)
-        expect( quantizedData ).toTabulateAs(`\
+                const quantizedData = dataset.Dataset._splitDataByQuantilesOfColumn( mixedDataset.data, 'Neuroticism', 4, 1)
+                expect( quantizedData ).toTabulateAs(`\
 ┌───────────────────┬───────────┬─────────────────────────────────────────────────────┐
 │ (iteration index) │    Key    │                       Values                        │
 ├───────────────────┼───────────┼─────────────────────────────────────────────────────┤
@@ -1221,10 +1412,10 @@ describe ('Quantizing', () => {
 │         3         │ '1.6-2.2' │ [ [Object], [Object], [Object], ... 2 more items ]  │
 └───────────────────┴───────────┴─────────────────────────────────────────────────────┘`)
 
-            const quantileBoundariesVsQuantileNamesForNeuroticism =
-                dataset.Dataset._findBoundariesVsQuantileNamesInQuantiledData(quantizedData, 'Neuroticism')
+                const quantileBoundariesVsQuantileNamesForNeuroticism =
+                    dataset.Dataset._findBoundariesVsQuantileNamesInQuantiledData(quantizedData, 'Neuroticism')
 
-            expect( quantileBoundariesVsQuantileNamesForNeuroticism ).toTabulateAs(`\
+                expect( quantileBoundariesVsQuantileNamesForNeuroticism ).toTabulateAs(`\
 ┌───────────────────┬───────────┬────────────────────────────────────────────────┐
 │ (iteration index) │    Key    │                     Values                     │
 ├───────────────────┼───────────┼────────────────────────────────────────────────┤
@@ -1235,11 +1426,11 @@ describe ('Quantizing', () => {
 └───────────────────┴───────────┴────────────────────────────────────────────────┘`)
 
 
-            const quantizedAndRenamedData = d3.group( mixedDataset.data,
-                d=> dataset.Dataset._translateValueToQuantileName(mixedDataset.data, 'Neuroticism', d['Neuroticism'])
-            )
+                const quantizedAndRenamedData = d3.group( mixedDataset.data,
+                    d=> dataset.Dataset._translateValueToQuantileName(mixedDataset.data, 'Neuroticism', d['Neuroticism'])
+                )
 
-            expect( quantizedAndRenamedData ).toTabulateAs(`\
+                expect( quantizedAndRenamedData ).toTabulateAs(`\
 ┌───────────────────┬───────────┬─────────────────────────────────────────────────────┐
 │ (iteration index) │    Key    │                       Values                        │
 ├───────────────────┼───────────┼─────────────────────────────────────────────────────┤
@@ -1252,14 +1443,9 @@ describe ('Quantizing', () => {
 
 
 
-
-
+            })
 
         })
-
-
-
-
 
 
 })

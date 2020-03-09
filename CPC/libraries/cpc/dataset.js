@@ -21,7 +21,7 @@ const version = "1.0"
 
 
 
- class Dataset {
+    class Dataset {
 
     /**
      *
@@ -35,6 +35,16 @@ const version = "1.0"
         // Public Parameters
         this._path = path
         this._omitColumns = typeof omitColumns === 'string' ? [omitColumns] : omitColumns
+
+        this.transformContinuousData = {
+            toQuantiles: true,
+            // using:{
+            //     numberOfQuantiles: 4,
+            //     numberOfDecimals: 1
+            // }
+        }
+
+
         this._numberOfQuantiles = 4
         this._numberOfDecimalsAfterRounding = 1
 
@@ -85,7 +95,14 @@ const version = "1.0"
 
          this.structure = this._mapDatasetStructure()
          this.categoryNames = this._getCategoryNames()
+
          this.columnTypes = this._inferColumnTypes()
+
+         if( this.transformContinuousData.toQuantiles ){
+             this.convertContinuousColumnsToCategorical()
+         }
+
+
 
          this.summary = this.summarize()
      }
@@ -306,6 +323,104 @@ const version = "1.0"
 
     }
 
+
+
+    convertContinuousColumnsToCategorical(numberOfQuantiles=4, numberOfDecimalsAfterRounding=1){
+
+        const namesOfContinuousColumns = this.getNamesOfContinuousColumns()
+
+        namesOfContinuousColumns.forEach( ( continuousColumnName ) => {
+
+            const continuousColumnData = this.data.map( d => d[continuousColumnName] )
+
+            // const quantilePercentages = Dataset.calculateQuantileCutoffPercentages(4)
+            // const quantilePercentages2 = quantilePercentages.map( decimalExpression => decimalExpression * 100 )
+
+            const quantileScale = d3.scaleQuantile()
+                .domain( continuousColumnData )
+                .range( ['0-25%', '25-50%', '50-75%', '75-100%'] )
+
+            this.data.forEach( row => {
+                const continuousValue = row[continuousColumnName]
+                row[continuousColumnName] = quantileScale(continuousValue) // replace values with their quantile equivalents
+            })
+
+            // Refresh column types
+            this.columnTypes = this._inferColumnTypes()
+
+            // i = 0
+            // continuousColumnData.forEach( (cellValue) => {
+            //
+            //     j = 0
+            //     quantileValuesOfColumn.forEach( (quantileValue) => {
+            //
+            //         const nextQuantileValue = quantileValuesOfColumn[j+1]
+            //
+            //         if( cellValue > quantileValue && cellValue < quantileValue[] ){
+            //
+            //         }
+            //         j++
+            //
+            //     })
+            //
+            //     i++
+            //
+            // })
+
+
+        })
+
+
+    }
+
+
+     calculateQuantileValuesOfColumn(continuousColumnName, numberOfQuantiles) {
+
+         const requestedQuantilePercentages = Dataset.calculateQuantileCutoffPercentages(numberOfQuantiles)
+
+         const cleanedAndSortedColumn = this.data.map( d => d[continuousColumnName] )
+                 .filter( d => d !== null && !isNaN(d) )
+                 .sort( d3.ascending )
+
+         const quantileValuesOfColumn = []
+         requestedQuantilePercentages.forEach( (quantilePercentage) => {
+             const quantileValue = d3.quantile(cleanedAndSortedColumn, quantilePercentage)
+             quantileValuesOfColumn.push(quantileValue)
+         })
+
+         return quantileValuesOfColumn
+     }
+
+
+     getNamesOfContinuousColumns() {
+
+         let namesOfContinuousColumns = []
+         this.columnTypes.forEach((columnType, columnName) => {
+
+             columnType === 'continuous'
+                 ? namesOfContinuousColumns.push(columnName)
+                 : null
+         })
+         return namesOfContinuousColumns
+     }
+
+     /**
+      * Calculates quantile cutoffs (e.g., 0, 0.25, 0.5, 0.75, 1)
+      * @param numberOfQuantiles{number}
+      * @return {[]}
+      */
+     static calculateQuantileCutoffPercentages(numberOfQuantiles ) {
+
+         const percentageStep = (100 / numberOfQuantiles) / 100  // e.g. (100/4)/100 = 0.25
+         const quantileCutoffPercentages = []
+         d3.range(numberOfQuantiles + 1).forEach((i) => {
+
+             const quantilePercentage = i * percentageStep
+
+             quantileCutoffPercentages.push( quantilePercentage )
+         })
+         return quantileCutoffPercentages
+     }
 
 
      /**
