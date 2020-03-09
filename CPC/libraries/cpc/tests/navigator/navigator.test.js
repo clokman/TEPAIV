@@ -498,7 +498,7 @@ describe ('Absolute values: Toggle absolute values in category captions', () => 
 │         1         │ 'panel-1-0' │ [NestedPanel] │
 └───────────────────┴─────────────┴───────────────┘`)
             
-            
+
         // Get initial caption texts on DOM
         let captionTexts = getCaptionTextsOfCategoriesFromDom()
         expect(captionTexts).toTabulateAs(`\
