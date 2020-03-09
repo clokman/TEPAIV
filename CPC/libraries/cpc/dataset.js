@@ -31,18 +31,19 @@ const version = "1.0"
      */
     constructor(path, omitColumns=[]){
 
-
         // Public Parameters
-        this._path = path
-        this._omitColumns = typeof omitColumns === 'string' ? [omitColumns] : omitColumns
 
-        this.transformContinuousColumns = {
-            toQuantiles: true,
-            // using:{
+        this.preferences = {
+            transformContinuousColumnsToQuantiles: true,
             //     numberOfQuantiles: 4,
             //     numberOfDecimals: 1
-            // }
         }
+
+
+        // Private parameters
+
+        this._path = path
+        this._omitColumns = typeof omitColumns === 'string' ? [omitColumns] : omitColumns
 
         this.data = null
 
@@ -77,7 +78,7 @@ const version = "1.0"
 
         this._inferDatasetFeatures()
 
-        if( this.transformContinuousColumns.toQuantiles ){
+        if( this.preferences.transformContinuousColumnsToQuantiles ){
             this.transformContinuousColumnsToQuantiles()
         }
 
