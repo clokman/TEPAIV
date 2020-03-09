@@ -16,7 +16,10 @@ require('jest-canvas-mock')
 
 
 //// PURE NODE DEPENDENCIES ////
-require('../../JestUtils/jest-console')
+const jestConsole = require('../../JestUtils/jest-console')
+const expectConsoleHistory = jestConsole.expectConsoleHistory
+const clearConsoleHistory = jestConsole.clearConsoleHistory
+
 require('../../JestUtils/jest-dom')
 
 

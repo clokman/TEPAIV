@@ -15,7 +15,8 @@ if (typeof Object.fromEntries !== 'function') {
 }
 
 //// TESTING LIBRARIES ////
-require('../../JestUtils/jest-console')
+const jestConsole = require('../../JestUtils/jest-console')
+const expectTable = jestConsole.expectTable
 
 //// REQUIREMENTS ////
 
