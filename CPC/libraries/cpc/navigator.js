@@ -26,7 +26,6 @@
             // Superclass Init //
             super(parentContainerSelectionOrObject)
                 .class('navigator')
-                .update()
 
             // Public Parameters //
             this.datasetObject = null
@@ -58,17 +57,21 @@
 
             this._currentDrilldownPathParameter = []  // stores the drilldownTo path that generated whatever is being visualized in the navigator at a point in time
 
-            // Initialize //
+        }
 
+
+        build() {
+
+            super.update()
+            this.update()
 
             // document.removeEventListener('click', domUtils._assessAndRecordClickProperties, true)
             document.listenForClicksAndRecordLastClickProperties()
 
             this._addListenerToFirstPanel()
 
-
+            return this
         }
-
 
         _createPanelZeroBasedOnDataset() {
 
@@ -104,13 +107,23 @@
         }
 
 
-        async loadDataset(path, omitColumns) {
+        /**
+         *
+         * @param path {String}
+         * @param omitColumns {Array} An array of strings. Each item should be a column name.
+         * @param update {Boolean} Should be set to false only for testing and debugging purposes
+         * @return {Promise<Navigator>}
+         */
+        async loadDataset(path, omitColumns, update=true) {
 
             this._awaitingDomUpdateAfterDataChange = true
 
             this.datasetObject = new dataset.Dataset(path, omitColumns)
             await this.datasetObject.build()
 
+            if (update){  // should be set to false only for testing and debugging
+                this.update()
+            }
 
             return this
 

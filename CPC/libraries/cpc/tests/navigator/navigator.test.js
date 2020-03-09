@@ -75,6 +75,7 @@ describe ('Instantiation', () => {
 
     // Create Navigator object
     const myNavigator = new navigator.Navigator()
+    myNavigator.build()
 
 
     // Use different tags for testing
@@ -114,6 +115,7 @@ describe ('Instantiation', () => {
 
     // Create Navigator object
     const myNavigator = new navigator.Navigator(mySvg)
+    myNavigator.build()
 
     myNavigator.id('child-navigator').update()
 
@@ -145,6 +147,7 @@ describe ('Instantiation', () => {
 
     // Create Navigator object
     const myNavigator = new navigator.Navigator(parentGroup)
+    myNavigator.build()
 
     myNavigator.id('child-navigator').update()
 
@@ -174,9 +177,9 @@ describe ('Instantiation', () => {
     const svg = new container.Svg()
 
 
-
     // Create Navigator object
     const myNavigator = new navigator.Navigator()
+    myNavigator.build()
 
     // Check data-related flags before loading data
     expect(myNavigator._awaitingDomUpdateAfterDataChange)
@@ -186,10 +189,11 @@ describe ('Instantiation', () => {
     // Load a dataset
     await myNavigator.loadDataset(
         'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
-        ['Name']
-    )
+        ['Name'],
+        false
+    ) // `update` argument is set to false, so that `_awaitingDomUpdateAfterDataChange` property can be tested below
 
-    // Verfiy  that the data is imported correctly
+    // Verify  that the data is imported correctly
     expect(myNavigator.datasetObject.data).toHaveLength(100)
     expectTable(myNavigator.datasetObject.data, `\
 ┌─────────┬─────────────┬────────────┬──────────┐
@@ -252,7 +256,9 @@ describe ('Loading Data', () => {
 
         // Create Navigator object and tag it for later selectability
         const myNavigator = new navigator.Navigator()
-        myNavigator.id('my-navigator').update()
+        myNavigator
+            .id('my-navigator')
+            .build()
 
 
         // Verify that DOM only has a Navigator element in it
@@ -271,8 +277,9 @@ describe ('Loading Data', () => {
         // Load a dataset
         await myNavigator.loadDataset(
             'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
-            ['Name']
-        )
+            ['Name'],
+            false
+        )  // `update` argument is set to false, so that `_awaitingDomUpdateAfterDataChange` property can be tested below
 
         // Verify that the data-related flags are switched after loading data
         expect(myNavigator._awaitingDomUpdateAfterDataChange).toBe(true)
@@ -389,7 +396,9 @@ describe ('Interactivity', () => {
 
         // Create Navigator object and tag it for later selectability
         const myNavigator = new navigator.Navigator()
-        myNavigator.id('my-navigator').update()
+        myNavigator
+            .id('my-navigator')
+            .build()
 
 
 
@@ -486,7 +495,7 @@ describe ('Absolute Values: Toggle absolute values in category captions', () => 
     test ('Dom: Absolute values should toggle for all category captions on DOM', async () => {
 
         const myNavigator = await initializeDomWithTitanicTinyNavigator()
-
+        myNavigator.build()
 
         // Expand one panel
         domUtils.simulateClickOn( '#Female' )
@@ -778,7 +787,7 @@ describe ('Color Sets', () => {
 //     //// CREATE A NAVIGATOR OBJECT ////
 //     // Create Navigator object and tag it for later selectability
 //     const myNavigator = new navigator.Navigator()
-//     myNavigator.id('my-navigator').update()
+//     myNavigator.id('my-navigator').build()
 //
 //     // Load a dataset into Navigator
 //     await myNavigator.loadDataset(
@@ -952,11 +961,13 @@ async function initializeDomWithTitanicTinyNavigator() {
         ['Name']
     ).then(that => {
 
-        that.update(0)
-
         setTimeout( () => {
 
-            that.objects('panel-0-0').x(200).update(0)
+            that.build()
+
+            that.objects('panel-0-0')
+                .x(200)
+                .update(0)
 
         }, that.animationDuration() )
         
