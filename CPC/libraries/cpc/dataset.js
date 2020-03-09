@@ -44,14 +44,6 @@ const version = "1.0"
             // }
         }
 
-
-        this._numberOfQuantiles = 4
-        this._numberOfDecimalsAfterRounding = 1
-
-        // Private Parameters
-        this._numberOfDecimalsToDisplayForContinuousData = 1
-
-
         this.data = null
 
         this.columnNames = []
@@ -60,7 +52,6 @@ const version = "1.0"
         this.structure = new Map()
 
         this.summary = null
-
 
     }
 
@@ -174,48 +165,19 @@ const version = "1.0"
 
          const resultingDataFromDrilldown = this.drilldownTo(...drilldownPath)
 
-
          const allCategoryFrequenciesInData = new Map()
 
          this.columnNames.forEach( (columnName) => {
 
-             // Establish Conditions
-             const columnConsistsOfCategoricalData = this.columnTypes.get(columnName) === 'categorical'
-             const columnConsistsOfContinuousData = this.columnTypes.get(columnName) === 'continuous'
-
-
              let categoryFrequenciesInColumn
 
-             // CATEGORICAL DATA //
-
-             if (columnConsistsOfCategoricalData){
-                 categoryFrequenciesInColumn = d3.rollup(resultingDataFromDrilldown,
-                         v=>v.length,
-                         d=>d[columnName]
-                 )
-             }
-
-
-             // CONTINUOUS DATA //
-
-             if (columnConsistsOfContinuousData){
-
-                 // Quantile data
-                 const quantiledData = Dataset._splitDataByQuantilesOfColumn(resultingDataFromDrilldown, columnName, this._numberOfQuantiles, this._numberOfDecimalsAfterRounding)
-
-                 // Summarize groups (manual rollup)
-                 const manualRollupOfQuantiles = new Map()
-                 quantiledData.forEach( (quantileData, quantileName) => {
-                     
-                     manualRollupOfQuantiles.set( quantileName, quantileData.length )
-                     
-                 })
-
-                 categoryFrequenciesInColumn = manualRollupOfQuantiles
-
-             }
+             categoryFrequenciesInColumn = d3.rollup(resultingDataFromDrilldown,
+                     v=>v.length,
+                     d=>d[columnName]
+             )
 
              allCategoryFrequenciesInData.set(columnName, categoryFrequenciesInColumn)
+
          })
 
          return allCategoryFrequenciesInData
@@ -344,32 +306,13 @@ const version = "1.0"
             // Refresh column types
             this.columnTypes = this._inferColumnTypes()
 
-            // i = 0
-            // continuousColumnData.forEach( (cellValue) => {
-            //
-            //     j = 0
-            //     quantileValuesOfColumn.forEach( (quantileValue) => {
-            //
-            //         const nextQuantileValue = quantileValuesOfColumn[j+1]
-            //
-            //         if( cellValue > quantileValue && cellValue < quantileValue[] ){
-            //
-            //         }
-            //         j++
-            //
-            //     })
-            //
-            //     i++
-            //
-            // })
-
-
         })
 
 
     }
 
 
+    // TODO [FEB]: Renamed to calculateQuantileCutoffValuesOfColumn
      calculateQuantileValuesOfColumn(continuousColumnName, numberOfQuantiles) {
 
          const requestedQuantilePercentages = Dataset.calculateQuantileCutoffPercentages(numberOfQuantiles)
@@ -419,105 +362,6 @@ const version = "1.0"
      }
 
 
-     /**
-      *
-      * @param data{Array}
-      * @param columnName{string}
-      * @param quantiles{number}
-      * @return {Map<String, Array>}
-      */
-     static _splitDataByQuantilesOfColumn(data, columnName, numberOfQuantiles=4, numberOfDecimalsAfterRounding=1) {
-         // Construct the scale for quantization //
-
-         const min = d3.min(data, d => d[columnName])
-         const max = d3.max(data, d => d[columnName])
-
-         const quantilerScale = d3.scaleQuantile()
-             .domain([min, max])
-             .range(d3.range(numberOfQuantiles))
-
-
-         // Split data to quantiles //
-         const quantiledData = d3.group(data,
-             d => quantilerScale(d[columnName])
-         )
-
-         // Rename quantiles (replace keys) //
-         const quantiledDataWithRenamedKeys = new Map(
-             Array.from(quantiledData, ([quantileName, quantileData]) => {
-
-                 const quantileMin = d3.min(quantileData, d => d[columnName])
-                 const quantileMax = d3.max(quantileData, d => d[columnName])
-
-                 const quantileMinShortened = Number(quantileMin).toFixed(numberOfDecimalsAfterRounding)
-                 const quantileMaxShortened = Number(quantileMax).toFixed(numberOfDecimalsAfterRounding)
-
-                 const newQuantileName = `${quantileMinShortened}-${quantileMaxShortened}`
-                 return [newQuantileName, quantileData]
-
-             })
-         )
-
-         // Sort quantiles
-         const sortedQuantiledData = new Map([...quantiledDataWithRenamedKeys.entries()].sort().reverse())
-         return sortedQuantiledData
-     }
-
-
-     /**
-      * @param data{Array}
-      * @param nameOfColumnBeingSplitToQuantiles{String}
-      * @param value{Number}
-      * @return {String}
-      */
-     static _translateValueToQuantileName(data, nameOfColumnBeingSplitToQuantiles, value, numberOfQuantiles=4, numberOfDecimalsAfterRounding=1) {
-
-         let quantileNameThatCorrespondsToValue
-
-         const quantiledData = Dataset._splitDataByQuantilesOfColumn( data, nameOfColumnBeingSplitToQuantiles, numberOfQuantiles, numberOfDecimalsAfterRounding )
-
-         const quantileBoundariesVsQuantileNamesInColumnBeingSplit =
-             Dataset._findBoundariesVsQuantileNamesInQuantiledData(quantiledData, nameOfColumnBeingSplitToQuantiles)
-
-         quantileBoundariesVsQuantileNamesInColumnBeingSplit
-             .forEach((quantileRanges, quantileName) => {
-
-                 const quantileMax = quantileRanges.get('max')
-                 const quantileMin = quantileRanges.get('min')
-
-                 if (quantileMin <= value && value <= quantileMax) {
-                     quantileNameThatCorrespondsToValue = quantileName
-                 }
-
-             })
-
-         return quantileNameThatCorrespondsToValue
-     }
-
-
-
-     /**
-      * @param quantiledData{Map}
-      * @param targetColumnName{String}
-      */
-     static _findBoundariesVsQuantileNamesInQuantiledData(quantiledData, targetColumnName) {
-
-         const quantileBoundariesOfAColumnVsQuantileNames = new Map()
-         quantiledData.forEach((quantileData, quantileName) => {
-
-             const min = d3.min(quantileData, d => d[targetColumnName])
-             const max = d3.max(quantileData, d => d[targetColumnName])
-
-             quantileBoundariesOfAColumnVsQuantileNames.set(quantileName, new Map())
-                 .get(quantileName)
-                 .set('min', min)
-                 .set('max', max)
-
-         })
-         return quantileBoundariesOfAColumnVsQuantileNames
-     }
-
-
 }
 
 
@@ -555,30 +399,15 @@ const version = "1.0"
 
                     Object.entries(step).forEach( ([columnName, categoryName]) => {
 
-                        // Establish Conditions
-                        const columnConsistsOfCategoricalData = this._datasetObject.columnTypes.get(columnName) === 'categorical'
-                        const columnConsistsOfContinuousData = this._datasetObject.columnTypes.get(columnName) === 'continuous'
-                        // TODO: .columnTypes added to property checker in constructor
-
-
-                        if (columnConsistsOfCategoricalData){
-                            argumentsSubstring += `, g=>g['${columnName}']`
-                        }
-                        if (columnConsistsOfContinuousData){
-
-                            argumentsSubstring += `, g=>Dataset._translateValueToQuantileName(this.data , '${columnName}', g['${columnName}'] )`
-                        }
-
+                        argumentsSubstring += `, g=>g['${columnName}']`
                         gettersSubstring += `.get('${categoryName}')`
-
 
                     })
                 })
             }
 
-
             this.queryString = `d3.group(this.data${argumentsSubstring})${gettersSubstring}`
-            // TODO: callback function of g=>g{ this } could be the solution, as 'this' could be data
+
         }
 
 
