@@ -184,7 +184,7 @@ describe ('Initialization', () => {
     test ('Continuous data: Read continuous data without discretization', async () => {
 
         const bigFiveDatasetContinous = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/BigFivePersonalityTraits-Small.csv')
-        bigFiveDatasetContinous.transformContinuousData.toQuantiles = false
+        bigFiveDatasetContinous.transformContinuousColumns.toQuantiles = false
         await bigFiveDatasetContinous.build()
 
 
@@ -308,7 +308,7 @@ describe ('Inferences', () => {
 
 
         const mixedDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/SampleMixedData.csv')
-        mixedDataset.transformContinuousData.toQuantiles = false
+        mixedDataset.transformContinuousColumns.toQuantiles = false
         await mixedDataset.build()
 
         expectTable(mixedDataset.data, `\
@@ -354,7 +354,7 @@ describe ('Inferences', () => {
 
 
         const mixedDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/SampleMixedData.csv')
-        mixedDataset.transformContinuousData.toQuantiles = false
+        mixedDataset.transformContinuousColumns.toQuantiles = false
 
         await mixedDataset.build()
 
@@ -1088,7 +1088,7 @@ describe ('Summarizing', () => {
     test ('lvl0 continuous drilldownAndSummarize: drilldownAndSummarize level 0 continuous data', async () => {
 
         const mixedDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/SampleMixedData.csv')
-        mixedDataset.transformContinuousData.toQuantiles = false
+        mixedDataset.transformContinuousColumns.toQuantiles = false
         await mixedDataset.build()
 
         expectTable(mixedDataset.data, `\
@@ -1130,7 +1130,7 @@ describe ('Summarizing', () => {
     test ('Lvl1 continuous drilldownAndSummarize: drilldownAndSummarize Level 1 continuous data', async () => {
 
         const mixedDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/SampleMixedData.csv')
-        mixedDataset.transformContinuousData.toQuantiles = false
+        mixedDataset.transformContinuousColumns.toQuantiles = false
         await mixedDataset.build()
 
         expectTable(mixedDataset.data, `\
@@ -1240,7 +1240,7 @@ describe ('Handling continous data', () => {
             test ('Get names of continuous columns', async () => {
 
                 const mixedDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/SampleMixedData.csv')
-                mixedDataset.transformContinuousData.toQuantiles = false
+                mixedDataset.transformContinuousColumns.toQuantiles = false
                 await mixedDataset.build()
 
                 expect( mixedDataset.getNamesOfContinuousColumns() ).toEqual( ["Neuroticism", "Extraversion"] )
@@ -1251,7 +1251,7 @@ describe ('Handling continous data', () => {
             test ('Calculate quantiles of a column', async () => {
 
                 const mixedDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/SampleMixedData.csv')
-                mixedDataset.transformContinuousData.toQuantiles = false
+                mixedDataset.transformContinuousColumns.toQuantiles = false
                 await mixedDataset.build()
 
                 const neuroticismQuantileValues = mixedDataset.calculateQuantileValuesOfColumn('Neuroticism', 4)
@@ -1315,10 +1315,10 @@ describe ('Handling continous data', () => {
         })
 
 
-        test ('If a Dataset is built without discretization, it should still be possible to call convertContinuousColumnsToCategorical() method for discretizing the data after the built', async () => {
+        test ('If a Dataset is built without discretization, it should still be possible to call transformContinuousColumnsToQuantiles() method for discretizing the data after the built', async () => {
 
         const mixedDatasetWithoutDiscretization = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/SampleMixedData.csv')
-        mixedDatasetWithoutDiscretization.transformContinuousData.toQuantiles = false
+        mixedDatasetWithoutDiscretization.transformContinuousColumns.toQuantiles = false
         await mixedDatasetWithoutDiscretization.build()
 
         expect( mixedDatasetWithoutDiscretization.data ).toTabulateAs(`\
@@ -1343,7 +1343,7 @@ describe ('Handling continous data', () => {
 └─────────┴─────────────┴──────────────┴──────────┴───────────────┘
 ˅˅˅ 84 more rows`, 0, 15)
 
-        mixedDatasetWithoutDiscretization.convertContinuousColumnsToCategorical( 4, 1 )
+        mixedDatasetWithoutDiscretization.transformContinuousColumnsToQuantiles( 4, 1 )
         expect( mixedDatasetWithoutDiscretization.data ).toTabulateAs(`\
 ┌─────────┬─────────────┬──────────────┬──────────┬───────────────┐
 │ (index) │ Neuroticism │ Extraversion │  Gender  │ MonthMeasured │
@@ -1375,7 +1375,7 @@ describe ('Handling continous data', () => {
 
 
                 const mixedDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/SampleMixedData.csv')
-                mixedDataset.transformContinuousData.toQuantiles = false
+                mixedDataset.transformContinuousColumns.toQuantiles = false
                 await mixedDataset.build()
 
                 expectTable(mixedDataset.data, `\

@@ -36,7 +36,7 @@ const version = "1.0"
         this._path = path
         this._omitColumns = typeof omitColumns === 'string' ? [omitColumns] : omitColumns
 
-        this.transformContinuousData = {
+        this.transformContinuousColumns = {
             toQuantiles: true,
             // using:{
             //     numberOfQuantiles: 4,
@@ -86,8 +86,8 @@ const version = "1.0"
 
         this._inferDatasetFeatures()
 
-        if( this.transformContinuousData.toQuantiles ){
-            this.convertContinuousColumnsToCategorical()
+        if( this.transformContinuousColumns.toQuantiles ){
+            this.transformContinuousColumnsToQuantiles()
         }
 
         this.summary = this.summarize()
@@ -321,7 +321,7 @@ const version = "1.0"
 
 
 
-    convertContinuousColumnsToCategorical(numberOfQuantiles=4, numberOfDecimalsAfterRounding=1){
+    transformContinuousColumnsToQuantiles(numberOfQuantiles=4, numberOfDecimalsAfterRounding=1){
 
         const namesOfContinuousColumns = this.getNamesOfContinuousColumns()
 
