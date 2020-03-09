@@ -84,27 +84,23 @@ const version = "1.0"
         )
 
 
-        this._calculateInstanceProperties()
+        this._inferDatasetFeatures()
 
+        if( this.transformContinuousData.toQuantiles ){
+            this.convertContinuousColumnsToCategorical()
+        }
+
+        this.summary = this.summarize()
     }
 
 
-     _calculateInstanceProperties(){
+     _inferDatasetFeatures(){
 
          this.columnNames = this.data.columns
-
          this.structure = this._mapDatasetStructure()
          this.categoryNames = this._getCategoryNames()
-
          this.columnTypes = this._inferColumnTypes()
 
-         if( this.transformContinuousData.toQuantiles ){
-             this.convertContinuousColumnsToCategorical()
-         }
-
-
-
-         this.summary = this.summarize()
      }
 
 
