@@ -375,6 +375,98 @@ describe ('Loading Data', () => {
 
 
 
+//// Position and Dimensions ///////////////////////////////////////////////////////////////
+
+describe ('Position and Dimensions', () => {
+
+    test ('Get/Set X, Y, width, and height at INIT time', async () => {
+
+        jest.useFakeTimers()
+
+        const myNavigator = await initializeDomWithTitanicTinyNavigator(false)
+
+        // Check initial values
+        expect( myNavigator.x() ).toBe( 200 )
+        expect( myNavigator.y() ).toBe( 25 )
+        expect ( myNavigator.width() ).toBe( 100 )
+        expect ( myNavigator.height() ).toBe( 700 )
+
+        // Set new values at init time (i.e., BEFORE the build is completed)
+        myNavigator.x( 225 )
+        myNavigator.y( 50 )
+        myNavigator.width( 200 )
+        myNavigator.height( 500 )
+
+        // Check new values in Navigator instance
+        expect( myNavigator.x() ).toBe( 225 )
+        expect( myNavigator.y() ).toBe( 50 )
+        expect( myNavigator.width() ).toBe( 200 )
+        expect( myNavigator.height() ).toBe( 500 )
+
+
+        // Build the Navigator
+        await myNavigator.build()
+        jest.runAllTimers()
+
+        // After built has completed, panel zero should have the right position and dimensions
+        expect( myNavigator.objects('panel-0-0').x() ).toBe( 225 )
+        expect( myNavigator.objects('panel-0-0').y() ).toBe( 50 )
+        expect ( myNavigator.objects('panel-0-0').width() ).toBe( 200 )
+        expect ( myNavigator.objects('panel-0-0').height() ).toBe( 500 )
+
+
+        // // TODO [Puppeteer]: Uncomment after Puppeteer is set up
+        // // const xOnDom = document.querySelector( '#panel-0-0' ).getBoundingClientRect( )
+        // // expect( xOnDom ).toBe( 225 )
+
+    })
+
+
+    test ('Get/Set X, Y, width, and height after build has been completed', async () => {
+
+        jest.useFakeTimers()
+
+        const myNavigator = await initializeDomWithTitanicTinyNavigator(false)
+
+        // Check initial values
+        expect( myNavigator.x() ).toBe( 200 )
+        expect( myNavigator.y() ).toBe( 25 )
+        expect ( myNavigator.width() ).toBe( 100 )
+        expect ( myNavigator.height() ).toBe( 700 )
+
+        // Build the Navigator
+        await myNavigator.build()
+        jest.runAllTimers()
+
+        // Set new values AFTER build is completed
+        myNavigator.x( 225 )
+        myNavigator.y( 50 )
+        myNavigator.width( 200 )
+        myNavigator.height( 500 )
+
+        // Check new values in Navigator instance
+        expect( myNavigator.x() ).toBe( 225 )
+        expect( myNavigator.y() ).toBe( 50 )
+        expect( myNavigator.width() ).toBe( 200 )
+        expect( myNavigator.height() ).toBe( 500 )
+
+        // Panel zero should have the right position and dimensions
+        expect( myNavigator.objects('panel-0-0').x() ).toBe( 225 )
+        expect( myNavigator.objects('panel-0-0').y() ).toBe( 50 )
+        expect ( myNavigator.objects('panel-0-0').width() ).toBe( 200 )
+        expect ( myNavigator.objects('panel-0-0').height() ).toBe( 500 )
+
+
+        // // TODO [Puppeteer]: Uncomment after Puppeteer is set up
+        // // const xOnDom = document.querySelector( '#panel-0-0' ).getBoundingClientRect( )
+        // // expect( xOnDom ).toBe( 225 )
+
+    })
+
+
+})
+
+
 //// Interactivity ////////////////////////////////////////////////////////////////////////
 
 describe ('Interactivity', () => {
