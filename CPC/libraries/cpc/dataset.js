@@ -33,7 +33,7 @@ const version = "1.0"
 
         // Public Parameters
 
-        this.preferences = {
+        this.initParams = {
             transformContinuousColumnsToQuantiles: true,
             //     numberOfQuantiles: 4,
             //     numberOfDecimals: 1
@@ -78,7 +78,7 @@ const version = "1.0"
 
         this._inferDatasetFeatures()
 
-        if( this.preferences.transformContinuousColumnsToQuantiles ){
+        if( this.initParams.transformContinuousColumnsToQuantiles ){
             this.transformContinuousColumnsToQuantiles()
         }
 
@@ -297,7 +297,7 @@ const version = "1.0"
 
             const quantileScale = d3.scaleQuantile()
                 .domain( continuousColumnData )
-                .range( ['0-25%', '25-50%', '50-75%', '75-100%'] )
+                .range( this.initParams.quantilesForContinuousColumns )
 
             this.data.forEach( row => {
                 const continuousValue = row[continuousColumnName]
