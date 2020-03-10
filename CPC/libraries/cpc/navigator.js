@@ -1689,8 +1689,9 @@
             // Set properties based on parent
             if (this.has.parentPanel) {
 
-                this.x(  0 - this.width() - this.x() )
-                    // .update(0)  // start off-screen  // `update()` commented out during init-build split
+                // Start off-screen
+                this.x(  0 - this.parentPanel.x() - this.parentPanel.width() )
+                    // .update(0)    // `update()` commented out during init-build split
 
                 const shouldShowAbsoluteChartWidths = this.showAbsoluteChartWidths() || this.parentPanel.showAbsoluteChartWidths()
                 if ( shouldShowAbsoluteChartWidths  ){
