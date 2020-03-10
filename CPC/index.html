@@ -98,6 +98,51 @@
 
         <div class="preferences-pane">
 
+            <!-- Panel Width Slider -->
+            <div id="panel-width-control" class="preference-control">
+
+                <p>Panel width: <span id="panel-width-text">100px</span>px</p>
+
+                <input type="range"
+                       class="slider"
+                       id=panel-width-slider
+                       value=100
+                       step=10
+                       max=300
+                       min=50
+                       onchange="setPanelWidth()"
+                >
+
+                <script>
+
+                    // PANEL WIDTH SLIDER //
+                    function setPanelWidth() {
+
+                        // Get slider value and text
+                        const slider = document.getElementById('panel-width-slider')
+                        const text = document.getElementById('panel-width-text')
+
+                        // Update displayed text
+                        text.innerText = Number(slider.value)
+
+                        // Change the value
+                        allNavigators.forEach( (navigatorObject, navigatorName) => {
+
+                            navigatorObject
+                                .width( Number(slider.value) )
+                                .update()
+
+                        })
+
+                    }
+                </script>
+
+
+            </div>
+
+
+
+
 
             <!--Absolute Values Checkbox-->
             <div class="preference-control ui checkbox">
