@@ -28,11 +28,30 @@
                 .class('navigator')
 
             // Public Parameters //
+            this.initParams = {
+
+                datasetPath: '',  // string
+                omitColumns: [],  // array of strings that should contain column names
+                quantilesForContinuousColumns: [ 'Q1', 'Q2', 'Q3', 'Q4' ],
+
+                x: 200,
+                y: 25,
+                width: 100,
+                height: 700
+            }
+
+
+
             this.datasetObject = null
 
 
             // Private Variables //
             this._awaitingDomUpdateAfterDataChange = false
+
+            this._x = this.initParams.x
+            this._y = this.initParams.y
+            this._width = this.initParams.width
+            this._height = this.initParams.height
 
             this._colorSet = 'Single-Hue'
             this._showAbsoluteValues = false
@@ -83,6 +102,10 @@
 
 
             const panelObject = new NestedPanel(this.select())
+                .x(this.x())
+                .y(this.y())
+                .width(this.width())
+                .height(this.height())
                 .stacks(summaryStacks)
                 .showAbsoluteChartWidths( this.showAbsoluteChartWidths() )
                 .bgText('Dataset')
@@ -338,6 +361,10 @@
             const panelZero = this.get('panelZero')
             if (!!panelZero){
                 panelZero
+                    .x( this.x() )
+                    .y( this.y() )
+                    .width( this.width() )
+                    .height( this.height() )
                     .showAbsoluteValues( this.showAbsoluteValues() )
                     .showAbsoluteChartWidths( this.showAbsoluteChartWidths() )
                     .colorSet( this.colorSet() )
@@ -617,6 +644,82 @@
             }
         }
 
+
+        x(value) {
+
+            // Getter
+            if (!arguments.length){
+                return this._x
+            }
+
+            // Setter
+            else{
+                value.mustBeOfType('Number')
+                this._x = value
+
+                return this
+            }
+
+        }
+
+
+
+        // TODO: If multiple panels are open, this moves only the first panel
+        //  NestedPanel's .y() method should be changed to accommodate child panels.
+        y(value) {
+
+            // Getter
+            if (!arguments.length){
+                return this._y
+            }
+
+            // Setter
+            else{
+                value.mustBeOfType('Number')
+                this._y = value
+
+                return this
+            }
+
+        }
+
+
+        width(value) {
+
+            // Getter
+            if (!arguments.length){
+                return this._width
+            }
+
+            // Setter
+            else{
+                value.mustBeOfType('Number')
+                this._width = value
+
+                return this
+            }
+
+        }
+
+
+        // TODO: If multiple panels are open, this moves only the first panel
+        //  NestedPanel's .height() method should be changed to accommodate child panels.
+        height(value) {
+
+            // Getter
+            if (!arguments.length){
+                return this._height
+            }
+
+            // Setter
+            else{
+                value.mustBeOfType('Number')
+                this._height = value
+
+                return this
+            }
+
+        }
 
     }
 
