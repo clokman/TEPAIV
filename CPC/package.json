@@ -1,6 +1,5 @@
 {
   "name": "cpc",
-  "version": "0.3",
   "description": "Faceted Frequency Browser",
   "main": "app.js",
   "scripts": {
@@ -12,11 +11,9 @@
   },
   "author": "John Can Lokman",
   "license": "MIT",
-  "dependencies": {
-    "semantic-ui": "^2.4.2"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "jest": "^24.9.0",
+    "jest": "^25.1.0",
     "jest-canvas-mock": "^2.2.0",
     "node-fetch-polyfill": "^2.0.6",
     "object.fromentries": "^2.0.2"
