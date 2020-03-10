@@ -1246,4 +1246,42 @@ describe ('Handling continous data', () => {
     })
 
 
+
+        //// Preferences ///////////////////////////////////////////////////////////////
+
+        describe ('Preferences', () => {
+
+            test ('If specified during init, discretized categories should be named with Q1, Q2, etc instead of percentage ranges such as "25-50%" ', async () => {
+
+                const myDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/SampleMixedData.csv')
+                myDataset.initParams.quantilesForContinuousColumns = [ 'Q1', 'Q2', 'Q3', 'Q4' ]
+                await myDataset.build()
+                
+                expect( myDataset.data ).toTabulateAs(`\
+┌─────────┬─────────────┬──────────────┬──────────┬───────────────┐
+│ (index) │ Neuroticism │ Extraversion │  Gender  │ MonthMeasured │
+├─────────┼─────────────┼──────────────┼──────────┼───────────────┤
+│    0    │    'Q1'     │     'Q4'     │  'Male'  │   'January'   │
+│    1    │    'Q2'     │     'Q1'     │  'Male'  │  'February'   │
+│    2    │    'Q1'     │     'Q1'     │  'Male'  │    'March'    │
+│    3    │    'Q4'     │     'Q2'     │ 'Female' │    'April'    │
+│    4    │    'Q3'     │     'Q2'     │ 'Female' │     'May'     │
+│    5    │    'Q1'     │     'Q2'     │  'Male'  │    'June'     │
+│    6    │    'Q1'     │     'Q4'     │  'Male'  │    'July'     │
+│    7    │    'Q1'     │     'Q3'     │  'Male'  │   'August'    │
+│    8    │    'Q3'     │     'Q4'     │  'Male'  │  'September'  │
+│    9    │    'Q2'     │     'Q3'     │  'Male'  │   'October'   │
+│   10    │    'Q2'     │     'Q2'     │  'Male'  │  'November'   │
+│   11    │    'Q1'     │     'Q4'     │  'Male'  │  'December'   │
+│   12    │    'Q3'     │     'Q2'     │  'Male'  │   'January'   │
+│   13    │    'Q4'     │     'Q1'     │  'Male'  │  'February'   │
+│   14    │    'Q1'     │     'Q1'     │  'Male'  │    'March'    │
+└─────────┴─────────────┴──────────────┴──────────┴───────────────┘
+˅˅˅ 84 more rows`, 0, 15)
+
+
+            })
+
+        })
+
 })

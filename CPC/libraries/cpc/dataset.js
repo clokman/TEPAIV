@@ -35,6 +35,7 @@ const version = "1.0"
 
         this.initParams = {
             transformContinuousColumnsToQuantiles: true,
+            quantilesForContinuousColumns: [ '0-25%', '25-50%', '50-75%', '75-100%' ]
             //     numberOfQuantiles: 4,
             //     numberOfDecimals: 1
         }
