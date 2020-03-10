@@ -79,10 +79,19 @@
         }
 
 
-        build() {
+        async build() {
 
             super.update()
             this.update()
+
+            if (!!this.initParams.datasetPath ){
+                await this.loadDataset(
+                    this.initParams.datasetPath,
+                    this.initParams.omitColumns,
+                    this.initParams.quantilesForContinuousColumns
+                )
+            }
+
 
             // document.removeEventListener('click', domUtils._assessAndRecordClickProperties, true)
             document.listenForClicksAndRecordLastClickProperties()
@@ -133,15 +142,21 @@
         /**
          *
          * @param path {String}
-         * @param omitColumns {Array} An array of strings. Each item should be a column name.
-         * @param update {Boolean} Should be set to false only for testing and debugging purposes
+         * @param omitColumns {Array} - An array of strings. Each item should be a column name.
+         * @param quantiles {Array} - An array of strings. Each item should be a quantile name. Any continuous column will be discretized using the number and names of quantiles given in this argument.
+         * @param update {Boolean} - Should be set to false only for testing and debugging purposes
          * @return {Promise<Navigator>}
          */
-        async loadDataset(path, omitColumns, update=true) {
+        async loadDataset(
+            path=this.initParams.datasetPath,
+            omitColumns=this.initParams.omitColumns,
+            quantiles=this.initParams.quantilesForContinuousColumns,
+            update=true) {
 
             this._awaitingDomUpdateAfterDataChange = true
 
             this.datasetObject = new dataset.Dataset(path, omitColumns)
+            this.datasetObject.initParams.quantilesForContinuousColumns = quantiles
             await this.datasetObject.build()
 
             if (update){  // should be set to false only for testing and debugging
@@ -738,7 +753,6 @@
 
             // Superclass Init //
             super(parentContainerSelectionOrObject)
-
 
             this.class('panel')
                 .update()

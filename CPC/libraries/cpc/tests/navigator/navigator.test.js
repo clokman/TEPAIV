@@ -75,7 +75,7 @@ describe ('Instantiation', () => {
 
     // Create Navigator object
     const myNavigator = new navigator.Navigator()
-    myNavigator.build()
+    await myNavigator.build()
 
 
     // Use different tags for testing
@@ -103,7 +103,7 @@ describe ('Instantiation', () => {
     })
 
 
-    test ('Instantiate Navigator class as a child of a Svg class object',  () => {
+    test ('Instantiate Navigator class as a child of a Svg class object',  async () => {
 
     // Clear JEST's DOM to prevent leftovers from previous tests
     document.body.innerHTML = ''
@@ -115,7 +115,7 @@ describe ('Instantiation', () => {
 
     // Create Navigator object
     const myNavigator = new navigator.Navigator(mySvg)
-    myNavigator.build()
+    await myNavigator.build()
 
     myNavigator.id('child-navigator').update()
 
@@ -129,7 +129,7 @@ describe ('Instantiation', () => {
     })
 
 
-    test ('Instantiate Navigator class as a child of a Group class object',  () => {
+    test ('Instantiate Navigator class as a child of a Group class object',  async () => {
 
     // Clear JEST's DOM to prevent leftovers from previous tests
     document.body.innerHTML = ''
@@ -147,7 +147,7 @@ describe ('Instantiation', () => {
 
     // Create Navigator object
     const myNavigator = new navigator.Navigator(parentGroup)
-    myNavigator.build()
+    await myNavigator.build()
 
     myNavigator.id('child-navigator').update()
 
@@ -179,7 +179,7 @@ describe ('Instantiation', () => {
 
     // Create Navigator object
     const myNavigator = new navigator.Navigator()
-    myNavigator.build()
+    await myNavigator.build()
 
     // Check data-related flags before loading data
     expect(myNavigator._awaitingDomUpdateAfterDataChange)
@@ -190,6 +190,7 @@ describe ('Instantiation', () => {
     await myNavigator.loadDataset(
         'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
         ['Name'],
+        myNavigator.initParams.quantilesForContinuousColumns,  // `this` refers to myNavigator
         false
     ) // `update` argument is set to false, so that `_awaitingDomUpdateAfterDataChange` property can be tested below
 
@@ -278,6 +279,7 @@ describe ('Loading Data', () => {
         await myNavigator.loadDataset(
             'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
             ['Name'],
+            this.quantilesForContinuousColumns,  // `this` refers to myNavigator
             false
         )  // `update` argument is set to false, so that `_awaitingDomUpdateAfterDataChange` property can be tested below
 
@@ -376,6 +378,7 @@ describe ('Loading Data', () => {
 //// Interactivity ////////////////////////////////////////////////////////////////////////
 
 describe ('Interactivity', () => {
+
 
     test ('Clicking on a category must make a query and visualize query results with a new panel', async () => {
 
@@ -495,7 +498,6 @@ describe ('Absolute Values: Toggle absolute values in category captions', () => 
     test ('Dom: Absolute values should toggle for all category captions on DOM', async () => {
 
         const myNavigator = await initializeDomWithTitanicTinyNavigator()
-        myNavigator.build()
 
         // Expand one panel
         domUtils.simulateClickOn( '#Female' )
@@ -671,13 +673,15 @@ describe ('Absolute Chart Widths', () => {
 
 describe ('Continuous Data', () => {
 
-        test ('When specified in preferences, quartile names should be shown instead of quartile percentage ranges', async () => {
+        test ('When specified in initParams, quartile names should be shown instead of quartile percentage ranges', async () => {
 
             jest.useFakeTimers()
 
-            const myNavigator = await initializeDomWithTitanicTinyNavigator()
+            const myNavigator = await initializeDomWithTitanicTinyNavigator(false)
+            myNavigator.initParams.quantilesForContinuousColumns = [ 'Q1', 'Q2', 'Q3', 'Q4' ]
+            await myNavigator.build()
 
-            // myNavigator.
+            myNavigator
 
         })
 
@@ -945,7 +949,13 @@ describe ('Stroke Properties ', () => {
 
 //// Helper Functions  ///////////////////////////////////////////////////////////////
 
-async function initializeDomWithTitanicTinyNavigator() {
+
+/**
+ * A simple testing template that creates a Navigator object with a very small dataset.
+ * @param build {Boolean} If set to false, would initialize Navigator without calling the `build()` method.
+ * @return {Promise<Navigator>}
+ */
+async function initializeDomWithTitanicTinyNavigator( build=true ) {
 
     jest.useFakeTimers()
 
@@ -956,22 +966,15 @@ async function initializeDomWithTitanicTinyNavigator() {
     // Create Navigator object
     const myNavigator = new navigator.Navigator()
     //// Load a dataset into navigator
-    await myNavigator.loadDataset(
-        'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
-        ['Name']
-    ).then(that => {
+    myNavigator.initParams.datasetPath = 'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv'
+    myNavigator.initParams.omitColumns = ['Name']
 
-        setTimeout( () => {
+    myNavigator.x(200)
 
-            that.build()
+    if (build){
+        await myNavigator.build()
+    }
 
-            that.objects('panel-0-0')
-                .x(200)
-                .update(0)
-
-        }, that.animationDuration() )
-        
-    })
 
     jest.runOnlyPendingTimers()
     jest.runAllTimers()
