@@ -1680,7 +1680,7 @@
             this.id(panelId)//.update(0)  //   // `update()` commented out during init-build split
 
 
-            // Automatically assign background color base on the parent (if there is one)
+            // Automatically assign background color based on the parent (if there is one)
             this._bgFill = this.has.parentPanel
                 ? this.objectToSpawnFrom.fill()
                 : this._defaults.bgFill
