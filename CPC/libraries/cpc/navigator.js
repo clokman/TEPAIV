@@ -2984,6 +2984,19 @@
         }
 
 
+        getEquivalentCategoryObjectInLeftPanel(chartId, categoryId ){
+
+            const equivalentObjectOnLeftPanel = this.has.beenAddedAsSibling && this.has.parentPanel  // Note: The first siblings in a panel are NOT added as a sibling. So if this method is ran on a first sibling, then the parent of the first sibling will be queried.
+                ? this._leftSiblingObject.objects(chartId).objects(categoryId)  // if this has sibling on left
+                : this.has.parentPanel
+                    ? this.parentPanel.objects(chartId).objects(categoryId)  // if this is a singleton child
+                    : null  // if panelZero is being queried
+
+            return equivalentObjectOnLeftPanel
+
+        }
+
+
     }
 
 

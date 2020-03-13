@@ -2235,6 +2235,67 @@ describe ('Ancestry Inferences: Parent child relationships should be inferred co
     })
 
 
+    
+    //// Equivalent Category Object in Left Panel ///////////////////////////////////////////////////////////////
+    
+    describe ('Equivalent Category Object in Left Panel', () => {
+
+        test ('Should get the Category object with the same name in PARENT panel', () => {
+
+            const {panelZero, childPanel} =  initializeDomWith.panelZero.and.child()
+
+            const survivorsCategoryObjectInParentPanel = panelZero.objects('status').objects('survived')
+
+
+            const retrievedSurvivorsCategoryObjectFromThePanelOnTheLeftOfChildPanel = childPanel.getEquivalentCategoryObjectInLeftPanel( 'status', 'survived' )
+            expect( retrievedSurvivorsCategoryObjectFromThePanelOnTheLeftOfChildPanel ).toEqual( survivorsCategoryObjectInParentPanel )
+
+        })
+
+
+        test ('Should get the Category object with the same name in SIBLING panel', () => {
+
+            const {panelZero, siblingPanel1, siblingPanel2, siblingPanel3} =  initializeDomWith.panelZero.and.threeSiblingChildren()
+
+            const survivorsCategoryObjectInSibling1 = siblingPanel1.objects('status').objects('survived')
+                , survivorsCategoryObjectInSibling2 = siblingPanel2.objects('status').objects('survived')
+
+            const retrievedSurvivorsCategoryObjectFromThePanelOnTheLeftOfSibling3 = siblingPanel3.getEquivalentCategoryObjectInLeftPanel( 'status', 'survived' )
+                , retrievedSurvivorsCategoryObjectFromThePanelOnTheLeftOfSibling2 = siblingPanel2.getEquivalentCategoryObjectInLeftPanel( 'status', 'survived' )
+
+            expect( retrievedSurvivorsCategoryObjectFromThePanelOnTheLeftOfSibling3 ).toEqual( survivorsCategoryObjectInSibling2 )
+            expect( retrievedSurvivorsCategoryObjectFromThePanelOnTheLeftOfSibling2 ).toEqual( survivorsCategoryObjectInSibling1 )
+
+        })
+
+
+        test ('If panelZero is queried for categories on the left side, a `null` value should be returned', () => {
+
+            const panelZero =  initializeDomWith.panelZero()
+
+            const retrievedSurvivorsCategoryObjectFromThePanelOnTheLeftOfPanelZero = panelZero.getEquivalentCategoryObjectInLeftPanel( 'status', 'survived' );
+            expect( retrievedSurvivorsCategoryObjectFromThePanelOnTheLeftOfPanelZero ).toBeNull()
+
+        })
+
+
+        test ('If the leftmost sibling is queried, the equivalent Category in parent panel should be returned' , () => {
+
+            const {panelZero, siblingPanel1, siblingPanel2, siblingPanel3} =  initializeDomWith.panelZero.and.threeSiblingChildren()
+
+            const survivorsCategoryObjectInParentPanel = panelZero.objects('status').objects('survived')
+
+            const retrievedSurvivorsCategoryObjectFromThePanelOnTheLeftSideOfSibling1 = siblingPanel1.getEquivalentCategoryObjectInLeftPanel( 'status', 'survived' )
+
+            expect( retrievedSurvivorsCategoryObjectFromThePanelOnTheLeftSideOfSibling1 ).toEqual( survivorsCategoryObjectInParentPanel )
+
+        })
+
+
+    })
+    
+
+
 })
 
 
