@@ -105,6 +105,16 @@ describe ('Instantiate', () => {
 
 
 
+//// Update ///////////////////////////////////////////////////////////////
+
+describe ('update()', () => {
+
+// TODO: TEST WRITTEN FOR UPDATE METHOD
+
+})
+
+
+
 //// Select ///////////////////////////////////////////////////////////////
 
 describe ('select()', () => {
@@ -166,16 +176,6 @@ describe ('remove()', () => {
 
     })
 
-
-})
-
-
-
-//// Update ///////////////////////////////////////////////////////////////
-
-describe ('update()', () => {
-
-// TODO: TEST WRITTEN FOR UPDATE METHOD
 
 })
 
