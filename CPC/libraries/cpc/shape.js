@@ -783,11 +783,59 @@
         }
 
 
-
-
     }
 
 
+    let polygonCounter = 0  // for assigning unique default polygon Ids
+
+    class Polygon extends Shape {
+
+        constructor( parentContainerSelection=d3.select('body').select('svg') ) {
+
+            // Superclass Init //
+            super( parentContainerSelection )
+            this.id(`polygon-${rectangleCounter}`)
+            polygonCounter++
+
+            this._points = "0,100 200,0 200,200 0,200"
+
+        }
+
+        build(){
+
+            this._selection = this._parentContainerSelection
+                .selectAll('polygon' + ' ' + this._htmlIdSelector)
+                // .select(this._htmlIdSelector)
+                .data(this._data)
+                .enter()
+                .append('polygon')
+
+            this.update(0)
+
+        }
+
+        update(transitionDuration=500){
+
+            this._selection
+                .transition().duration(transitionDuration)
+                .attr('class', this._htmlClass)
+                .attr('id', this._htmlId)
+                .attr('fill', this._fill)
+                .attr("points", this.points() )
+                .attr("stroke-width", this.strokeWidth() )
+                .attr("stroke", this.strokeColor() )
+
+        }
+
+
+
+        // Getter/setter methods
+        points(value){ return !!arguments.length ? (value.mustBeOfType('String'), this._points = value, this) : this._points }
+
+        x(){ console.warn('`Polygon.x()` method was called but this method has no effect on polygons. `Polygon.points()` method should be used instead.'); if(!!arguments.length){return this} }
+        y(){ console.warn('`Polygon.y()` method was called but this method has no effect on polygons. `Polygon.points()` method should be used instead.'); if(!!arguments.length){return this} }
+
+    }
 
 //// UMD FOOT ////////////////////////////////////////////////////////////////////////
 
@@ -797,6 +845,7 @@
     exports.Rectangle = Rectangle;
     exports.Text = Text;
     exports.CaptionedRectangle = CaptionedRectangle;
+    exports.Polygon = Polygon;
 
 
     Object.defineProperty(exports, '__esModule', { value: true });
