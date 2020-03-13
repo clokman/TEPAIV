@@ -847,12 +847,13 @@
 
             this._selection
                 .transition().duration(transitionDuration)
-                .attr('class', this._htmlClass)
-                .attr('id', this._htmlId)
-                .attr('fill', this._fill)
-                .attr("points", this.points() )
-                .attr("stroke-width", this.strokeWidth() )
-                .attr("stroke", this.strokeColor() )
+                .attr( 'class', this._htmlClass )
+                .attr( 'id', this._htmlId )
+                .attr( 'fill', this._fill )
+                .attr( 'points', this.points() )
+                .attr( 'stroke-width', this.strokeWidth() )
+                .attr( 'stroke', this.strokeColor() )
+                .attr( 'visibility', this.visibility() )
 
         }
 
