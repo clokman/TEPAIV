@@ -37,7 +37,7 @@ global.container = require("../../container")
 global.shape = require("../../shape")
 global.stringUtils = require("../../../utils/stringUtils")
 global.domUtils = require("../../../utils/domUtils")
-global.domUtils = require("../../../utils/errorUtils")
+global.errorUtils = require("../../../utils/errorUtils")
 global.data = require("../../../cpc/data")
 
 
