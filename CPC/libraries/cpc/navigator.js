@@ -3788,6 +3788,14 @@
         }
 
 
+        update(transitionDuration=500){
+
+            super.update(transitionDuration)
+
+            return this
+
+        }
+
         x(value) {
 
             // Getter
