@@ -146,6 +146,7 @@
     let rectangleCounter = 0  // for assigning unique default rectangle Ids
 
     class Rectangle extends Shape {
+
         /*
         param svg {SvgCanvas}
          */
@@ -224,6 +225,34 @@
 
                 return this
             }
+        }
+
+
+        upperLeftCorner(){
+            const x = this.x()
+            const y = this.y()
+            return [x, y]
+        }
+
+
+        upperRightCorner(){
+            const x = this.x() + this.width()
+            const y = this.y()
+            return [x, y]
+        }
+
+
+        bottomLeftCorner(){
+            const x = this.x()
+            const y = this.y() + this.height()
+            return [x, y]
+        }
+
+
+        bottomRightCorner(){
+            const x = this.x() + this.width()
+            const y = this.y() + this.height()
+            return [x, y]
         }
 
     }

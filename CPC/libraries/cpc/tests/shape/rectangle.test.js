@@ -227,6 +227,27 @@ describe ('x() and y() ', () => {
 
 
 
+
+//// Location Inferences ///////////////////////////////////////////////////////////////
+
+describe ('Location Inferences', () => {
+
+        test ('Rectangle should report the coordinates of its four corners', () => {
+            
+            initializeDomWithSvg()
+            const myRectangle = new shape.Rectangle()
+            
+            expect( myRectangle.upperLeftCorner() ).toEqual(  [0, 0] )
+            expect( myRectangle.upperRightCorner() ).toEqual( [50, 0] )
+
+            expect( myRectangle.bottomLeftCorner() ).toEqual( [0, 50] )
+            expect( myRectangle.bottomRightCorner() ).toEqual( [50, 50] )
+
+
+        })
+
+})
+
 //// Width and Height ///////////////////////////////////////////////////////////////
 
 describe ('width() and height(): ', () => {
