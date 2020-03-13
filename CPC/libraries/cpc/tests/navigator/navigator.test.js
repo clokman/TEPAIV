@@ -439,10 +439,13 @@ describe ('Position and Dimensions', () => {
         jest.runAllTimers()
 
         // Set new values AFTER build is completed
-        myNavigator.x( 225 )
-        myNavigator.y( 50 )
-        myNavigator.width( 200 )
-        myNavigator.height( 500 )
+        myNavigator
+            .x( 225 )
+            .y( 50 )
+            .width( 200 )
+            .height( 500 )
+            .update(0)
+
 
         // Check new values in Navigator instance
         expect( myNavigator.x() ).toBe( 225 )
