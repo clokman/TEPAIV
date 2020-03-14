@@ -3800,7 +3800,7 @@
 
             this._showLeftConnectorPolygon = false
 
-            this._createPolygon()
+            this._createLeftPolygon()
 
             this.class('category')
                 .update()
@@ -3808,34 +3808,46 @@
         }
 
 
-        _createPolygon(){
-
-            // The right corners of polygon attach to the left corners of the rectangle
-            const topLeftCornerOfRectangle = this.objects('rectangle').topLeftCorner()
-                , bottomLeftCornerOfRectangle = this.objects('rectangle').bottomLeftCorner()
-
-            // The left corners of polygon are given placeholder locations with an arbitrary offset
-            const placeholderLocationForTopLeftCornerOfPolygon = this.objects('rectangle').topLeftCorner().map( (coordinate) => coordinate - 10)
-                , placeholderLocationForBottomLeftCornerOfPolygon = this.objects('rectangle').bottomLeftCorner().map( (coordinate) => coordinate - 10)
-
-            const topLeftCornerOfPolygon = placeholderLocationForTopLeftCornerOfPolygon
-                , topRightCornerOfPolygon = topLeftCornerOfRectangle
-                , bottomRightCornerOfPolygon = bottomLeftCornerOfRectangle
-                , bottomLeftCornerOfPolygon = placeholderLocationForBottomLeftCornerOfPolygon
-
-            const polygonPoints = [
-                topLeftCornerOfPolygon,
-                topRightCornerOfPolygon,
-                bottomRightCornerOfPolygon,
-                bottomLeftCornerOfPolygon
-            ]
+        _createLeftPolygon(){
 
             const polygonObject = new shape.Polygon()
-            polygonObject.points( ...polygonPoints )
-                .visibility( 'hidden' )
+            this.objects().set('polygon', polygonObject)
+
+            this._adjustLeftPolygon()
+
             polygonObject.build()
 
-            this.objects().set('polygon', polygonObject)
+        }
+
+
+        _adjustLeftPolygon(){
+
+            const polygonPoints = calculatePolygonPoints.call(this)
+
+            this.objects('polygon')
+                .points( ...polygonPoints )
+                .visibility( this.showLeftConnectorPolygon() ? 'visible' : 'hidden' )
+
+
+
+            function calculatePolygonPoints() {
+
+                // The right corners of polygon attach to the left corners of the rectangle
+                const topLeftCornerOfRectangle = this.objects('rectangle').topLeftCorner()
+                    , bottomLeftCornerOfRectangle = this.objects('rectangle').bottomLeftCorner()
+
+                // The left corners of polygon are given placeholder locations with an arbitrary offset
+                const placeholderLocationForTopLeftCornerOfPolygon = this.objects('rectangle').topLeftCorner().map((coordinate) => coordinate - 10)
+                    , placeholderLocationForBottomLeftCornerOfPolygon = this.objects('rectangle').bottomLeftCorner().map((coordinate) => coordinate - 10)
+
+                const polygonPoints = [
+                    placeholderLocationForTopLeftCornerOfPolygon,  // topLeftCornerOfPolygon
+                    topLeftCornerOfRectangle,  // topRightCornerOfPolygon
+                    bottomLeftCornerOfRectangle,  // bottomRightCornerOfPolygon
+                    placeholderLocationForBottomLeftCornerOfPolygon  // bottomLeftCornerOfPolygon
+                ]
+                return polygonPoints
+            }
 
         }
 
