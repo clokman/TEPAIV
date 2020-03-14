@@ -650,10 +650,23 @@ describe ('Connector polygons', () => {
         expect( topRightCornerOfPolygon ).toEqual( topLeftCornerOfRectangle )
         expect( bottomRightCornerOfPolygon ).toEqual( bottomLeftCornerOfRectangle )
 
-        jestDom.writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/poly.html')
-
     })
 
+    test ('Polygon fill and stroke colors should follow the properties of the category', () => {
+
+        initializeDomWithSvg()
+        // Create category
+        const myCategory = new navigator.Category()
+
+        // Initial colors should match
+        const myPolygon = myCategory.objects('polygon')
+        expect( myPolygon.fill() ).toBe( myCategory.fill() )
+
+        // Colors should match after a new color is given to category
+        myCategory.fill('salmon').update()
+        expect( myPolygon.fill() ).toBe( myCategory.fill() )
+
+    })
 
 
 

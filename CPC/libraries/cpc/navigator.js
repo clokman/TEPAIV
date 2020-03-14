@@ -3939,6 +3939,26 @@
         }
 
 
+        fill(value) {
+        
+            // Getter
+            if (!arguments.length){
+                return super.fill()
+            }
+        
+            // Setter
+            else{
+
+                super.fill(value)
+
+                // Update polygon object
+                this.objects('polygon').fill( this.fill() )
+
+                return this
+            }
+            
+        }
+
         showPolygon(value) {
 
             // Getter
