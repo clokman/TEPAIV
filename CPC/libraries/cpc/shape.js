@@ -591,6 +591,8 @@
                 this._textObject.update(transitionDuration)
             }
 
+            return this
+
         }
 
 
