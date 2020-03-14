@@ -313,7 +313,7 @@ describe ('fill()', () => {
 
 //// Stroke Color ///////////////////////////////////////////////////////////////
 
-describe ('strokeColor() ', () => {
+describe ('stroke() ', () => {
 
     test('Get: Get stroke color', () => {
 
@@ -321,7 +321,7 @@ describe ('strokeColor() ', () => {
 
         const myRectangle = new shape.Rectangle()
 
-        expect( myRectangle.strokeColor() ).toBe( 'rgba(0, 0, 0, 0.0)' )
+        expect( myRectangle.stroke() ).toBe( 'rgba(0, 0, 0, 0.0)' )
 
     })
 
@@ -333,13 +333,13 @@ describe ('strokeColor() ', () => {
         const myRectangle = new shape.Rectangle()
 
         // Ensure that the default color is different than this example value
-        expect( myRectangle.strokeColor() ).not.toBe( 'rgba(0, 175, 255, .8)' )
+        expect( myRectangle.stroke() ).not.toBe( 'rgba(0, 175, 255, .8)' )
 
         // Change stroke color
-        myRectangle.strokeColor('rgba(0, 175, 255, .8)')
+        myRectangle.stroke('rgba(0, 175, 255, .8)')
 
         // Confirm change in object
-        expect( myRectangle.strokeColor() ).toBe( 'rgba(0, 175, 255, .8)' )
+        expect( myRectangle.stroke() ).toBe( 'rgba(0, 175, 255, .8)' )
 
         // Confirm change on DOM
         myRectangle.id('my-rectangle').update()

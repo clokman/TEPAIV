@@ -134,14 +134,14 @@ describe ('Points', () => {
             
 
             // Chain methods should be possible
-            expect( myPolygon.strokeColor() ).not.toBe('salmon')
+            expect( myPolygon.stroke() ).not.toBe('salmon')
 
             const objectReturned = myPolygon.points("0,10 20,0")
             expect( objectReturned.constructor.name ).toBe( "Polygon" )
             myPolygon
                 .points("0,10 20,0")
-                .strokeColor('salmon')
-            expect( myPolygon.strokeColor() ).toBe( 'salmon' )
+                .stroke('salmon')
+            expect( myPolygon.stroke() ).toBe( 'salmon' )
             
 
         })
@@ -182,7 +182,7 @@ describe ('fill()', () => {
 
 //// Stroke Color ///////////////////////////////////////////////////////////////
 
-describe ('strokeColor() ', () => {
+describe ('stroke() ', () => {
 
     test('Get: Get stroke color', () => {
 
@@ -191,7 +191,7 @@ describe ('strokeColor() ', () => {
         const myPolygon = new shape.Polygon()
         myPolygon.build()
 
-        expect( myPolygon.strokeColor() ).toBe( 'rgba(0, 0, 0, 0.0)' )
+        expect( myPolygon.stroke() ).toBe( 'rgba(0, 0, 0, 0.0)' )
 
     })
 
@@ -204,13 +204,13 @@ describe ('strokeColor() ', () => {
         myPolygon.build()
 
         // Ensure that the default color is different than this example value
-        expect( myPolygon.strokeColor() ).not.toBe( 'rgba(0, 175, 255, .8)' )
+        expect( myPolygon.stroke() ).not.toBe( 'rgba(0, 175, 255, .8)' )
 
         // Change stroke color
-        myPolygon.strokeColor('rgba(0, 175, 255, .8)')
+        myPolygon.stroke('rgba(0, 175, 255, .8)')
 
         // Confirm change in object
-        expect( myPolygon.strokeColor() ).toBe( 'rgba(0, 175, 255, .8)' )
+        expect( myPolygon.stroke() ).toBe( 'rgba(0, 175, 255, .8)' )
 
         // Confirm change on DOM
         myPolygon.id('my-polygon').update()

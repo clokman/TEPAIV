@@ -1015,22 +1015,22 @@ describe ('Stroke Properties ', () => {
 
             // Get default values
             expect( myNavigator.strokeWidth() ).toBe( '0.5px' )
-            expect( myNavigator.strokeColor() ).toBe( 'rgba(255, 255, 255, 1.0)' )
+            expect( myNavigator.stroke() ).toBe( 'rgba(255, 255, 255, 1.0)' )
 
             // Set new values
             myNavigator
                 .strokeWidth('4px')
-                .strokeColor('red')
+                .stroke('red')
                 .update()
 
             // Confirm new values
             expect( myNavigator.strokeWidth() ).toBe( '4px' )
-            expect( myNavigator.strokeColor() ).toBe( 'red' )
+            expect( myNavigator.stroke() ).toBe( 'red' )
 
 
             const panel0_0 = myNavigator.objects('panel-0-0')
             expect( panel0_0.strokeWidth() ).toBe( '4px' )
-            expect( panel0_0.strokeColor() ).toBe( 'red' )
+            expect( panel0_0.stroke() ).toBe( 'red' )
 
 
         })

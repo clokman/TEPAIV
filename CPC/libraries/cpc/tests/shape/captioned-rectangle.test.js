@@ -238,15 +238,15 @@ describe ('Getters and setters ', () => {
         // STROKECOLOR () //
 
         // Verify initial values (get)
-        expect(myCaptionedRectangle.strokeColor()).toBe('rgba(0, 0, 0, 0.0)')
+        expect(myCaptionedRectangle.stroke()).toBe('rgba(0, 0, 0, 0.0)')
         expect(rectangleElementOfCaptionedRectangle.getAttribute('stroke')).toBe('rgba(0, 0, 0, 0.0)')
 
         // Set new value (set)
-        myCaptionedRectangle.strokeColor('salmon').update()
+        myCaptionedRectangle.stroke('salmon').update()
 
         // Verify new values
         // Object
-        expect(myCaptionedRectangle.strokeColor()).toBe('salmon')
+        expect(myCaptionedRectangle.stroke()).toBe('salmon')
         // Elements
         expect(rectangleElementOfCaptionedRectangle.getAttribute('stroke')).toBe('salmon')
 

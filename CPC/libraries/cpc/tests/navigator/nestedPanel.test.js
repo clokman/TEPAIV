@@ -2540,7 +2540,7 @@ describe ('Stroke', () => {
         // GET //
 
         expect( panel0.strokeWidth() ).toBe( '0.5px' )
-        expect( panel0.strokeColor() ).toBe( 'rgba(255, 255, 255, 1.0)' )
+        expect( panel0.stroke() ).toBe( 'rgba(255, 255, 255, 1.0)' )
 
         const {strokeWidths:defaultStrokeWidths, strokeColors:defaultStrokeColors} = getStrokeWidthsAndColors(panel0)
 
@@ -2567,9 +2567,9 @@ describe ('Stroke', () => {
         // SET //
 
         panel0.strokeWidth('4px')
-        panel0.strokeColor('black')
+        panel0.stroke('black')
         expect( panel0.strokeWidth() ).toBe( '4px' )
-        expect( panel0.strokeColor() ).toBe( 'black' )
+        expect( panel0.stroke() ).toBe( 'black' )
 
 
         panel0.update()
@@ -2604,16 +2604,16 @@ describe ('Stroke', () => {
 
         // Check default values
         expect( panel0_0.strokeWidth() ).toBe( '0.5px' )
-        expect( panel0_0.strokeColor() ).toBe( 'rgba(255, 255, 255, 1.0)' )
+        expect( panel0_0.stroke() ).toBe( 'rgba(255, 255, 255, 1.0)' )
 
 
         // Change values
         panel0_0.strokeWidth( '4px' )
-        panel0_0.strokeColor( 'red' )
+        panel0_0.stroke( 'red' )
 
         // Verify the change
         expect( panel0_0.strokeWidth() ).toBe( '4px' )
-        expect( panel0_0.strokeColor() ).toBe( 'red' )
+        expect( panel0_0.stroke() ).toBe( 'red' )
 
 
         // Add child panel
@@ -2623,7 +2623,7 @@ describe ('Stroke', () => {
 
         // Confirm that child's values are the same with parent
         expect( panel1_0.strokeWidth() ).toBe( '4px' )
-        expect( panel1_0.strokeColor() ).toBe( 'red' )
+        expect( panel1_0.stroke() ).toBe( 'red' )
 
 
     })
@@ -2643,7 +2643,7 @@ describe ('Stroke', () => {
         // Change values
         panelZero
             .strokeWidth('4px')
-            .strokeColor('red')
+            .stroke('red')
             .update(0)
 
         // Confirm changes
@@ -2664,7 +2664,7 @@ describe ('Stroke', () => {
         arrayOfPanelObjects.forEach( (panelObject) => {
 
             const backgroundStokeWidth = panelObject._backgroundObject.strokeWidth()
-            const backgroundStokeColor = panelObject._backgroundObject.strokeColor()
+            const backgroundStokeColor = panelObject._backgroundObject.stroke()
 
             bgStrokeWidths.push(backgroundStokeWidth)
             bgStokeColors.push(backgroundStokeColor)
@@ -2750,7 +2750,7 @@ function getStrokeWidthsAndColors(panel0) {
 
         strokeColors.set(chartName, [])
             .get(chartName)
-            .push(chartObject.strokeColor())
+            .push(chartObject.stroke())
     })
     return {strokeWidths, strokeColors}
 }

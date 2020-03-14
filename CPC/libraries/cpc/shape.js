@@ -28,7 +28,7 @@
             this._y = 0
             this._fill = 'gray'
             this._strokeWidth = '1px'
-            this._strokeColor = 'rgba(0, 0, 0, 0.0)'
+            this._stroke = 'rgba(0, 0, 0, 0.0)'
             this._visibility = 'visible'
             this._htmlClass = null
             this._htmlId = null
@@ -57,11 +57,11 @@
         }
 
 
-        strokeColor(value){
+        stroke(value){
             if (!arguments.length) {
-                return this._strokeColor
+                return this._stroke
             } else {
-                this._strokeColor = value
+                this._stroke = value
                 return this
             }
         }
@@ -197,7 +197,7 @@
             this._selection
                 .transition().duration(transitionDuration)
                 .attr('fill', this._fill)
-                .attr('stroke', this._strokeColor)
+                .attr('stroke', this._stroke)
                 .attr('stroke-width', this._strokeWidth)
                 .attr('visibility', this._visibility)
                 .attr('x', this._x)
@@ -688,12 +688,12 @@
         }
 
 
-        strokeColor(value){
+        stroke(value){
             if (!arguments.length) {
-                return this._rectangleObject.strokeColor()
+                return this._rectangleObject.stroke()
             }
             else {
-                this._rectangleObject.strokeColor(value)
+                this._rectangleObject.stroke(value)
                 return this
             }
         }
@@ -860,7 +860,7 @@
                 .attr( 'fill', this._fill )
                 .attr( 'points', this.points() )
                 .attr( 'stroke-width', this.strokeWidth() )
-                .attr( 'stroke', this.strokeColor() )
+                .attr( 'stroke', this.stroke() )
                 .attr( 'visibility', this.visibility() )
 
         }

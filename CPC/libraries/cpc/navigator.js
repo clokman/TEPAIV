@@ -58,7 +58,7 @@
             this._showAbsoluteChartWidths = false
             this._animationDuration = 600
             this._strokeWidth = '0.5px'
-            this._strokeColor = 'rgba(255, 255, 255, 1.0)'
+            this._stroke = 'rgba(255, 255, 255, 1.0)'
 
             this._currentPanelDepth = -1  // `-1`, so that the first panel can be labeled as `panel-0`
 
@@ -385,7 +385,7 @@
                     .colorSet( this.colorSet() )
                     .animationDuration( this.animationDuration() )
                     .strokeWidth( this.strokeWidth() )
-                    .strokeColor( this.strokeColor() )
+                    .stroke( this.stroke() )
             }
 
 
@@ -648,13 +648,13 @@
             }
         }
 
-        strokeColor(value){
+        stroke(value){
 
             if (!arguments.length) {
-                return this._strokeColor
+                return this._stroke
             }
             else {
-                this._strokeColor = value
+                this._stroke = value
                 return this
             }
         }
@@ -784,7 +784,7 @@
                 bgFill: 'lightgray',
 
                 strokeWidth: '0.5px',
-                strokeColor: 'rgba(255, 255, 255, 1.0)'
+                stroke: 'rgba(255, 255, 255, 1.0)'
 
             }
 
@@ -797,7 +797,7 @@
             this._backgroundObject = null
 
             this._strokeWidth = this._defaults.strokeWidth
-            this._strokeColor = this._defaults.strokeColor
+            this._stroke = this._defaults.stroke
 
             this._yAxisLabelsAreVisible = false
 
@@ -944,7 +944,7 @@
                         .height( this._chartHeights() )
                         .colorScheme( currentColorScheme )
                         .strokeWidth( this._strokeWidth )
-                        .strokeColor( this._strokeColor )
+                        .stroke( this._stroke )
 
                     i++
 
@@ -988,7 +988,7 @@
                 .text( this._bgText )
                 .textFill( this._bgTextFill )
                 .strokeWidth( this.strokeWidth() )
-                .strokeColor ( this.strokeColor() )
+                .stroke ( this.stroke() )
 
         }
 
@@ -1513,13 +1513,13 @@
             }
         }
 
-        strokeColor(value){
+        stroke(value){
 
             if (!arguments.length) {
-                return this._strokeColor
+                return this._stroke
             }
             else {
-                this._strokeColor = value
+                this._stroke = value
                 return this
             }
         }
@@ -1874,7 +1874,7 @@
                         .showAbsoluteChartWidths( this.showAbsoluteChartWidths() )
                         .colorSet( this.colorSet() )
                         .strokeWidth( this.strokeWidth() )
-                        .strokeColor( this.strokeColor() )
+                        .stroke( this.stroke() )
 
 
                     // Set absolute chart widths if necessary
@@ -3061,7 +3061,7 @@
             this._colorScale = null  // Dynamically populated by .colorScheme()
             this._showAbsoluteValues = false
             this._showConnectorPolygons = false
-            this._strokeColor = 'rgba(255, 255, 255, 1.0)'
+            this._stroke = 'rgba(255, 255, 255, 1.0)'
             this._strokeWidth = '0.5px'
 
             // Private variables //
@@ -3247,7 +3247,7 @@
                         .y(end)
                         .height(start - end)
                         .width(this._width)
-                        .strokeColor(this._strokeColor)
+                        .stroke(this._stroke)
                         .strokeWidth(this._strokeWidth)
                         .id(eachCategoryId)
                         .showLeftConnectorPolygon( this.showConnectorPolygons() )
@@ -3751,12 +3751,12 @@
 
         showConnectorPolygons(value){ return !arguments.length ? this._showConnectorPolygons : ( value.mustBeOfType('Boolean'), this._showConnectorPolygons = value, this ) }
 
-        strokeColor(value){
+        stroke(value){
             if (!arguments.length) {
-                return this._strokeColor
+                return this._stroke
             }
             else {
-                this._strokeColor = value
+                this._stroke = value
                 return this
             }
         }

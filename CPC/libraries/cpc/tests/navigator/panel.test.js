@@ -1569,7 +1569,7 @@ describe ('Stroke', () => {
             // GET //
 
             expect( panel0.strokeWidth() ).toBe( '0.5px' )
-            expect( panel0.strokeColor() ).toBe( 'rgba(255, 255, 255, 1.0)' )
+            expect( panel0.stroke() ).toBe( 'rgba(255, 255, 255, 1.0)' )
 
             const {strokeWidths:defaultStrokeWidths, strokeColors:defaultStrokeColors} = getStrokeWidthsAndColors(panel0)
 
@@ -1596,9 +1596,9 @@ describe ('Stroke', () => {
             // SET //
 
             panel0.strokeWidth('4px')
-            panel0.strokeColor('black')
+            panel0.stroke('black')
             expect( panel0.strokeWidth() ).toBe( '4px' )
-            expect( panel0.strokeColor() ).toBe( 'black' )
+            expect( panel0.stroke() ).toBe( 'black' )
 
 
             panel0.update()
@@ -1645,7 +1645,7 @@ function getStrokeWidthsAndColors(panel0) {
 
         strokeColors.set(chartName, [])
             .get(chartName)
-            .push(chartObject.strokeColor())
+            .push(chartObject.stroke())
     })
     return {strokeWidths, strokeColors}
 }

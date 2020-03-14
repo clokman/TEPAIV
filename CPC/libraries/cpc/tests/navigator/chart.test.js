@@ -494,7 +494,7 @@ describe ('Stroke Width and Color', () => {
             const myChart = new navigator.Chart()
 
             expect( myChart.strokeWidth() ).toBe( "0.5px" )
-            expect( myChart.strokeColor() ).toBe( "rgba(255, 255, 255, 1.0)" )
+            expect( myChart.stroke() ).toBe( "rgba(255, 255, 255, 1.0)" )
 
         })
 
@@ -506,15 +506,15 @@ describe ('Stroke Width and Color', () => {
             const myChart = new navigator.Chart()
 
             expect( myChart.strokeWidth() ).not.toBe( "4px" )
-            expect( myChart.strokeColor() ).not.toBe( "brick" )
+            expect( myChart.stroke() ).not.toBe( "brick" )
 
             myChart
                 .strokeWidth('4px')
-                .strokeColor('brick')
+                .stroke('brick')
                 .update()
 
             expect( myChart.strokeWidth() ).toBe( '4px' )
-            expect( myChart.strokeColor() ).toBe( 'brick' )
+            expect( myChart.stroke() ).toBe( 'brick' )
 
 
             // Check if changes are passed on to category objects
@@ -523,7 +523,7 @@ describe ('Stroke Width and Color', () => {
             myChart.objects().forEach( (chartObject, chartName) => {
                 
                 strokeWidthsOfCharts.push( chartObject.strokeWidth() )
-                strokeColorsOfCharts.push( chartObject.strokeColor() )
+                strokeColorsOfCharts.push( chartObject.stroke() )
                 
             })
 
