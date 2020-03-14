@@ -3060,6 +3060,7 @@
             this._colorScheme = 'Greys'  // TODO: Should be replaced with dynamic statement (e.g., this.colorScheme('Greys'))
             this._colorScale = null  // Dynamically populated by .colorScheme()
             this._showAbsoluteValues = false
+            this._showConnectorPolygons = false
             this._strokeColor = 'rgba(255, 255, 255, 1.0)'
             this._strokeWidth = '0.5px'
 
@@ -3249,6 +3250,7 @@
                         .strokeColor(this._strokeColor)
                         .strokeWidth(this._strokeWidth)
                         .id(eachCategoryId)
+                        .showConnectorPolygon( this.showConnectorPolygons() )
 
                     if ( this._showAbsoluteValues ) {
                         eachCategoryObject.text(count)
@@ -3746,6 +3748,8 @@
              }
 
         }
+
+        showConnectorPolygons(value){ return !arguments.length ? this._showConnectorPolygons : ( value.mustBeOfType('Boolean'), this._showConnectorPolygons = value, this ) }
 
         strokeColor(value){
             if (!arguments.length) {
