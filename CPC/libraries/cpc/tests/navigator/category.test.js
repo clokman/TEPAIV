@@ -597,8 +597,7 @@ describe ('Connector polygons', () => {
         const topRightCornerOfPolygon = polygonCoordinates[1]
         const bottomRightCornerOfPolygon = polygonCoordinates[2]
 
-        // TODO: .upperLeftCorner() method's name changed to .topLeftCorner()
-        const topLeftCornerOfRectangle = myCategory.objects('rectangle').upperLeftCorner().toString()
+        const topLeftCornerOfRectangle = myCategory.objects('rectangle').topLeftCorner().toString()
         const bottomLeftCornerOfRectangle = myCategory.objects('rectangle').bottomLeftCorner().toString()
         
         expect( topRightCornerOfPolygon ).toEqual( topLeftCornerOfRectangle )

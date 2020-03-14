@@ -237,7 +237,7 @@ describe ('Location Inferences', () => {
             initializeDomWithSvg()
             const myRectangle = new shape.Rectangle()
             
-            expect( myRectangle.upperLeftCorner() ).toEqual(  [0, 0] )
+            expect( myRectangle.topLeftCorner() ).toEqual(  [0, 0] )
             expect( myRectangle.upperRightCorner() ).toEqual( [50, 0] )
 
             expect( myRectangle.bottomLeftCorner() ).toEqual( [0, 50] )

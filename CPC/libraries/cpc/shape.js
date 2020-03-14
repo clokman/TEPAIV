@@ -234,7 +234,7 @@
         }
 
 
-        upperLeftCorner(){
+        topLeftCorner(){
             const x = this.x()
             const y = this.y()
             return [x, y]
