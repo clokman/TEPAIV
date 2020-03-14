@@ -58,271 +58,322 @@ const navigator = require("../../navigator")
 
 //// INSTANTIATE ///
 
-test ('Should instantiate object', () => {
 
-    const myChart = new navigator.Chart()
+//// Instantiation ///////////////////////////////////////////////////////////////
 
-    expect(myChart).toBeDefined()
-
-})
+describe ('Instantiation', () => {
 
 
-//// COORDINATES ///
+    test ('Should instantiate object', () => {
 
-test ('Should get and set coordinates', () => {
+        const myChart = new navigator.Chart()
 
-    const myChart = new navigator.Chart()
+        expect(myChart).toBeDefined()
 
-    //// SINGLE METHOD ///
-
-    // x()
-    expect(myChart.x(11).x()).toBe(11)
-    // y()
-    expect(myChart.y(22).y()).toBe(22)
-
-    // x().y()
-    myChart.x(33).y(44)
-    expect(myChart.x()).toBe(33)
-    expect(myChart.y()).toBe(44)
-
-    // y().x()
-    myChart.y(55).x(66)
-    expect(myChart.y()).toBe(55)
-    expect(myChart.x()).toBe(66)
-
-    // INTERACTION WITH OTHER HEIGHT-MODIFYING METHODS //
-
-    // Besides this._y, y() should also update related instance variables,
-    // such as this._rangeStart, and this._rangeEnd,
-    // as well as this._scaleFunction and this._rangeStack
-
-    myChart.range([300, 200])
-    const originalHeight = myChart.height()    // When y is updated, height should stay the same
-
-    myChart.y(0)
-    expect(myChart.y()).toBe(0)
-    expect(myChart.height()).toBe(originalHeight)   // When y is updated, height should stay the same
-    expect(myChart.range()).toEqual([100, 0])   // When y is updated, height should stay the same
-
-
-    // If y() is first, it should be overridden by a following function that also modifies height
-    myChart.y(300).range([100, 50])
-    expect(myChart.y()).toEqual(50)
-    expect(myChart.range()).toEqual([100, 50])
-
-
-    // y() should work with complex chains
-    myChart.y(200).height(100).range([900, 700]).width(150)
-    expect(myChart.height()).toBe(200)
-    expect(myChart.y()).toBe(700)
-    expect(myChart.range()).toEqual([900, 700])
-    expect(myChart.width()).toBe(150)
-
-    myChart.range([10, 0]).y(50)
-    expect(myChart.range()).toEqual([60, 50])
-    expect(myChart.height()).toBe(10)
-    expect(myChart.y()).toBe(50)
-
-    myChart.height(100).y(0)
-    expect(myChart.range()).toEqual([100,0])
-    expect(myChart.height()).toBe(100)
-    expect(myChart.y()).toBe(0)
-
-})
-
-
-//// WIDTH AND HEIGHT ///
-
-test ('Should get and set width and height correctly in single and chain syntax', () => {
-
-    const myChart = new navigator.Chart()
-
-    // SINGLE METHOD //
-
-    // Get
-    expect(myChart.width()).toBe(100)
-    expect(myChart._width).toBe(100)
-
-    expect(myChart.height()).toBe(300)
-    expect(myChart._height).toBe(300)
-
-
-    // Set (and then get to see what is set)
-    expect(myChart.width(100).width()).toBe(100)
-    expect(myChart._width).toBe(100)
-
-    expect(myChart.height(100).height()).toBe(100)
-    expect(myChart._height).toBe(100)
-
-
-
-    // CHAIN SYNTAX//
-
-    // width().height()
-    myChart.width(999).height(111)
-    expect(myChart.width()).toBe(999)
-    expect(myChart.height()).toBe(111)
-
-    // height().width()
-    myChart.height(555).width(444)
-    expect(myChart.width()).toBe(444)
-    expect(myChart.height()).toBe(555)
-
-
-    // INTERACTION WITH OTHER HEIGHT-MODIFYING METHODS //
-
-    // Besides this._height, height() should also update related instance variables, such as this._rangeEnd
-    myChart.range([400, 0]).height(100)
-    expect(myChart.range()).toEqual([100, 0])
-
-    // If height() is first, it should be overridden by a following function that also modifies height
-    myChart.height(200).range([500, 0])
-    expect(myChart.height()).toBe(500)
-    expect(myChart.range()).toEqual([500, 0])
-
-})
-
-
-//// DOMAIN AND RANGE ///
-
-test ('Should get and set domain correctly in single and chain syntax', () => {
-
-    const myChart = new navigator.Chart()
-
-    // SINGLE METHOD //
-
-    // Get range
-    expect(myChart.range()).toEqual([325, 25])
-
-    expect(myChart._rangeStack.data().get('category-1').get('start'))
-        .toEqual(325)
-
-    // Set Range
-    myChart.range([100, 0])
-    expect(myChart.range()).toEqual([100, 0])
-    expect(myChart._rangeStart).toBe(100)
-    expect(myChart._rangeEnd).toBe(0)
-
-
-
-    // REVERSED COORDINATES AS INPUT //
-
-    // Coordinates in correct order
-    myChart.range([100, 50])
-    expect(myChart.range()).toEqual([100, 50])
-
-    // Coordinates in reversed order; this input should still lead to same result
-    myChart.range([50, 100])
-    expect(myChart.range()).toEqual([100, 50])
-
-
-
-    // INTERACTION WITH OTHER RANGE-MODIFYING METHODS //
-
-    // Besides this._rangeStart and this._rangeEnd, range() should also update related instance variables, such as this._height
-    myChart.range([400, 0])
-    expect(myChart.height()).toBe(400)
-    expect(myChart.y()).toBe(0)
-
-    myChart.range([300, 100])
-    expect(myChart.height()).toBe(200)
-    expect(myChart.y()).toBe(100)
-
-
-    // If range() is first, it should be overridden by a following function that also modifies height
-    myChart.range([400, 0]).height(100)
-    expect(myChart.range()).toEqual([100, 0])
+    })
 
 
 })
 
 
-//// DATA ////
 
 
-test ('Should get stack data', () => {
+//// Coordinates ///////////////////////////////////////////////////////////////
 
-    const myChart = new navigator.Chart()
-
-    expect(myChart.stack().data().size).toBe(3)
-
-})
+describe ('Coordinates', () => {
 
 
-test ('Should query the stack data', () => {
+    test ('Should get and set coordinates', () => {
 
-    const myChart = new navigator.Chart()
+        const myChart = new navigator.Chart()
 
-    // Get first, query later manually
-    expect(myChart.stack().data().get('category-1').get('label'))
-        .toBe('Category One')
+        //// SINGLE METHOD ///
 
-    // Directly query by giving a parameter to to method
-    expect(myChart.stack('category-1').get('label'))
-        .toBe('Category One')
+        // x()
+        expect(myChart.x(11).x()).toBe(11)
+        // y()
+        expect(myChart.y(22).y()).toBe(22)
 
+        // x().y()
+        myChart.x(33).y(44)
+        expect(myChart.x()).toBe(33)
+        expect(myChart.y()).toBe(44)
 
-})
+        // y().x()
+        myChart.y(55).x(66)
+        expect(myChart.y()).toBe(55)
+        expect(myChart.x()).toBe(66)
 
+        // INTERACTION WITH OTHER HEIGHT-MODIFYING METHODS //
 
-//// UPDATE STACK DATA  ///////////////////////////////////////////////////////////////
+        // Besides this._y, y() should also update related instance variables,
+        // such as this._rangeStart, and this._rangeEnd,
+        // as well as this._scaleFunction and this._rangeStack
 
-test ('Should update stack data and also the related instance variables', () => {
+        myChart.range([300, 200])
+        const originalHeight = myChart.height()    // When y is updated, height should stay the same
 
-    const myChart = new navigator.Chart()
-
-    // Check original data
-    expect(myChart._domainStack.data('category-1').get('label'))
-        .toBe('Category One')
-    expect(myChart._rangeStack.data('category-1').get('label'))
-        .toBe('Category One')
-
-
-    // Update data in stack
-    const myStack = new data.Stack()
-    myStack.populateWithExampleData('gender')
-
-    myChart.stack(myStack)
-
-    // Probe to see if data is correctly updated
-    expect(myChart.stack().data().size).toBe(2)
-
-    expect(myChart.stack().data().get('female').get('label'))
-        .toBe('Female')
-    expect(myChart.stack('female').get('start'))
-        .toBe(64)
-    expect(myChart.stack('female').get('end'))
-        .toBe(100)
-
-    expect(myChart.stack('male').get('label'))
-        .toBe('Male')
-    expect(myChart.stack('male').get('start'))
-        .toBe(0)
-    expect(myChart.stack('male').get('end'))
-        .toBe(64)
+        myChart.y(0)
+        expect(myChart.y()).toBe(0)
+        expect(myChart.height()).toBe(originalHeight)   // When y is updated, height should stay the same
+        expect(myChart.range()).toEqual([100, 0])   // When y is updated, height should stay the same
 
 
-    // Do a manual check on the updated private stack variable in the instance
-    expect(myChart._domainStack.data().size).toBe(2)
-    expect(myChart._domainStack.data().get('female').get('label'))
-        .toBe('Female')
+        // If y() is first, it should be overridden by a following function that also modifies height
+        myChart.y(300).range([100, 50])
+        expect(myChart.y()).toEqual(50)
+        expect(myChart.range()).toEqual([100, 50])
 
-    // Check if domain min and domain max are updated
-    expect(myChart._domainMax).toBe(100)
-    expect(myChart._domainMin).toBe(0)
 
-    // Check if scale function is updated
-    expect(myChart._scaleFunction.domain()).toEqual([0,100])
+        // y() should work with complex chains
+        myChart.y(200).height(100).range([900, 700]).width(150)
+        expect(myChart.height()).toBe(200)
+        expect(myChart.y()).toBe(700)
+        expect(myChart.range()).toEqual([900, 700])
+        expect(myChart.width()).toBe(150)
 
-    // Check if range stack is updated
-    expect(myChart._rangeStack.data('female').get('label')).toBe('Female')
+        myChart.range([10, 0]).y(50)
+        expect(myChart.range()).toEqual([60, 50])
+        expect(myChart.height()).toBe(10)
+        expect(myChart.y()).toBe(50)
+
+        myChart.height(100).y(0)
+        expect(myChart.range()).toEqual([100,0])
+        expect(myChart.height()).toBe(100)
+        expect(myChart.y()).toBe(0)
+
+    })
 
 
 })
 
-//// ABSOLUTE VALUES ///////////////////////////////////////////////////////////////
 
-describe ('ABSOLUTE VALUES: Toggle absolute values', () => {
+
+
+//// Width and Height ///////////////////////////////////////////////////////////////
+
+describe ('Width and Height', () => {
+
+
+    test ('Should get and set width and height correctly in single and chain syntax', () => {
+
+        const myChart = new navigator.Chart()
+
+        // SINGLE METHOD //
+
+        // Get
+        expect(myChart.width()).toBe(100)
+        expect(myChart._width).toBe(100)
+
+        expect(myChart.height()).toBe(300)
+        expect(myChart._height).toBe(300)
+
+
+        // Set (and then get to see what is set)
+        expect(myChart.width(100).width()).toBe(100)
+        expect(myChart._width).toBe(100)
+
+        expect(myChart.height(100).height()).toBe(100)
+        expect(myChart._height).toBe(100)
+
+
+
+        // CHAIN SYNTAX//
+
+        // width().height()
+        myChart.width(999).height(111)
+        expect(myChart.width()).toBe(999)
+        expect(myChart.height()).toBe(111)
+
+        // height().width()
+        myChart.height(555).width(444)
+        expect(myChart.width()).toBe(444)
+        expect(myChart.height()).toBe(555)
+
+
+        // INTERACTION WITH OTHER HEIGHT-MODIFYING METHODS //
+
+        // Besides this._height, height() should also update related instance variables, such as this._rangeEnd
+        myChart.range([400, 0]).height(100)
+        expect(myChart.range()).toEqual([100, 0])
+
+        // If height() is first, it should be overridden by a following function that also modifies height
+        myChart.height(200).range([500, 0])
+        expect(myChart.height()).toBe(500)
+        expect(myChart.range()).toEqual([500, 0])
+
+    })
+
+
+})
+
+
+
+
+//// Domain and Range ///////////////////////////////////////////////////////////////
+
+describe ('Domain and Range', () => {
+
+
+    test ('Should get and set domain correctly in single and chain syntax', () => {
+
+        const myChart = new navigator.Chart()
+
+        // SINGLE METHOD //
+
+        // Get range
+        expect(myChart.range()).toEqual([325, 25])
+
+        expect(myChart._rangeStack.data().get('category-1').get('start'))
+            .toEqual(325)
+
+        // Set Range
+        myChart.range([100, 0])
+        expect(myChart.range()).toEqual([100, 0])
+        expect(myChart._rangeStart).toBe(100)
+        expect(myChart._rangeEnd).toBe(0)
+
+
+
+        // REVERSED COORDINATES AS INPUT //
+
+        // Coordinates in correct order
+        myChart.range([100, 50])
+        expect(myChart.range()).toEqual([100, 50])
+
+        // Coordinates in reversed order; this input should still lead to same result
+        myChart.range([50, 100])
+        expect(myChart.range()).toEqual([100, 50])
+
+
+
+        // INTERACTION WITH OTHER RANGE-MODIFYING METHODS //
+
+        // Besides this._rangeStart and this._rangeEnd, range() should also update related instance variables, such as this._height
+        myChart.range([400, 0])
+        expect(myChart.height()).toBe(400)
+        expect(myChart.y()).toBe(0)
+
+        myChart.range([300, 100])
+        expect(myChart.height()).toBe(200)
+        expect(myChart.y()).toBe(100)
+
+
+        // If range() is first, it should be overridden by a following function that also modifies height
+        myChart.range([400, 0]).height(100)
+        expect(myChart.range()).toEqual([100, 0])
+
+
+    })
+
+
+})
+
+
+
+
+//// Data ///////////////////////////////////////////////////////////////
+
+describe ('Data', () => {
+
+
+    test ('Should get stack data', () => {
+
+        const myChart = new navigator.Chart()
+
+        expect(myChart.stack().data().size).toBe(3)
+
+    })
+
+
+    test ('Should query the stack data', () => {
+
+        const myChart = new navigator.Chart()
+
+        // Get first, query later manually
+        expect(myChart.stack().data().get('category-1').get('label'))
+            .toBe('Category One')
+
+        // Directly query by giving a parameter to to method
+        expect(myChart.stack('category-1').get('label'))
+            .toBe('Category One')
+
+
+    })
+
+
+})
+
+
+
+
+//// Update Stack Data ///////////////////////////////////////////////////////////////
+
+describe ('Update Stack Data', () => {
+
+
+    test ('Should update stack data and also the related instance variables', () => {
+
+        const myChart = new navigator.Chart()
+
+        // Check original data
+        expect(myChart._domainStack.data('category-1').get('label'))
+            .toBe('Category One')
+        expect(myChart._rangeStack.data('category-1').get('label'))
+            .toBe('Category One')
+
+
+        // Update data in stack
+        const myStack = new data.Stack()
+        myStack.populateWithExampleData('gender')
+
+        myChart.stack(myStack)
+
+        // Probe to see if data is correctly updated
+        expect(myChart.stack().data().size).toBe(2)
+
+        expect(myChart.stack().data().get('female').get('label'))
+            .toBe('Female')
+        expect(myChart.stack('female').get('start'))
+            .toBe(64)
+        expect(myChart.stack('female').get('end'))
+            .toBe(100)
+
+        expect(myChart.stack('male').get('label'))
+            .toBe('Male')
+        expect(myChart.stack('male').get('start'))
+            .toBe(0)
+        expect(myChart.stack('male').get('end'))
+            .toBe(64)
+
+
+        // Do a manual check on the updated private stack variable in the instance
+        expect(myChart._domainStack.data().size).toBe(2)
+        expect(myChart._domainStack.data().get('female').get('label'))
+            .toBe('Female')
+
+        // Check if domain min and domain max are updated
+        expect(myChart._domainMax).toBe(100)
+        expect(myChart._domainMin).toBe(0)
+
+        // Check if scale function is updated
+        expect(myChart._scaleFunction.domain()).toEqual([0,100])
+
+        // Check if range stack is updated
+        expect(myChart._rangeStack.data('female').get('label')).toBe('Female')
+
+
+    })
+
+
+})
+
+
+
+
+//// Absolute Values ///////////////////////////////////////////////////////////////
+
+describe ('Absolute Values: Toggle absolute values', () => {
 
     // PREP //
     // Clear JEST's DOM to prevent leftovers from previous tests
@@ -333,7 +384,7 @@ describe ('ABSOLUTE VALUES: Toggle absolute values', () => {
     const myChart = new navigator.Chart()
 
 
-    test('GET/SET', () => {
+    test('Get/set', () => {
 
         // Get
         expect( myChart.showAbsoluteValues()).toBe( false )
@@ -349,7 +400,7 @@ describe ('ABSOLUTE VALUES: Toggle absolute values', () => {
     })
 
 
-    test('VALIDATE: If absolute values are on, only numbers should be present in category text', () => {
+    test('Validate: If absolute values are on, only numbers should be present in category text', () => {
 
         myChart.showAbsoluteValues(true).update()
 
@@ -367,7 +418,7 @@ describe ('ABSOLUTE VALUES: Toggle absolute values', () => {
     })
 
     
-    test ('TOGGLE OFF: Toggling off absolute values should toggle on percentages', () => {
+    test ('Toggle off: Toggling off absolute values should toggle on percentages', () => {
             
             myChart.showAbsoluteValues(false).update()
 
@@ -377,7 +428,7 @@ describe ('ABSOLUTE VALUES: Toggle absolute values', () => {
     })
 
 
-    test ('N/A VALUES: If there is no absolute value data for a category, it should display as N/A', () => {
+    test ('N/A values: If there is no absolute value data for a category, it should display as N/A', () => {
 
         // Hack the data: Delete counts from data (counts are used to display absolute values)
         myChart.stack('category-1').delete('count')
@@ -406,8 +457,6 @@ describe ('ABSOLUTE VALUES: Toggle absolute values', () => {
     }
 
 
-
-
 })
 
 
@@ -416,6 +465,7 @@ describe ('ABSOLUTE VALUES: Toggle absolute values', () => {
 //// Statistics ///////////////////////////////////////////////////////////////
 
 describe ('Statistics', () => {
+
 
     test ('Total count', () => {
 
@@ -426,13 +476,17 @@ describe ('Statistics', () => {
 
     })
 
+
 })
 
 
-//// STROKE WIDTH AND COLOR ///////////////////////////////////////////////////////////////
 
-describe ('Stroke width and color', () => {
-   
+
+//// Stroke Width and Color ///////////////////////////////////////////////////////////////
+
+describe ('Stroke Width and Color', () => {
+
+
         test ('Get', () => {
         
             initializeDomWithSvg()
@@ -443,6 +497,7 @@ describe ('Stroke width and color', () => {
             expect( myChart.strokeColor() ).toBe( "rgba(255, 255, 255, 1.0)" )
 
         })
+
 
         test ('Set', () => {
 
@@ -492,26 +547,32 @@ describe ('Stroke width and color', () => {
 
         })
 
+
 })
 
 
-//// CATEGORY LABELS ///////////////////////////////////////////////////////////////
-
-test ('Get/TurnOn/TurnOff category labels', () => {
-
-    // Clear JEST's DOM to prevent leftovers from previous tests
-    document.body.innerHTML = ''
-    // Create svg
-    const mySvg = new container.Svg()
-    // Create chart
-    const myChart = new navigator.Chart()
-
-    // Check that there are no label objects and elements already
-    expect(document.querySelectorAll('.category-label')).toHaveLength(0)
 
 
-    // Get initial category labels
-    expect( myChart.categoryLabels() ).toTabulateAs(`\
+//// Category Labels ///////////////////////////////////////////////////////////////
+
+describe ('Category Labels', () => {
+
+
+    test ('Get/TurnOn/TurnOff category labels', () => {
+
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+        // Create svg
+        const mySvg = new container.Svg()
+        // Create chart
+        const myChart = new navigator.Chart()
+
+        // Check that there are no label objects and elements already
+        expect(document.querySelectorAll('.category-label')).toHaveLength(0)
+
+
+        // Get initial category labels
+        expect( myChart.categoryLabels() ).toTabulateAs(`\
 ┌─────────┬────────┐
 │ (index) │ Values │
 ├─────────┼────────┤
@@ -521,13 +582,13 @@ test ('Get/TurnOn/TurnOff category labels', () => {
 └─────────┴────────┘`)
 
 
-    //// TOGGLE LABELS ON ////
+        //// TOGGLE LABELS ON ////
 
-    // Toggle category labels on
-    myChart.categoryLabels(true).update()
+        // Toggle category labels on
+        myChart.categoryLabels(true).update()
 
-    // Get now-created category labels
-    expect(myChart.categoryLabels()).toTabulateAs(`\
+        // Get now-created category labels
+        expect(myChart.categoryLabels()).toTabulateAs(`\
 ┌─────────┬──────────────┐
 │ (index) │    Values    │
 ├─────────┼──────────────┤
@@ -536,28 +597,28 @@ test ('Get/TurnOn/TurnOff category labels', () => {
 │    2    │ 'category-3' │
 └─────────┴──────────────┘`)
 
-    // New label elements should be created
-    const categoryLabelElements = document.querySelectorAll('.category-label')
-    expect(categoryLabelElements).toHaveLength(3)
+        // New label elements should be created
+        const categoryLabelElements = document.querySelectorAll('.category-label')
+        expect(categoryLabelElements).toHaveLength(3)
 
-    // Label object properties and texts of label elements should match each other
-    categoryLabelElements.forEach((categoryLabelElement) => {
-        const categoryObject = myChart.objects(categoryLabelElement.textContent)
-        expect(categoryObject.label()).toBe(categoryLabelElement.textContent)
-    })
-
-
-    //// HOT-SWAP LABELS (SWAP DATASET WHILE LABELS ARE TOGGLED ON) ////
-    //// ALSO: TEST LABELS WITH DATA THAT HAS SPACES ////
-
-    // Using data with spaces in category names should not lead to problems //
-    // Replace data with one that has spaces in category names
-    const stackWithSpacedNames = new data.Stack()
-        .populateWithExampleData('generic with spaces in category names')
+        // Label object properties and texts of label elements should match each other
+        categoryLabelElements.forEach((categoryLabelElement) => {
+            const categoryObject = myChart.objects(categoryLabelElement.textContent)
+            expect(categoryObject.label()).toBe(categoryLabelElement.textContent)
+        })
 
 
-    myChart.stack(stackWithSpacedNames).update()
-    expect( myChart.categoryLabels() ).toTabulateAs(`\
+        //// HOT-SWAP LABELS (SWAP DATASET WHILE LABELS ARE TOGGLED ON) ////
+        //// ALSO: TEST LABELS WITH DATA THAT HAS SPACES ////
+
+        // Using data with spaces in category names should not lead to problems //
+        // Replace data with one that has spaces in category names
+        const stackWithSpacedNames = new data.Stack()
+            .populateWithExampleData('generic with spaces in category names')
+
+
+        myChart.stack(stackWithSpacedNames).update()
+        expect( myChart.categoryLabels() ).toTabulateAs(`\
 ┌─────────┬──────────────┐
 │ (index) │    Values    │
 ├─────────┼──────────────┤
@@ -566,8 +627,8 @@ test ('Get/TurnOn/TurnOff category labels', () => {
 │    2    │ 'category 3' │
 └─────────┴──────────────┘`)
 
-    myChart.categoryLabels(true)  // loading new data resets the labels, so they should be toggled on again
-    expect( myChart.categoryLabels() ).toTabulateAs(`\
+        myChart.categoryLabels(true)  // loading new data resets the labels, so they should be toggled on again
+        expect( myChart.categoryLabels() ).toTabulateAs(`\
 ┌─────────┬──────────────┐
 │ (index) │    Values    │
 ├─────────┼──────────────┤
@@ -576,24 +637,24 @@ test ('Get/TurnOn/TurnOff category labels', () => {
 │    2    │ 'category 3' │
 └─────────┴──────────────┘`)
 
-    // Select the newly created labels
-    const newCategoryLabelElements = document.querySelectorAll('.category-label')
+        // Select the newly created labels
+        const newCategoryLabelElements = document.querySelectorAll('.category-label')
 
-    // Label object properties and texts of label elements should match each other
-    newCategoryLabelElements.forEach((categoryLabelElement) => {
-        const categoryObject = myChart.objects(categoryLabelElement.textContent)
-        expect(categoryObject.label()).toBe(categoryLabelElement.textContent)
-    })
+        // Label object properties and texts of label elements should match each other
+        newCategoryLabelElements.forEach((categoryLabelElement) => {
+            const categoryObject = myChart.objects(categoryLabelElement.textContent)
+            expect(categoryObject.label()).toBe(categoryLabelElement.textContent)
+        })
 
 
 
-    //// TOGGLE LABELS OFF ////
-    myChart.categoryLabels(false).update()
+        //// TOGGLE LABELS OFF ////
+        myChart.categoryLabels(false).update()
 
-    let categoryLabelElementsAfterToggleOff = document.querySelectorAll('.category-label')
+        let categoryLabelElementsAfterToggleOff = document.querySelectorAll('.category-label')
 
-    expect(categoryLabelElementsAfterToggleOff).toHaveLength(0)
-    expect(myChart.categoryLabels()).toTabulateAs(`\
+        expect(categoryLabelElementsAfterToggleOff).toHaveLength(0)
+        expect(myChart.categoryLabels()).toTabulateAs(`\
 ┌─────────┬────────┐
 │ (index) │ Values │
 ├─────────┼────────┤
@@ -603,12 +664,12 @@ test ('Get/TurnOn/TurnOff category labels', () => {
 └─────────┴────────┘`)
 
 
-    //// TOGGLE LABELS ON 2 TIMES, OFF 1 TIME ////
-    myChart.categoryLabels(true).update()
-    myChart.categoryLabels(true).update()
+        //// TOGGLE LABELS ON 2 TIMES, OFF 1 TIME ////
+        myChart.categoryLabels(true).update()
+        myChart.categoryLabels(true).update()
 
-    let categoryLabelElementsAfterToggleOn = document.querySelectorAll('.category-label')
-    expect(categoryLabelElementsAfterToggleOn).toHaveLength(3)
+        let categoryLabelElementsAfterToggleOn = document.querySelectorAll('.category-label')
+        expect(categoryLabelElementsAfterToggleOn).toHaveLength(3)
 
 
 
@@ -626,120 +687,133 @@ test ('Get/TurnOn/TurnOff category labels', () => {
 // │    2    │  null  │
 // └─────────┴────────┘`)
 
+    })
+
+
 })
 
 
 
 
-//// CHART LABEL ////
+//// Chart Label ///////////////////////////////////////////////////////////////
 
-test ('Get/Set/Toggle chart label', () => {
-
-    // Clear JEST's DOM to prevent leftovers from previous tests
-    document.body.innerHTML = ''
-    // Create svg
-    const mySvg = new container.Svg()
-    // Create chart
-    const myChart = new navigator.Chart()
+describe ('Chart Label', () => {
 
 
+    test ('Get/Set/Toggle chart label', () => {
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+        // Create svg
+        const mySvg = new container.Svg()
+        // Create chart
+        const myChart = new navigator.Chart()
 
-    // Check that there are no chart label objects and elements already
-    expect(document.querySelectorAll('.chart-label')).toHaveLength(0)
 
-    // Get chart label
-    expect( myChart.chartLabel() ).toBe( myChart._chartLabel.text )
 
-    // Turn on chart label (with default, placeholder value)
-    myChart.chartLabel(true).update()
-    expect( document.querySelectorAll('.chart-label') ).toHaveLength(1)
-    expect( document.querySelector('.chart-label').textContent ).toBe('Chart label')
+        // Check that there are no chart label objects and elements already
+        expect(document.querySelectorAll('.chart-label')).toHaveLength(0)
 
-    // Set chart label (while its already toggled on)
-    myChart.chartLabel('My label').update()
+        // Get chart label
+        expect( myChart.chartLabel() ).toBe( myChart._chartLabel.text )
 
-    // Check that the chart label is correctly created on DOM
-    expect( document.querySelectorAll('.chart-label') ).toHaveLength(1)
-    expect( document.querySelector('.chart-label').textContent ).toBe('My label')
+        // Turn on chart label (with default, placeholder value)
+        myChart.chartLabel(true).update()
+        expect( document.querySelectorAll('.chart-label') ).toHaveLength(1)
+        expect( document.querySelector('.chart-label').textContent ).toBe('Chart label')
 
-    // Check that chart label position is OK
-    myChart.categoryLabels(true).update()
-    const xCoordinate_leftEdgeOfCategoryLabelsArea = myChart._categoryLabelsArea.leftEdgeXCoordinate
+        // Set chart label (while its already toggled on)
+        myChart.chartLabel('My label').update()
 
-    const chartLabelPosition = myChart._chartLabelObject.x()
-    const xCoordinate_chartLabelObject = myChart._chartLabelObject.x()
-    const xCoordinate_chartLabelElement = Number(
+        // Check that the chart label is correctly created on DOM
+        expect( document.querySelectorAll('.chart-label') ).toHaveLength(1)
+        expect( document.querySelector('.chart-label').textContent ).toBe('My label')
+
+        // Check that chart label position is OK
+        myChart.categoryLabels(true).update()
+        const xCoordinate_leftEdgeOfCategoryLabelsArea = myChart._categoryLabelsArea.leftEdgeXCoordinate
+
+        const chartLabelPosition = myChart._chartLabelObject.x()
+        const xCoordinate_chartLabelObject = myChart._chartLabelObject.x()
+        const xCoordinate_chartLabelElement = Number(
             document
                 .querySelector('.chart-label')
                 .getAttribute('x')
-    )
+        )
 
-    // Chart label object and element positions should match
-    expect(xCoordinate_chartLabelObject).toBe(xCoordinate_chartLabelElement)
-    // Chart
-    expect( xCoordinate_chartLabelElement )
-        .toBeLessThanOrEqual( xCoordinate_leftEdgeOfCategoryLabelsArea )
-
-
-
-    // Turn off chart label
-    expect( document.querySelectorAll('.chart-label') ).toHaveLength(1)
-
-    myChart.chartLabel(false).update()
-
-    expect( document.querySelectorAll('.chart-label') ).toHaveLength(0)
-    expect( myChart._chartLabelObject ).toBe( null )
-    expect ( myChart._chartLabel.text ).toBe( 'My label')
-
-    // Toggle chart label off multiple times
-    myChart.chartLabel(false).update()
-    expect( document.querySelectorAll('.chart-label') ).toHaveLength(0)
-    expect( myChart._chartLabelObject ).toBe( null )
-
-    myChart.chartLabel(false).update()
-    expect( document.querySelectorAll('.chart-label') ).toHaveLength(0)
-    expect( myChart._chartLabelObject ).toBe( null )
+        // Chart label object and element positions should match
+        expect(xCoordinate_chartLabelObject).toBe(xCoordinate_chartLabelElement)
+        // Chart
+        expect( xCoordinate_chartLabelElement )
+            .toBeLessThanOrEqual( xCoordinate_leftEdgeOfCategoryLabelsArea )
 
 
-    // Set the chart label multiple times (when the chart label is toggled on)
-    myChart.chartLabel(true).update()
-    myChart.chartLabel('Label 1').update()
-    expect( document.querySelectorAll('.chart-label') ).toHaveLength(1)
-    expect( document.querySelector('.chart-label').textContent ).toBe('Label 1')
 
-    myChart.chartLabel('Label 2').update()
-    expect( document.querySelectorAll('.chart-label') ).toHaveLength(1)
-    expect( document.querySelector('.chart-label').textContent ).toBe('Label 2')
+        // Turn off chart label
+        expect( document.querySelectorAll('.chart-label') ).toHaveLength(1)
 
-    // Set the chart label multiple times (when the chart label is toggled off)
-    myChart.chartLabel(false).update()
-    myChart.chartLabel('Label 3').update()
-    expect ( myChart.chartLabel() ).toBe('Label 3')
-    expect( document.querySelectorAll('.chart-label') ).toHaveLength(0)
+        myChart.chartLabel(false).update()
 
-    myChart.chartLabel('Label 4').update()
-    expect ( myChart.chartLabel() ).toBe('Label 4')
-    expect( document.querySelectorAll('.chart-label') ).toHaveLength(0)
+        expect( document.querySelectorAll('.chart-label') ).toHaveLength(0)
+        expect( myChart._chartLabelObject ).toBe( null )
+        expect ( myChart._chartLabel.text ).toBe( 'My label')
+
+        // Toggle chart label off multiple times
+        myChart.chartLabel(false).update()
+        expect( document.querySelectorAll('.chart-label') ).toHaveLength(0)
+        expect( myChart._chartLabelObject ).toBe( null )
+
+        myChart.chartLabel(false).update()
+        expect( document.querySelectorAll('.chart-label') ).toHaveLength(0)
+        expect( myChart._chartLabelObject ).toBe( null )
+
+
+        // Set the chart label multiple times (when the chart label is toggled on)
+        myChart.chartLabel(true).update()
+        myChart.chartLabel('Label 1').update()
+        expect( document.querySelectorAll('.chart-label') ).toHaveLength(1)
+        expect( document.querySelector('.chart-label').textContent ).toBe('Label 1')
+
+        myChart.chartLabel('Label 2').update()
+        expect( document.querySelectorAll('.chart-label') ).toHaveLength(1)
+        expect( document.querySelector('.chart-label').textContent ).toBe('Label 2')
+
+        // Set the chart label multiple times (when the chart label is toggled off)
+        myChart.chartLabel(false).update()
+        myChart.chartLabel('Label 3').update()
+        expect ( myChart.chartLabel() ).toBe('Label 3')
+        expect( document.querySelectorAll('.chart-label') ).toHaveLength(0)
+
+        myChart.chartLabel('Label 4').update()
+        expect ( myChart.chartLabel() ).toBe('Label 4')
+        expect( document.querySelectorAll('.chart-label') ).toHaveLength(0)
+
+    })
+
 
 })
 
 
 
-//// COLOR SCHEME ////
-
-test ('COLOR SCHEME: Get/Set', () => {
-
-    // Clear JEST's DOM to prevent leftovers from previous tests
-    document.body.innerHTML = ''
-    // Create svg
-    const mySvg = new container.Svg()
-    // Create chart
-    const myChart = new navigator.Chart()
 
 
-    // Get color scheme
-    expect( myChart.colorScheme() ).toBe('Greys')  // the default color scheme
-    expect( myChart.actualColors() ).toTabulateAs(`\
+//// Color Scheme ///////////////////////////////////////////////////////////////
+
+describe ('Color Scheme', () => {
+
+
+    test ('Color Scheme: Get/Set', () => {
+
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+        // Create svg
+        const mySvg = new container.Svg()
+        // Create chart
+        const myChart = new navigator.Chart()
+
+
+        // Get color scheme
+        expect( myChart.colorScheme() ).toBe('Greys')  // the default color scheme
+        expect( myChart.actualColors() ).toTabulateAs(`\
 ┌─────────┬────────┐
 │ (index) │ Values │
 ├─────────┼────────┤
@@ -749,10 +823,10 @@ test ('COLOR SCHEME: Get/Set', () => {
 └─────────┴────────┘`)
 
 
-    // Set color scheme
-    myChart.colorScheme('Blues').update()
-    expect( myChart.colorScheme() ).toBe('Blues')
-    expect( myChart.actualColors() ).toTabulateAs(`\
+        // Set color scheme
+        myChart.colorScheme('Blues').update()
+        expect( myChart.colorScheme() ).toBe('Blues')
+        expect( myChart.actualColors() ).toTabulateAs(`\
 ┌─────────┬──────────────────────┐
 │ (index) │        Values        │
 ├─────────┼──────────────────────┤
@@ -762,10 +836,10 @@ test ('COLOR SCHEME: Get/Set', () => {
 └─────────┴──────────────────────┘`)
 
 
-    // Set color scheme
-    myChart.colorScheme('Reds').update()
-    expect( myChart.colorScheme() ).toBe('Reds')
-    expect( myChart.actualColors() ).toTabulateAs(`\
+        // Set color scheme
+        myChart.colorScheme('Reds').update()
+        expect( myChart.colorScheme() ).toBe('Reds')
+        expect( myChart.actualColors() ).toTabulateAs(`\
 ┌─────────┬──────────────────────┐
 │ (index) │        Values        │
 ├─────────┼──────────────────────┤
@@ -774,127 +848,122 @@ test ('COLOR SCHEME: Get/Set', () => {
 │    2    │ 'rgb(252, 138, 107)' │
 └─────────┴──────────────────────┘`)
 
-})
+    })
+
+
+    test ('Category Labels: Get widest category label width: Get the width of the widest category label in the chart', () => {
+
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+        // Create svg
+        const mySvg = new container.Svg()
+        // Create chart
+        const myChart = new navigator.Chart()
+
+
+        // Toggle labels on for the first time and measure
+        myChart.categoryLabels(true).update()
+        expect( myChart._getWidestCategoryLabelWidth() ).toBe(10)  // mocked value as length of the string
+
+
+        // Can't measure widths if category labels are not toggled on
+        myChart.categoryLabels(false).update()
+        expect( () => {
+            myChart._getWidestCategoryLabelWidth()
+        }).toThrow(
+            'Cannot measure the widths of the category labels because the category labels are NOT toggled on.'
+        )
+
+        // Toggle labels back on from off state and measure again
+        myChart.categoryLabels(true).update()
+        expect( myChart._getWidestCategoryLabelWidth() ).toBe(10)  // mocked value
+
+
+        // Toggle labels back on from the already on state and measure again
+        myChart.categoryLabels(true).update()
+        expect( myChart._getWidestCategoryLabelWidth() ).toBe(10)  // mocked value
 
 
 
-///////////////////////////////////////////////////////////////////////////////////////////
-//// WHITE BOX TESTS //////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
-
-test ('CATEGORY LABELS: Get widest category label width: Get the width of the widest category label in the chart', () => {
-
-    // Clear JEST's DOM to prevent leftovers from previous tests
-    document.body.innerHTML = ''
-    // Create svg
-    const mySvg = new container.Svg()
-    // Create chart
-    const myChart = new navigator.Chart()
+    })
 
 
-    // Toggle labels on for the first time and measure
-    myChart.categoryLabels(true).update()
-    expect( myChart._getWidestCategoryLabelWidth() ).toBe(10)  // mocked value as length of the string
+    test ('Chart Label: Calculate chart label position', () => {
+
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+        // Create svg
+        const mySvg = new container.Svg()
+        // Create chart
+        const myChart = new navigator.Chart()
 
 
-    // Can't measure widths if category labels are not toggled on
-    myChart.categoryLabels(false).update()
-    expect( () => {
-        myChart._getWidestCategoryLabelWidth()
-    }).toThrow(
-        'Cannot measure the widths of the category labels because the category labels are NOT toggled on.'
-    )
-
-    // Toggle labels back on from off state and measure again
-    myChart.categoryLabels(true).update()
-    expect( myChart._getWidestCategoryLabelWidth() ).toBe(10)  // mocked value
+        // Calculate chart label position (chart label is the only label)
+        let {x, y} = myChart._calculateChartLabelPosition()
+        expect(x).toBe(-10)
+        expect(y).toBe(175)
 
 
-    // Toggle labels back on from the already on state and measure again
-    myChart.categoryLabels(true).update()
-    expect( myChart._getWidestCategoryLabelWidth() ).toBe(10)  // mocked value
+    })
 
 
+    test ('Chart Label: Set right padding', () => {
 
-})
-
-
-
-
-test ('CHART LABEL: Calculate chart label position', () => {
-
-    // Clear JEST's DOM to prevent leftovers from previous tests
-    document.body.innerHTML = ''
-    // Create svg
-    const mySvg = new container.Svg()
-    // Create chart
-    const myChart = new navigator.Chart()
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
+        // Create svg
+        const mySvg = new container.Svg()
+        // Create chart
+        const myChart = new navigator.Chart()
+        // Turn on chart label
+        myChart.chartLabel(true).update()
 
 
-    // Calculate chart label position (chart label is the only label)
-    let {x, y} = myChart._calculateChartLabelPosition()
-    expect(x).toBe(-10)
-    expect(y).toBe(175)
+        // Calculate default chart label position (chart label is the only label)
+        let {x, y} = myChart._calculateChartLabelPosition()
+        expect(x).toBe(-10)
+        expect(y).toBe(175)
+
+        // Get initial values for later comparisons
+        const initialRightPaddingForChartLabel = myChart._chartLabel.paddingRight
+        const initialXCoordinateForChartLabel = myChart._chartLabelObject.x()
+        const initialXCoordinateOfChartLabelOnDom = Number( document.querySelector('.chart-label').getAttribute('x') )
+
+        // Get current chart label right padding
+        expect ( myChart.chartLabelPaddingRight() )
+            .toBe( initialRightPaddingForChartLabel )
+
+        // Set chart label right padding
+        const paddingIncrement = 100
+        let newRightPadding = myChart.chartLabelPaddingRight() + paddingIncrement
+        myChart
+            .chartLabelPaddingRight( newRightPadding )
+            .update()
+
+        // Check if the update is done correctly in JS environment
+        expect ( myChart.chartLabelPaddingRight() )
+            .toBe( newRightPadding )
+
+        expect ( myChart._chartLabelObject.x() )
+            .toBe( initialXCoordinateForChartLabel - paddingIncrement )
+
+        // Check if the update is done correctly on DOM environment
+        const newXCoordinateOfChartLabelOnDom = Number( document.querySelector('.chart-label').getAttribute('x') )
+        expect( newXCoordinateOfChartLabelOnDom )
+            .toBe( initialXCoordinateOfChartLabelOnDom - paddingIncrement )
 
 
-})
+        // Error checking: Method should accept only numbers
+        expect(() => {
+            myChart.chartLabelPaddingRight('-10')
+        }).toThrow()
+        expect(() => {
+            myChart.chartLabelPaddingRight(true)
+        }).toThrow()
 
 
-test ('CHART LABEL: Set right padding', () => {
-
-    // Clear JEST's DOM to prevent leftovers from previous tests
-    document.body.innerHTML = ''
-    // Create svg
-    const mySvg = new container.Svg()
-    // Create chart
-    const myChart = new navigator.Chart()
-    // Turn on chart label
-    myChart.chartLabel(true).update()
-
-
-    // Calculate default chart label position (chart label is the only label)
-    let {x, y} = myChart._calculateChartLabelPosition()
-    expect(x).toBe(-10)
-    expect(y).toBe(175)
-
-    // Get initial values for later comparisons
-    const initialRightPaddingForChartLabel = myChart._chartLabel.paddingRight
-    const initialXCoordinateForChartLabel = myChart._chartLabelObject.x()
-    const initialXCoordinateOfChartLabelOnDom = Number( document.querySelector('.chart-label').getAttribute('x') )
-
-    // Get current chart label right padding
-    expect ( myChart.chartLabelPaddingRight() )
-        .toBe( initialRightPaddingForChartLabel )
-
-    // Set chart label right padding
-    const paddingIncrement = 100
-    let newRightPadding = myChart.chartLabelPaddingRight() + paddingIncrement
-    myChart
-        .chartLabelPaddingRight( newRightPadding )
-        .update()
-
-    // Check if the update is done correctly in JS environment
-    expect ( myChart.chartLabelPaddingRight() )
-        .toBe( newRightPadding )
-
-    expect ( myChart._chartLabelObject.x() )
-        .toBe( initialXCoordinateForChartLabel - paddingIncrement )
-
-    // Check if the update is done correctly on DOM environment
-    const newXCoordinateOfChartLabelOnDom = Number( document.querySelector('.chart-label').getAttribute('x') )
-    expect( newXCoordinateOfChartLabelOnDom )
-        .toBe( initialXCoordinateOfChartLabelOnDom - paddingIncrement )
-
-
-    // Error checking: Method should accept only numbers
-    expect(() => {
-        myChart.chartLabelPaddingRight('-10')
-    }).toThrow()
-    expect(() => {
-        myChart.chartLabelPaddingRight(true)
-    }).toThrow()
+    })
 
 
 })
-
 
