@@ -13,8 +13,9 @@ if (typeof Object.fromEntries !== 'function') {
 }
 
 //// PURE NODE DEPENDENCIES ////
-require('../../../../../JestUtils/jest-console')
-require('../../../../../JestUtils/jest-dom')
+const jestConsole = require('../../../../../JestUtils/jest-console')
+const jestDom = require('../../../../../JestUtils/jest-dom')
+    , initializeDomWithSvg = jestDom.initializeDomWithSvg
 
 //// REQUIREMENTS ////
 
@@ -37,6 +38,7 @@ global.container = require("../../container")
 global.shape = require("../../shape")
 global.stringUtils = require("../../../utils/stringUtils")
 global.domUtils = require("../../../utils/domUtils")
+global.jsUtils = require("../../../utils/jsUtils")
 global.errorUtils = require("../../../utils/errorUtils")
 global.data = require("../../../cpc/data")
 
@@ -44,7 +46,6 @@ global.data = require("../../../cpc/data")
 //// MODULES BEING TESTED ////
 const datasets = require("../../../../data/datasets")
 const navigator = require("../../navigator")
-
 
 
 
@@ -524,3 +525,90 @@ test ('Get/set label color', () => {
 
 })
 
+
+//// Connector polygons ///////////////////////////////////////////////////////////////
+
+describe ('Connector polygons', () => {
+
+    test ('Getter/Setter: Should toggle connector polygons', () => {
+
+        initializeDomWithSvg()
+
+        // Create category
+        const myCategory = new navigator.Category()
+
+        // Toggle label
+        myCategory.showPolygon(true)
+        expect( myCategory.showPolygon() ).toBe( true )
+
+        // Toggle label
+        myCategory.showPolygon(false)
+        expect( myCategory.showPolygon() ).toBe( false )
+
+
+    })
+
+    test ('A category should initialize with connector polygons', () => {
+
+            initializeDomWithSvg()
+            // Create category
+            const myCategory = new navigator.Category()
+
+
+            // Polygon should be initially hidden
+            expect( myCategory.objects('polygon').visibility() ).toBe( 'hidden' )
+
+            // Toggle polygon on
+            myCategory
+                .showPolygon(true)
+                .update()
+
+            // Polygon should exist
+            expect( myCategory.objects('polygon').class() ).toBeDefined()
+            // And it should be visible
+            expect( myCategory.objects('polygon').visibility() ).toBe( "visible" )
+
+
+            // Toggle polygon off
+            myCategory
+                .showPolygon(false)
+                .update()
+
+            // Polygon should still exist
+            expect( myCategory.objects('polygon') ).toBeDefined()
+            // But it should be hidden
+            expect( myCategory.objects('polygon').visibility() ).toBe( "hidden" )
+
+
+        })
+    
+    test ('Polygon should be initialized at right location', () => {
+
+        initializeDomWithSvg()
+        // Create category
+        const myCategory = new navigator.Category()
+
+        myCategory.showPolygon( true )
+
+
+        const polygonCoordinatesString = myCategory.objects('polygon').points()
+            , polygonCoordinates = polygonCoordinatesString.split(' ')
+
+        const topRightCornerOfPolygon = polygonCoordinates[1]
+        const bottomRightCornerOfPolygon = polygonCoordinates[2]
+
+        // TODO: .upperLeftCorner() method's name changed to .topLeftCorner()
+        const topLeftCornerOfRectangle = myCategory.objects('rectangle').upperLeftCorner().toString()
+        const bottomLeftCornerOfRectangle = myCategory.objects('rectangle').bottomLeftCorner().toString()
+        
+        expect( topRightCornerOfPolygon ).toEqual( topLeftCornerOfRectangle )
+        expect( bottomRightCornerOfPolygon ).toEqual( bottomLeftCornerOfRectangle )
+
+        jestDom.writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/poly.html')
+
+    })
+
+
+
+
+})

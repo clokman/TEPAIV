@@ -3782,19 +3782,47 @@
             this._labelDistance = 20
             this._labelFill = 'gray'
 
+            this._showPolygon = false
 
-            this.class('category').update()
+            this._createPolygon()
+
+            this.class('category')
+                .update()
+
+        }
+
+
+        _createPolygon(){
+
+            // The right corners of polygon attach to the left corners of the rectangle
+            const topLeftCornerOfRectangle = this.objects('rectangle').upperLeftCorner()
+                , bottomLeftCornerOfRectangle = this.objects('rectangle').bottomLeftCorner()
+
+            // The left corners of polygon are given placeholder locations with an arbitrary offset
+            const placeholderLocationForTopLeftCornerOfPolygon = this.objects('rectangle').upperLeftCorner().map( (coordinate) => coordinate - 10)
+                , placeholderLocationForBottomLeftCornerOfPolygon = this.objects('rectangle').bottomLeftCorner().map( (coordinate) => coordinate - 10)
+
+            const topLeftCornerOfPolygon = placeholderLocationForTopLeftCornerOfPolygon
+                , topRightCornerOfPolygon = topLeftCornerOfRectangle
+                , bottomRightCornerOfPolygon = bottomLeftCornerOfRectangle
+                , bottomLeftCornerOfPolygon = placeholderLocationForBottomLeftCornerOfPolygon
+
+            const polygonPoints = [
+                topLeftCornerOfPolygon,
+                topRightCornerOfPolygon,
+                bottomRightCornerOfPolygon,
+                bottomLeftCornerOfPolygon
+            ]
+
+            const polygonObject = new shape.Polygon()
+            polygonObject.points( ...polygonPoints )
+                .visibility( 'hidden' )
+            polygonObject.build()
+
+            this.objects().set('polygon', polygonObject)
 
         }
 
-
-        update(transitionDuration=500){
-
-            super.update(transitionDuration)
-
-            return this
-
-        }
 
         x(value) {
 
@@ -3893,6 +3921,29 @@
             // Setter
             else{
                 super.text(value)
+                return this
+            }
+
+        }
+
+
+        showPolygon(value) {
+
+            // Getter
+            if (!arguments.length){
+                return this._showPolygon
+            }
+
+            // Setter
+            else{
+                value.mustBeOfType('Boolean')
+                this._showPolygon = value
+
+                // Toggle polygon visibility
+                value
+                    ? this.objects('polygon').visibility( 'visible' )
+                    : this.objects('polygon').visibility( 'hidden' )
+
                 return this
             }
 
