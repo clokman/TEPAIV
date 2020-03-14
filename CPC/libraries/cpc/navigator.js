@@ -3250,7 +3250,7 @@
                         .strokeColor(this._strokeColor)
                         .strokeWidth(this._strokeWidth)
                         .id(eachCategoryId)
-                        .showConnectorPolygon( this.showConnectorPolygons() )
+                        .showLeftConnectorPolygon( this.showConnectorPolygons() )
 
                     if ( this._showAbsoluteValues ) {
                         eachCategoryObject.text(count)
@@ -3798,7 +3798,7 @@
             this._labelDistance = 20
             this._labelFill = 'gray'
 
-            this._showPolygon = false
+            this._showLeftConnectorPolygon = false
 
             this._createPolygon()
 
@@ -3963,17 +3963,17 @@
             
         }
 
-        showConnectorPolygon(value) {
+        showLeftConnectorPolygon(value) {
 
             // Getter
             if (!arguments.length){
-                return this._showPolygon
+                return this._showLeftConnectorPolygon
             }
 
             // Setter
             else{
                 value.mustBeOfType('Boolean')
-                this._showPolygon = value
+                this._showLeftConnectorPolygon = value
 
                 // Toggle polygon visibility
                 value

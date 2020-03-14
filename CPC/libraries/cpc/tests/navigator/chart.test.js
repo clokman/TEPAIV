@@ -1009,7 +1009,7 @@ describe ('Connector Polygons', () => {
             let visibilityStatusesOfAllConnectorPolygons = []
 
             myChart.objects().forEach((categoryObject, categoryName) => {
-                const isConnectorPolygonVisible = categoryObject.showConnectorPolygon()
+                const isConnectorPolygonVisible = categoryObject.showLeftConnectorPolygon()
                 visibilityStatusesOfAllConnectorPolygons.push(isConnectorPolygonVisible)
             })
 
