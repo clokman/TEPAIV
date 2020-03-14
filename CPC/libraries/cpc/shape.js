@@ -75,6 +75,12 @@
             }
         }
 
+
+        /**
+         *
+         * @param value{String} - Takes the values `visible` or `hidden`.
+         * @return {string|Shape}
+         */
         visibility(value) {
 
             // Getter
