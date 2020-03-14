@@ -241,7 +241,7 @@
         }
 
 
-        upperRightCorner(){
+        topRightCorner(){
             const x = this.x() + this.width()
             const y = this.y()
             return [x, y]

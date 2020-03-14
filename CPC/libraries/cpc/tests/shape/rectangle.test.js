@@ -238,7 +238,7 @@ describe ('Location Inferences', () => {
             const myRectangle = new shape.Rectangle()
             
             expect( myRectangle.topLeftCorner() ).toEqual(  [0, 0] )
-            expect( myRectangle.upperRightCorner() ).toEqual( [50, 0] )
+            expect( myRectangle.topRightCorner() ).toEqual( [50, 0] )
 
             expect( myRectangle.bottomLeftCorner() ).toEqual( [0, 50] )
             expect( myRectangle.bottomRightCorner() ).toEqual( [50, 50] )
