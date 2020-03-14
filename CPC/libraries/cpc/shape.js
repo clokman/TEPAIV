@@ -860,10 +860,49 @@
 
 
         // Getter/setter methods
-        points(value){ return !!arguments.length ? (value.mustBeOfType('String'), this._points = value, this) : this._points }
 
         x(){ console.warn('`Polygon.x()` method was called but this method has no effect on polygons. `Polygon.points()` method should be used instead.'); if(!!arguments.length){return this} }
         y(){ console.warn('`Polygon.y()` method was called but this method has no effect on polygons. `Polygon.points()` method should be used instead.'); if(!!arguments.length){return this} }
+
+        /**
+         *
+         * @param value {Null|String|Array} - If null, returns the points as a string. If String, the coordinates should be entered in the form of `x1,y1 x2,y2` (this is the SVG-compliant way). If Arrays, the coordinates can be entered as `[x1, y1], [x2, y2]`.
+         * @return {string|Polygon}
+         */
+        points(value){
+
+            // Establish conditions
+            const argumentsAreArrays = !!arguments.length && value.hasType('Array')
+            const argumentIsString = !!arguments.length && value.hasType('String')
+            const thereIsNoArgument = !arguments.length
+
+            if( thereIsNoArgument ){
+               return this._points
+            }
+
+            if( argumentIsString ){
+                this._points = value
+                return this
+            }
+
+            if( argumentsAreArrays ){
+
+                let pointsAsStringExpression = '';  // this semicolon is necessary
+
+                [...arguments].forEach( (xyCoordinate) => {
+                    pointsAsStringExpression += xyCoordinate.toString() + ' '
+                })
+
+                // Remove the last space character in points string
+                pointsAsStringExpression = pointsAsStringExpression.substring(0, pointsAsStringExpression.length - 1)
+
+                this._points = pointsAsStringExpression
+
+                return this
+            }
+
+
+        }
 
     }
 

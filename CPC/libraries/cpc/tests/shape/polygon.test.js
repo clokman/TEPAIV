@@ -27,6 +27,7 @@ d3.selection.prototype.duration = jest.fn( function(){return this} )
 
 global.classUtils = require("../../../utils/classUtils")
 global.errorUtils = require("../../../utils/errorUtils")
+global.jsUtils = require("../../../utils/jsUtils")
 global.container = require("../../container")
 global.shape = require("../../shape")
 global.stringUtils = require("../../../utils/stringUtils")
@@ -116,8 +117,7 @@ describe ('Instantiate', () => {
 
 describe ('Points', () => {
 
-        test ('Get/set points', () => {
-
+        test ('Get/set points using a string argument', () => {
 
             // Clear JEST's DOM to prevent leftovers from previous tests
             document.body.innerHTML = ''
@@ -131,9 +131,7 @@ describe ('Points', () => {
             // Set points
             myPolygon.points("0,10 20,0")
             expect( myPolygon.points() ).toBe( "0,10 20,0" )
-
-
-
+            
 
             // Chain methods should be possible
             expect( myPolygon.strokeColor() ).not.toBe('salmon')
@@ -146,6 +144,17 @@ describe ('Points', () => {
             expect( myPolygon.strokeColor() ).toBe( 'salmon' )
             
 
+        })
+    
+    
+        test ('Get/set using arrays as argument', () => {
+
+            initializeDomWithSvg()
+            const myPolygon = new shape.Polygon()
+
+            expect( myPolygon.points() ).not.toBe( "10,10 50,10 50,50 10,50" )
+            myPolygon.points( [10,10], [50,10], [50,50], [10,50] )
+            expect( myPolygon.points() ).toBe( "10,10 50,10 50,50 10,50" )
 
 
         })
