@@ -1648,8 +1648,8 @@
             // Therefore, inferences are form a state where this panel is not yet in the picture
             this._inferParentChildRelationships()
 
-            // TODO: _leftSiblingObject SHOULD be moved to .inferParentChildRelationships method.
-            // Alias. At this point in code, these are equal (once nestedPanel is fully instantiated, parentWithRightmostChildPanelObject would be inferred as the current panel ):
+            // At this point in code, these are equal (once nestedPanel is fully instantiated, parentWithRightmostChildPanelObject would be inferred as the current panel)
+            // NOTE: Use `this.has.leftSiblingObject` property instead. `this._leftSiblingObject` is here for one-time private storage of `this.has.parentWithRightmostChildPanelObject` at init time.
             this._leftSiblingObject = this.has.parentWithRightmostChildPanelObject
 
 
@@ -2644,6 +2644,18 @@
                     : null
             )
 
+            // What sibling panel object is at the immediate left side?
+            this.has.leftSiblingObject = ( () => {
+                return !!this._leftSiblingObject
+                    ? this._leftSiblingObject  // This has to be stored in the external variable `this._leftSiblingObject`,
+                                               // because after `build()` is completed, this.has.leftSiblingObject should
+                                               // not be updated. This is because at the time of init, this._leftSiblingObject
+                                               // stores the result from `this.has.parentWithRightmostChildPanelObject`,
+                                               // which points to the left sibling at init time. However, after the build is
+                                               // completed, `this.has.parentWithRightmostChildPanelObject` points to self.
+                    : null
+            })()
+
             // What are the sibling panels on the right side?
             this.has.siblingObjectsOnRightSide = (
                    this.has.parentWithAnotherChild
@@ -2987,7 +2999,7 @@
         getEquivalentCategoryObjectInLeftPanel(chartId, categoryId ){
 
             const equivalentObjectOnLeftPanel = this.has.beenAddedAsSibling && this.has.parentPanel  // Note: The first siblings in a panel are NOT added as a sibling. So if this method is ran on a first sibling, then the parent of the first sibling will be queried.
-                ? this._leftSiblingObject.objects(chartId).objects(categoryId)  // if this has sibling on left
+                ? this.has.leftSiblingObject.objects(chartId).objects(categoryId)  // if this has sibling on left
                 : this.has.parentPanel
                     ? this.parentPanel.objects(chartId).objects(categoryId)  // if this is a singleton child
                     : null  // if panelZero is being queried

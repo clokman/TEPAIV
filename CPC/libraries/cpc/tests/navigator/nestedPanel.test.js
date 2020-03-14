@@ -1746,6 +1746,7 @@ describe ('Ancestry Inferences: Parent child relationships should be inferred co
 
         expect( panel0.has.parentWithRightmostChildPanelObject ).toBe(null)
 
+        expect( panel0.has.leftSiblingObject ).toBe( null)
         expect( panel0._leftSiblingObject ).toBe( null)
 
         expect( panel0.has.siblingObjectsOnRightSide ).toBe( null )
@@ -1789,7 +1790,6 @@ describe ('Ancestry Inferences: Parent child relationships should be inferred co
         panel1.updateAllPanels()
         jest.runOnlyPendingTimers()
 
-
         // Check inferred relationships for panel-1
         expect( panel1.has.beenAddedAsSibling ).toBe( false )
         expect( panel1.has.numberOfSiblings ).toBe( 0 )
@@ -1805,6 +1805,7 @@ describe ('Ancestry Inferences: Parent child relationships should be inferred co
         expect( panel1.has.parentWithRightmostChildPanelObject.hasType() ).toBe('NestedPanel')
         expect( panel1.has.parentWithRightmostChildPanelObject.id() ).toBe('panel-1-0')
 
+        expect( panel1.has.leftSiblingObject ).toBe( null)
         expect( panel1._leftSiblingObject ).toBe( null)
 
         expect( panel1.has.siblingObjectsOnRightSide ).toBe( null )
@@ -1858,6 +1859,7 @@ describe ('Ancestry Inferences: Parent child relationships should be inferred co
         expect( panel2.has.parentWithRightmostChildPanelObject.hasType() ).toBe( 'NestedPanel' )
         expect( panel2.has.parentWithRightmostChildPanelObject.id() ).toBe( 'panel-2-0' )
 
+        expect( panel2.has.leftSiblingObject ).toBe( null)
         expect( panel2._leftSiblingObject ).toBe( null )
 
         expect( panel2.has.siblingObjectsOnRightSide ).toBe( null )
@@ -1906,6 +1908,7 @@ describe ('Ancestry Inferences: Parent child relationships should be inferred co
         expect( panel1_0.has.parentWithRightmostChildPanelObject.hasType() ).toBe( 'NestedPanel' )
         expect( panel1_0.has.parentWithRightmostChildPanelObject.id() ).toBe( 'panel-1-0' )
 
+        expect( panel1_0.has.leftSiblingObject ).toBe( null)
         expect( panel1_0._leftSiblingObject ).toBe( null )
 
         expect( panel1_0.has.siblingObjectsOnRightSide ).toBe( null)
@@ -1956,8 +1959,13 @@ describe ('Ancestry Inferences: Parent child relationships should be inferred co
         expect( panel1_1.has.parentWithRightmostChildPanelObject.hasType() ).toBe( 'NestedPanel' )
         expect( panel1_1.has.parentWithRightmostChildPanelObject.id() ).toBe( 'panel-1-1' )
 
+        expect( panel1_1.has.leftSiblingObject.hasType() ).toBe( 'NestedPanel')
+        expect( panel1_1.has.leftSiblingObject.id() ).toBe( 'panel-1-0' )
         expect( panel1_1._leftSiblingObject.hasType() ).toBe( 'NestedPanel' )
         expect( panel1_1._leftSiblingObject.id() ).toBe( 'panel-1-0' )
+
+
+
 
         expect( panel1_1.has.siblingObjectsOnRightSide ).toBe( null )
 
@@ -2013,7 +2021,9 @@ describe ('Ancestry Inferences: Parent child relationships should be inferred co
         expect( panel2_0.has.parentWithRightmostChildPanelObject.hasType() ).toBe( 'NestedPanel' )
         expect( panel2_0.has.parentWithRightmostChildPanelObject.id() ).toBe( 'panel-2-0' )
 
+        expect( panel2_0.has.leftSiblingObject ).toBe( null)
         expect( panel2_0._leftSiblingObject ).toBe( null )
+
 
         expect( panel2_0.has.siblingObjectsOnRightSide ).toBe( null )
 
@@ -2046,8 +2056,11 @@ describe ('Ancestry Inferences: Parent child relationships should be inferred co
         expect( panel2_1.has.parentWithRightmostChildPanelObject.hasType() ).toBe( 'NestedPanel' )
         expect( panel2_1.has.parentWithRightmostChildPanelObject.id() ).toBe( 'panel-2-1' )
 
+        expect( panel2_1.has.leftSiblingObject.hasType() ).toBe( 'NestedPanel' )
+        expect( panel2_1.has.leftSiblingObject.id() ).toBe( 'panel-2-0' )
         expect( panel2_1._leftSiblingObject.hasType() ).toBe( 'NestedPanel' )
         expect( panel2_1._leftSiblingObject.id() ).toBe( 'panel-2-0' )
+
 
         expect( panel2_1.has.siblingObjectsOnRightSide ).toBe( null )
 
@@ -2080,8 +2093,11 @@ describe ('Ancestry Inferences: Parent child relationships should be inferred co
         expect( panel2_2.has.parentWithRightmostChildPanelObject.hasType() ).toBe( 'NestedPanel' )
         expect( panel2_2.has.parentWithRightmostChildPanelObject.id() ).toBe( 'panel-2-2' )
 
+        expect( panel2_2.has.leftSiblingObject.hasType() ).toBe( 'NestedPanel' )
+        expect( panel2_2.has.leftSiblingObject.id() ).toBe( 'panel-2-1' )
         expect( panel2_2._leftSiblingObject.hasType() ).toBe( 'NestedPanel' )
         expect( panel2_2._leftSiblingObject.id() ).toBe( 'panel-2-1' )
+
 
         expect( panel2_2.has.siblingObjectsOnRightSide ).toBe( null )
 
@@ -2103,6 +2119,7 @@ describe ('Ancestry Inferences: Parent child relationships should be inferred co
         expect( panel2_0.has.parentWithAnyGrandChild ).toBe( false )
         expect( panel2_0.has.parentWithAnyChildButNoGrandchildren ).toBe( true )
 
+        expect( panel2_0.has.leftSiblingObject ).toBe( null )
         expect( panel2_0._leftSiblingObject ).toBe( null )
 
         const rightwardSiblingsOfPanel2_0 = panel2_0.has.siblingObjectsOnRightSide.keys()
@@ -2193,6 +2210,7 @@ describe ('Ancestry Inferences: Parent child relationships should be inferred co
         expect( panel2_0_of_1_0.has.parentWithRightmostChildPanelObject.hasType() ).toBe( 'NestedPanel' )
         expect( panel2_0_of_1_0.has.parentWithRightmostChildPanelObject.id() ).toBe( 'panel-2-0' )
 
+        expect( panel2_0_of_1_0.has.leftSiblingObject ).toBe( null )
         expect( panel2_0_of_1_0._leftSiblingObject ).toBe( null )
         expect( panel2_0_of_1_0.has.siblingObjectsOnRightSide ).toBe( null )
 
