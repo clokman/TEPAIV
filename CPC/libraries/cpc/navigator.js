@@ -3959,7 +3959,7 @@
             
         }
 
-        showPolygon(value) {
+        showConnectorPolygon(value) {
 
             // Getter
             if (!arguments.length){

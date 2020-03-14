@@ -585,12 +585,12 @@ describe ('Connector polygons', () => {
         const myCategory = new navigator.Category()
 
         // Toggle label
-        myCategory.showPolygon(true)
-        expect( myCategory.showPolygon() ).toBe( true )
+        myCategory.showConnectorPolygon(true)
+        expect( myCategory.showConnectorPolygon() ).toBe( true )
 
         // Toggle label
-        myCategory.showPolygon(false)
-        expect( myCategory.showPolygon() ).toBe( false )
+        myCategory.showConnectorPolygon(false)
+        expect( myCategory.showConnectorPolygon() ).toBe( false )
 
 
     })
@@ -607,7 +607,7 @@ describe ('Connector polygons', () => {
 
             // Toggle polygon on
             myCategory
-                .showPolygon(true)
+                .showConnectorPolygon(true)
                 .update()
 
             // Polygon should exist
@@ -618,7 +618,7 @@ describe ('Connector polygons', () => {
 
             // Toggle polygon off
             myCategory
-                .showPolygon(false)
+                .showConnectorPolygon(false)
                 .update()
 
             // Polygon should still exist
@@ -635,7 +635,7 @@ describe ('Connector polygons', () => {
         // Create category
         const myCategory = new navigator.Category()
 
-        myCategory.showPolygon( true )
+        myCategory.showConnectorPolygon( true )
 
 
         const polygonCoordinatesString = myCategory.objects('polygon').points()
