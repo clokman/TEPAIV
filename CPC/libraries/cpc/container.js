@@ -108,10 +108,10 @@ class Group {
         // TODO: If there is  no SVG element already existing in DOM, init method should return an error
         this.parentContainerSelection = container.Group.getD3SelectionFromVariousParameterTypes(parentContainerSelectionOrObject)
 
-        // Public Parameters
-        this._objects = new Map()
 
-        // Private Parameters
+        this._objects = new Map()
+        this._visibility = 'visible'
+
         this._htmlClass = null
         this._htmlId = null
 
@@ -150,10 +150,13 @@ class Group {
         this._selection
             .attr('class', this.class())
             .attr('id', this.id())
+            .attr('visibility', this.visibility())
 
         // Call the update method of each object contained within container (e.g., svg.rect or svg.text)
         this.objects().forEach(
             (eachInstance, eachId) => {
+
+                eachInstance.visibility( this.visibility() )
 
                 // TODO: This error COULD be tested
                 // Make sure the object has an update function of its own
@@ -219,6 +222,7 @@ class Group {
     }
 
     // Standard getters and setters //
+    visibility(value){ return !arguments.length ? this._visibility : ( value.mustBeOfType('String'), this._visibility = value, this ) }
     class(value){ return !arguments.length ? this._htmlClass : ( value.mustBeOfType('String'), this._htmlClass = value, this ) }
     id(value){ return !arguments.length ? this._htmlId : ( value.mustBeOfType('String'), this._htmlId = value, this ) }
 
@@ -248,6 +252,9 @@ class Group {
     }
 
 
+
+
+
     width(value){
 
         if (!arguments.length){
@@ -269,6 +276,8 @@ class Group {
         }
 
     }
+
+
 
 
     /**

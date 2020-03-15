@@ -24,6 +24,8 @@ global.classUtils = require("../../../utils/classUtils")
 global.container = require("../../container")
 global.shape = require("../../shape")
 
+const {writeDomToFile} = require("../../../../../JestUtils/jest-dom")
+const {initializeDomWithSvg} = require("../../../../../JestUtils/jest-dom")
 const {mustBeOfType} = require("../../../utils/errorUtils")
 
 
@@ -285,3 +287,58 @@ test ('Should return a D3 Selection form various inputs ', () => {
         .toBe(true)
 
 })
+
+
+//// Visibility ///////////////////////////////////////////////////////////////
+
+describe ('Visibility', () => {
+
+    test ('Get/Set', () => {
+
+        initializeDomWithSvg()
+        const myGroup = new container.Group()
+
+        // Set to visible
+        myGroup.visibility('visible')
+        expect( myGroup.visibility() ).toBe( 'visible' )
+
+        // Set to hidden
+        myGroup.visibility('hidden')
+        expect( myGroup.visibility() ).toBe( 'hidden' )
+
+    })
+    
+    test ('HTML element should reflect changes to visibility', () => {
+
+        initializeDomWithSvg()
+        const myGroup = new container.Group()
+
+        // Set to visible
+        myGroup.visibility('visible').update()
+        expect( myGroup.select().attr('visibility') ).toBe( 'visible' )
+
+        // Set to hidden
+        myGroup.visibility('hidden').update()
+        expect( myGroup.select().attr('visibility') ).toBe( 'hidden' )
+
+    })
+    
+    test ('Visibility should be applied to objects within group', () => {
+
+        initializeDomWithSvg()
+        const parentGroup = new container.Group()
+        const childGroup = new container.Group( parentGroup.select() )
+        parentGroup.objects().set('childGroup', childGroup)
+
+        // Toggle visibility on
+        parentGroup.visibility('visible').update()
+        expect( childGroup.visibility() ).toBe( 'visible' )
+
+        // Toggle visibility off
+        parentGroup.visibility('hidden').update()
+        expect( childGroup.visibility() ).toBe( 'hidden' )
+
+    })
+
+})
+
