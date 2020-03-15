@@ -526,14 +526,17 @@
             this._currentPanelDepth += 1
 
 
-            // Remove categories of the child panel that are already represented by the child panel's background
+            // Remove the chart of the child panel that is being drilled down in parent
+            // (i.e., if user clicked on 'Male' on parent, 'Gender' category should not be visible in child panel)
             this._currentDrilldownPathParameter.forEach((step) => {
 
                 Object.entries(step).forEach(([columnName, categoryName]) => {
 
-                    childPanelObject
-                        .objects(columnName)
-                        .remove(categoryName)
+                    // Remove chart element
+                    childPanelObject.objects(columnName).remove()
+                    // Remove chart from objects registry
+                    childPanelObject.objects().delete(columnName)
+
                 })
 
             })
