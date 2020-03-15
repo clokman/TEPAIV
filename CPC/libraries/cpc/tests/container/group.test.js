@@ -24,6 +24,8 @@ global.classUtils = require("../../../utils/classUtils")
 global.container = require("../../container")
 global.shape = require("../../shape")
 
+const {mustBeOfType} = require("../../../utils/errorUtils")
+
 
 //// MODULES BEING TESTED ////
 //...

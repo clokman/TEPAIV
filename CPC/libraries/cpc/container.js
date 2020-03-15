@@ -218,28 +218,12 @@ class Group {
         return this._selection
     }
 
-
-    class(value) {
-        if (!arguments.length) {
-            return this._htmlClass
-        } else {
-            this._htmlClass = value
-
-            return this
-        }
-    }
+    // Standard getters and setters //
+    class(value){ return !arguments.length ? this._htmlClass : ( value.mustBeOfType('String'), this._htmlClass = value, this ) }
+    id(value){ return !arguments.length ? this._htmlId : ( value.mustBeOfType('String'), this._htmlId = value, this ) }
 
 
-    id(value) {
-        if (!arguments.length) {
-            return this._htmlId
-        } else {
-            this._htmlId = value
-
-            return this
-        }
-    }
-
+    // Custom Getters and Setters //
 
     x(value){
 
