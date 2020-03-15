@@ -833,6 +833,11 @@
             this.rightEdgeOfCharts = () => this.rightEdge() - this._innerPadding.right - this.bgExtensionRight()
             this.leftEdgeOfCharts = () => this.x() + this._innerPadding.left
 
+            // Inferences
+            this.has = { // this object groups methods that report a primitives (with the exception of formulas)
+                numberOfCategories: () => this._numberOfCategories()
+            }
+
             this._colorTheme = 'Single-Hue'
 
             this._showAbsoluteValues = false
@@ -1531,6 +1536,22 @@
 
         }
 
+
+        /**
+         * Use via `Panel.get` object
+         * @return {number}
+         * @private
+         */
+        _numberOfCategories(){
+            let categoryCount = 0
+            const numberOfCategoriesInPanel = this.objects().forEach((chartObject, chartName) => {
+                chartObject.objects().forEach((categoryObject, categoryName) => {
+                    categoryCount++
+                })
+            })
+            return categoryCount
+        }
+
     }
 
 
@@ -1616,9 +1637,12 @@
             this._paddingBetweenSiblingPanels = this._defaults.paddingBetweenSiblingPanels
 
 
+            // TODO: `has` object should report only primitives. All properties in `has` object that returns
+            //   objects (e.g., a NestedPanel object) should be moved to a `get`, `grab`, or `retrieve` method.
             // Inferences (mainly parent-child relationships, which are to be calculated by `_inferParentChildRelationships()` method
             this.has = {
                 // childPanel: false, // Not supported. Should be calculated manually, real-time
+                ...this.has,  // inherit items form super's `has` object (`super` keyword does not work here)
                 sibling: false,
                 numberOfSiblings: 0,
                 siblingObjectsOnRightSide: null,

@@ -1085,6 +1085,25 @@ describe ('Statistics', () => {
 })
 
 
+
+//// Inferences ///////////////////////////////////////////////////////////////
+
+describe ('Inferences', () => {
+
+    test ('Number of charts in panel ', () => {
+
+        initializeDomWithSvg()
+        const myPanel = new navigator.Panel()
+        myPanel.build()
+
+        expect( myPanel.has.numberOfCategories() ).toBe( 7 )
+
+    })
+
+
+})
+
+
 //// BG Extension ///////////////////////////////////////////////////////////////
 
 describe ('BG Extension', () => {
