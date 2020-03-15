@@ -592,10 +592,14 @@ describe ('Absolute Values: Toggle absolute values in category captions', () => 
 
     test ('Dom: Absolute values should toggle for all category captions on DOM', async () => {
 
+        jest.useFakeTimers()
         const myNavigator = await initializeDomWithTitanicTinyNavigator()
+        jest.runOnlyPendingTimers()
 
         // Expand one panel
         domUtils.simulateClickOn( '#Female' )
+        jest.runOnlyPendingTimers()
+
         // Confirm the existence of two panels
         expect( myNavigator.objects() ).toTabulateAs(`\
 ┌───────────────────┬─────────────┬───────────────┐
@@ -604,7 +608,6 @@ describe ('Absolute Values: Toggle absolute values in category captions', () => 
 │         0         │ 'panel-0-0' │ [NestedPanel] │
 │         1         │ 'panel-1-0' │ [NestedPanel] │
 └───────────────────┴─────────────┴───────────────┘`)
-            
 
         // Get initial caption texts on DOM
         let captionTexts = getCaptionTextsOfCategoriesFromDom()
