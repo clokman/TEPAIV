@@ -1973,15 +1973,6 @@
             }
 
 
-            // if ( this.showAbsoluteChartWidths() ){
-            //     setTimeout( () => {
-            //
-            //         this._recursivelyAdjustBackgroundsIfTheyAreErroneousInAbsoluteChartWidthsMode()
-            //         this.updateAllPanels()
-            //
-            //     }, this.animationDuration() )
-            // }
-
             // Register the current object as a child of its parent panel
             const nameOfThisPanel = this.id()
             this.parentPanel.childrenPanels.set(nameOfThisPanel, this)
@@ -2401,32 +2392,6 @@
             }
 
         }
-
-
-        // _recursivelyAdjustBackgroundsIfTheyAreErroneousInAbsoluteChartWidthsMode(thisPanel=this ){
-        //
-        //     if ( thisPanel.has.parentPanel ){
-        //
-        //         const parentPanel = thisPanel.parentPanel
-        //
-        //         // Correct background extensions in case of errors
-        //         const locationBgExtensionOfParentShouldEnd = thisPanel.rightEdge() + parentPanel._innerPadding.right
-        //         const locationParentPanelActuallyEnds = parentPanel.rightEdge()
-        //         const parentBgExtensionCorrectionValue = locationBgExtensionOfParentShouldEnd - locationParentPanelActuallyEnds
-        //
-        //         parentPanel
-        //             .bgExtensionRight( parentPanel.bgExtensionRight() + parentBgExtensionCorrectionValue )
-        //
-        //
-        //         thisPanel._recursivelyAdjustBackgroundsIfTheyAreErroneousInAbsoluteChartWidthsMode( thisPanel.parentPanel )
-        //
-        //
-        //     }
-        //
-        //
-        //
-        // }
-
 
 
         _recursivelyAdjustAndUpdateDOWNSTREAM(thisPanel=this, transitionDuration){
