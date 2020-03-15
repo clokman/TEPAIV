@@ -3084,7 +3084,6 @@
             this._colorScheme = 'Greys'  // TODO: Should be replaced with dynamic statement (e.g., this.colorScheme('Greys'))
             this._colorScale = null  // Dynamically populated by .colorScheme()
             this._showAbsoluteValues = false
-            this._showConnectorPolygons = false
             this._stroke = 'rgba(255, 255, 255, 1.0)'
             this._strokeWidth = '0.5px'
 
@@ -3274,7 +3273,6 @@
                         .stroke(this._stroke)
                         .strokeWidth(this._strokeWidth)
                         .id(eachCategoryId)
-                        .showLeftConnectorPolygon( this.showConnectorPolygons() )
 
                     if ( this._showAbsoluteValues ) {
                         eachCategoryObject.text(count)
@@ -3773,7 +3771,6 @@
 
         }
 
-        showConnectorPolygons(value){ return !arguments.length ? this._showConnectorPolygons : ( value.mustBeOfType('Boolean'), this._showConnectorPolygons = value, this ) }
 
         stroke(value){
             if (!arguments.length) {
@@ -3822,59 +3819,10 @@
             this._labelDistance = 20
             this._labelFill = 'gray'
 
-            this._showLeftConnectorPolygon = false
-
-            this._createLeftPolygon()
-
             this.class('category')
                 .update()
 
         }
-
-
-        _createLeftPolygon(){
-
-            const polygonObject = new shape.Polygon()
-            this.objects().set('polygon', polygonObject)
-
-            this._adjustLeftPolygon()
-
-            polygonObject.build()
-
-        }
-
-
-        _adjustLeftPolygon(){
-
-            const polygonPoints = calculatePolygonPoints.call(this)
-
-            this.objects('polygon')
-                .points( ...polygonPoints )
-                .visibility( this.showLeftConnectorPolygon() ? 'visible' : 'hidden' )
-
-
-
-            function calculatePolygonPoints() {
-
-                // The right corners of polygon attach to the left corners of the rectangle
-                const topLeftCornerOfRectangle = this.objects('rectangle').topLeftCorner()
-                    , bottomLeftCornerOfRectangle = this.objects('rectangle').bottomLeftCorner()
-
-                // The left corners of polygon are given placeholder locations with an arbitrary offset
-                const placeholderLocationForTopLeftCornerOfPolygon = this.objects('rectangle').topLeftCorner().map((coordinate) => coordinate - 10)
-                    , placeholderLocationForBottomLeftCornerOfPolygon = this.objects('rectangle').bottomLeftCorner().map((coordinate) => coordinate - 10)
-
-                const polygonPoints = [
-                    placeholderLocationForTopLeftCornerOfPolygon,  // topLeftCornerOfPolygon
-                    topLeftCornerOfRectangle,  // topRightCornerOfPolygon
-                    bottomLeftCornerOfRectangle,  // bottomRightCornerOfPolygon
-                    placeholderLocationForBottomLeftCornerOfPolygon  // bottomLeftCornerOfPolygon
-                ]
-                return polygonPoints
-            }
-
-        }
-
 
         x(value) {
 
@@ -3973,49 +3921,6 @@
             // Setter
             else{
                 super.text(value)
-                return this
-            }
-
-        }
-
-
-        fill(value) {
-        
-            // Getter
-            if (!arguments.length){
-                return super.fill()
-            }
-        
-            // Setter
-            else{
-
-                super.fill(value)
-
-                // Update polygon object
-                this.objects('polygon').fill( this.fill() )
-
-                return this
-            }
-            
-        }
-
-        showLeftConnectorPolygon(value) {
-
-            // Getter
-            if (!arguments.length){
-                return this._showLeftConnectorPolygon
-            }
-
-            // Setter
-            else{
-                value.mustBeOfType('Boolean')
-                this._showLeftConnectorPolygon = value
-
-                // Toggle polygon visibility
-                value
-                    ? this.objects('polygon').visibility( 'visible' )
-                    : this.objects('polygon').visibility( 'hidden' )
-
                 return this
             }
 
