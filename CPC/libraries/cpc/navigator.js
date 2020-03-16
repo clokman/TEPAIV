@@ -3074,7 +3074,7 @@
 
             // Initialize //
             this._calculateVariablesDependentOnDomainStack()
-            this._updatePropertiesOfCategoryObjects()
+            this._adjustPropertiesOfCategoryObjects()
             this._draw()
 
         }
@@ -3088,7 +3088,7 @@
 
             this._createCategoryObjectsFromRangeStack()
 
-            this._updatePropertiesOfCategoryObjects()
+            this._adjustPropertiesOfCategoryObjects()
 
             // Update the DOM
             this.update()
@@ -3115,7 +3115,7 @@
         update(transitionDuration){
 
             this._updateChartLabel(transitionDuration)
-            this._updatePropertiesOfCategoryObjects()
+            this._adjustPropertiesOfCategoryObjects()
 
             super.update(transitionDuration)
             return this
@@ -3172,8 +3172,8 @@
 
             this._calculateVariablesDependentOnDomainStack()
             this._replaceOldCategoriesWithNewOnes()
-            this._updatePropertiesOfCategoryObjects()
-            this._updateCategoryLabelsAndPropertiesOfCategoryLabelsArea()
+            this._adjustPropertiesOfCategoryObjects()
+            this._adjustCategoryLabelsAndPropertiesOfCategoryLabelsArea()
 
             // Toggle category labels back on (and thus, update them according to the new data)
             // if (changingDataWhileLabelsAreOn){this.categoryLabels(true)}
@@ -3220,7 +3220,7 @@
         }
 
 
-        _updatePropertiesOfCategoryObjects() {
+        _adjustPropertiesOfCategoryObjects() {
 
             // LOOP //
             this.objects().forEach(
@@ -3316,7 +3316,7 @@
 
             if (this._chartLabelObject) {
 
-                this._updateChartLabelPosition()
+                this._adjustChartLabelPosition()
 
                 this._chartLabelObject
                     .text(this._chartLabel.text)
@@ -3334,10 +3334,10 @@
         }
 
 
-        _updateChartLabelPosition() {
+        _adjustChartLabelPosition() {
 
             // Update coordinates (and other properties) of the category labels area
-            this._updateCategoryLabelsAndPropertiesOfCategoryLabelsArea()
+            this._adjustCategoryLabelsAndPropertiesOfCategoryLabelsArea()
 
             // Update chart label position
             const {x, y} = this._calculateChartLabelPosition()
@@ -3398,7 +3398,7 @@
 
                 // Register status and update the properties of the CATEGORY labels area (necessary for positioning CHART label)
                 this._categoryLabelsArea.isVisible = true
-                this._updateCategoryLabelsAndPropertiesOfCategoryLabelsArea()
+                this._adjustCategoryLabelsAndPropertiesOfCategoryLabelsArea()
 
                 return this
             }
@@ -3409,7 +3409,7 @@
 
                 // Register status and update related variables
                 this._categoryLabelsArea.isVisible = false
-                this._updateCategoryLabelsAndPropertiesOfCategoryLabelsArea()
+                this._adjustCategoryLabelsAndPropertiesOfCategoryLabelsArea()
 
                 return this
             }
@@ -3417,7 +3417,7 @@
         }
 
 
-        _updateCategoryLabelsAndPropertiesOfCategoryLabelsArea() {
+        _adjustCategoryLabelsAndPropertiesOfCategoryLabelsArea() {
 
             // If category labels area has been turned off
             if( !this._categoryLabelsArea.isVisible ){
