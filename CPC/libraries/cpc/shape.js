@@ -849,6 +849,8 @@
 
             this.update(0)
 
+
+            return this
         }
 
         update(transitionDuration=500){
