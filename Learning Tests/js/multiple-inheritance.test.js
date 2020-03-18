@@ -42,6 +42,8 @@ global.arrayUtils = require("../../CPC/libraries/utils/arrayUtils")
 global.domUtils = require("../../CPC/libraries/utils/domUtils")
 global.stringUtils = require("../../CPC/libraries/utils/stringUtils")
 global.stringUtils = require("../../CPC/libraries/utils/statsUtils")
+global.jsUtils = require("../../CPC/libraries/utils/jsUtils")
+
 
 //// MODULE BEING TESTED IN CURRENT FILE ////
 
@@ -57,10 +59,10 @@ global.stringUtils = require("../../CPC/libraries/utils/statsUtils")
 
 //// Multiple inheritance ///////////////////////////////////////////////////////////////
 
-describe ('Multiple inheritance', () => {
+describe ('Multiple inheritance in ES6 classes', () => {
 
 
-    test ('MI in ES6 classes', () => {
+    test ("Use Chong Lip Phang's algorithm to achieve multiple inheritance", () => {
 
         /**
          * From SO answer of Chong Lip Phang at https://stackoverflow.com/a/45332959/3102060
@@ -101,8 +103,6 @@ describe ('Multiple inheritance', () => {
 
 
 
-
-
         class ClassOne{
             constructor() {
             }
@@ -138,6 +138,50 @@ describe ('Multiple inheritance', () => {
     })
 
 
+})
 
+
+//// Mixins ///////////////////////////////////////////////////////////////
+
+describe ('Mixins', () => {
+
+        test ('', () => {
+
+            const mixIn = {
+
+                returnSimpleValue : () => {return 'simpleValue'},
+
+                _field: 'value of this_field',
+                returnFieldClassic: function() {return this._field},
+                returnFieldArrow: () => {return this._field},
+
+                returnThisClassic: function() {return this},
+                returnThisArrow: () => {return this},
+            }
+
+
+            class BaseClass {
+                constructor() {
+                    Object.assign(BaseClass.prototype, mixIn)  // This statement does the mixing in
+                }
+                returnBaseClass(){return 'rectangle'}
+            }
+
+            const baseClassInstance = new BaseClass()
+
+            // Both base class and mixIn methods should be accessible from base class instance
+            expect( baseClassInstance.returnBaseClass() ).toBe( 'rectangle' )
+            expect( baseClassInstance.returnSimpleValue() ).toBe( 'simpleValue' )
+
+            // While accessing `this`, classic function syntax should be used
+            expect( baseClassInstance.returnThisClassic().constructor.name ).toBe( 'BaseClass' )
+            expect( baseClassInstance.returnThisArrow().constructor.name ).toBe( 'Object' )
+
+            // While accessing mixed-in properties and getters, also classic function syntax should be used
+            expect( baseClassInstance._field ).toBe( 'value of this_field' )
+            expect( baseClassInstance.returnFieldClassic() ).toBe( 'value of this_field' )
+            expect( baseClassInstance.returnFieldArrow() ).toBe( undefined )
+
+        })
 
 })
