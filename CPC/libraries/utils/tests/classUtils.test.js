@@ -117,9 +117,9 @@ test ('Should pass (return error) if an instance property does (not) exist', () 
 
 //// Mixin ///////////////////////////////////////////////////////////////
 
-describe ('Mixin', () => {
+describe ('Mix-in Class', () => {
 
-    test ('mixin() method should enable multiple inheritance', () => {
+    test ('mixInClass() method should enable multiple inheritance', () => {
 
         class ClassOne{
             constructor() {
@@ -135,7 +135,7 @@ describe ('Mixin', () => {
         }
 
 
-        class MultiClass extends ClassOne.mixin(ClassTwo) {
+        class MultiClass extends ClassOne.mixInClass(ClassTwo) {
             constructor() {
                 super()
             }

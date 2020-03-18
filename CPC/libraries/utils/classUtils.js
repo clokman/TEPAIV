@@ -28,7 +28,7 @@ const version = "1.0"
  * @param mixins - Other classes to be added
  * @return {base}
  */
-Object.prototype.mixin = function (...mixins) {
+Object.prototype.mixInClass = function (...mixins) {
 
     class base extends this {
         constructor (...args) {
