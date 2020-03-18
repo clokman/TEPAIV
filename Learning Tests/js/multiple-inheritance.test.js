@@ -66,6 +66,7 @@ describe ('Multiple inheritance', () => {
          * From SO answer of Chong Lip Phang at https://stackoverflow.com/a/45332959/3102060
          * NOTE: The properties and methods of classes that occur later in the arguments of this method will overwrite
          * the previous properties and methods with the same names.
+         * NOTE: This may not work with React `Component`.
          * @param baseClass
          * @param mixins - Other classes to be added
          * @return {base}
@@ -116,7 +117,7 @@ describe ('Multiple inheritance', () => {
         }
 
 
-        class MultiClass extends ClassOne.mixin(ClassTwo) {
+        class MultiClass extends classes(ClassOne, ClassTwo) {
             constructor() {
                 super()
             }
