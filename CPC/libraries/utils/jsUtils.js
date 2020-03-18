@@ -59,7 +59,45 @@ Object.prototype.hasName = function (value) {
 
 }
 
-                                                
+
+/**
+ * From SO answer of Chong Lip Phang at https://stackoverflow.com/a/45332959/3102060
+ * NOTE: The properties and methods of classes that occur later in the arguments of this method will overwrite
+ * NOTE: This may not work with React `Component`.
+ * the previous properties and methods with the same names.
+ * @param mixins - Other classes to be added
+ * @return {base}
+ */
+Object.prototype.mixin = function (...mixins) {
+
+    class base extends this {
+        constructor (...args) {
+            super(...args);
+            mixins.forEach((mixin) => {
+                copyProps(this,(new mixin));
+            });
+        }
+    }
+
+    let copyProps = (target, source) => {  // this function copies all properties and symbols, filtering out some special ones
+        Object.getOwnPropertyNames(source)
+            .concat(Object.getOwnPropertySymbols(source))
+            .forEach((prop) => {
+                if (!prop.match(/^(?:constructor|prototype|arguments|caller|name|bind|call|apply|toString|length)$/))
+                    Object.defineProperty(target, prop, Object.getOwnPropertyDescriptor(source, prop));
+            })
+    }
+
+    mixins.forEach((mixin) => { // outside contructor() to allow classes(A,B,C).staticFunction() to be called etc.
+        copyProps(base.prototype, mixin.prototype);
+        copyProps(base, mixin);
+    });
+
+    return base;
+}
+
+
+
 //// UMD FOOT ////////////////////////////////////////////////////////////////////////
                              
     //// MODULE.EXPORTS ////

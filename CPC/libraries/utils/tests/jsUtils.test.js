@@ -92,3 +92,46 @@ test ('HAS TYPE: Compare the type of an object', () => {
     expect( new container.Svg().hasType() ).toBe('Svg')
 
 })
+
+
+//// Mixin ///////////////////////////////////////////////////////////////
+
+describe ('Mixin', () => {
+
+    test ('mixin() method should enable multiple inheritance', () => {
+
+        class ClassOne{
+            constructor() {
+            }
+            returnOne (){ return 1 }
+        }
+
+
+        class ClassTwo{
+            constructor() {
+            }
+            returnTwo (){ return 2 }
+        }
+
+
+        class MultiClass extends ClassOne.mixin(ClassTwo) {
+            constructor() {
+                super()
+            }
+            returnSum(){
+                return this.returnOne() + this.returnTwo()
+            }
+        }
+
+        const multiClassObject = new MultiClass()
+
+
+        expect( multiClassObject ).toBeDefined( )
+        expect( multiClassObject.returnOne() ).toBe( 1 )
+        expect( multiClassObject.returnTwo() ).toBe( 2 )
+        expect( multiClassObject.returnSum() ).toBe( 3 )
+
+
+    })
+
+})
