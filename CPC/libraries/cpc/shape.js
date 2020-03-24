@@ -914,6 +914,41 @@
 
         }
 
+
+        /**
+         * As a getter, gets points as string, converts them, and returns them into an array of numbers.
+         * As a setter, accepts an arrays of numbers.
+         * @value{} - An array of numbers in the format of  [ [x1, y1], [x2, y2] ]
+         * @return {[]} -- An array of numbers in the format of  [ [x1, y1], [x2, y2] ]
+         */
+        pointsAsNumbers(...value){
+
+            // Getter
+            if(!arguments.length){
+
+                const coordinatesAsString = "0,100 200,0 200,200 0,200".split(' ')
+
+                const coordinatesAsStringCouples = []
+                coordinatesAsString.forEach( e => {coordinatesAsStringCouples.push(e.split(','))} )
+
+                const coordinatesAsNumberCouples = []
+                coordinatesAsStringCouples.forEach( stringCouple => {
+                    coordinatesAsNumberCouples.push([+stringCouple[0], +stringCouple[1]])
+                })
+
+                return coordinatesAsNumberCouples
+            }
+
+            // Setter
+            else {
+                this.points(...value)
+                return this
+            }
+
+
+        }
+
+
     }
 
 //// UMD FOOT ////////////////////////////////////////////////////////////////////////

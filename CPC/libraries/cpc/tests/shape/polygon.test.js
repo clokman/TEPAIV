@@ -117,47 +117,68 @@ describe ('Instantiate', () => {
 
 describe ('Points', () => {
 
-        test ('Get/set points using a string argument', () => {
+    test ('Get/set points using a string argument', () => {
 
-            // Clear JEST's DOM to prevent leftovers from previous tests
-            document.body.innerHTML = ''
+        // Clear JEST's DOM to prevent leftovers from previous tests
+        document.body.innerHTML = ''
 
-            const mySvg = new container.Svg()
-            const myPolygon = new shape.Polygon()
+        const mySvg = new container.Svg()
+        const myPolygon = new shape.Polygon()
 
-            // Get points
-            expect( myPolygon.points() ).toBe( "0,100 200,0 200,200 0,200" )
+        // Get points
+        expect( myPolygon.points() ).toBe( "0,100 200,0 200,200 0,200" )
 
-            // Set points
-            myPolygon.points("0,10 20,0")
-            expect( myPolygon.points() ).toBe( "0,10 20,0" )
-            
+        // Set points
+        myPolygon.points("0,10 20,0")
+        expect( myPolygon.points() ).toBe( "0,10 20,0" )
 
-            // Chain methods should be possible
-            expect( myPolygon.stroke() ).not.toBe('salmon')
 
-            const objectReturned = myPolygon.points("0,10 20,0")
-            expect( objectReturned.constructor.name ).toBe( "Polygon" )
-            myPolygon
-                .points("0,10 20,0")
-                .stroke('salmon')
-            expect( myPolygon.stroke() ).toBe( 'salmon' )
-            
+        // Chain methods should be possible
+        expect( myPolygon.stroke() ).not.toBe('salmon')
 
-        })
+        const objectReturned = myPolygon.points("0,10 20,0")
+        expect( objectReturned.constructor.name ).toBe( "Polygon" )
+        myPolygon
+            .points("0,10 20,0")
+            .stroke('salmon')
+        expect( myPolygon.stroke() ).toBe( 'salmon' )
+
+
+    })
     
     
-        test ('Get/set using arrays as argument', () => {
+    test ('Get/set using arrays as argument', () => {
 
-            initializeDomWithSvg()
-            const myPolygon = new shape.Polygon()
+        initializeDomWithSvg()
+        const myPolygon = new shape.Polygon()
 
-            expect( myPolygon.points() ).not.toBe( "10,10 50,10 50,50 10,50" )
-            myPolygon.points( [10,10], [50,10], [50,50], [10,50] )
-            expect( myPolygon.points() ).toBe( "10,10 50,10 50,50 10,50" )
+        expect( myPolygon.points() ).not.toBe( "10,10 50,10 50,50 10,50" )
+        myPolygon.points( [10,10], [50,10], [50,50], [10,50] )
+        expect( myPolygon.points() ).toBe( "10,10 50,10 50,50 10,50" )
 
 
-        })
+    })
+
+
+    test ('Get points as an array of numbers', () => {
+
+       initializeDomWithSvg()
+       const myPolygon = new shape.Polygon()
+
+        // Get points as string (SVG specification)
+        expect( myPolygon.points() ).toBe( "0,100 200,0 200,200 0,200" )
+        // Get points as numbers
+        expect( myPolygon.pointsAsNumbers() )
+           .toEqual( [ [0, 100], [200, 0], [200, 200], [0, 200] ])
+
+
+        // Set points as numbers
+        myPolygon.pointsAsNumbers( [10,10], [50,10], [50,50], [10,50] )
+        expect( myPolygon.pointsAsNumbers() ).toEqual( [[10, 10], [50, 10], [50, 50], [10, 50]] )
+        expect( myPolygon.points() ).toBe( "10,10 50,10 50,50 10,50" )
+
+
+    })
 
 })
 
