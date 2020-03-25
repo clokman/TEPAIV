@@ -266,6 +266,490 @@
 
 
 
+    // MixIn
+    class EnsembleMember {
+
+        constructor(){
+
+            this._linkedObjects = null  // is later set to a Map
+
+
+            /**
+             * Registry method that sets values and returns `null` if a requested value cannot be found.
+             * @param key{String} - e.g., 'left'
+             * @param newObject - e.g., a LinkableRectangle object
+             * @return {EnsembleMember|null|V|Map|Map|Map|Map|Map<any, any>} - if called as get-all method, returns {key => object}.
+             * If called as a get-one method, returns the object key corresponds to. If called as a setter, returns `this`.
+             * If a requested object cannot be found, it returns null.
+             */
+            this.linkedObjects = function(key, newObject) {
+
+                const thereIsNoArgument = !arguments.length
+                const thereIsOnlyOneArgument = arguments.length === 1
+                const thereAreTwoArguments = arguments.length === 2
+
+                // Get all objects
+                if (thereIsNoArgument){
+                    return this._linkedObjects
+                }
+
+                // Get an existing object
+                if(thereIsOnlyOneArgument){
+
+                    key.mustBeOfType('String')
+
+                    if(!this._linkedObjects){return undefined}
+                    if(!this._linkedObjects.get(key)){return undefined}
+
+                    return this._linkedObjects.get(key)
+                }
+
+                // Set a new object
+                if(thereAreTwoArguments){
+
+                    key.mustBeOfType('String')
+                    // newObject.mustBeOfType('Object') // TODO: mustBeOfType does not accept this, but another method in errorUtils should me made, so that it is possilbe to allow only complex objects (and not primitives)
+
+                    // Initialize a Map object for _linkedObjects if this is not done before
+                    if (!this._linkedObjects){this._linkedObjects = new Map()}
+
+                    this._linkedObjects.set(key, newObject)
+
+                    return this
+                }
+
+            }
+
+
+            /**
+             * Makes sure that an object's registry of linked objects does not contain the self or duplicate items.
+             *  This is to ensure that each 'connection slot' of an object (e.g., 'left' or 'top') is occuped by only
+             *  one other member of the ensemble.
+             */
+            this.validateLinkingLogic = function() {
+
+                // Get linked objects
+                const thereIsAtLeastOneLinkedObject = !!this.linkedObjects()
+                const linkedObjects = thereIsAtLeastOneLinkedObject  // array
+                    ? Array.from( this.linkedObjects().values() )
+                    : [null]
+
+                // Ensure that the object is not connected to itself
+                const thisObjectIsConnectedToItself = linkedObjects.includes(this)
+                if (thisObjectIsConnectedToItself) {
+                    throw new Error( `An ensemble member cannot be linked to itself. The attempt was made to link the object with the id '${this.id()}' with type '${this.hasType()}' to itself.` )
+                }
+
+                // Ensure that the an object is not added to the ensemble more than one time
+                linkedObjects.forEach( linkedObject => {
+
+                    // Copy linkedObjects, so the original array is not modified
+                    const remainingObjects = [...linkedObjects]
+
+                    // Remove each object from the list
+                    const i = remainingObjects.indexOf(linkedObject)
+                    delete remainingObjects[i]  // delete the item without changing index. Yields to e.g., [1,2, empty, 4].
+
+                    // If the list still contains (another of) the same item after removal, throw error
+                    if( remainingObjects.includes(linkedObject) ){
+                        throw new Error(`It was attempted to add the same object more than once to the 'linkedObjects' registry of the ensemble member with the id (if available) '${this.id()}'. This may indicate the use of the same object in more than one link slot or a recurrent link between two ensemble members. The type of the object that was attempted to be added to the registry is '${linkedObject.hasType()}' and its id is (if available) '${linkedObject.id()}'.`)
+                    }
+
+                })
+
+            }
+
+            /**
+             * Returns only non-default, user specified field values. This relies
+             *  on default values being `null`.
+             * @param ensemble {Array} - An array of objects. E.g., [this, this.linkLeft(),
+             *  this.linkRight()]. The array can contain `null` values (e.g., `this.linkLeft()` may return `null`).
+             * @param sharedFieldNames{Array} - An array of strings. E.g., ['_customParentContainerSelectionForConnectors']
+             * @return {Map<string, Map<any, any>>} - Map[ sharedFieldName, Map[ objectId, sharedFieldValue ]].
+             */
+            this.collectSharedUserSpecifiedPropertiesInEnsemble = function (ensemble,sharedFieldNames) {
+
+                let sharedPropertiesInEnsemble = new Map()
+
+                sharedFieldNames.forEach( sharedFieldName => {
+
+                    // Register shared field name
+                    sharedPropertiesInEnsemble.set( sharedFieldName, new Map() )
+
+                    // Add user specified (i.e., non-null) values to shared properties Map
+                    ensemble.forEach( objectInEnsemble => {
+                        if(!!objectInEnsemble &&  // in case e.g. this.linkLeft returns null
+                            !!objectInEnsemble[sharedFieldName]
+                        ){
+                            sharedPropertiesInEnsemble
+                                .get( sharedFieldName )
+                                .set( objectInEnsemble.id(), objectInEnsemble[sharedFieldName] )
+                        }
+                    })
+
+                })
+
+                return sharedPropertiesInEnsemble
+
+            }
+
+
+            /**
+             *
+             * @param ensemble{Array} - An array of objects.
+             * @param sharedFieldNames {Array} An array of strings.
+             */
+            this.validateSharedPropertiesInEnsemble = function(ensemble, sharedFieldNames) {
+
+                const sharedUserSpecifiedPropertiesInEnsemble = this.collectSharedUserSpecifiedPropertiesInEnsemble(ensemble, sharedFieldNames)
+
+                sharedUserSpecifiedPropertiesInEnsemble.forEach( (objectIdVsPropertyValueMap, propertyName) => {
+
+                    let propertyValueInPreviousLoop
+                    let objectIdInPreviousLoop
+                    objectIdVsPropertyValueMap.forEach( (propertyValue, objectId) => {
+
+                        let twoValuesDiffer = false
+
+                        if(!!propertyValueInPreviousLoop){
+                            twoValuesDiffer = !(propertyValue === propertyValueInPreviousLoop)
+                        }
+
+                        if(twoValuesDiffer){
+                            throw(`Property "${propertyName}" is given conflicting values in the ensemble. The conflicts occur in objects with IDs "${objectIdInPreviousLoop}" and "${objectId}".`)
+                        }
+
+                        propertyValueInPreviousLoop = propertyValue
+                        objectIdInPreviousLoop = objectId
+
+                    })
+                })
+            }
+
+
+
+            this.equalizeSharedPropertiesInEnsemble = function(ensemble, sharedFieldNames){
+
+                // Error checking
+                this.validateSharedPropertiesInEnsemble(ensemble, sharedFieldNames)
+
+                // Get shared user-defined field values
+                const sharedUserSpecifiedPropertiesInEnsemble = this.collectSharedUserSpecifiedPropertiesInEnsemble(ensemble, sharedFieldNames)
+
+                // Loop over every user-defined field value and assign it to shared fields of all ensemble members
+                sharedUserSpecifiedPropertiesInEnsemble.forEach( (objectIdVsPropertyValueMap, propertyName) => {
+                    objectIdVsPropertyValueMap.forEach( (propertyValue, objectId) => {
+                        ensemble.forEach( objectInEnsemble => {
+                            if (!!objectInEnsemble){ // e.g.. LinkableRectangle.linkRight() may have returned an empty object
+                                objectInEnsemble[propertyName] = propertyValue
+                            }
+                        })
+
+                    })
+                })
+
+
+
+                // sharedFieldNamesInEnsemble.forEach( sharedFieldName => {
+                //
+                //     [sharedFieldName]
+                //
+                // })
+
+            }
+
+        }
+    }
+
+
+
+    let _uniqueIdCounterForLinkableRectangle = 0  // for assigning unique ids
+
+    class LinkableRectangle extends Rectangle{
+
+        constructor(parentContainerSelection=d3.select('body').select('svg')){
+            super(parentContainerSelection)
+
+            // Do mix-ins
+            const ensembleMember = new EnsembleMember()
+            Object.assign(LinkableRectangle.prototype, ensembleMember)
+
+
+            // Assign class
+            this.class('linkable-rectangle')
+
+            // Assign ID number and unique ID
+            this._idNumber = LinkableRectangle.uniqueIdCounter()
+            this.id( `linkable-rectangle-${ this.idNumber() }` )
+
+            // Increment unique ID counter
+            LinkableRectangle.uniqueIdCounter( LinkableRectangle.uniqueIdCounter() + 1 )
+
+            // Private Variables //
+            this.sharedFieldNamesInEnsemble = [
+                '_customParentContainerSelectionForConnectors'
+            ]
+
+
+            this._connectorObjects = null  // a Map object
+
+            this._customParentContainerSelectionForConnectors = null
+            this.updateTriggeredByEnsembleMember = false
+        }
+
+
+        build(){
+            this.update()
+            return super.update()
+        }
+
+        update(transitionDuration = 500) {
+
+
+            this.validateLinkingLogic()
+            registerAnyLinkedObjectsInEachOther.call(this)
+
+            const ensemble = [ this, this.linkLeft(), this.linkRight() ]
+            this.equalizeSharedPropertiesInEnsemble(ensemble, this.sharedFieldNamesInEnsemble)
+
+            createAnyConnectorsAndRegisterThemInObjectsTheyConnect.call(this)
+
+            // Trigger updates in all ensemble members
+            ensemble.forEach( objectInEnsemble => {
+                if(!!objectInEnsemble && objectInEnsemble !== this && !objectInEnsemble.updateTriggeredByEnsembleMember){
+                    objectInEnsemble.updateTriggeredByEnsembleMember = true
+                    objectInEnsemble.update()
+                }
+            })
+            ensemble.forEach( objectInEnsemble => {
+                if(objectInEnsemble){
+                    objectInEnsemble.updateTriggeredByEnsembleMember = false
+                }
+            })
+
+            super.update(transitionDuration)
+            return this
+
+            // Helper Functions //
+
+            function registerAnyLinkedObjectsInEachOther() {
+                // If there is a linked object on right, register `this` object also in that object
+
+                const anObjectIsLinkedAtLeftSide = !!this.linkLeft()
+                const anObjectIsLinkedAtRightSide = !!this.linkRight()
+
+                // If there is a linked object on left, register `this` object also in that object
+                if (anObjectIsLinkedAtLeftSide) {
+                    const leftLinkableRectangleObject = this.linkLeft()
+                    leftLinkableRectangleObject.linkRight(this)
+                }
+
+                // If there is a linked object on right, register `this` object also in that object
+                if (anObjectIsLinkedAtRightSide) {
+                    const rightLinkableRectangleObject = this.linkRight()
+                    rightLinkableRectangleObject.linkLeft(this)
+                }
+
+
+            }
+
+            function createAnyConnectorsAndRegisterThemInObjectsTheyConnect() {
+
+                const anObjectIsLinkedAtLeftSide = !!this.linkLeft()
+                const anObjectIsLinkedAtRightSide = !!this.linkRight()
+
+                const aConnectorAlreadyExistsAtLeftSide =
+                    !!this.connectorObjects('left') ||
+                    ( !!this.linkLeft() && !!this.linkLeft().connectorObjects('right') )
+
+                const aConnectorAlreadyExistsAtRightSide =
+                    !!this.connectorObjects('right') ||
+                    ( !!this.linkRight() && !!this.linkRight().connectorObjects('left') )
+
+                const aCustomParentContainerSelectionIsSpecifiedForConnectors = !!this.customParentContainerSelectionForConnectors()
+
+
+                // WARNING: THINK TWICE BEFORE FIXING THE DUPLICATE CODE BELOW
+                // Even There is some duplication in the following two `if` blocks,
+                //  Abstracting the code in them into one method is not recommended
+                //  This is due to existence of many 'right' and 'left' strings that,
+                //  if generated via an abstract method automatically, could be too
+                //  confusing to read/debug.
+                if (anObjectIsLinkedAtRightSide) {
+
+                    const connectorId = `connector-linkable-rectangles-${this.idNumber()}-${this.linkRight().idNumber()}`
+
+                    // Create connector Polygon
+                    const connectorPolygon = aConnectorAlreadyExistsAtRightSide
+                       // Select
+                        ? this.connectorObjects('right') || this.linkRight().connectorObjects('left')
+                       // Create
+                        : aCustomParentContainerSelectionIsSpecifiedForConnectors
+                           // Create with custom parent container
+                            ? new Polygon( this.customParentContainerSelectionForConnectors() )
+                           // Create with default parent container
+                            : new Polygon( )
+
+                    connectorPolygon
+                        .points(
+                            this.topRightCorner(),
+                            this.linkRight().topLeftCorner(),
+                            this.linkRight().bottomLeftCorner(),
+                            this.bottomRightCorner()
+                        )
+
+                    aConnectorAlreadyExistsAtRightSide
+                        ? connectorPolygon.update()
+                        : connectorPolygon
+                            .id(connectorId)
+                            .build()
+
+                    // Register connector Polygon in self and in linked object's registry
+                    this.connectorObjects('right', connectorPolygon)
+                    this.linkRight().connectorObjects('left', connectorPolygon)
+                }
+
+                if (anObjectIsLinkedAtLeftSide) {
+
+                    const connectorId = `connector-linkable-rectangles-${this.idNumber()}-${this.linkLeft().idNumber()}`
+
+                    // Create connector Polygon
+                    const connectorPolygon = aConnectorAlreadyExistsAtLeftSide
+                        // Select
+                        ? this.connectorObjects('left') || this.linkLeft().connectorObjects('right')
+                        // Create
+                        : aCustomParentContainerSelectionIsSpecifiedForConnectors
+                            // Create with custom parent container
+                            ? new Polygon( this.customParentContainerSelectionForConnectors() )
+                            // Create with default parent container
+                            : new Polygon( )
+
+                    connectorPolygon
+                        .points(
+                            this.linkLeft().topRightCorner(),
+                            this.topLeftCorner(),
+                            this.bottomLeftCorner(),
+                            this.linkLeft().bottomRightCorner()
+                        )
+
+                    aConnectorAlreadyExistsAtLeftSide
+                        ? connectorPolygon.update()
+                        : connectorPolygon
+                            .id(connectorId)
+                            .build()
+
+
+                    // Register connector Polygon in self and in linked object's registry
+                    this.connectorObjects('left', connectorPolygon)
+                    this.linkLeft().connectorObjects('right', connectorPolygon)
+
+                }
+            }
+
+        }
+
+
+        // Standard Getters //
+        
+
+        // Standard Getters/Setters //
+        customParentContainerSelectionForConnectors(value){ return !arguments.length ? this._customParentContainerSelectionForConnectors : ( value.mustBeOfType('Selection'), this._customParentContainerSelectionForConnectors = value, this ) }
+        // (Almost standard) This getter/setter refers to an extra-class variable
+        static uniqueIdCounter(value){ return !arguments.length ? _uniqueIdCounterForLinkableRectangle : ( value.mustBeOfType('Number'), _uniqueIdCounterForLinkableRectangle = value ) }
+        linkRight(value){ return !arguments.length ? this.linkedObjects('right') : ( value.mustBeOfType('LinkableRectangle'), this.linkedObjects('right', value), this ) }
+        linkLeft(value){ return !arguments.length ? this.linkedObjects('left') : ( value.mustBeOfType('LinkableRectangle'), this.linkedObjects('left', value), this ) }
+
+        // Custom Getters/Setters //
+        
+        /**
+         * @param position{String} - e.g., `left` or `right`
+         * @param connectorObject - a Polygon object
+         * @return {LinkableRectangle|null|*} - If used for get, returns {positionString => Object}. E.g., {'left' => Polygon}
+         */
+        connectorObjects(position, connectorObject) {
+
+            const thereIsNoArgument = !arguments.length
+            const thereIsOnlyOneArgument = arguments.length === 1
+            const thereAreTwoArguments = arguments.length === 2
+
+            // Get all objects
+            if (thereIsNoArgument){
+                return this._connectorObjects
+            }
+
+            // Get a specific object
+            if(thereIsOnlyOneArgument){
+                position.mustBeOfType('String')
+
+                if(!this._connectorObjects){return undefined}
+                if(!this._connectorObjects.get(position)){return undefined}
+
+                return this._connectorObjects.get(position)
+            }
+
+            // Set an object
+            if(thereAreTwoArguments){
+
+                position.mustBeOfType('String')
+                connectorObject.mustBeOfType('Polygon')
+
+                // Initialize a Map object for _connectorObjects if this is not done before
+                if (!this._connectorObjects){this._connectorObjects = new Map()}
+
+                this._connectorObjects.set(position, connectorObject)
+
+                return this
+            }
+
+        }
+
+
+        idNumber() {
+        
+            // Getter
+            if (!arguments.length){
+                return this._idNumber
+            }
+        
+            else{
+                throw('This method cannot be used to set unique ids. Use `LinkableRectangle.uniqueIdCounter()` instead.')
+            }
+            
+        }
+
+
+        _numberOfCustomParentsForConnectorsSpecifiedInLinkedObjects(){
+
+            let numberOfTimesACustomParentForConnectorsIsSpecifiedInEnsemble = 0
+
+            const linkedObjects = [this, this.linkLeft(), this.linkRight()]
+            linkedObjects.forEach( linkedObject => {
+                if(!!linkedObject &&
+                    !!linkedObject.customParentContainerSelectionForConnectors()
+                ){
+                    numberOfTimesACustomParentForConnectorsIsSpecifiedInEnsemble++
+                }
+            })
+
+            return numberOfTimesACustomParentForConnectorsIsSpecifiedInEnsemble
+
+        }
+
+
+        inferences(){
+
+            const aCustomParentElementForConnectorsIsSpecified =
+                this._numberOfCustomParentsForConnectorsSpecifiedInLinkedObjects() > 0
+
+            const customParentElementsForConnectorsAreSpecifiedInMoreThanOneObject =
+                this._numberOfCustomParentsForConnectorsSpecifiedInLinkedObjects() > 1
+
+
+
+        }
+    }
+
+
 
 
 
@@ -926,10 +1410,11 @@
             // Getter
             if(!arguments.length){
 
-                const coordinatesAsString = "0,100 200,0 200,200 0,200".split(' ')
+                const coordinatesAsString = this.points()
+                const coordinatesAsArrayOfStrings = coordinatesAsString.split(' ')
 
                 const coordinatesAsStringCouples = []
-                coordinatesAsString.forEach( e => {coordinatesAsStringCouples.push(e.split(','))} )
+                coordinatesAsArrayOfStrings.forEach( e => {coordinatesAsStringCouples.push(e.split(','))} )
 
                 const coordinatesAsNumberCouples = []
                 coordinatesAsStringCouples.forEach( stringCouple => {
@@ -957,6 +1442,7 @@
     exports.version = version;
     exports.Shape = Shape;
     exports.Rectangle = Rectangle;
+    exports.LinkableRectangle = LinkableRectangle;
     exports.Text = Text;
     exports.CaptionedRectangle = CaptionedRectangle;
     exports.Polygon = Polygon;
