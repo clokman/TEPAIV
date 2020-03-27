@@ -35,11 +35,7 @@ Object.prototype.mustBe = function(value, customErrorMessage) {
 
         // The standard error message
         else{
-
-            // Get the name of the object as string
-            let nameOfThisVariable = this.hasName()
-
-            throw Error(`The value of the variable "${nameOfThisVariable}" must be "${value}" but is "${this}".`)
+            throw Error(`The value of variable must be "${value}" but is "${this}".`)
         }
 
     }

@@ -33,29 +33,20 @@ Object.prototype.hasType = function (value) {
 }
 
 
-Object.prototype.hasName = function (value) {
+/**
+ * Returns the name of the function or method. Does not work for functions that are assigned
+ *  to variables (i.e., `const myFunc = function(){}`)
+ */
+Object.prototype.hasFunctionName = function(){
 
-    let nameOfObject
+    const functionAsString = this.toString()  // e.g., this string: "function myFunction(){return 'something'}"
+    const functionNameExtract = functionAsString.split('(')[0] // e.g., 'function myFunction'
 
-    // A convoluted way of getting the name of the parent object of the method. Inspired from https://stackoverflow.com/a/4602375/3102060).
-    // Minimalistic methods such as `Object.keys({myOject})[0]` does not allow methods to get the variable name of their parent object.
-    var that = this
-    for(that in window){
-        if(window[that] === this){
-            nameOfObject = that
-        }
-    }
+    const functionName = functionNameExtract.includes('function')
+        ? functionNameExtract.split('function ')[1]  // e.g., 'myFunction' in 'function myFunction'
+        : functionNameExtract  // when methods are stringified, the strings do not start with 'function', but directly with method's name, hence the different treatment here
 
-
-    if(!arguments.length){
-        return nameOfObject
-    }
-    else{
-
-        const comparison = value === nameOfObject
-        return comparison
-
-    }
+    return functionName
 
 }
 

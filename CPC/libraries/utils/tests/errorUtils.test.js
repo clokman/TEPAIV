@@ -63,7 +63,7 @@ test ('EQUIVALENCY: Value must be equal to the specified value', () => {
     // Error with default error message
     expect( () => {
         a.mustBe(3)
-    }).toThrow('The value of the variable "a" must be "3" but is "2".')
+    }).toThrow('The value of variable must be "3" but is "2".')
 
 
     // Error with custom error message
