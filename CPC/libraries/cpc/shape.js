@@ -581,13 +581,13 @@
 
                     // Create connector Polygon
                     const connectorPolygon = aConnectorAlreadyExistsAtRightSide
-                       // Select
+                        // Select
                         ? this.connectorObjects('right') || this.linkRight().connectorObjects('left')
-                       // Create
+                        // Create
                         : aCustomParentContainerSelectionIsSpecifiedForConnectors
-                           // Create with custom parent container
+                            // Create with custom parent container
                             ? new Polygon( this.customParentContainerSelectionForConnectors() )
-                           // Create with default parent container
+                            // Create with default parent container
                             : new Polygon( )
 
                     connectorPolygon
