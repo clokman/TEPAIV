@@ -52,50 +52,6 @@ global.__ = {
 //// TESTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-// hasName() ///////////////////////////////////////////////////////////////
-
-describe ('hasFunctionName()', () => {
-
-
-    test ('Return hoisted function name as string', () => {
-
-        function myFunction(){return 'a'}
-
-        expect( myFunction.hasFunctionName() ).toBe( 'myFunction' )
-
-    })
-
-    test ('If the name of a function assigned to a variable is requested, return empty string', () => {
-
-        const myFunction = function(){return 'a'}
-
-        expect( myFunction.hasFunctionName() ).toBe( '' )
-
-    })
-
-
-    test ('Return method name as string in various scenarios', () => {
-
-        // Declare class and instantiate instance
-        class MyClass{
-            constructor(){
-                this.listOfSelectedMethods = [this.myMethod]
-                this.myAliasedMethod = this.myMethod
-            }
-            myMethod(){return 'a'}
-        }
-        const myInstance = new MyClass()
-
-        //
-        expect( myInstance.myMethod.hasFunctionName() ).toBe( 'myMethod' )
-        expect( myInstance.myAliasedMethod.hasFunctionName() ).toBe( 'myMethod' )
-        expect( myInstance.listOfSelectedMethods[0].hasFunctionName() ).toBe( 'myMethod' )
-
-    })
-
-})
-
-
 test ('HAS TYPE: Return the type of an object', () => {
 
     const myNumber = 5
