@@ -1648,7 +1648,9 @@
 
         /**
          *
-         * @param value {Null|String|Array} - If null, returns the points as a string. If String, the coordinates should be entered in the form of `x1,y1 x2,y2` (this is the SVG-compliant way). If Arrays, the coordinates can be entered as `[x1, y1], [x2, y2]`.
+         * @param value {Null|String|Array} - If null, returns the points as a string. If String, the coordinates
+         *     should be entered in the form of `x1,y1 x2,y2` (this is the SVG-compliant way). If Arrays, the
+         *     coordinates can be entered as `[x1, y1], [x2, y2]`.
          * @return {string|Polygon}
          */
         points(value){
