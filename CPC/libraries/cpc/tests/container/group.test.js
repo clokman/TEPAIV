@@ -24,8 +24,7 @@ global.classUtils = require("../../../utils/classUtils")
 global.container = require("../../container")
 global.shape = require("../../shape")
 
-const {writeDomToFile} = require("../../../../../JestUtils/jest-dom")
-const {initializeDomWithSvg} = require("../../../../../JestUtils/jest-dom")
+const {initializeDomWithSvg, writeDomToFile} = require("../../../../../JestUtils/jest-dom")
 const {mustBeOfType} = require("../../../utils/errorUtils")
 
 
