@@ -301,7 +301,8 @@ class Group {
     }
 
     /**
-     * If the parameter is already a D3 Selection, returns it as it is. If the parameter is an object that an return a D3 selection via one of its method, calls this method and returns the returned D3 selection.
+     * If the parameter is already a D3 Selection, returns it as it is. If the parameter is an object that an return a
+     * D3 selection via one of its method, calls this method and returns the returned D3 selection.
      * @param parentSpecifier {Object|Selection}
      * @return {*}
      */
@@ -330,6 +331,209 @@ class Group {
 }
 
 
+    let _uniqueIdCounterForEnsembles = 0  // for assigning unique ids
+
+
+    /**
+     * A container class that acts as registry and does not have any DOM functionality.
+     */
+    class Ensemble extends Group{
+
+        constructor( parentContainerSelectionOrObject=d3.select('body').select('svg') ) {
+            super( parentContainerSelectionOrObject )
+
+
+            // Assign ID number and unique ID
+            this._idNumber = Ensemble.uniqueIdNumber()
+
+            this.id( `ensemble-${ this.idNumber() }` )
+
+            // Increment unique ID counter
+            Ensemble.uniqueIdNumber( Ensemble.uniqueIdNumber() + 1 )
+
+
+
+            this._sharedSettersAndValues = null
+
+        }
+
+        // Standard getters/setters
+        static uniqueIdNumber(value){ return !arguments.length ? _uniqueIdCounterForEnsembles : ( value.mustBeOfType('Number'), _uniqueIdCounterForEnsembles = value ) }
+
+        // An Enhanced version of Group.objects().
+        // TODO: Enhancements in this method should be transferred to Group.objects()
+        members(key, newObject) {
+
+            super.objects()
+
+            const thereIsNoArgument = !arguments.length
+            const thereIsOnlyOneArgument = arguments.length === 1
+            const thereAreTwoArguments = arguments.length === 2
+            //
+            // Get all objects
+            if (thereIsNoArgument){
+                return this.objects().size > 0
+                    ? this.objects()
+                    : undefined
+            }
+            //
+            // Get an existing object
+            if(thereIsOnlyOneArgument){
+
+                key.mustBeOfType('String')
+
+
+                // If requested key is not found, or if registry is empty, return null
+                if(!this.objects(key)){return undefined}
+
+                return this.objects(key)
+            }
+
+            // Set a new object
+            if(thereAreTwoArguments){
+
+                key.mustBeOfType('String')
+                if(!newObject.usesEnsembleMemberMixIn){
+                    throw new Error(`'.members()' method of an Ensemble instance attempted register a '${newObject.hasType()}' class object into Ensemble registry. Ensemble registry only accepts 'EnsembleMember' instances.`)
+                }
+
+
+                this.objects(key, newObject)
+
+                return this
+            }
+
+        }
+
+
+
+        /**
+         * Removes a member from Ensemble registry.
+         * @param memberId{String} - Key to delete in Ensemble registry
+         */
+        removeMember(memberId) {
+
+            this.members().delete(memberId)
+
+        }
+
+
+        /**
+         *
+         * @param methodName{String}
+         * @param fieldValue{*}
+         * @returns {null|Ensemble|undefined|*}
+         */
+        sharedSettersAndValues(methodName, fieldValue) {
+
+            // Establish conditions
+            const thereIsNoArgument = !arguments.length
+            const thereIsOnlyOneArgument = arguments.length === 1
+            const thereAreTwoArguments = arguments.length === 2
+
+
+            // Get all objects
+            if ( thereIsNoArgument ){
+                return this._sharedSettersAndValues
+            }
+
+
+            // Get an existing object
+            if( thereIsOnlyOneArgument ){
+
+                methodName.mustBeOfType('String')
+
+                // If requested methodName is not found, or if registry is empty, return null
+                if(!this._sharedSettersAndValues){return undefined}
+                // if(!this._sharedSettersAndValues.get(methodName.name)){return undefined}
+
+                // Return registry value
+                return this._sharedSettersAndValues.get(methodName)
+            }
+
+            // Add a new object and SET its value
+            // (Allowing some duplicate code in this block for clear separation of all modes of this methodName)
+            if(thereAreTwoArguments){
+
+                methodName.mustBeOfType('String')
+
+                // Initialize a Map object for _sharedSettersAndValues if this is not done before
+                if (!this._sharedSettersAndValues){this._sharedSettersAndValues = new Map()}
+
+
+                this._sharedSettersAndValues.set(methodName, fieldValue)
+
+                return this
+            }
+
+        }
+
+
+        /**
+         * Grabs the first argument from a setter and writes it to and Ensemble registry
+         * @returns - nothing
+         */
+        hookRegistryToSharedSetters(){
+
+            thereMustBeAtLeastOneSharedGetterSpecified.call(this)
+
+            this.sharedSettersAndValues().forEach( (getterValue, getterName) => {
+
+                this.members().forEach( (member, memberName) => {
+
+                    const sharedSettersAndValues = this.sharedSettersAndValues()
+
+                    // Grab the first argument and write it to Ensemble registry
+                    eval(`
+                        member.${getterName} = functionUtils.injectIntoMethod(
+                            member.${getterName}, function(){
+                                if(arguments.length === 1){
+                                    member.ensembleObject.sharedSettersAndValues('${getterName}', arguments[0])
+                                }
+                            }
+                        )                    
+                    `)
+
+
+                })
+            })
+
+            function thereMustBeAtLeastOneSharedGetterSpecified() {
+                if(!this.sharedSettersAndValues()) {
+                    throw new Error(`Cannot hook registry to setters because 'this._sharedSettersAndGetters' is empty. Did you forget to add shared getters using 'this.sharedSettersAndValues()'?`)
+                }
+            }
+
+        }
+
+
+        synchronizeAnySharedFieldsOfMembers(){
+
+            if( !!this.sharedSettersAndValues() ){
+                this.sharedSettersAndValues().forEach( (setterValue, setterName) => {
+                    this.members().forEach( (memberObject, memberName) => {
+                        eval( `memberObject.${setterName}(setterValue)` )
+                    })
+                })
+            }
+
+        }
+
+
+        idNumber() {
+
+            // Getter
+            if (!arguments.length){
+                return this._idNumber
+            }
+
+            else{
+                throw('This method cannot be used to set unique ids. Use `Ensemble.uniqueIdNumber()` instead.')
+            }
+
+        }
+
+    }
 
 
                                                 
@@ -340,6 +544,7 @@ class Group {
 
     exports.Svg = Svg;
     exports.Group = Group;
+    exports.Ensemble = Ensemble;
 
 	Object.defineProperty(exports, '__esModule', { value: true });
 
