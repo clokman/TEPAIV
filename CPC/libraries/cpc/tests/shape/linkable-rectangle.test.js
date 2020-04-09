@@ -1921,7 +1921,7 @@ describe( 'Connector Polygons', () => {
             const defaultLinkableRectangle = new shape.LinkableRectangle()
                 .build()
             expect( defaultLinkableRectangle.customParentContainerSelectionForConnectors() )
-                .toBe( null )
+                .toBe( undefined )
 
 
             const customContainerElementForLinkableRectangle = new container.Group()

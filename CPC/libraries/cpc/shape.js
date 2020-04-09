@@ -406,13 +406,14 @@
             // Private Variables //
             this._connectorObjects = null  // a Map object
 
-            this._customParentContainerSelectionForConnectors = null
+            this._customParentContainerSelectionForConnectors = undefined
             this.updateTriggeredByEnsembleMember = false
 
 
 
-            this._sharedSettersAndValues = null  // is Map when assigned.  When this object makes a link with another object, the shared setters and values from
-                                                  // this registry informs the shared setters and values in the Ensemble object.
+            this._sharedSettersAndValues = undefined  // is Map when assigned.  When this object makes a link with another object, the shared setters and values from
+                                                     // this registry informs the shared setters and values in the
+            // Ensemble object.
 
             // Specify which fields would be shared with an ensemble
             this.sharedSettersAndValues( this.customParentContainerSelectionForConnectors.name, this.customParentContainerSelectionForConnectors() )
