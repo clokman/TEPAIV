@@ -1090,13 +1090,23 @@ describe ('Statistics', () => {
 
 describe ('Inferences', () => {
 
-    test ('Number of charts in panel ', () => {
+    test ('Number of visible categories in panel ', () => {
 
         initializeDomWithSvg()
         const myPanel = new navigator.Panel()
         myPanel.build()
 
-        expect( myPanel.has.numberOfCategories() ).toBe( 7 )
+        // A panel with no hidden categories
+        expect( myPanel.has.numberOfVisibleCategories() ).toBe( 7 )
+
+        // Hide a chart in panel and check how many categories are visible again
+        myPanel.objects('gender').visibility('hidden').update()
+        expect( myPanel.has.numberOfVisibleCategories() ).toBe( 5 )
+
+        // Show the hidden chart again, and check visible category count again
+        myPanel.objects('gender').visibility('visible').update()
+        expect( myPanel.has.numberOfVisibleCategories() ).toBe( 7 )
+
 
     })
 

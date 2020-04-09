@@ -838,7 +838,7 @@
 
             // Inferences
             this.has = { // this object groups methods that report a primitives (with the exception of formulas)
-                numberOfCategories: () => this._numberOfCategories()
+                numberOfVisibleCategories: () => this._numberOfVisibleCategories()
             }
 
             this._colorTheme = 'Single-Hue'
@@ -1545,11 +1545,15 @@
          * @return {number}
          * @private
          */
-        _numberOfCategories(){
+        _numberOfVisibleCategories(){
             let categoryCount = 0
             const numberOfCategoriesInPanel = this.objects().forEach((chartObject, chartName) => {
                 chartObject.objects().forEach((categoryObject, categoryName) => {
-                    categoryCount++
+
+                    if( categoryObject.visibility() === 'visible' ){
+                        categoryCount++
+                    }
+
                 })
             })
             return categoryCount
