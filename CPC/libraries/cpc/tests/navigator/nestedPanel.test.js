@@ -958,7 +958,8 @@ describe ('Absolute Chart Widths', () => {
 
             // Add child panel
             const spawnObjectForChildPanel = panelZero.objects('Gender').objects('Female')
-            const childPanel = new navigator.NestedPanel(panelZero, spawnObjectForChildPanel).build()
+            const childPanel = new navigator.NestedPanel(panelZero, spawnObjectForChildPanel)
+            childPanel.build()
 
             // Summarize a dataset in child panel
             await childPanel.summarizeDataset(
