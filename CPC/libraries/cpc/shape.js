@@ -404,16 +404,28 @@
             LinkableRectangle.uniqueIdCounter( LinkableRectangle.uniqueIdCounter() + 1 )
 
             // Private Variables //
-            this._connectorObjects = null  // a Map object
+            this._connectorObjects = undefined  // a Map object
+
+            this._visibilityOfConnectorRight = 'visible'
+            this._visibilityStatusOfConnectorRightIsAwaitingPropagation = false
+
+            this._visibilityOfConnectorLeft = 'visible'
+            this._visibilityStatusOfConnectorLeftIsAwaitingPropagation = false
+
+            this._visibilityOfAllConnectorsInEnsemble = 'visible'
+            this._visibilityOfAllConnectorsInEnsembleIsAwaitingPropagation = false
+
+
 
             this._customParentContainerSelectionForConnectors = undefined
             this.updateTriggeredByEnsembleMember = false
 
 
 
-            this._sharedSettersAndValues = undefined  // is Map when assigned.  When this object makes a link with another object, the shared setters and values from
-                                                     // this registry informs the shared setters and values in the
-            // Ensemble object.
+            this._sharedSettersAndValues = undefined  /* is Map when assigned.  When this object makes a link with another
+                                                        object, the shared setters and values from this registry informs
+                                                        the shared setters and values in the Ensemble object.*/
+
 
             // Specify which fields would be shared with an ensemble
             this.sharedSettersAndValues( this.customParentContainerSelectionForConnectors.name, this.customParentContainerSelectionForConnectors() )
@@ -450,6 +462,8 @@
 
             // Sync member fields
             this.synchronizeAnySharedFieldsWithAnyOtherMembers()
+            adjustVisibilityOfAllConnectorsInEnsembleIfRequested.call(this)
+            propagateConnectorVisibilityToLinkedMember.call(this)
 
             // Create connector polygons
             createAndUpdateAnyConnectors.call(this)
@@ -595,6 +609,7 @@
             }
 
 
+
             /**
              * Creates (if necessary), updates and registers connector polygons
              */
@@ -647,6 +662,7 @@
                         .fill( this.fill() )
                         .stroke( this.stroke() )
                         .strokeWidth( this.strokeWidth() )
+                        .visibility( this.visibilityOfConnectorRight() )
 
                     // Update OR build the connector
                     aConnectorAlreadyExistsAtRightSide
@@ -686,6 +702,7 @@
                         .fill( this.fill() )
                         .stroke( this.stroke() )
                         .strokeWidth( this.strokeWidth() )
+                        .visibility( this.visibilityOfConnectorLeft() )
 
                     // Update OR build the connector
                     aConnectorAlreadyExistsAtLeftSide
@@ -702,6 +719,72 @@
                 }
             }
 
+            
+            
+
+            function adjustVisibilityOfAllConnectorsInEnsembleIfRequested(){
+
+                if( this._visibilityOfAllConnectorsInEnsembleIsAwaitingPropagation ) {
+
+
+                    if ( this.visibilityOfAllConnectorsInEnsemble() === 'visible' ){
+
+                        this.ensembleObject.members().forEach( (member, memberName) => {
+                            member.visibilityOfConnectorRight( 'visible' )
+                            member.visibilityOfConnectorLeft( 'visible' )
+                        })
+
+                    }
+
+                    if ( this.visibilityOfAllConnectorsInEnsemble() === 'hidden' ){
+
+                        this.ensembleObject.members().forEach( (member, memberName) => {
+                            member.visibilityOfConnectorRight( 'hidden' )
+                            member.visibilityOfConnectorLeft( 'hidden' )
+                        })
+
+                    }
+
+                    this._visibilityOfAllConnectorsInEnsembleIsAwaitingPropagation = false
+
+                }
+
+            }
+
+
+            /**
+             * Propagates connector visibility status to the linked member on the left or right (depending on the
+             * existence of linked objects on the right or left side)
+             */
+            function propagateConnectorVisibilityToLinkedMember(){
+
+                // Copy value FROM the linked object on the left (if there is an object on the left side)
+                if( !!this.linkLeft() && this._visibilityStatusOfConnectorLeftIsAwaitingPropagation ){
+
+                    this.linkLeft()._visibilityOfConnectorRight = this.visibilityOfConnectorLeft() /* The
+                     private variable `_visibilityOfConnectorRight` is set without using a setter in order to
+                     prevent infinite calls from the setters of ensemble members to each other */
+                    this._visibilityStatusOfConnectorLeftIsAwaitingPropagation = false
+
+                }
+
+
+
+                if( !!this.linkRight() && this._visibilityStatusOfConnectorRightIsAwaitingPropagation ){
+
+                    this.linkRight()._visibilityOfConnectorLeft = this.visibilityOfConnectorRight() /* The
+                     private variable `_visibilityOfConnectorLeft` is set without using a setter in order to
+                     prevent infinite calls from the setters of ensemble members to each other */
+                    this._visibilityStatusOfConnectorRightIsAwaitingPropagation = false
+
+                }
+
+
+
+
+            }
+
+
         }
 
 
@@ -714,7 +797,6 @@
         linkLeft(value){ return !arguments.length ? this.linkedObjects('left') : ( value.mustBeOfType('LinkableRectangle'), this.linkedObjects('left', value), this ) }
 
         // Custom Getters/Setters //
-
 
         customParentContainerSelectionForConnectors(value) {
             if (!arguments.length) {
@@ -942,6 +1024,80 @@
             }
 
         }
+
+
+        /**
+         *
+         * @param value {String}
+         * @returns {string|LinkableRectangle}
+         */
+        visibilityOfConnectorLeft(value) {
+
+            // Getter
+            if (!arguments.length){
+                return this._visibilityOfConnectorLeft
+            }
+
+            // Setter
+            else{
+                value.mustBeOfType('String')
+                this._visibilityOfConnectorLeft = value
+                this._visibilityStatusOfConnectorLeftIsAwaitingPropagation = true
+
+                return this
+            }
+
+        }
+
+
+        /**
+         *
+         * @param value {String}
+         * @returns {string|LinkableRectangle}
+         */
+        visibilityOfConnectorRight(value) {
+
+            // Getter
+            if (!arguments.length){
+                return this._visibilityOfConnectorRight
+            }
+
+            // Setter
+            else{
+                value.mustBeOfType('String')
+                this._visibilityOfConnectorRight = value
+                this._visibilityStatusOfConnectorRightIsAwaitingPropagation = true
+
+                return this
+            }
+
+        }
+
+
+
+        /**
+         *
+         * @param value {String}
+         * @returns {string|LinkableRectangle}
+         */
+        visibilityOfAllConnectorsInEnsemble(value) {
+
+            // Getter
+            if (!arguments.length){
+                return this._visibilityOfAllConnectorsInEnsemble
+            }
+
+            // Setter
+            else{
+                value.mustBeOfType('String')
+                this._visibilityOfAllConnectorsInEnsemble = value
+                this._visibilityOfAllConnectorsInEnsembleIsAwaitingPropagation = true
+
+                return this
+            }
+
+        }
+
 
 
         /**

@@ -2065,4 +2065,139 @@ describe( 'Connector Polygons', () => {
     } )
 
 
+
+    //// Show/Hide Connectors ///////////////////////////////////////////////////////////////
+
+    describe( 'Show/Hide Connectors', () => {
+
+        // Setup //
+
+        let middleRectangle,
+            rightRectangle,
+            leftRectangle
+        let connector1,
+            connector2
+
+        beforeEach( () => {
+
+            // Create rectangles
+            rightRectangle = new shape.LinkableRectangle()
+                .id( 'right-rectangle' )
+            middleRectangle = new shape.LinkableRectangle()
+                .id( 'middle-rectangle' )
+                .build()
+                .build()
+            leftRectangle = new shape.LinkableRectangle()
+                .id( 'left-rectangle' )
+                .build()
+
+            // Link rectangles
+            // [L]️ -c1-> [M] -c2-> [R]
+
+            leftRectangle.linkRight( middleRectangle ).update()
+            middleRectangle.linkRight( rightRectangle ).update()
+
+            // Get connectors
+            connector1 = leftRectangle.connectorRight()
+            connector2 = middleRectangle.connectorRight()
+
+
+        } )
+
+
+        test( 'It should be possible to toggle visibility of INDIVIDUAL connectors', () => {
+
+            // Status of rectangles at this point
+            // [L]️ -c1-> [M] -c2-> [R]
+
+            // Connectors should share the same visibility status with the rectangles they connect
+            // Check for connector 1
+            expect( leftRectangle.visibilityOfConnectorRight() ).toBe( 'visible' )
+            expect( middleRectangle.visibilityOfConnectorLeft() ).toBe( 'visible' )
+            expect( connector1.visibility() ).toBe( 'visible' )
+            // Check for connector 2
+            expect( middleRectangle.visibilityOfConnectorRight() ).toBe( 'visible' )
+            expect( rightRectangle.visibilityOfConnectorLeft() ).toBe( 'visible' )
+            expect( connector2.visibility() ).toBe( 'visible' )
+
+
+
+            // Toggle visibility status of connector 1 via a rectangle it is connected to
+            leftRectangle.visibilityOfConnectorRight('hidden').update()
+
+            // Connector 1 should now be hidden
+            expect( leftRectangle.visibilityOfConnectorRight() ).toBe( 'hidden' )
+            expect( middleRectangle.visibilityOfConnectorLeft() ).toBe( 'hidden' )
+            expect( connector1.visibility() ).toBe( 'hidden' )
+            // Connector 2 should still be visible
+            expect( middleRectangle.visibilityOfConnectorRight() ).toBe( 'visible' )
+            expect( rightRectangle.visibilityOfConnectorLeft() ).toBe( 'visible' )
+            expect( connector2.visibility() ).toBe( 'visible' )
+
+
+
+            // Toggle visibility status of connector 2 via a rectangle it is connected to
+            rightRectangle.visibilityOfConnectorLeft('hidden').update()
+
+            // Connector 1 should remain be hidden
+            expect( leftRectangle.visibilityOfConnectorRight() ).toBe( 'hidden' )
+            expect( middleRectangle.visibilityOfConnectorLeft() ).toBe( 'hidden' )
+            expect( connector1.visibility() ).toBe( 'hidden' )
+            // Connector 2 should now also be hidden
+            expect( middleRectangle.visibilityOfConnectorRight() ).toBe( 'hidden' )
+            expect( rightRectangle.visibilityOfConnectorLeft() ).toBe( 'hidden' )
+            expect( connector2.visibility() ).toBe( 'hidden' )
+
+        } )
+
+
+        test( 'It should be possible to toggle visibility of ALL connectors', () => {
+
+            // Status of rectangles at this point
+            // [L]️ -c1-> [M] -c2-> [R]
+
+            // Connectors should share the same visibility status with the rectangles they connect
+            // Check for connector 1
+            expect( leftRectangle.visibilityOfConnectorRight() ).toBe( 'visible' )
+            expect( middleRectangle.visibilityOfConnectorLeft() ).toBe( 'visible' )
+            expect( connector1.visibility() ).toBe( 'visible' )
+            // Check for connector 2
+            expect( middleRectangle.visibilityOfConnectorRight() ).toBe( 'visible' )
+            expect( rightRectangle.visibilityOfConnectorLeft() ).toBe( 'visible' )
+            expect( connector2.visibility() ).toBe( 'visible' )
+
+
+
+            // Hide all connectors via one of the rectangles in the ensemble
+            leftRectangle.visibilityOfAllConnectorsInEnsemble('hidden').update()
+
+            // Connector 1 should now be hidden
+            expect( leftRectangle.visibilityOfConnectorRight() ).toBe( 'hidden' )
+            expect( middleRectangle.visibilityOfConnectorLeft() ).toBe( 'hidden' )
+            expect( rightRectangle.visibilityOfConnectorLeft() ).toBe( 'hidden' )
+            expect( connector1.visibility() ).toBe( 'hidden' )
+            // Connector 2 should still be visible
+            expect( middleRectangle.visibilityOfConnectorRight() ).toBe( 'hidden' )
+            expect( rightRectangle.visibilityOfConnectorLeft() ).toBe( 'hidden' )
+            expect( connector2.visibility() ).toBe( 'hidden' )
+
+
+
+            // Show all connectors via one of the rectangles in the ensemble
+            rightRectangle.visibilityOfAllConnectorsInEnsemble('visible').update()
+
+            // Connector 1 should now be visible
+            expect( leftRectangle.visibilityOfConnectorRight() ).toBe( 'visible' )
+            expect( middleRectangle.visibilityOfConnectorLeft() ).toBe( 'visible' )
+            expect( connector1.visibility() ).toBe( 'visible' )
+            // Connector 2 should now be visible
+            expect( middleRectangle.visibilityOfConnectorRight() ).toBe( 'visible' )
+            expect( rightRectangle.visibilityOfConnectorLeft() ).toBe( 'visible' )
+            expect( connector2.visibility() ).toBe( 'visible' )
+
+        } )
+
+
+    } )
+
 } )
