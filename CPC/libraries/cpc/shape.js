@@ -635,6 +635,49 @@
                 //  This is due to existence of many 'right' and 'left' strings that,
                 //  if generated via an abstract method automatically, could be too
                 //  confusing to read/debug.
+                if (anObjectIsLinkedAtLeftSide) {
+
+                    const connectorId = `connector-linkable-rectangles-${this.idNumber()}-${this.linkLeft().idNumber()}`
+
+                    // Select OR create (if it does not already exist) connector Polygon
+                    const connectorPolygon = aConnectorAlreadyExistsAtLeftSide
+                        // Select
+                        ? this.connectorObjects('left') || this.linkLeft().connectorObjects('right')
+                        // Create
+                        : aCustomParentContainerSelectionIsSpecifiedForConnectors
+                            // Create with custom parent container
+                            ? new Polygon( this.customParentContainerSelectionForConnectors() )
+                            // Create with default parent container
+                            : new Polygon( )
+
+                    // Adjust values of the connector
+                    connectorPolygon
+                        .points(
+                            this.linkLeft().topRightCorner(),
+                            this.topLeftCorner(),
+                            this.bottomLeftCorner(),
+                            this.linkLeft().bottomRightCorner()
+                        )
+                        .fill( this.fill() )
+                        .stroke( this.stroke() )
+                        .strokeWidth( this.strokeWidth() )
+                        .visibility( this.visibilityOfConnectorLeft() )
+
+                    // Update OR build the connector
+                    aConnectorAlreadyExistsAtLeftSide
+                        ? connectorPolygon.update()
+                        : connectorPolygon
+                        .id(connectorId)
+                        .build()
+
+
+                    // Register connector Polygon in self and in linked object's registry
+                    this.connectorObjects('left', connectorPolygon)
+                    this.linkLeft().connectorObjects('right', connectorPolygon)
+
+                }
+
+
                 if (anObjectIsLinkedAtRightSide) {
 
                     const connectorId = `connector-linkable-rectangles-${this.idNumber()}-${this.linkRight().idNumber()}`
@@ -676,47 +719,7 @@
                     this.linkRight().connectorObjects('left', connectorPolygon)
                 }
 
-                if (anObjectIsLinkedAtLeftSide) {
 
-                    const connectorId = `connector-linkable-rectangles-${this.idNumber()}-${this.linkLeft().idNumber()}`
-
-                    // Select OR create (if it does not already exist) connector Polygon
-                    const connectorPolygon = aConnectorAlreadyExistsAtLeftSide
-                        // Select
-                        ? this.connectorObjects('left') || this.linkLeft().connectorObjects('right')
-                        // Create
-                        : aCustomParentContainerSelectionIsSpecifiedForConnectors
-                            // Create with custom parent container
-                            ? new Polygon( this.customParentContainerSelectionForConnectors() )
-                            // Create with default parent container
-                            : new Polygon( )
-
-                    // Adjust values of the connector
-                    connectorPolygon
-                        .points(
-                            this.linkLeft().topRightCorner(),
-                            this.topLeftCorner(),
-                            this.bottomLeftCorner(),
-                            this.linkLeft().bottomRightCorner()
-                        )
-                        .fill( this.fill() )
-                        .stroke( this.stroke() )
-                        .strokeWidth( this.strokeWidth() )
-                        .visibility( this.visibilityOfConnectorLeft() )
-
-                    // Update OR build the connector
-                    aConnectorAlreadyExistsAtLeftSide
-                        ? connectorPolygon.update()
-                        : connectorPolygon
-                            .id(connectorId)
-                            .build()
-
-
-                    // Register connector Polygon in self and in linked object's registry
-                    this.connectorObjects('left', connectorPolygon)
-                    this.linkLeft().connectorObjects('right', connectorPolygon)
-
-                }
             }
 
             
@@ -1472,7 +1475,7 @@
 
 
             // Initialize //
-            this._rectangleObject = new shape.Rectangle(this._selection)
+            this._rectangleObject = new shape.LinkableRectangle(this._selection)
             this.objects('rectangle', this._rectangleObject)  // add object to container registry
 
             this._textObject = new shape.Text(this._selection)
