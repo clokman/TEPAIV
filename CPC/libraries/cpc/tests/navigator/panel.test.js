@@ -1073,7 +1073,7 @@ describe ('Data Operations', () => {
 
 describe ('Statistics', () => {
 
-        test ('Largest count in panel', () => {
+        test ('The largest count in panel', () => {
 
             const myPanel = new navigator.Panel()
             myPanel.build()

@@ -1994,6 +1994,7 @@
             // Remove self
             super.remove()
 
+
             if ( this.has.parentPanel ){
 
                 // De-register self from children registry
@@ -2049,6 +2050,7 @@
                 this.parentPanel._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
 
             }
+
 
             this.updateAllPanels()
 

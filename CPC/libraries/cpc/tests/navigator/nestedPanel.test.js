@@ -975,7 +975,7 @@ describe ('Absolute Chart Widths', () => {
                 .update(0)
             jest.runOnlyPendingTimers()
 
-            // No overaps should have occurred
+            // No overlaps should have occurred
             expect( panelZero.largestTotalCount() > childPanel.largestTotalCount()  ).toBe( true )
             expect( panelZero.width() > childPanel.width()  ).toBe( true )
 
@@ -2813,7 +2813,6 @@ initializeDomWith.panelZero.and = {
         return {panelZero, childPanel}
 
     },
-
 
     childAndGrandchild: function() {
 
