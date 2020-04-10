@@ -2796,6 +2796,43 @@ describe ('Color Themes', () => {
 
 
 
+//// Connector Polygons ///////////////////////////////////////////////////////////////
+
+describe( 'Connector Polygons', () => {
+
+
+    test( 'Connector polygons should always exist between categories regardless of their visibility status', () => {
+
+
+        jest.useFakeTimers()
+
+        const {panelZero, childPanel} = initializeDomWith.panelZero.and.child()
+
+        panelZero.objects()
+
+        const panelZeroMaleRectangle = panelZero.objects('gender').objects('male').objects('rectangle')
+        const childPanelMaleRectangle = childPanel.objects('gender').objects('male').objects('rectangle')
+
+        jest.runOnlyPendingTimers()
+        jest.runAllTimers()
+
+        expect( panelZeroMaleRectangle.connectorRight() ).toBeDefined()
+        expect( childPanelMaleRectangle.connectorLeft() ).toBeDefined()
+
+
+    } )
+
+
+    test( 'It should be possible to toggle visibility of connector polygons', () => {
+
+
+
+    } )
+
+
+} )
+
+
 
 
 
@@ -3091,5 +3128,3 @@ describe ('initializeDomWith...', () => {
 
 
 })
-
-
