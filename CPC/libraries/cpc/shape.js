@@ -652,6 +652,7 @@
 
                     // Adjust values of the connector
                     connectorPolygon
+                        .class('connector-polygon')
                         .points(
                             this.linkLeft().topRightCorner(),
                             this.topLeftCorner(),

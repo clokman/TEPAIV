@@ -1391,6 +1391,34 @@ describe( 'Connector Polygons', () => {
 
         } )
 
+
+        test( 'Polygon objects should have the right class', () => {
+
+            // Initial state:
+            // [L] [M] [R] [my]
+
+            middleRectangle
+                .linkLeft( leftRectangle )
+                .linkRight( rightRectangle )
+                .update()
+
+            expect( middleRectangle.connectorLeft().class() ).toBe( 'connector-polygon' )
+            expect( middleRectangle.connectorRight().class() ).toBe( 'connector-polygon' )
+
+        } )
+
+        test( 'Linkable rectangle should have the right class', () => {
+
+            // Initial state:
+            // [L] [M] [R] [my]
+
+            expect( myRectangle.class() ).toBe( 'linkable-rectangle' )
+
+        } )
+
+
+
+
     } )
 
 
