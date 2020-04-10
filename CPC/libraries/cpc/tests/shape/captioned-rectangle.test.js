@@ -391,3 +391,41 @@ describe ('Text', () => {
 
 })
 
+
+
+//// Connectors ///////////////////////////////////////////////////////////////
+
+describe( 'Connectors', () => {
+
+
+    test( 'It should be possible to add connectors between rectangles by directly calling methods of' +
+        ' LinkableRectangle class', () => {
+
+        initializeDomWithSvg()
+        // Create category
+        const captionedRectangle1 = new shape.CaptionedRectangle()
+        const captionedRectangle2 = new shape.CaptionedRectangle()
+
+        // Get rectangle objects
+        const rectangle1 = captionedRectangle1.objects('rectangle')
+        const rectangle2 = captionedRectangle2.objects('rectangle')
+
+        // Link rectangles
+        rectangle1.linkRight(rectangle2).update()
+
+        // Both rectangles should  have a connector
+        expect( rectangle1.connectorRight().class() ).toBe( "connector-polygon" )
+        expect( rectangle2.connectorLeft().class() ).toBe( "connector-polygon" )
+        // Both rectangles should  have the same connector
+        expect( rectangle1.connectorRight() )
+            .toBe( rectangle2.connectorLeft() )
+
+
+        // The connector element should indeed be present on DOM
+        const connectorElement = document.querySelector( '#connector-linkable-rectangles-0-1' )
+        expect( connectorElement.getAttribute('id') ).toBeDefined()
+
+    } )
+
+} )
+
