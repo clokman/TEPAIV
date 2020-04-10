@@ -32,6 +32,7 @@ d3.selection.prototype.duration = jest.fn( function(){return this} )
 
 
 global.classUtils = require("../../../utils/classUtils")
+global.jsUtils = require("../../../utils/jsUtils")
 global.container = require("../../container")
 global.shape = require("../../shape")
 global.stringUtils = require("../../../utils/stringUtils")
