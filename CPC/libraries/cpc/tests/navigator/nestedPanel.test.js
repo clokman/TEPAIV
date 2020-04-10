@@ -2322,6 +2322,57 @@ describe ('Inferences', () => {
             })
 
 
+            test ('If parent panel has different data than the child panel, build should not give an error (it used to)', async () => {
+
+                jest.useFakeTimers()
+
+                initializeDomWithSvg()
+
+                // Add panelZero
+                const panelZero = new navigator.NestedPanel()
+                    .build()
+
+                // Summarize a dataset in panel0
+                await panelZero.summarizeDataset(
+                    'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv', 'Name')
+                panelZero.update()
+
+                jest.runOnlyPendingTimers()
+                jest.runAllTimers()
+
+                expect( panelZero.stacks().data() ).toTabulateAs(`\
+┌───────────────────┬──────────┬──────────────────────────────────────────────┐
+│ (iteration index) │   Key    │                    Values                    │
+├───────────────────┼──────────┼──────────────────────────────────────────────┤
+│         0         │ 'Ticket' │ Stack { _data: [Map], _scaleFunction: null } │
+│         1         │ 'Status' │ Stack { _data: [Map], _scaleFunction: null } │
+│         2         │ 'Gender' │ Stack { _data: [Map], _scaleFunction: null } │
+└───────────────────┴──────────┴──────────────────────────────────────────────┘`)
+
+                // Add child panel that starts with an example dataset, which is different than the panelZero
+                const spawnObjectForChildPanel = panelZero.objects('Gender').objects('Female')
+                const childPanel = new navigator.NestedPanel(panelZero, spawnObjectForChildPanel)
+
+                // Build should not fail here
+                childPanel.build()
+                jest.runOnlyPendingTimers()
+
+                expect( childPanel.stacks().data() ).toTabulateAs(`\
+┌───────────────────┬──────────┬──────────────────────────────────────────────┐
+│ (iteration index) │   Key    │                    Values                    │
+├───────────────────┼──────────┼──────────────────────────────────────────────┤
+│         0         │ 'gender' │ Stack { _data: [Map], _scaleFunction: null } │
+│         1         │ 'class'  │ Stack { _data: [Map], _scaleFunction: null } │
+│         2         │ 'status' │ Stack { _data: [Map], _scaleFunction: null } │
+└───────────────────┴──────────┴──────────────────────────────────────────────┘`)
+
+                // When child requests a category that is not in parent, the statement should return null, but NOT throw error
+                const noMatchFound = childPanel.getEquivalentCategoryObjectInLeftPanel('gender', 'female')
+                expect( noMatchFound ).toBe( null )
+                
+            })
+
+
         })
         
     })
@@ -2974,6 +3025,24 @@ initializeDomWith.panelZero.and = {
 
 }
 
+initializeDomWith.panelZero.and.child.without = {
+
+    genderChart: function () {
+
+        jest.useFakeTimers()
+
+        const {panelZero, childPanel} = initializeDomWith.panelZero.and.child()
+
+        childPanel.objects('gender').remove()
+
+        jest.runOnlyPendingTimers()
+
+        return {panelZero, childPanel}
+
+    }
+}
+
+
 
 
 //// initializeDomWith... ///////////////////////////////////////////////////////////////
@@ -3012,6 +3081,13 @@ describe ('initializeDomWith...', () => {
         // initializeDomWith.panelZero.and.childThatHasTwoSiblingChildren()
         // writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/initializeDomWith.panelZero.and.childThatHasTwoSiblingChildren.html')
     })
+
+
+    // test ('initializeDomWith.panelZero.and.child.without.genderChart()', () => {
+    //     // Uncomment to write html output to file
+    //     initializeDomWith.panelZero.and.child.without.genderChart()
+    //     writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/initializeDomWith.panelZero.and.child.without.genderChart().html')
+    // })
 
 
 })
