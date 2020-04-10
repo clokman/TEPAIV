@@ -1257,29 +1257,57 @@ describe( 'Connector Polygons', () => {
     describe( 'Basics', () => {
 
 
-        test( 'Get/set connector objects with `connectorObjects()`', () => {
+        let myRectangle
+        let leftRectangle
+          , middleRectangle
+          , rightRectangle
 
-            const myLinkableRectangle = new shape.LinkableRectangle()
+        // Setup
+        beforeEach( () => {
+
+            shape.LinkableRectangle.uniqueIdCounter( 0 )
+
+            initializeDomWithSvg()
+
+            leftRectangle = new shape.LinkableRectangle()
+                .build()
+            middleRectangle = new shape.LinkableRectangle()
+                .build()
+            rightRectangle = new shape.LinkableRectangle()
                 .build()
 
+            myRectangle = new shape.LinkableRectangle()
+                .build()
+
+            // Current state:
+            // [L] [M] [R] [my]
+
+        } )
+
+
+        test( 'Get/set connector objects with `connectorObjects()`', () => {
+
+            // Initial state:
+            // [L] [M] [R] [my]
+
             // Set
-            myLinkableRectangle.connectorObjects( 'left', new shape.Polygon() )
-            myLinkableRectangle.connectorObjects( 'right', new shape.Polygon() )
-            myLinkableRectangle.connectorObjects( 'anyOtherDirection', new shape.Polygon() )
+            myRectangle.connectorObjects( 'left', new shape.Polygon() )
+            myRectangle.connectorObjects( 'right', new shape.Polygon() )
+            myRectangle.connectorObjects( 'anyOtherDirection', new shape.Polygon() )
 
             // Get
-            expect( myLinkableRectangle.connectorObjects( 'left' ).hasType() ).toBe( 'Polygon' )
-            expect( myLinkableRectangle.connectorObjects( 'right' ).hasType() ).toBe( 'Polygon' )
-            expect( myLinkableRectangle.connectorObjects( 'anyOtherDirection' ).hasType() ).toBe( 'Polygon' )
+            expect( myRectangle.connectorObjects( 'left' ).hasType() ).toBe( 'Polygon' )
+            expect( myRectangle.connectorObjects( 'right' ).hasType() ).toBe( 'Polygon' )
+            expect( myRectangle.connectorObjects( 'anyOtherDirection' ).hasType() ).toBe( 'Polygon' )
 
 
             // Return undefined if a non-existent key is requested
-            expect( myLinkableRectangle.connectorObjects( 'previouslyUnsetKey' ) ).toBeUndefined()
+            expect( myRectangle.connectorObjects( 'previouslyUnsetKey' ) ).toBeUndefined()
 
 
             // Return undefined if a key was requested while there is nothing in registry
-            myLinkableRectangle._connectorObjects = null
-            expect( myLinkableRectangle.connectorObjects( 'someKey' ) ).toBeUndefined()
+            myRectangle._connectorObjects = null
+            expect( myRectangle.connectorObjects( 'someKey' ) ).toBeUndefined()
 
 
         } )
@@ -1287,25 +1315,26 @@ describe( 'Connector Polygons', () => {
 
         test( 'Get/set connector objects with the shorthand methods `connectorRight() and `connectorLeft()`', () => {
 
-            const myLinkableRectangle = new shape.LinkableRectangle()
-                .build()
+
+            // Initial state:
+            // [L] [M] [R] [my]
 
             // Set
-            myLinkableRectangle.connectorLeft( new shape.Polygon().id( 'polygon-at-left' ) )
-            myLinkableRectangle.connectorRight( new shape.Polygon().id( 'polygon-at-right' ) )
+            myRectangle.connectorLeft( new shape.Polygon().id( 'polygon-at-left' ) )
+            myRectangle.connectorRight( new shape.Polygon().id( 'polygon-at-right' ) )
 
             // Get
-            expect( myLinkableRectangle.connectorLeft().id() ).toBe( 'polygon-at-left' )
-            expect( myLinkableRectangle.connectorRight().id() ).toBe( 'polygon-at-right' )
+            expect( myRectangle.connectorLeft().id() ).toBe( 'polygon-at-left' )
+            expect( myRectangle.connectorRight().id() ).toBe( 'polygon-at-right' )
 
 
             // If argument type is not correct, there should be an error
             expect( () => {
-                myLinkableRectangle.connectorLeft( 'some text' )
+                myRectangle.connectorLeft( 'some text' )
             } ).toThrow( `Expected the type 'Polygon' but the value 'some text' has the type 'String'.` )
 
             expect( () => {
-                myLinkableRectangle.connectorRight( 'some text' )
+                myRectangle.connectorRight( 'some text' )
             } ).toThrow( `Type error: Expected the type 'Polygon' but the value 'some text' has the type 'String'.` )
 
 
@@ -1314,15 +1343,8 @@ describe( 'Connector Polygons', () => {
 
         test( 'There should be Polygon objects between connected objects', () => {
 
-            shape.LinkableRectangle.uniqueIdCounter( 0 )
-
-            initializeDomWithSvg()
-            const leftRectangle = new shape.LinkableRectangle()
-                .build()
-            const middleRectangle = new shape.LinkableRectangle()
-                .build()
-            const rightRectangle = new shape.LinkableRectangle()
-                .build()
+            // Initial state:
+            // [L] [M] [R] [my]
 
             // L --> M //
 
@@ -1351,29 +1373,23 @@ describe( 'Connector Polygons', () => {
 
         test( 'There should be the right number of Polygon objects between connected objects', () => {
 
-            shape.LinkableRectangle.uniqueIdCounter( 0 )
-
-            initializeDomWithSvg()
-            const leftLinkableRectangle = new shape.LinkableRectangle()
-                .build()
-            const rightLinkableRectangle = new shape.LinkableRectangle()
-                .build()
+            // Initial state:
+            // [L] [M] [R] [my]
 
             // L --> R //
 
-            leftLinkableRectangle
-                .linkRight( rightLinkableRectangle )
+            leftRectangle
+                .linkRight( rightRectangle )
                 .update()
 
             // There should be a polygon between L and R, and both objects have the same polygon registered in them
-            expect( leftLinkableRectangle.connectorObjects( 'right' ).id() ).toBe( 'connector-linkable-rectangles-0-1' )
-            expect( rightLinkableRectangle.connectorObjects( 'left' ).id() ).toBe( 'connector-linkable-rectangles-0-1' )
+            expect( leftRectangle.connectorObjects( 'right' ).id() ).toBe( 'connector-linkable-rectangles-0-2' )
+            expect( rightRectangle.connectorObjects( 'left' ).id() ).toBe( 'connector-linkable-rectangles-0-2' )
 
             // There should be only one polygon on DOM
             expect( document.querySelectorAll( 'polygon' ).length ).toBe( 1 )
 
         } )
-
 
     } )
 
