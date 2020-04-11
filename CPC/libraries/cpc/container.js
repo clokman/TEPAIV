@@ -183,6 +183,7 @@ class Group {
 
     remove(){
         this.select().remove()  // .remove() method in the end belongs to d3
+        this.removeAll()
     }
 
 
