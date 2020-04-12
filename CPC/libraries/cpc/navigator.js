@@ -143,7 +143,8 @@
          *
          * @param path {String}
          * @param omitColumns {Array} - An array of strings. Each item should be a column name.
-         * @param quantiles {Array} - An array of strings. Each item should be a quantile name. Any continuous column will be discretized using the number and names of quantiles given in this argument.
+         * @param quantiles {Array} - An array of strings. Each item should be a quantile name. Any continuous column
+         *     will be discretized using the number and names of quantiles given in this argument.
          * @param update {Boolean} - Should be set to false only for testing and debugging purposes
          * @return {Promise<Navigator>}
          */
@@ -534,8 +535,10 @@
 
                     // Remove chart element
                     childPanelObject.objects(columnName).remove()
+
                     // Remove chart from objects registry
-                    childPanelObject.objects().delete(columnName)
+                    // childPanelObject.objects().delete(columnName)  // Warning: Inclusion of this line leads to
+                                                                      //  layout changes
 
                 })
 
@@ -2188,14 +2191,14 @@
 
             // Create a cover (initiate invisible)
             const childPanelCover = new shape.Rectangle()
-                .width(0)
-                .fill(this.objectToSpawnFrom.fill())
-                .height(0)
-                .update(0)
+                .width( 0 )
+                .fill( this.objectToSpawnFrom.fill() )
+                .height( 0 )
+                .update( 0 )
 
 
             // Move the newly created panel cover to its initial position (which is on top of the bridge).
-            setTimeout(() => {
+            setTimeout( () => {
 
                 // Set the bridge width to its final value
                 this._adjustBridgeProperties()
@@ -2211,12 +2214,12 @@
                     .update( 0 )
 
 
-            }, this._animation.duration.extendBridge)  // do after bridge is extended
+            }, this._animation.duration.extendBridge )  // do after bridge is extended
 
 
 
             // Vertically maximize the cover
-            setTimeout(() => {
+            setTimeout( () => {
 
                 childPanelCover
                     .x( this.postCreationAnimationProperties.x )
@@ -2225,11 +2228,11 @@
                     .width( this.postCreationAnimationProperties.width )
                     .update( this._animation.duration.maximizePanelCover )
 
-            }, this._animation.duration.extendBridge)  // do after bridge is extended
+            }, this._animation.duration.extendBridge )  // do after bridge is extended
 
 
             // Remove the child panel's cover and teleport child panel to its final position
-            setTimeout(() => {
+            setTimeout( () => {
 
                 childPanelCover.remove()
 
@@ -2240,8 +2243,57 @@
                     .height( this.postCreationAnimationProperties.height )
                     .update( 0 )
 
-            }, this._animation.duration.extendBridge + this._animation.duration.maximizePanelCover)  // do after bridge extended and cover is maximized
+            }, this._animation.duration.extendBridge + this._animation.duration.maximizePanelCover )  // do after bridge extended and cover is maximized
+
+
+            // Create connectors
+            setTimeout( () => {
+
+                this._createConnectors()
+
+            }, this._animation.duration.extendBridge + this._animation.duration.maximizePanelCover)
+
+
         }
+
+
+
+        /**
+         * IMPORTANT: Because this method uses 'an update' method for LinkableRectangle class, it should be called
+         * within a `setTimeout` block.  Otherwise, it may interrupt an ongoing animation.
+         * @private
+         */
+        _createConnectors(){
+
+            // WARNING: This method call may be decreasing performance significantly
+
+            this.objects().forEach( (chartObject, chartName) => {
+
+                // Note: Do not change to `forEach` loop: A classic `for` loop is necessary here, due to usage of `continue` statement in it.)
+                for( const [categoryName, categoryObject] of chartObject.objects()  ) {
+
+                    // Get equivalent of category in the panel on the left (if there is a panel on the left)
+                    const equivalentCategoryObjectInLeftPanel = this.getEquivalentCategoryObjectInLeftPanel( chartName, categoryName )
+
+                    if( !equivalentCategoryObjectInLeftPanel ) {
+                        continue /* (if there is no panel on the left side (e.g., this is the first panel), skip the
+                                    rest of the code in this for loop */
+                    }
+
+                    // Link objects
+                    const leftRectangle = equivalentCategoryObjectInLeftPanel.objects( 'rectangle' )
+                    const rightRectangle = categoryObject.objects( 'rectangle' )
+                    leftRectangle.linkRight( rightRectangle ).update()  /* the `update` that is called here should not
+                                                                          interrupt the animation because this
+                                                                           method is (and should always be) called
+                                                                           within a `setTimeOut` block)
+                                                                      */
+
+                }
+            })
+
+        }
+
 
 
         _pushAnySiblingsOfParentRightward( thisPanel=this ){
@@ -3573,11 +3625,12 @@
          * @param value {Array} - Format: [yStart, yEnd].
          * @return {(number|*)[]|Chart}
          *
-         * @example <caption>Note that the first value is higher than the first value. A chart with this range would start at 400 pixels away from the top of the Svg container, and end at the very top of it. </caption>
-         * myChart.range([400,0])
+         * @example <caption>Note that the first value is higher than the first value. A chart with this range would
+         *     start at 400 pixels away from the top of the Svg container, and end at the very top of it. </caption>
+         *     myChart.range([400,0])
          *
-         * @example <caption>If the user enters order of items in the wrong order the method correct this instead of raising an error. </caption>
-         * myChart.range([0,400])
+         * @example <caption>If the user enters order of items in the wrong order the method correct this instead of
+         *     raising an error. </caption> myChart.range([0,400])
          */
         range(value) {
 
