@@ -17,6 +17,7 @@ if (typeof Object.fromEntries !== 'function') {
 require('../../../../../JestUtils/jest-console')
 
 const jestDom = require('../../../../../JestUtils/jest-dom')
+    , wrdom = jestDom.writeDomToFile
 const initializeDomWithSvg = jestDom.initializeDomWithSvg
 
 
@@ -398,34 +399,114 @@ describe ('Text', () => {
 describe( 'Connectors', () => {
 
 
+    let leftCaptionedRectangle
+       , middleCaptionedRectangle
+       , rightCaptionedRectangle
+
+    let leftLinkableRectangle
+       , middleLinkableRectangle
+       , rightLinkableRectangle
+
+
+    // Setup
+    beforeEach( () => {
+
+        jest.useFakeTimers()
+
+        initializeDomWithSvg()
+
+        // Create CaptionedRectangle objects
+        leftCaptionedRectangle = new shape.CaptionedRectangle()
+
+        middleCaptionedRectangle = new shape.CaptionedRectangle()
+            .x(100)
+            .y(100)
+            .update()
+
+        rightCaptionedRectangle = new shape.CaptionedRectangle()
+            .x(200)
+            .y(200)
+            .update()
+
+        // Get LinkableRectangle objects from within CaptionedRectangle objects
+        leftLinkableRectangle = leftCaptionedRectangle.objects('rectangle')
+        middleLinkableRectangle = middleCaptionedRectangle.objects('rectangle')
+        rightLinkableRectangle = rightCaptionedRectangle.objects('rectangle')
+
+        // Link LinkableRectangle objects
+        leftLinkableRectangle.linkRight(middleLinkableRectangle).update()
+        middleLinkableRectangle.linkRight(rightLinkableRectangle).update()
+
+        // Current state:
+        // [ Lcr [Llr] ] --> [ Mcr [Mlr] ] --> [ Rcr [Rlr] ]
+
+        jest.runOnlyPendingTimers()
+        jest.runAllTimers()
+
+    } )
+
+
     test( 'It should be possible to add connectors between rectangles by directly calling methods of' +
         ' LinkableRectangle class', () => {
 
-        initializeDomWithSvg()
-        // Create category
-        const captionedRectangle1 = new shape.CaptionedRectangle()
-        const captionedRectangle2 = new shape.CaptionedRectangle()
-
-        // Get rectangle objects
-        const rectangle1 = captionedRectangle1.objects('rectangle')
-        const rectangle2 = captionedRectangle2.objects('rectangle')
-
-        // Link rectangles
-        rectangle1.linkRight(rectangle2).update()
-
-        // Both rectangles should  have a connector
-        expect( rectangle1.connectorRight().class() ).toBe( "connector-polygon" )
-        expect( rectangle2.connectorLeft().class() ).toBe( "connector-polygon" )
-        // Both rectangles should  have the same connector
-        expect( rectangle1.connectorRight() )
-            .toBe( rectangle2.connectorLeft() )
+        // Initial state:
+        // [ Lcr [Llr] ] --> [ Mcr [Mlr] ] --> [ Rcr [Rlr] ]
 
 
-        // The connector element should indeed be present on DOM
-        const connectorElement = document.querySelector( '#connector-linkable-rectangles-0-1' )
-        expect( connectorElement.getAttribute('id') ).toBeDefined()
+        // Rectangles should have a connector
+        expect( leftLinkableRectangle.connectorRight().class() ).toBe( "connector-polygon" )
+        expect( middleLinkableRectangle.connectorLeft().class() ).toBe( "connector-polygon" )
+        expect( middleLinkableRectangle.connectorRight().class() ).toBe( "connector-polygon" )
+        expect( rightLinkableRectangle.connectorLeft().class() ).toBe( "connector-polygon" )
+
+        // Linked rectangles should  have the same connector
+        expect( leftLinkableRectangle.connectorRight() )
+            .toBe( middleLinkableRectangle.connectorLeft() )
+        expect( middleLinkableRectangle.connectorRight() )
+            .toBe( rightLinkableRectangle.connectorLeft() )
+
+
+        // The connector elements should indeed be present on DOM
+        const connectorElement1 = document.querySelector(
+            `#${ leftLinkableRectangle.connectorRight().id() }`
+       )
+        expect( connectorElement1.getAttribute('id') ).toBeDefined()
+
+        const connectorElement2 = document.querySelector(
+            `#${ rightLinkableRectangle.connectorLeft().id() }`
+       )
+        expect( connectorElement2.getAttribute('id') ).toBeDefined()
 
     } )
+
+
+
+    test( 'When one of the linked Category objects is deleted as a side effect of deletion of a CaptionedRectangle ,' +
+        ' any related connector polygons should also be deleted', () => {
+
+        // Initial state:
+        // [ Lcr [Llr] ] --> [ Mcr [Mlr] ] --> [ Rcr [Rlr] ]
+
+        middleCaptionedRectangle.remove()
+
+
+        // Current state:
+        // [ L [Llr] ] -x- [ M [Mlr] ] -x- [ R [Rlr] ]
+
+        // Rectangles should have a connector
+        expect( leftLinkableRectangle.connectorRight() ).toBeUndefined()
+        expect( middleLinkableRectangle.connectorLeft() ).toBeUndefined()
+        expect( middleLinkableRectangle.connectorRight() ).toBeUndefined()
+        expect( rightLinkableRectangle.connectorLeft() ).toBeUndefined()
+
+
+        // The connector elements should indeed be NOT present on DOM
+        expect(document.querySelector( '.connector-polygon' ) ).toBeNull()
+
+
+    } )
+
+
 
 } )
 
