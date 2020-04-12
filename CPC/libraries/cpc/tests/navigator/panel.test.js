@@ -1158,8 +1158,8 @@ describe ('BG Extension', () => {
 
 
         // Check if final values are reflected to DOM
-        const newBgXOnDom = Number( document.querySelector('.background .rectangle').getAttribute('x') )
-        const newBgWidthOnDom = Number( document.querySelector('.background .rectangle').getAttribute('width') )
+        const newBgXOnDom = Number( document.querySelector('.background .linkable-rectangle').getAttribute('x') )
+        const newBgWidthOnDom = Number( document.querySelector('.background .linkable-rectangle').getAttribute('width') )
         expect( newBgXOnDom ).toBe( newBgX )
         expect( newBgWidthOnDom ).toBe( newBgWidth )
 
