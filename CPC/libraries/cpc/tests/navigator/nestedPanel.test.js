@@ -2801,33 +2801,49 @@ describe ('Color Themes', () => {
 describe( 'Connector Polygons', () => {
 
 
-    test( 'Connector polygons should always exist between categories regardless of their visibility status', () => {
+    test( 'The right number of connector polygons should exist between categories by default', () => {
 
 
-        jest.useFakeTimers()
+        initializeDomWithSvg()  /* Do not delete this line. Othewise, when many tests are ran in tandem,
+                                    `childPanel.has.numberOfVisibleCategories()` returns double the amount of
+                                     expected elements. This is likely due to leftovers from a previous test, (even
+                                     though the DOM is cleared during `initializeDomWith.panelZero.and.child()`. */
 
+        // Initialize panels
         const {panelZero, childPanel} = initializeDomWith.panelZero.and.child()
 
-        panelZero.objects()
+
+        // Count the number of categories and compare them with the number of connectors //
+
+        expect (panelZero.has.numberOfVisibleCategories() ).toBe( 7 )
+        expect (childPanel.has.numberOfVisibleCategories() ).toBe( 7 )
+
+        const numberOfPolygonElementsOnDom = document.querySelectorAll( '.connector-polygon' )
+        expect( numberOfPolygonElementsOnDom.length ).toBe( 7 )
+
+
+
+
+        // Check an individual connection's existence //
 
         const panelZeroMaleRectangle = panelZero.objects('gender').objects('male').objects('rectangle')
         const childPanelMaleRectangle = childPanel.objects('gender').objects('male').objects('rectangle')
-
-        jest.runOnlyPendingTimers()
-        jest.runAllTimers()
 
         expect( panelZeroMaleRectangle.connectorRight() ).toBeDefined()
         expect( childPanelMaleRectangle.connectorLeft() ).toBeDefined()
 
 
-    } )
-
-
-    test( 'It should be possible to toggle visibility of connector polygons', () => {
-
-
 
     } )
+
+
+
+    test( /*TODO*/ 'It should be possible to toggle visibility of connector polygons', () => {
+
+
+
+    } )
+
 
 
 } )

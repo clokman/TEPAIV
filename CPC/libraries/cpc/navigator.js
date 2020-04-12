@@ -2241,7 +2241,45 @@
                     .update( 0 )
 
             }, this._animation.duration.extendBridge + this._animation.duration.maximizePanelCover)  // do after bridge extended and cover is maximized
+
+
+            // Create connectors
+            setTimeout( () => {
+                // WARNING: Calling this method may be decreasing performance
+                this._createConnectors()
+            }, this._animation.duration.extendBridge + this._animation.duration.maximizePanelCover)
+
+
         }
+
+
+        _createConnectors(){
+
+            this.objects().forEach( (chartObject, chartName) => {
+
+                // Note: Do not change to `forEach` loop: A classic `for` loop is necessary here, due to usage of `continue` statement in it.)
+                for( const [categoryName, categoryObject] of chartObject.objects()  ){
+
+                    // Get equivalent of category in the panel on the left (if there is a panel on the left)
+                    const equivalentCategoryObjectInLeftPanel = this.getEquivalentCategoryObjectInLeftPanel(chartName, categoryName)
+
+                    if ( !equivalentCategoryObjectInLeftPanel ){
+                        continue /* (if there is no panel on the left side (e.g., this is the first panel), skip the
+                                    rest of the code in this for loop */
+                    }
+
+                    // Link objects
+                    const leftRectangle = equivalentCategoryObjectInLeftPanel.objects('rectangle')
+                    const rightRectangle = categoryObject.objects('rectangle')
+                    leftRectangle.linkRight(rightRectangle).update()  // TODO: This `update` should not be necessary.
+
+                }
+
+
+            })
+
+        }
+
 
 
         _pushAnySiblingsOfParentRightward( thisPanel=this ){
