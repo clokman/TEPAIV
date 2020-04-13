@@ -208,6 +208,18 @@ describe ('Inferences', () => {
     })
 
 
+    test( 'When the actual sample is smaller than the specified sample size, there should be no issues', () => {
+
+        const continuousData = [1,2,3,4,5]
+        expect( continuousData.containsMostlyNumbers(10) ).toBe( true )
+
+        const nonContinuousData = ['a','b','c',4,5]
+        expect( nonContinuousData.containsMostlyNumbers(10) ).toBe( false )
+
+
+    } )
+
+
 })
 
 
