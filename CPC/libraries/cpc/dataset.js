@@ -35,7 +35,9 @@ constructor(path, omitColumns=[]){
 
     this.initParams = {
         transformContinuousColumnsToQuantiles: true,
-        quantilesForContinuousColumns: [ '0-25%', '25-50%', '50-75%', '75-100%' ]
+        quantilesForContinuousColumns: [ '0-25%', '25-50%', '50-75%', '75-100%' ],
+        forcedCategoricalColumns: []
+
         //     numberOfQuantiles: 4,
         //     numberOfDecimals: 1
     }
@@ -60,7 +62,9 @@ constructor(path, omitColumns=[]){
 
 async build(){
 
-    this.data = await d3.csv(this._path, (d) => {
+    this.data = await d3.csv(this._path, (d) => { // `d` can be interpreted as 'eachRow'
+
+
 
         this._omitColumns.forEach( (omittedColumnName) => {
             delete d[omittedColumnName]  // d3 reads each column cell as a row property. This line deletes the property that matches an omitted column name from the row being currently read.
@@ -196,6 +200,7 @@ async build(){
 
  }
 
+
  _inferColumnTypes(sampleSize=50){
 
     const columnTypes = new Map()
@@ -218,12 +223,23 @@ async build(){
              }
          })
 
+        // TODO: Method indentation in this class fixed
+
+         // Check for any user-forced data type
+         const userIsForcingTheColumnToBeCategorical =
+             this.initParams.forcedCategoricalColumns.includes( columnName )
+
+
          // Evaluate Sample
-         const columnType = columnSample.containsMostlyNumbers(50)
+         const columnType =
+             columnSample.containsMostlyNumbers(50) &&
+             !userIsForcingTheColumnToBeCategorical
             ? 'continuous'
             : 'categorical'
 
          columnTypes.set(columnName, columnType)
+
+
 
      })
 

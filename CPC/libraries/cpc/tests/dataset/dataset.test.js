@@ -732,7 +732,7 @@ describe ('Splitting', () => {
 
 //// DRILLDOWN ///////////////////////////////////////////////////////////////
 
-describe ('Drillling Down ', () => {
+describe ('Drilling Down ', () => {
    
     test ('Parse DrilldownQuery parameters', async () => {
 
@@ -1092,7 +1092,8 @@ describe ('Summarizing', () => {
 //// Continuous Data ///////////////////////////////////////////////////////////////
 
 
-describe ('Handling continous data', () => {
+describe ('Handling continuous data', () => {
+
 
         //// Utility Methods ///////////////////////////////////////////////////////////////
 
@@ -1157,6 +1158,36 @@ describe ('Handling continous data', () => {
             })
 
 
+            test ('Calculate quantiles of a column if a column has many `0` values in it (previously, a bug) ', async () => {
+
+                const mixedDataset = new dataset.Dataset(
+                    'http://localhost:3000/libraries/cpc/tests/dataset/Covid19Geographic-Tiny.csv',
+                    ['dateRep', 'day', 'year', 'month', 'countriesAndTerritories', 'geoId', 'countryterritoryCode', 'popData2018']
+                )
+                mixedDataset.initParams.transformContinuousColumnsToQuantiles = true
+                await mixedDataset.build()
+
+
+                expect( mixedDataset.data ).toTabulateAs(`\
+┌─────────┬───────────┬───────────┐
+│ (index) │   cases   │  deaths   │
+├─────────┼───────────┼───────────┤
+│    0    │ '75-100%' │ '75-100%' │
+│    1    │ '75-100%' │ '75-100%' │
+│    2    │ '75-100%' │ '75-100%' │
+│    3    │ '50-75%'  │ '75-100%' │
+│    4    │ '75-100%' │ '75-100%' │
+│    5    │ '75-100%' │ '75-100%' │
+│    6    │ '75-100%' │ '75-100%' │
+│    7    │ '75-100%' │ '75-100%' │
+│    8    │ '75-100%' │ '75-100%' │
+│    9    │ '75-100%' │ '75-100%' │
+└─────────┴───────────┴───────────┘
+˅˅˅ 40 more rows`, 0, 10)
+
+
+            })
+
 
         })
 
@@ -1190,6 +1221,177 @@ describe ('Handling continous data', () => {
 ˅˅˅ 84 more rows`, 0, 15)
 
             })
+
+
+
+
+    //// COVID-19 Dataset ///////////////////////////////////////////////////////////////
+
+    describe( 'COVID-19 Dataset', () => {
+
+        test( 'Detect continuous columns but do NOT transform them', async () => {
+
+            const dataset_detectContinuousButDontTransform = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/Covid19Geographic-Tiny.csv')
+            dataset_detectContinuousButDontTransform.initParams.transformContinuousColumnsToQuantiles = false
+
+            await dataset_detectContinuousButDontTransform.build()
+
+
+            expect( dataset_detectContinuousButDontTransform.data ).toTabulateAs(`\
+┌─────────┬───────────┬──────┬───────┬────────┬────────┬────────┬─────────────────────────┬───────┬──────────────────────┬─────────────┐
+│ (index) │  dateRep  │ day  │ month │  year  │ cases  │ deaths │ countriesAndTerritories │ geoId │ countryterritoryCode │ popData2018 │
+├─────────┼───────────┼──────┼───────┼────────┼────────┼────────┼─────────────────────────┼───────┼──────────────────────┼─────────────┤
+│    0    │ '4/11/20' │ '11' │  '4'  │ '2020' │ '1335' │ '115'  │      'Netherlands'      │ 'NL'  │        'NLD'         │ '17231017'  │
+│    1    │ '4/10/20' │ '10' │  '4'  │ '2020' │ '1213' │ '148'  │      'Netherlands'      │ 'NL'  │        'NLD'         │ '17231017'  │
+│    2    │ '4/9/20'  │ '9'  │  '4'  │ '2020' │ '969'  │ '147'  │      'Netherlands'      │ 'NL'  │        'NLD'         │ '17231017'  │
+│    3    │ '4/8/20'  │ '8'  │  '4'  │ '2020' │ '777'  │ '234'  │      'Netherlands'      │ 'NL'  │        'NLD'         │ '17231017'  │
+│    4    │ '4/7/20'  │ '7'  │  '4'  │ '2020' │ '952'  │ '101'  │      'Netherlands'      │ 'NL'  │        'NLD'         │ '17231017'  │
+│    5    │ '4/6/20'  │ '6'  │  '4'  │ '2020' │ '1224' │ '115'  │      'Netherlands'      │ 'NL'  │        'NLD'         │ '17231017'  │
+│    6    │ '4/5/20'  │ '5'  │  '4'  │ '2020' │ '904'  │ '164'  │      'Netherlands'      │ 'NL'  │        'NLD'         │ '17231017'  │
+│    7    │ '4/4/20'  │ '4'  │  '4'  │ '2020' │ '1026' │ '148'  │      'Netherlands'      │ 'NL'  │        'NLD'         │ '17231017'  │
+│    8    │ '4/3/20'  │ '3'  │  '4'  │ '2020' │ '1083' │ '166'  │      'Netherlands'      │ 'NL'  │        'NLD'         │ '17231017'  │
+│    9    │ '4/2/20'  │ '2'  │  '4'  │ '2020' │ '1019' │ '134'  │      'Netherlands'      │ 'NL'  │        'NLD'         │ '17231017'  │
+│   10    │ '4/1/20'  │ '1'  │  '4'  │ '2020' │ '845'  │ '175'  │      'Netherlands'      │ 'NL'  │        'NLD'         │ '17231017'  │
+│   11    │ '3/31/20' │ '31' │  '3'  │ '2020' │ '884'  │  '93'  │      'Netherlands'      │ 'NL'  │        'NLD'         │ '17231017'  │
+│   12    │ '3/30/20' │ '30' │  '3'  │ '2020' │ '1104' │ '132'  │      'Netherlands'      │ 'NL'  │        'NLD'         │ '17231017'  │
+│   13    │ '3/29/20' │ '29' │  '3'  │ '2020' │ '1159' │  '93'  │      'Netherlands'      │ 'NL'  │        'NLD'         │ '17231017'  │
+│   14    │ '3/28/20' │ '28' │  '3'  │ '2020' │ '1172' │ '112'  │      'Netherlands'      │ 'NL'  │        'NLD'         │ '17231017'  │
+└─────────┴───────────┴──────┴───────┴────────┴────────┴────────┴─────────────────────────┴───────┴──────────────────────┴─────────────┘
+˅˅˅ 35 more rows`, 0, 15)
+
+
+            // Without transformation, numerical categorical data is seen as continuous (addressed in tests /**/below)
+            expect( dataset_detectContinuousButDontTransform.columnTypes ).toTabulateAs(`\
+┌───────────────────┬───────────────────────────┬───────────────┐
+│ (iteration index) │            Key            │    Values     │
+├───────────────────┼───────────────────────────┼───────────────┤
+│         0         │         'dateRep'         │ 'categorical' │
+│         1         │           'day'           │ 'continuous'  │
+│         2         │          'month'          │ 'continuous'  │
+│         3         │          'year'           │ 'continuous'  │
+│         4         │          'cases'          │ 'continuous'  │
+│         5         │         'deaths'          │ 'continuous'  │
+│         6         │ 'countriesAndTerritories' │ 'categorical' │
+│         7         │          'geoId'          │ 'categorical' │
+│         8         │  'countryterritoryCode'   │ 'categorical' │
+│         9         │       'popData2018'       │ 'continuous'  │
+└───────────────────┴───────────────────────────┴───────────────┘`)
+
+
+
+        } )
+
+
+        test( 'Detect continuous columns and transform them to quartiles', async () => {
+
+            const dataset_detectContinuousAndTransform = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/Covid19Geographic-Tiny.csv')
+            dataset_detectContinuousAndTransform.initParams.transformContinuousColumnsToQuantiles = true
+
+            await dataset_detectContinuousAndTransform.build()
+
+            expect( dataset_detectContinuousAndTransform.data ).toTabulateAs(`\
+┌─────────┬───────────┬───────────┬───────────┬───────────┬───────────┬───────────┬─────────────────────────┬───────┬──────────────────────┬─────────────┐
+│ (index) │  dateRep  │    day    │   month   │   year    │   cases   │  deaths   │ countriesAndTerritories │ geoId │ countryterritoryCode │ popData2018 │
+├─────────┼───────────┼───────────┼───────────┼───────────┼───────────┼───────────┼─────────────────────────┼───────┼──────────────────────┼─────────────┤
+│    0    │ '4/11/20' │ '25-50%'  │ '75-100%' │ '75-100%' │ '75-100%' │ '75-100%' │      'Netherlands'      │ 'NL'  │        'NLD'         │  '75-100%'  │
+│    1    │ '4/10/20' │ '25-50%'  │ '75-100%' │ '75-100%' │ '75-100%' │ '75-100%' │      'Netherlands'      │ 'NL'  │        'NLD'         │  '75-100%'  │
+│    2    │ '4/9/20'  │ '25-50%'  │ '75-100%' │ '75-100%' │ '75-100%' │ '75-100%' │      'Netherlands'      │ 'NL'  │        'NLD'         │  '75-100%'  │
+│    3    │ '4/8/20'  │ '25-50%'  │ '75-100%' │ '75-100%' │ '50-75%'  │ '75-100%' │      'Netherlands'      │ 'NL'  │        'NLD'         │  '75-100%'  │
+│    4    │ '4/7/20'  │ '25-50%'  │ '75-100%' │ '75-100%' │ '75-100%' │ '75-100%' │      'Netherlands'      │ 'NL'  │        'NLD'         │  '75-100%'  │
+│    5    │ '4/6/20'  │  '0-25%'  │ '75-100%' │ '75-100%' │ '75-100%' │ '75-100%' │      'Netherlands'      │ 'NL'  │        'NLD'         │  '75-100%'  │
+│    6    │ '4/5/20'  │  '0-25%'  │ '75-100%' │ '75-100%' │ '75-100%' │ '75-100%' │      'Netherlands'      │ 'NL'  │        'NLD'         │  '75-100%'  │
+│    7    │ '4/4/20'  │  '0-25%'  │ '75-100%' │ '75-100%' │ '75-100%' │ '75-100%' │      'Netherlands'      │ 'NL'  │        'NLD'         │  '75-100%'  │
+│    8    │ '4/3/20'  │  '0-25%'  │ '75-100%' │ '75-100%' │ '75-100%' │ '75-100%' │      'Netherlands'      │ 'NL'  │        'NLD'         │  '75-100%'  │
+│    9    │ '4/2/20'  │  '0-25%'  │ '75-100%' │ '75-100%' │ '75-100%' │ '75-100%' │      'Netherlands'      │ 'NL'  │        'NLD'         │  '75-100%'  │
+│   10    │ '4/1/20'  │  '0-25%'  │ '75-100%' │ '75-100%' │ '50-75%'  │ '75-100%' │      'Netherlands'      │ 'NL'  │        'NLD'         │  '75-100%'  │
+│   11    │ '3/31/20' │ '75-100%' │ '75-100%' │ '75-100%' │ '50-75%'  │ '50-75%'  │      'Netherlands'      │ 'NL'  │        'NLD'         │  '75-100%'  │
+│   12    │ '3/30/20' │ '75-100%' │ '75-100%' │ '75-100%' │ '75-100%' │ '75-100%' │      'Netherlands'      │ 'NL'  │        'NLD'         │  '75-100%'  │
+│   13    │ '3/29/20' │ '75-100%' │ '75-100%' │ '75-100%' │ '75-100%' │ '50-75%'  │      'Netherlands'      │ 'NL'  │        'NLD'         │  '75-100%'  │
+│   14    │ '3/28/20' │ '75-100%' │ '75-100%' │ '75-100%' │ '75-100%' │ '75-100%' │      'Netherlands'      │ 'NL'  │        'NLD'         │  '75-100%'  │
+└─────────┴───────────┴───────────┴───────────┴───────────┴───────────┴───────────┴─────────────────────────┴───────┴──────────────────────┴─────────────┘
+˅˅˅ 35 more rows`, 0, 15)
+
+            // All numeric data is now turned to categorical via quantilization. However, day, month, year, and
+            // popData2018 are numerical categorical data, and should not have been treated as continuous data
+            // (which is quantilized). This is addressed in the test(s) below.
+            expect( dataset_detectContinuousAndTransform.columnTypes ).toTabulateAs(`\
+┌───────────────────┬───────────────────────────┬───────────────┐
+│ (iteration index) │            Key            │    Values     │
+├───────────────────┼───────────────────────────┼───────────────┤
+│         0         │         'dateRep'         │ 'categorical' │
+│         1         │           'day'           │ 'categorical' │
+│         2         │          'month'          │ 'categorical' │
+│         3         │          'year'           │ 'categorical' │
+│         4         │          'cases'          │ 'categorical' │
+│         5         │         'deaths'          │ 'categorical' │
+│         6         │ 'countriesAndTerritories' │ 'categorical' │
+│         7         │          'geoId'          │ 'categorical' │
+│         8         │  'countryterritoryCode'   │ 'categorical' │
+│         9         │       'popData2018'       │ 'categorical' │
+└───────────────────┴───────────────────────────┴───────────────┘`)
+
+
+        } )
+
+
+        test( `Force categorical data for columns with numeric categories`, async () => {
+
+            /* When a dataset column is made of numeric category values (e.g., "1") and not numbers (e.g., 1) columns,
+            these number strings should NOT be read as continuous data (and not quantilized)' */
+
+            const dataset_detectContinuousForceCategoricalAndTransform = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/Covid19Geographic-Tiny.csv')
+            dataset_detectContinuousForceCategoricalAndTransform.initParams.transformContinuousColumnsToQuantiles = true
+            dataset_detectContinuousForceCategoricalAndTransform.initParams.forcedCategoricalColumns = [  'dateRep', 'day', 'month', 'year' ]
+
+            await dataset_detectContinuousForceCategoricalAndTransform.build()
+            // expect( dataset_detectContinuousForceCategoricalAndTransform.getNamesOfContinuousColumns() ).toBe( `` )
+
+
+            expect( dataset_detectContinuousForceCategoricalAndTransform.data ).toTabulateAs(`\
+┌─────────┬───────────┬──────┬───────┬────────┬───────────┬───────────┬─────────────────────────┬───────┬──────────────────────┬─────────────┐
+│ (index) │  dateRep  │ day  │ month │  year  │   cases   │  deaths   │ countriesAndTerritories │ geoId │ countryterritoryCode │ popData2018 │
+├─────────┼───────────┼──────┼───────┼────────┼───────────┼───────────┼─────────────────────────┼───────┼──────────────────────┼─────────────┤
+│    0    │ '4/11/20' │ '11' │  '4'  │ '2020' │ '75-100%' │ '75-100%' │      'Netherlands'      │ 'NL'  │        'NLD'         │  '75-100%'  │
+│    1    │ '4/10/20' │ '10' │  '4'  │ '2020' │ '75-100%' │ '75-100%' │      'Netherlands'      │ 'NL'  │        'NLD'         │  '75-100%'  │
+│    2    │ '4/9/20'  │ '9'  │  '4'  │ '2020' │ '75-100%' │ '75-100%' │      'Netherlands'      │ 'NL'  │        'NLD'         │  '75-100%'  │
+│    3    │ '4/8/20'  │ '8'  │  '4'  │ '2020' │ '50-75%'  │ '75-100%' │      'Netherlands'      │ 'NL'  │        'NLD'         │  '75-100%'  │
+│    4    │ '4/7/20'  │ '7'  │  '4'  │ '2020' │ '75-100%' │ '75-100%' │      'Netherlands'      │ 'NL'  │        'NLD'         │  '75-100%'  │
+│    5    │ '4/6/20'  │ '6'  │  '4'  │ '2020' │ '75-100%' │ '75-100%' │      'Netherlands'      │ 'NL'  │        'NLD'         │  '75-100%'  │
+│    6    │ '4/5/20'  │ '5'  │  '4'  │ '2020' │ '75-100%' │ '75-100%' │      'Netherlands'      │ 'NL'  │        'NLD'         │  '75-100%'  │
+│    7    │ '4/4/20'  │ '4'  │  '4'  │ '2020' │ '75-100%' │ '75-100%' │      'Netherlands'      │ 'NL'  │        'NLD'         │  '75-100%'  │
+│    8    │ '4/3/20'  │ '3'  │  '4'  │ '2020' │ '75-100%' │ '75-100%' │      'Netherlands'      │ 'NL'  │        'NLD'         │  '75-100%'  │
+│    9    │ '4/2/20'  │ '2'  │  '4'  │ '2020' │ '75-100%' │ '75-100%' │      'Netherlands'      │ 'NL'  │        'NLD'         │  '75-100%'  │
+│   10    │ '4/1/20'  │ '1'  │  '4'  │ '2020' │ '50-75%'  │ '75-100%' │      'Netherlands'      │ 'NL'  │        'NLD'         │  '75-100%'  │
+│   11    │ '3/31/20' │ '31' │  '3'  │ '2020' │ '50-75%'  │ '50-75%'  │      'Netherlands'      │ 'NL'  │        'NLD'         │  '75-100%'  │
+│   12    │ '3/30/20' │ '30' │  '3'  │ '2020' │ '75-100%' │ '75-100%' │      'Netherlands'      │ 'NL'  │        'NLD'         │  '75-100%'  │
+│   13    │ '3/29/20' │ '29' │  '3'  │ '2020' │ '75-100%' │ '50-75%'  │      'Netherlands'      │ 'NL'  │        'NLD'         │  '75-100%'  │
+│   14    │ '3/28/20' │ '28' │  '3'  │ '2020' │ '75-100%' │ '75-100%' │      'Netherlands'      │ 'NL'  │        'NLD'         │  '75-100%'  │
+└─────────┴───────────┴──────┴───────┴────────┴───────────┴───────────┴─────────────────────────┴───────┴──────────────────────┴─────────────┘
+˅˅˅ 35 more rows`, 0, 15)
+
+            expect( dataset_detectContinuousForceCategoricalAndTransform.columnTypes ).toTabulateAs(`\
+┌───────────────────┬───────────────────────────┬───────────────┐
+│ (iteration index) │            Key            │    Values     │
+├───────────────────┼───────────────────────────┼───────────────┤
+│         0         │         'dateRep'         │ 'categorical' │
+│         1         │           'day'           │ 'categorical' │
+│         2         │          'month'          │ 'categorical' │
+│         3         │          'year'           │ 'categorical' │
+│         4         │          'cases'          │ 'categorical' │
+│         5         │         'deaths'          │ 'categorical' │
+│         6         │ 'countriesAndTerritories' │ 'categorical' │
+│         7         │          'geoId'          │ 'categorical' │
+│         8         │  'countryterritoryCode'   │ 'categorical' │
+│         9         │       'popData2018'       │ 'categorical' │
+└───────────────────┴───────────────────────────┴───────────────┘`)
+
+
+        } )
+
+    } )
+
+
+
 
 
         test ('If a Dataset is built without discretization, it should still be possible to call transformContinuousColumnsToQuantiles() method for discretizing the data after the built', async () => {
@@ -1256,7 +1458,7 @@ describe ('Handling continous data', () => {
                 const myDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/SampleMixedData.csv')
                 myDataset.initParams.quantilesForContinuousColumns = [ 'Q1', 'Q2', 'Q3', 'Q4' ]
                 await myDataset.build()
-                
+
                 expect( myDataset.data ).toTabulateAs(`\
 ┌─────────┬─────────────┬──────────────┬──────────┬───────────────┐
 │ (index) │ Neuroticism │ Extraversion │  Gender  │ MonthMeasured │
