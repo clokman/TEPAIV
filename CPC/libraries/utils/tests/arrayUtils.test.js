@@ -20,6 +20,7 @@ require('../../../../JestUtils/jest-console')
 //// REQUIREMENTS ////
 global._ = require("../../../../JestUtils/external/lodash")
 global.container = require("../../cpc/container")
+global.jsUtils = require("../../utils/jsUtils")
 
 
 //// MODULES BEING TESTED ////
@@ -151,12 +152,58 @@ describe ('Inferences', () => {
         expect( ninetyPercentContinuousData.containsMostlyNumbers(25, 0.95) ).toBe( false )
     })
 
+    test( 'Zeroes and negative values', () => {
+
+        // Zeroes
+        const continuousDataWithMostlyZeroes = [0,0,0,0,0,0,0,0,9,10]
+        expect( continuousDataWithMostlyZeroes.containsMostlyNumbers() ).toBe( true )
+
+        // Zeroes as strings
+        const continuousDataWithZeroesAsStrings = ['0', '0', '0', '0', '0', '0', '0', '0', '9', '10']
+        expect( continuousDataWithZeroesAsStrings.containsMostlyNumbers() ).toBe( true )
+
+        // Negative values
+        const continuousDataWithMostlyNegativeValues = [ -0, -1, -2 , -3, -4, -5, -6, -7, -8, 9, 10 ]
+        expect( continuousDataWithMostlyNegativeValues.containsMostlyNumbers() ).toBe( true )
+
+
+    } )
+
 
     test ('containsMostlyNumbers(): Dealing with missing values ', () => {
 
         const continuousDataWithMissingValues = [1,2,'3','NaN','','6','7','8','9','10']
         expect( continuousDataWithMissingValues.containsMostlyNumbers() ).toBe( false )
         expect( continuousDataWithMissingValues.containsMostlyNumbers(25, 0.8) ).toBe( true )
+
+        // Booleans
+        const continuousDataWithBooleans = [1,2,'3',false, true,'6','7','8','9','10']
+        expect( continuousDataWithBooleans.containsMostlyNumbers() ).toBe( false )
+        expect( continuousDataWithBooleans.containsMostlyNumbers(25, 0.8) ).toBe( true )
+
+        // Mostly booelans
+        const continuousDataWithMostlyFalses = [ false,false,false,false,false,false,false,false, '9','10' ]
+        expect( continuousDataWithMostlyFalses.containsMostlyNumbers() ).toBe( false )
+
+        // Mostly `True`s
+        const continuousDataWithMostlyTrues = [ true,true,true,true,true,true,true,true, '9','10' ]
+        expect( continuousDataWithMostlyTrues.containsMostlyNumbers() ).toBe( false )
+
+        // Mostly empty strings
+        const continuousDataWithMostlyEmptyStrings = [ '','','','','','','','', '9','10' ]
+        expect( continuousDataWithMostlyEmptyStrings.containsMostlyNumbers() ).toBe( false )
+
+        // Mostly `NaN`s
+        const continuousDataWithMostlyNaNs = [ NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, '9','10' ]
+        expect( continuousDataWithMostlyNaNs.containsMostlyNumbers() ).toBe( false )
+
+        // Mostly `null`s
+        const continuousDataWithMostlyNulls = [ null,null,null,null,null,null,null,null, '9','10' ]
+        expect( continuousDataWithMostlyNulls.containsMostlyNumbers() ).toBe( false )
+
+        // Mostly `Undefined`s
+        const continuousDataWithMostlyUndefineds = [ undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined, '9','10' ]
+        expect( continuousDataWithMostlyUndefineds.containsMostlyNumbers() ).toBe( false )
 
     })
 

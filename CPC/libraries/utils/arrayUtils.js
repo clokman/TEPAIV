@@ -53,7 +53,13 @@ Array.prototype.containsMostlyNumbers = function (sampleSize=25, requiredRatioOf
 
         // Establish Conditions
         const sampleValueIsNotAmongOmittedValues = sampleValue !== omittedValues
-        const sampleValueIsConvertibleToANumber = Number(sampleValue)
+        const sampleValueIsConvertibleToANumber =
+            sampleValue !== null &&
+            sampleValue !== undefined &&
+            !isNaN(sampleValue) &&
+            sampleValue !== '' &&
+            !(sampleValue).hasType('Boolean') &&
+            ( !!Number(sampleValue) || Number(sampleValue) === 0 )
 
         if (sampleValueIsNotAmongOmittedValues && sampleValueIsConvertibleToANumber){
             result.isANumber += 1
@@ -63,6 +69,7 @@ Array.prototype.containsMostlyNumbers = function (sampleSize=25, requiredRatioOf
         }
 
     })
+
 
     const ratioOfNumbers = result.isANumber / actualSampleSize
 
