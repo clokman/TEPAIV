@@ -124,6 +124,23 @@ describe ('d3.scaleQuantile', () => {
     })
 
 
+test( 'Many zero values and quantile function', () => {
+
+        const continuousArray = [100, 90, 80, 70, 60, 50, 0, 0, 0, 0, 0]
+
+        const quantileScale = d3.scaleQuantile()
+            .domain( continuousArray )
+            .range( ['q1', 'q2', 'q3', 'q4'] )
+
+        expect( quantileScale.quantiles() ).toEqual( [0, 50, 75] )
+
+        const transformedArray = transformArrayWithQuantileScale( continuousArray, quantileScale )
+
+        expect( transformedArray ).toEqual( [ "q4", "q4", "q4", "q3", "q3", "q3", "q2", "q2", "q2", "q2", "q2" ] )
+
+    } )
+
+
 
     // Helper Functions
 
