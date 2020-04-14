@@ -726,7 +726,7 @@ describe ('Chart Label', () => {
 
         // Check that the chart label is correctly created on DOM
         expect( document.querySelectorAll('.chart-label') ).toHaveLength(1)
-        expect( document.querySelector('.chart-label').textContent ).toBe('My label')
+        expect( document.querySelector('.chart-label').textContent ).toBe('MY LABEL')
 
         // Check that chart label position is OK
         myChart.categoryLabels(true).update()
@@ -755,7 +755,7 @@ describe ('Chart Label', () => {
 
         expect( document.querySelectorAll('.chart-label') ).toHaveLength(0)
         expect( myChart._chartLabelObject ).toBe( null )
-        expect ( myChart._chartLabel.text ).toBe( 'My label')
+        expect ( myChart._chartLabel.text ).toBe( 'MY LABEL')
 
         // Toggle chart label off multiple times
         myChart.chartLabel(false).update()
@@ -771,20 +771,20 @@ describe ('Chart Label', () => {
         myChart.chartLabel(true).update()
         myChart.chartLabel('Label 1').update()
         expect( document.querySelectorAll('.chart-label') ).toHaveLength(1)
-        expect( document.querySelector('.chart-label').textContent ).toBe('Label 1')
+        expect( document.querySelector('.chart-label').textContent ).toBe('LABEL 1')
 
         myChart.chartLabel('Label 2').update()
         expect( document.querySelectorAll('.chart-label') ).toHaveLength(1)
-        expect( document.querySelector('.chart-label').textContent ).toBe('Label 2')
+        expect( document.querySelector('.chart-label').textContent ).toBe('LABEL 2')
 
         // Set the chart label multiple times (when the chart label is toggled off)
         myChart.chartLabel(false).update()
         myChart.chartLabel('Label 3').update()
-        expect ( myChart.chartLabel() ).toBe('Label 3')
+        expect ( myChart.chartLabel() ).toBe('LABEL 3')
         expect( document.querySelectorAll('.chart-label') ).toHaveLength(0)
 
         myChart.chartLabel('Label 4').update()
-        expect ( myChart.chartLabel() ).toBe('Label 4')
+        expect ( myChart.chartLabel() ).toBe('LABEL 4')
         expect( document.querySelectorAll('.chart-label') ).toHaveLength(0)
 
     })

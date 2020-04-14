@@ -3362,10 +3362,12 @@
             }
 
             // Setter: Set label
-            if (settingNewLabel)  {
+            if (settingNewLabel)  {// TODO: Must play well with category labels. (Ensure they are on, etc.)
 
-                // TODO: Must play well with category labels. (Ensure they are on, etc.)
-                this._chartLabel.text = value
+                // Transform case and convert characters such as `-` and `.` to spaces
+                const uppercaseAndSpaceSeparatedValue = _.upperCase(value)
+
+                this._chartLabel.text = uppercaseAndSpaceSeparatedValue
 
                 return this
 
