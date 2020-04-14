@@ -37,28 +37,39 @@ const data = require("../../data")
 //// UNIT TESTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-//// INITIATE ////
-test ('Should instantiate the class with initial sample data and summary statistics' , () => {
+//// Initialize ///////////////////////////////////////////////////////////////
 
-    const myStack = new data.Stack()
+describe( 'Initialize', () => {
 
-    expect(myStack).toBeDefined()
+    test ('Should instantiate the class with initial sample data and summary statistics' , () => {
 
-    expect(myStack._data.size).toBe(3)
-    expect(myStack.min()).toBe(0)
-    expect(myStack.max()).toBe(30)
+        const myStack = new data.Stack()
 
-})
+        expect(myStack).toBeDefined()
+
+        expect(myStack._data.size).toBe(3)
+        expect(myStack.min()).toBe(0)
+        expect(myStack.max()).toBe(30)
+
+    })
+
+
+} )
 
 
 
-//// GENERATE EXAMPLE DATA ////
-test ('Should initiate with example data', () => {
 
-    const myStack = new data.Stack()
-    
-    
-    expectTable(myStack.data().get('category-1'), `\
+//// Generate Example Data ///////////////////////////////////////////////////////////////
+
+describe( 'Generate Example Data', () => {
+
+
+    test ('Should initiate with example data', () => {
+
+        const myStack = new data.Stack()
+
+
+        expectTable(myStack.data().get('category-1'), `\
 ┌───────────────────┬──────────────┬────────────────┐
 │ (iteration index) │     Key      │     Values     │
 ├───────────────────┼──────────────┼────────────────┤
@@ -68,7 +79,7 @@ test ('Should initiate with example data', () => {
 │         3         │ 'percentage' │       33       │
 │         4         │   'count'    │      330       │
 └───────────────────┴──────────────┴────────────────┘`)
-    expectTable(myStack.data().get('category-2'), `\
+        expectTable(myStack.data().get('category-2'), `\
 ┌───────────────────┬──────────────┬────────────────┐
 │ (iteration index) │     Key      │     Values     │
 ├───────────────────┼──────────────┼────────────────┤
@@ -79,7 +90,7 @@ test ('Should initiate with example data', () => {
 │         4         │   'count'    │      330       │
 └───────────────────┴──────────────┴────────────────┘`)
 
-    expectTable(myStack.data().get('category-3'), `\
+        expectTable(myStack.data().get('category-3'), `\
 ┌───────────────────┬──────────────┬──────────────────┐
 │ (iteration index) │     Key      │      Values      │
 ├───────────────────┼──────────────┼──────────────────┤
@@ -91,68 +102,66 @@ test ('Should initiate with example data', () => {
 └───────────────────┴──────────────┴──────────────────┘`)
 
 
-    // Check number of categories
-    expect(myStack._data.size)
-        .toBe(3)
+        // Check number of categories
+        expect(myStack._data.size)
+            .toBe(3)
 
 
-    // Check content of one of the categories
-    expect(myStack._data.get('category-1').get('label'))
-        .toBe('Category One')
+        // Check content of one of the categories
+        expect(myStack._data.get('category-1').get('label'))
+            .toBe('Category One')
 
-    expect(myStack._data.get('category-1').get('start'))
-        .toBe(0)
+        expect(myStack._data.get('category-1').get('start'))
+            .toBe(0)
 
-    expect(myStack._data.get('category-1').get('end'))
-        .toBe(10)
-
-
-    // Check content of another category
-    expect(myStack._data.get('category-2').get('end'))
-        .toBe(20)
+        expect(myStack._data.get('category-1').get('end'))
+            .toBe(10)
 
 
-    // Check summary
-    expect(myStack.min())
-        .toBe(0)
-
-    expect(myStack.max())
-        .toBe(30)
-
-})
+        // Check content of another category
+        expect(myStack._data.get('category-2').get('end'))
+            .toBe(20)
 
 
+        // Check summary
+        expect(myStack.min())
+            .toBe(0)
+
+        expect(myStack.max())
+            .toBe(30)
+
+    })
 
 
-test ('Should generate various example data', () => {
+    test ('Should generate various example data', () => {
 
-    myStack = new data.Stack()
+        myStack = new data.Stack()
 
-    // DEFAULT VARIANT //
+        // DEFAULT VARIANT //
 
-    // Generate the default variant of example data
-    myStack.populateWithExampleData()   // parameter defaults to 'generic'
-    const exampleData1 = myStack.data()
+        // Generate the default variant of example data
+        myStack.populateWithExampleData()   // parameter defaults to 'generic'
+        const exampleData1 = myStack.data()
 
-    // Probe the generated data
-    expect(exampleData1).toBeInstanceOf(Map)
-    expect(exampleData1.size).toBe(3)
+        // Probe the generated data
+        expect(exampleData1).toBeInstanceOf(Map)
+        expect(exampleData1.size).toBe(3)
 
-    // Probe one category
-    expect(exampleData1.get('category-1').get('label'))
-        .toBe('Category One')
+        // Probe one category
+        expect(exampleData1.get('category-1').get('label'))
+            .toBe('Category One')
 
-    expect(exampleData1.get('category-1').get('start'))
-        .toBe(0)
+        expect(exampleData1.get('category-1').get('start'))
+            .toBe(0)
 
-    expect(exampleData1.get('category-1').get('end'))
-        .toBe(10)
+        expect(exampleData1.get('category-1').get('end'))
+            .toBe(10)
 
-    // Probe another category
-    expect(exampleData1.get('category-2').get('end'))
-        .toBe(20)
+        // Probe another category
+        expect(exampleData1.get('category-2').get('end'))
+            .toBe(20)
 
-    expectTable(myStack.data().get('category-1'), `\
+        expectTable(myStack.data().get('category-1'), `\
 ┌───────────────────┬──────────────┬────────────────┐
 │ (iteration index) │     Key      │     Values     │
 ├───────────────────┼──────────────┼────────────────┤
@@ -162,7 +171,7 @@ test ('Should generate various example data', () => {
 │         3         │ 'percentage' │       33       │
 │         4         │   'count'    │      330       │
 └───────────────────┴──────────────┴────────────────┘`)
-    expectTable(myStack.data().get('category-2'), `\
+        expectTable(myStack.data().get('category-2'), `\
 ┌───────────────────┬──────────────┬────────────────┐
 │ (iteration index) │     Key      │     Values     │
 ├───────────────────┼──────────────┼────────────────┤
@@ -175,13 +184,13 @@ test ('Should generate various example data', () => {
 
 
 
-    // VARIANT: GENDER
+        // VARIANT: GENDER
 
-    myStack.populateWithExampleData('gender')
-    const exampleData2 = myStack.data()
+        myStack.populateWithExampleData('gender')
+        const exampleData2 = myStack.data()
 
 
-    expectTable(exampleData2.get('male'), `\
+        expectTable(exampleData2.get('male'), `\
 ┌───────────────────┬──────────────┬────────┐
 │ (iteration index) │     Key      │ Values │
 ├───────────────────┼──────────────┼────────┤
@@ -191,7 +200,7 @@ test ('Should generate various example data', () => {
 │         3         │ 'percentage' │   64   │
 │         4         │   'count'    │  843   │
 └───────────────────┴──────────────┴────────┘`)
-    expectTable(exampleData2.get('female'), `\
+        expectTable(exampleData2.get('female'), `\
 ┌───────────────────┬──────────────┬──────────┐
 │ (iteration index) │     Key      │  Values  │
 ├───────────────────┼──────────────┼──────────┤
@@ -202,38 +211,38 @@ test ('Should generate various example data', () => {
 │         4         │   'count'    │   466    │
 └───────────────────┴──────────────┴──────────┘`)
 
-    // Probe the generated data
-    expect(exampleData2).toBeInstanceOf(Map)
-    expect(exampleData2.size).toBe(2)
+        // Probe the generated data
+        expect(exampleData2).toBeInstanceOf(Map)
+        expect(exampleData2.size).toBe(2)
 
 
-    // Probe one category
-    expect(exampleData2.get('male').get('label'))
-        .toBe('Male')
+        // Probe one category
+        expect(exampleData2.get('male').get('label'))
+            .toBe('Male')
 
-    expect(exampleData2.get('male').get('start'))
-        .toBe(0)
+        expect(exampleData2.get('male').get('start'))
+            .toBe(0)
 
-    expect(exampleData2.get('male').get('end'))
-        .toBe(64)
-
-
-    // Probe another category
-    expect(exampleData2.get('female').get('end'))
-        .toBe(100)
-
-    expect(exampleData2.get('female').get('percentage'))
-        .toBe(36)
+        expect(exampleData2.get('male').get('end'))
+            .toBe(64)
 
 
+        // Probe another category
+        expect(exampleData2.get('female').get('end'))
+            .toBe(100)
 
-    // VARIANT: CLASS
-
-    myStack.populateWithExampleData('class')
-    const exampleDataClass = myStack.data()
+        expect(exampleData2.get('female').get('percentage'))
+            .toBe(36)
 
 
-    expectTable(exampleDataClass.get('first-class'), `\
+
+        // VARIANT: CLASS
+
+        myStack.populateWithExampleData('class')
+        const exampleDataClass = myStack.data()
+
+
+        expectTable(exampleDataClass.get('first-class'), `\
 ┌───────────────────┬──────────────┬───────────────┐
 │ (iteration index) │     Key      │    Values     │
 ├───────────────────┼──────────────┼───────────────┤
@@ -243,7 +252,7 @@ test ('Should generate various example data', () => {
 │         3         │ 'percentage' │      25       │
 │         4         │   'count'    │      323      │
 └───────────────────┴──────────────┴───────────────┘`)
-    expectTable(exampleDataClass.get('second-class'), `\
+        expectTable(exampleDataClass.get('second-class'), `\
 ┌───────────────────┬──────────────┬────────────────┐
 │ (iteration index) │     Key      │     Values     │
 ├───────────────────┼──────────────┼────────────────┤
@@ -253,7 +262,7 @@ test ('Should generate various example data', () => {
 │         3         │ 'percentage' │       21       │
 │         4         │   'count'    │      277       │
 └───────────────────┴──────────────┴────────────────┘`)
-    expectTable(exampleDataClass.get('third-class'), `\
+        expectTable(exampleDataClass.get('third-class'), `\
 ┌───────────────────┬──────────────┬───────────────┐
 │ (iteration index) │     Key      │    Values     │
 ├───────────────────┼──────────────┼───────────────┤
@@ -265,37 +274,37 @@ test ('Should generate various example data', () => {
 └───────────────────┴──────────────┴───────────────┘`)
 
 
-    // Probe the generated data
-    expect(exampleDataClass).toBeInstanceOf(Map)
-    expect(exampleDataClass.size).toBe(3)
+        // Probe the generated data
+        expect(exampleDataClass).toBeInstanceOf(Map)
+        expect(exampleDataClass.size).toBe(3)
 
 
-    // Probe one category
-    expect(exampleDataClass.get('first-class').get('label'))
-        .toBe('First Class')
+        // Probe one category
+        expect(exampleDataClass.get('first-class').get('label'))
+            .toBe('First Class')
 
-    expect(exampleDataClass.get('first-class').get('start'))
-        .toBe(0)
+        expect(exampleDataClass.get('first-class').get('start'))
+            .toBe(0)
 
-    expect(exampleDataClass.get('first-class').get('end'))
-        .toBe(25)
-
-
-    // Probe another category
-    expect(exampleDataClass.get('third-class').get('end'))
-        .toBe(100)
-
-    expect(exampleDataClass.get('third-class').get('percentage'))
-        .toBe(54)
+        expect(exampleDataClass.get('first-class').get('end'))
+            .toBe(25)
 
 
+        // Probe another category
+        expect(exampleDataClass.get('third-class').get('end'))
+            .toBe(100)
 
-    // VARIANT: STATUS
+        expect(exampleDataClass.get('third-class').get('percentage'))
+            .toBe(54)
 
-    myStack.populateWithExampleData('status')
-    const exampleDataStatus = myStack.data()
 
-    expectTable(exampleDataStatus.get('survived'), `\
+
+        // VARIANT: STATUS
+
+        myStack.populateWithExampleData('status')
+        const exampleDataStatus = myStack.data()
+
+        expectTable(exampleDataStatus.get('survived'), `\
 ┌───────────────────┬──────────────┬────────────┐
 │ (iteration index) │     Key      │   Values   │
 ├───────────────────┼──────────────┼────────────┤
@@ -305,7 +314,7 @@ test ('Should generate various example data', () => {
 │         3         │ 'percentage' │     38     │
 │         4         │   'count'    │    500     │
 └───────────────────┴──────────────┴────────────┘`)
-    expectTable(exampleDataStatus.get('died'), `\
+        expectTable(exampleDataStatus.get('died'), `\
 ┌───────────────────┬──────────────┬────────┐
 │ (iteration index) │     Key      │ Values │
 ├───────────────────┼──────────────┼────────┤
@@ -317,139 +326,162 @@ test ('Should generate various example data', () => {
 └───────────────────┴──────────────┴────────┘`)
 
 
-    // Probe the generated data
-    expect(exampleDataStatus).toBeInstanceOf(Map)
-    expect(exampleDataStatus.size).toBe(2)
+        // Probe the generated data
+        expect(exampleDataStatus).toBeInstanceOf(Map)
+        expect(exampleDataStatus.size).toBe(2)
 
 
-    // Probe one category
-    expect(exampleDataStatus.get('survived').get('label'))
-        .toBe('Survived')
+        // Probe one category
+        expect(exampleDataStatus.get('survived').get('label'))
+            .toBe('Survived')
 
-    expect(exampleDataStatus.get('survived').get('start'))
-        .toBe(0)
+        expect(exampleDataStatus.get('survived').get('start'))
+            .toBe(0)
 
-    expect(exampleDataStatus.get('survived').get('end'))
-        .toBe(38)
-
-
-    // Probe another category
-    expect(exampleDataStatus.get('died').get('end'))
-        .toBe(100)
-
-    expect(exampleDataStatus.get('died').get('percentage'))
-        .toBe(62)
-
-})
+        expect(exampleDataStatus.get('survived').get('end'))
+            .toBe(38)
 
 
+        // Probe another category
+        expect(exampleDataStatus.get('died').get('end'))
+            .toBe(100)
 
-//// GET/SET/QUERY ////
+        expect(exampleDataStatus.get('died').get('percentage'))
+            .toBe(62)
 
-test ('Should return the data in Stack' , () => {
-
-    const myStack = new data.Stack()
-
-
-    expect(myStack.data().size).toBe(3)
-
-})
-
-test ('Should set new data for Stack', () => {
-
-    const myMap = new Map()
-
-    myMap.set('male', new Map())
-        .get('male')
-        .set('label', 'Male')
-        .set('start', 100)
-        .set('end', 200)
-    myMap.set('female', new Map())
-        .get('female')
-        .set('label', 'Female')
-        .set('start', 200)
-        .set('end', 300)
-
-    const myStack = new data.Stack()
-
-    myStack.data(myMap)
-
-    expect(myStack.data().size).toBe(2)
-
-})
-
-test ('Should query the data in Stack', () => {
-
-    const myStack = new data.Stack()
-
-    expect(myStack.data('category-1').get('label'))
-        .toBe('Category One')
+    })
 
 
-})
-
-test ('Should get correct summaries (e.g., min and max) values after updating data', () => {
-
-    const myStack = new data.Stack()
-
-    // Generate new data
-    myStack.populateWithExampleData('gender')
-
-    // Check summary methods
-    expect(myStack.min())
-        .toBe(0)
-
-    expect(myStack.max())
-        .toBe(100)
-
-})
-
-
-//// COPY ////
-
-test ('Should make a copy the stack instance', () => {
-
-    const originalStack = new data.Stack()
-
-    const copiedStack = originalStack.copy()
-
-    // Check if copied stack has same values with  the original
-    expect(copiedStack.data().size).toBe(3)
-    expect(copiedStack.data('category-3').get('label'))
-        .toBe('Category Three')
-
-
-    // Check if original stack is still the same
-    expect(originalStack.data().size).toBe(3)
-    expect(originalStack.data('category-3').get('label'))
-        .toBe('Category Three')
-
-
-    // Ensure that changes to the copied stack do NOT affect the original stack
-    const myScaleFunction = d3.scaleLinear()
-        .domain([copiedStack.min(), copiedStack.max()])
-        .rangeRound([500, 1000])
-
-    copiedStack.scale(myScaleFunction)
-
-    const copiedEnd = copiedStack.data('category-1').get('start')
-        , originalEnd = originalStack.data('category-1').get('start')
-
-    expect(originalEnd).toBe(0)
-    expect(copiedEnd).toBe(500)
-
-})
+} )
 
 
 
 
-//// SCALE ////
+//// Get/set/query ///////////////////////////////////////////////////////////////
 
-test ('Should scale the data in stack' , () => {
+describe( 'Get/set/query', () => {
 
-    const myStack = new data.Stack()
 
-    expectTable(myStack.data().get('category-1'), `\
+    test( 'Should return the data in Stack', () => {
+
+        const myStack = new data.Stack()
+
+
+        expect( myStack.data().size ).toBe( 3 )
+
+    } )
+
+
+    test( 'Should set new data for Stack', () => {
+
+        const myMap = new Map()
+
+        myMap.set( 'male', new Map() )
+            .get( 'male' )
+            .set( 'label', 'Male' )
+            .set( 'start', 100 )
+            .set( 'end', 200 )
+        myMap.set( 'female', new Map() )
+            .get( 'female' )
+            .set( 'label', 'Female' )
+            .set( 'start', 200 )
+            .set( 'end', 300 )
+
+        const myStack = new data.Stack()
+
+        myStack.data( myMap )
+
+        expect( myStack.data().size ).toBe( 2 )
+
+    } )
+
+
+    test( 'Should query the data in Stack', () => {
+
+        const myStack = new data.Stack()
+
+        expect( myStack.data( 'category-1' ).get( 'label' ) )
+            .toBe( 'Category One' )
+
+
+    } )
+
+
+    test( 'Should get correct summaries (e.g., min and max) values after updating data', () => {
+
+        const myStack = new data.Stack()
+
+        // Generate new data
+        myStack.populateWithExampleData( 'gender' )
+
+        // Check summary methods
+        expect( myStack.min() )
+            .toBe( 0 )
+
+        expect( myStack.max() )
+            .toBe( 100 )
+
+    } )
+
+
+} )
+
+
+
+
+//// Copy ///////////////////////////////////////////////////////////////
+
+describe( 'Copy', () => {
+
+
+    test( 'Should make a copy the stack instance', () => {
+
+        const originalStack = new data.Stack()
+
+        const copiedStack = originalStack.copy()
+
+        // Check if copied stack has same values with  the original
+        expect( copiedStack.data().size ).toBe( 3 )
+        expect( copiedStack.data( 'category-3' ).get( 'label' ) )
+            .toBe( 'Category Three' )
+
+
+        // Check if original stack is still the same
+        expect( originalStack.data().size ).toBe( 3 )
+        expect( originalStack.data( 'category-3' ).get( 'label' ) )
+            .toBe( 'Category Three' )
+
+
+        // Ensure that changes to the copied stack do NOT affect the original stack
+        const myScaleFunction = d3.scaleLinear()
+            .domain( [copiedStack.min(), copiedStack.max()] )
+            .rangeRound( [500, 1000] )
+
+        copiedStack.scale( myScaleFunction )
+
+        const copiedEnd = copiedStack.data( 'category-1' ).get( 'start' )
+            , originalEnd = originalStack.data( 'category-1' ).get( 'start' )
+
+        expect( originalEnd ).toBe( 0 )
+        expect( copiedEnd ).toBe( 500 )
+
+    } )
+
+} )
+
+
+
+
+//// Scale ///////////////////////////////////////////////////////////////
+
+describe( 'Scale', () => {
+
+
+    test( 'Should scale the data in stack', () => {
+
+        const myStack = new data.Stack()
+
+        expectTable( myStack.data().get( 'category-1' ), `\
 ┌───────────────────┬──────────────┬────────────────┐
 │ (iteration index) │     Key      │     Values     │
 ├───────────────────┼──────────────┼────────────────┤
@@ -458,17 +490,17 @@ test ('Should scale the data in stack' , () => {
 │         2         │    'end'     │       10       │
 │         3         │ 'percentage' │       33       │
 │         4         │   'count'    │      330       │
-└───────────────────┴──────────────┴────────────────┘`)
+└───────────────────┴──────────────┴────────────────┘` )
 
 
-    const scaleFunction = d3.scaleLinear()
-        .domain([myStack.min(), myStack.max()])
-        .rangeRound([0, 1000])
+        const scaleFunction = d3.scaleLinear()
+            .domain( [myStack.min(), myStack.max()] )
+            .rangeRound( [0, 1000] )
 
 
-    myStack.scale(scaleFunction)
+        myStack.scale( scaleFunction )
 
-    expectTable(myStack.data().get('category-1'), `\
+        expectTable( myStack.data().get( 'category-1' ), `\
 ┌───────────────────┬──────────────┬────────────────┐
 │ (iteration index) │     Key      │     Values     │
 ├───────────────────┼──────────────┼────────────────┤
@@ -477,58 +509,64 @@ test ('Should scale the data in stack' , () => {
 │         2         │    'end'     │      333       │
 │         3         │ 'percentage' │       33       │
 │         4         │   'count'    │      330       │
-└───────────────────┴──────────────┴────────────────┘`)
+└───────────────────┴──────────────┴────────────────┘` )
 
-    expect(myStack._data.size).toBe(3)
-    expect(myStack._data.get('category-2').get('start')).toBe(333)
-    expect(myStack._data.get('category-2').get('end')).toBe(667)
-    expect(myStack.min()).toBe(0)
-    expect(myStack.max()).toBe(1000)
+        expect( myStack._data.size ).toBe( 3 )
+        expect( myStack._data.get( 'category-2' ).get( 'start' ) ).toBe( 333 )
+        expect( myStack._data.get( 'category-2' ).get( 'end' ) ).toBe( 667 )
+        expect( myStack.min() ).toBe( 0 )
+        expect( myStack.max() ).toBe( 1000 )
 
-})
-
-
-test ('Should find maximum and minimum values in stack data', () => {
-
-    const myStack = new data.Stack()
-
-    expect(myStack.min())
-        .toBe(0)
-
-    expect(myStack.max())
-        .toBe(30)
-
-})
+    } )
 
 
+    test( 'Should find maximum and minimum values in stack data', () => {
+
+        const myStack = new data.Stack()
+
+        expect( myStack.min() )
+            .toBe( 0 )
+
+        expect( myStack.max() )
+            .toBe( 30 )
+
+    } )
 
 
-//// IMPORT MAP ////
-
-test ('Convert a map object to a Stack', () => {
+} )
 
 
-    const myMap = new Map([
-        ['1st class', 323],
-        ['2nd class', 277],
-        ['3rd class', 709]
-    ])
 
 
-    expectTable(myMap, `\
+//// Import Map ///////////////////////////////////////////////////////////////
+
+describe( 'Import Map', () => {
+
+
+    test( 'Convert a map object to a Stack', () => {
+
+
+        const myMap = new Map( [
+            ['1st class', 323],
+            ['2nd class', 277],
+            ['3rd class', 709]
+        ] )
+
+
+expectTable( myMap, `\
 ┌───────────────────┬─────────────┬────────┐
 │ (iteration index) │     Key     │ Values │
 ├───────────────────┼─────────────┼────────┤
 │         0         │ '1st class' │  323   │
 │         1         │ '2nd class' │  277   │
 │         2         │ '3rd class' │  709   │
-└───────────────────┴─────────────┴────────┘`)
+└───────────────────┴─────────────┴────────┘` )
 
-    const myStack = new data.Stack()
-    myStack.fromShallowMap(myMap)
+        const myStack = new data.Stack()
+        myStack.fromShallowMap( myMap )
 
 
-    expectTable(myStack.data().get('1st class'), `\
+expectTable( myStack.data().get( '1st class' ), `\
 ┌───────────────────┬──────────────┬─────────────┐
 │ (iteration index) │     Key      │   Values    │
 ├───────────────────┼──────────────┼─────────────┤
@@ -537,8 +575,8 @@ test ('Convert a map object to a Stack', () => {
 │         2         │ 'percentage' │     25      │
 │         3         │   'start'    │      0      │
 │         4         │    'end'     │     323     │
-└───────────────────┴──────────────┴─────────────┘`)
-    expectTable(myStack.data().get('2nd class'), `\
+└───────────────────┴──────────────┴─────────────┘` )
+        expectTable( myStack.data().get( '2nd class' ), `\
 ┌───────────────────┬──────────────┬─────────────┐
 │ (iteration index) │     Key      │   Values    │
 ├───────────────────┼──────────────┼─────────────┤
@@ -547,8 +585,8 @@ test ('Convert a map object to a Stack', () => {
 │         2         │ 'percentage' │     21      │
 │         3         │   'start'    │     323     │
 │         4         │    'end'     │     600     │
-└───────────────────┴──────────────┴─────────────┘`)
-    expectTable(myStack.data().get('3rd class'), `\
+└───────────────────┴──────────────┴─────────────┘` )
+        expectTable( myStack.data().get( '3rd class' ), `\
 ┌───────────────────┬──────────────┬─────────────┐
 │ (iteration index) │     Key      │   Values    │
 ├───────────────────┼──────────────┼─────────────┤
@@ -557,17 +595,23 @@ test ('Convert a map object to a Stack', () => {
 │         2         │ 'percentage' │     54      │
 │         3         │   'start'    │     600     │
 │         4         │    'end'     │    1309     │
-└───────────────────┴──────────────┴─────────────┘`)
+└───────────────────┴──────────────┴─────────────┘` )
 
 
-})
+    } )
+
+
+} )
+
+
 
 
 //// Statistics ///////////////////////////////////////////////////////////////
 
 describe ('Statistics', () => {
-   
-        test ('Total counts in various example stack data', () => {
+
+
+    test ('Total counts in various example stack data', () => {
 
             // Generic example summary
             const myStack = new data.Stack()  // populated with 'generic' stack
@@ -590,11 +634,6 @@ describe ('Statistics', () => {
             expect( myStack.totalCount() ).toBe( 1309 )
 
         })
-
-
-
-
-
 
 
 })
