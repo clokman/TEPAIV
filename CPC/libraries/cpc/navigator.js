@@ -120,7 +120,7 @@
                 .stacks(summaryStacks)
                 .showAbsoluteChartWidths( this.showAbsoluteChartWidths() )
                 .bgText('Dataset')
-                .bgTextFill('white')
+                .bgTextFill('rgb(169, 169, 169)')
                 .height(600)   // TODO: Magic number removed
                 .build()
 
