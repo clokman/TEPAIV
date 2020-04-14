@@ -190,6 +190,7 @@ describe ('Instantiation', () => {
     await myNavigator.loadDataset(
         'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
         ['Name'],
+        [],
         myNavigator.initParams.quantilesForContinuousColumns,  // `this` refers to myNavigator
         false
     ) // `update` argument is set to false, so that `_awaitingDomUpdateAfterDataChange` property can be tested below
@@ -279,6 +280,7 @@ describe ('Loading Data', () => {
         await myNavigator.loadDataset(
             'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
             ['Name'],
+            [],
             this.quantilesForContinuousColumns,  // `this` refers to myNavigator
             false
         )  // `update` argument is set to false, so that `_awaitingDomUpdateAfterDataChange` property can be tested below
@@ -779,7 +781,83 @@ describe ('Continuous Data', () => {
             myNavigator.initParams.quantilesForContinuousColumns = [ 'Q1', 'Q2', 'Q3', 'Q4' ]
             await myNavigator.build()
 
-            myNavigator
+            myNavigator  // TODO
+
+        })
+
+        test ('When specified in initParams.forcedCategoricalColumns, numerical categorical data should be treated ' +
+            'as categorical data instead of continuous', async () => {
+
+            jest.useFakeTimers()
+
+
+            // Navigator WITHOUT ANY FORCED categorical values //
+
+            const unforcedNavigator = await initializeDomWithCovid19TinyNavigator(false)
+            unforcedNavigator.initParams.columNamesToIgnore = [ 'dateRep', 'day', 'countriesAndTerritories', 'geoId', 'countryterritoryCode', 'popData2018' ]
+            await unforcedNavigator.build()
+
+            expect( unforcedNavigator.objects('panel-0-0').stacks().data() ).toTabulateAs(`\
+┌───────────────────┬───────────────────────────┬──────────────────────────────────────────────┐
+│ (iteration index) │            Key            │                    Values                    │
+├───────────────────┼───────────────────────────┼──────────────────────────────────────────────┤
+│         0         │         'dateRep'         │ Stack { _data: [Map], _scaleFunction: null } │
+│         1         │           'day'           │ Stack { _data: [Map], _scaleFunction: null } │
+│         2         │          'month'          │ Stack { _data: [Map], _scaleFunction: null } │
+│         3         │          'year'           │ Stack { _data: [Map], _scaleFunction: null } │
+│         4         │          'cases'          │ Stack { _data: [Map], _scaleFunction: null } │
+│         5         │         'deaths'          │ Stack { _data: [Map], _scaleFunction: null } │
+│         6         │ 'countriesAndTerritories' │ Stack { _data: [Map], _scaleFunction: null } │
+│         7         │          'geoId'          │ Stack { _data: [Map], _scaleFunction: null } │
+│         8         │  'countryterritoryCode'   │ Stack { _data: [Map], _scaleFunction: null } │
+│         9         │       'popData2018'       │ Stack { _data: [Map], _scaleFunction: null } │
+└───────────────────┴───────────────────────────┴──────────────────────────────────────────────┘`)
+
+            expect( unforcedNavigator.objects('panel-0-0').stacks('year').data() ).toTabulateAs(`\
+┌───────────────────┬──────┬───────────────────────────────────────────────────────────────────────────────────────────┐
+│ (iteration index) │ Key  │                                          Values                                           │
+├───────────────────┼──────┼───────────────────────────────────────────────────────────────────────────────────────────┤
+│         0         │ 'Q4' │ Map(5) { 'label' => 'Q4', 'count' => 50, 'percentage' => 100, 'start' => 0, 'end' => 50 } │
+└───────────────────┴──────┴───────────────────────────────────────────────────────────────────────────────────────────┘`)
+
+            expect( unforcedNavigator.objects('panel-0-0').stacks('month').data() ).toTabulateAs(`\
+┌───────────────────┬──────┬──────────────────────────────────────────────────────────────────────────────────────────┐
+│ (iteration index) │ Key  │                                          Values                                          │
+├───────────────────┼──────┼──────────────────────────────────────────────────────────────────────────────────────────┤
+│         0         │ 'Q4' │ Map(5) { 'label' => 'Q4', 'count' => 42, 'percentage' => 84, 'start' => 0, 'end' => 42 } │
+│         1         │ 'Q1' │ Map(5) { 'label' => 'Q1', 'count' => 8, 'percentage' => 16, 'start' => 42, 'end' => 50 } │
+└───────────────────┴──────┴──────────────────────────────────────────────────────────────────────────────────────────┘`)
+
+
+
+
+            // Navigator WITH FORCED categorical values //
+
+            const forcedNavigator = await initializeDomWithCovid19TinyNavigator(false)
+            forcedNavigator.initParams.columNamesToIgnore = [ 'dateRep', 'day', 'countriesAndTerritories', 'geoId', 'countryterritoryCode', 'popData2018' ]
+            forcedNavigator.initParams.forcedCategoricalColumns = [ 'year', 'month' ]
+            await forcedNavigator.build()
+
+
+            // Instead of quartiles, actual values (e.g., 2020) should now appear as keys
+            expect( forcedNavigator.objects('panel-0-0').stacks('year').data() ).toTabulateAs(`\
+┌───────────────────┬────────┬─────────────────────────────────────────────────────────────────────────────────────────────┐
+│ (iteration index) │  Key   │                                           Values                                            │
+├───────────────────┼────────┼─────────────────────────────────────────────────────────────────────────────────────────────┤
+│         0         │ '2020' │ Map(5) { 'label' => '2020', 'count' => 50, 'percentage' => 100, 'start' => 0, 'end' => 50 } │
+└───────────────────┴────────┴─────────────────────────────────────────────────────────────────────────────────────────────┘`)
+
+            // Instead of quartiles, actual values (e.g., 2,3,4, which represent Feb, Mar, and Apr) should now
+            // appear as keys
+            expect( forcedNavigator.objects('panel-0-0').stacks('month').data() ).toTabulateAs(`\
+┌───────────────────┬─────┬──────────────────────────────────────────────────────────────────────────────────────────┐
+│ (iteration index) │ Key │                                          Values                                          │
+├───────────────────┼─────┼──────────────────────────────────────────────────────────────────────────────────────────┤
+│         0         │ '4' │ Map(5) { 'label' => '4', 'count' => 11, 'percentage' => 22, 'start' => 0, 'end' => 11 }  │
+│         1         │ '3' │ Map(5) { 'label' => '3', 'count' => 31, 'percentage' => 62, 'start' => 11, 'end' => 42 } │
+│         2         │ '2' │ Map(5) { 'label' => '2', 'count' => 8, 'percentage' => 16, 'start' => 42, 'end' => 50 }  │
+└───────────────────┴─────┴──────────────────────────────────────────────────────────────────────────────────────────┘`)
+
 
         })
 
@@ -1066,6 +1144,39 @@ async function initializeDomWithTitanicTinyNavigator( build=true ) {
     //// Load a dataset into navigator
     myNavigator.initParams.datasetPath = 'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv'
     myNavigator.initParams.omitColumns = ['Name']
+
+    myNavigator.x(200)
+
+    if (build){
+        await myNavigator.build()
+    }
+
+
+    jest.runOnlyPendingTimers()
+    jest.runAllTimers()
+
+    return myNavigator
+}
+
+
+
+/**
+ * A simple testing template that creates a Navigator object with a very small dataset.
+ * @param build {Boolean} If set to false, would initialize Navigator without calling the `build()` method.
+ * @return {Promise<Navigator>}
+ */
+async function initializeDomWithCovid19TinyNavigator( build=true ) {
+
+    jest.useFakeTimers()
+
+    // Clear JEST's DOM to prevent leftovers from previous tests
+    document.body.innerHTML = ''
+    // Create svg container
+    const svg = new container.Svg(1200, 900)
+    // Create Navigator object
+    const myNavigator = new navigator.Navigator()
+    //// Load a dataset into navigator
+    myNavigator.initParams.datasetPath = 'http://localhost:3000/libraries/cpc/tests/dataset/Covid19Geographic-Tiny.csv'
 
     myNavigator.x(200)
 

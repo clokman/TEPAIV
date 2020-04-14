@@ -33,6 +33,7 @@
                 datasetPath: '',  // string
                 omitColumns: [],  // array of strings that should contain column names
                 quantilesForContinuousColumns: [ 'Q1', 'Q2', 'Q3', 'Q4' ],
+                forcedCategoricalColumns: [],
 
                 x: 200,
                 y: 25,
@@ -88,6 +89,7 @@
                 await this.loadDataset(
                     this.initParams.datasetPath,
                     this.initParams.omitColumns,
+                    this.initParams.forcedCategoricalColumns,
                     this.initParams.quantilesForContinuousColumns
                 )
             }
@@ -143,6 +145,8 @@
          *
          * @param path {String}
          * @param omitColumns {Array} - An array of strings. Each item should be a column name.
+         * @param forcedCategories {Array} - An array of strings. Each item should be a column name. Enter `[]` to
+         * force no categories.
          * @param quantiles {Array} - An array of strings. Each item should be a quantile name. Any continuous column
          *     will be discretized using the number and names of quantiles given in this argument.
          * @param update {Boolean} - Should be set to false only for testing and debugging purposes
@@ -151,6 +155,7 @@
         async loadDataset(
             path=this.initParams.datasetPath,
             omitColumns=this.initParams.omitColumns,
+            forcedCategories=this.initParams.forcedCategoricalColumns,
             quantiles=this.initParams.quantilesForContinuousColumns,
             update=true) {
 
@@ -158,6 +163,7 @@
 
             this.datasetObject = new dataset.Dataset(path, omitColumns)
             this.datasetObject.initParams.quantilesForContinuousColumns = quantiles
+            this.datasetObject.initParams.forcedCategoricalColumns = forcedCategories
             await this.datasetObject.build()
 
             if (update){  // should be set to false only for testing and debugging
