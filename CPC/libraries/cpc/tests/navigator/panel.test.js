@@ -259,7 +259,7 @@ describe ('Instantiation', () => {
 │ (iteration index) │   Key    │                                Values                                 │
 ├───────────────────┼──────────┼───────────────────────────────────────────────────────────────────────┤
 │         0         │ 'Ticket' │ Map(3) { '1st class' => 323, '2nd class' => 277, '3rd class' => 709 } │
-│         1         │ 'Status' │              Map(2) { 'Survived' => 500, 'Died' => 809 }              │
+│         1         │ 'Status' │              Map(2) { 'Died' => 809, 'Survived' => 500 }              │
 │         2         │ 'Gender' │               Map(2) { 'Female' => 466, 'Male' => 843 }               │
 └───────────────────┴──────────┴───────────────────────────────────────────────────────────────────────┘`)
         // Summary produces a nested map (1-level deep)

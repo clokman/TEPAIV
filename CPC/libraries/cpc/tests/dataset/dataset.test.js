@@ -434,7 +434,7 @@ describe ('Omitting Columns', () => {
 │ (iteration index) │   Key    │                                Values                                 │
 ├───────────────────┼──────────┼───────────────────────────────────────────────────────────────────────┤
 │         0         │ 'Ticket' │ Map(3) { '1st class' => 323, '2nd class' => 277, '3rd class' => 709 } │
-│         1         │ 'Status' │              Map(2) { 'Survived' => 500, 'Died' => 809 }              │
+│         1         │ 'Status' │              Map(2) { 'Died' => 809, 'Survived' => 500 }              │
 │         2         │ 'Gender' │               Map(2) { 'Female' => 466, 'Male' => 843 }               │
 └───────────────────┴──────────┴───────────────────────────────────────────────────────────────────────┘`)
 
@@ -1005,7 +1005,7 @@ describe ('Summarizing', () => {
 │ (iteration index) │   Key    │                                Values                                 │
 ├───────────────────┼──────────┼───────────────────────────────────────────────────────────────────────┤
 │         0         │ 'Ticket' │ Map(3) { '1st class' => 323, '2nd class' => 277, '3rd class' => 709 } │
-│         1         │ 'Status' │              Map(2) { 'Survived' => 500, 'Died' => 809 }              │
+│         1         │ 'Status' │              Map(2) { 'Died' => 809, 'Survived' => 500 }              │
 │         2         │ 'Gender' │               Map(2) { 'Female' => 466, 'Male' => 843 }               │
 └───────────────────┴──────────┴───────────────────────────────────────────────────────────────────────┘`)
 
@@ -1031,7 +1031,7 @@ describe ('Summarizing', () => {
 │ (iteration index) │   Key    │                                Values                                 │
 ├───────────────────┼──────────┼───────────────────────────────────────────────────────────────────────┤
 │         0         │ 'Ticket' │ Map(3) { '1st class' => 323, '2nd class' => 277, '3rd class' => 709 } │
-│         1         │ 'Status' │              Map(2) { 'Survived' => 500, 'Died' => 809 }              │
+│         1         │ 'Status' │              Map(2) { 'Died' => 809, 'Survived' => 500 }              │
 │         2         │ 'Gender' │               Map(2) { 'Female' => 466, 'Male' => 843 }               │
 └───────────────────┴──────────┴───────────────────────────────────────────────────────────────────────┘`)
 
@@ -1046,7 +1046,7 @@ describe ('Summarizing', () => {
 │ (iteration index) │   Key    │                                Values                                 │
 ├───────────────────┼──────────┼───────────────────────────────────────────────────────────────────────┤
 │         0         │ 'Ticket' │ Map(3) { '1st class' => 144, '2nd class' => 106, '3rd class' => 216 } │
-│         1         │ 'Status' │              Map(2) { 'Survived' => 339, 'Died' => 127 }              │
+│         1         │ 'Status' │              Map(2) { 'Died' => 127, 'Survived' => 339 }              │
 │         2         │ 'Gender' │                      Map(1) { 'Female' => 466 }                       │
 └───────────────────┴──────────┴───────────────────────────────────────────────────────────────────────┘`)
 
@@ -1484,6 +1484,29 @@ describe ('Handling continuous data', () => {
 
             })
 
+
+            test( 'Order of quantiles should be as specified', async () => {
+
+
+                const myDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/SampleMixedData.csv')
+                myDataset.initParams.quantilesForContinuousColumns = [ 'Q1', 'Q2', 'Q3', 'Q4' ]
+                await myDataset.build()
+
+
+                expect( myDataset.summary.get('Neuroticism') ).toTabulateAs(`\
+┌───────────────────┬──────┬────────┐
+│ (iteration index) │ Key  │ Values │
+├───────────────────┼──────┼────────┤
+│         0         │ 'Q1' │   25   │
+│         1         │ 'Q2' │   23   │
+│         2         │ 'Q3' │   26   │
+│         3         │ 'Q4' │   25   │
+└───────────────────┴──────┴────────┘`)
+
+
+            } )
+
         })
 
 })
+

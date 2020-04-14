@@ -182,7 +182,12 @@ async build(){
                  d=>d[columnName]
          )
 
-         allCategoryFrequenciesInData.set(columnName, categoryFrequenciesInColumn)
+
+         // Sort category names
+         const sortedCategoryFrequenciesInColumn = this._sortCategoriesByName( categoryFrequenciesInColumn )
+
+
+         allCategoryFrequenciesInData.set(columnName, sortedCategoryFrequenciesInColumn)
 
      })
 
@@ -190,7 +195,22 @@ async build(){
  }
 
 
- _getCategoryNames() {
+
+    /**
+     * Sorts category names, so that they are in order (e.g., 'Q1, Q2, Q3, Q4' or '1st class', '2nd class' ).
+     * const sortedCategoryFrequenciesInColumn = this._sortCategoriesByName( categoryFrequenciesInColumn )
+     * @param categoryFrequenciesInColumn
+     * @returns {Map<unknown, unknown>}
+     * @private
+     */
+    _sortCategoriesByName(categoryFrequenciesInColumn) {
+        return new Map(
+            [...categoryFrequenciesInColumn.entries()].sort()
+        )
+    }
+
+
+    _getCategoryNames() {
 
      const categoriesAsObjects = this.structure.values()
      const categoriesAsArrays =  Array.from(categoriesAsObjects)
