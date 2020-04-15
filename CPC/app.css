@@ -62,7 +62,6 @@
     margin-bottom: 10px;
     margin-left: 10px;
     padding: 5px;
-
     /*line-height: 150px;*/
     /*color: white;*/
     /*font-weight: bold;*/
@@ -71,6 +70,9 @@
 }
 
 
+.preference-control-label:hover {
+    user-select: none;
+}
 
 .bridge {
     /*border: 1px solid #000 !important;*/

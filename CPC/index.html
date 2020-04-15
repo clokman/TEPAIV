@@ -99,17 +99,20 @@
 
         <!--Dataset Dropdown-->
         <div class="preference-control">
-            <p>Dataset:</p>
+            <label for="dataset-dropdown" class="preference-control-label">
+                Dataset:
+            </label>
             <select class="ui dropdown"
                     id="dataset-dropdown"
-                    onchange="loadSelectedDataset()">
+                    onchange="loadSelectedDataset()"
+            >
 
                 <option value="Titanic">Titanic</option>
                 <option value="Titanic - Embark (Partial)">Titanic - Embark (Partial)</option>
                 <option value="Titanic - Prediction Sample">Titanic - Prediction Sample</option>
                 <option value="COVID-19">COVID-19</option>
                 <option value="Wine">Wine</option>
-                <option value="Big Five (2 dimensions, generated data)">Big Five (2 dimensions, generated data)</option>
+                <option value="Big Five (2 dimensions, generated)">Big Five (2 dimensions, generated)</option>
                 <option value="Mushrooms (4 columns)">Mushrooms (4 columns)</option>
                 <option value="Mushrooms (8 columns)">Mushrooms (8 columns)</option>
             </select>
@@ -164,7 +167,7 @@
                             bgTitle: 'WINE DATASET'
                         },
 
-                        'Big Five (2 dimensions, generated data)': {
+                        'Big Five (2 dimensions, generated)': {
                             path: 'http://localhost:3000/data/SampleMixedData.csv',
                             columnsToOmit: [],
                             columnsToForceAsCategorical: [],
@@ -247,188 +250,21 @@
         </div>
 
 
-        <!-- Panel Width Slider -->
-        <div id="panel-width-control" class="preference-control">
-
-            <p>Panel width: <span id="panel-width-text">100px</span></p>
-
-            <input type="range"
-                   class="slider"
-                   id=panel-width-slider
-                   value=100
-                   step=10
-                   min=100
-                   max=400
-                   onchange="setPanelWidth()"
-            >
-
-            <script>
-
-                // PANEL WIDTH SLIDER //
-                function setPanelWidth() {
-
-                    // Get slider value and text
-                    const slider = document.getElementById( 'panel-width-slider' )
-                    const text = document.getElementById( 'panel-width-text' )
-
-                    // Update displayed text
-                    text.innerText = Number( slider.value )
-
-                    // Change the value
-                    allNavigators.forEach( (navigatorObject) => {
-
-                        navigatorObject
-                            .width( Number( slider.value ) )
-                            .update()
-
-                    } )
-
-                }
-            </script>
-
-
-        </div>
-
-        <!--Category Connectors checkbox-->
-        <div class="preference-control ui checkbox">
-            <input type="checkbox" name="example" id="category-connectors-checkbox" onclick="toggleConnectorPolygons()">
-            <label>Category connectors</label>
-
-
-            <script>
-
-                function toggleConnectorPolygons() {
-
-                    // Get the checkbox element
-                    const checkBox1 = document.getElementById( 'category-connectors-checkbox' )
-
-                    // Toggle labels based on checkbox status
-                    allNavigators.forEach( (navigator) => {
-
-                        if( checkBox1.checked === true ) {
-                            navigator.showConnectorPolygons( true )
-                        }
-                        else {
-                            navigator.showConnectorPolygons( false )
-                        }
-
-                        navigator.update()
-                    } )
-
-                }
-            </script>
-
-        </div>
-
-
-        <!--Absolute Values Checkbox-->
-        <div class="preference-control ui checkbox">
-            <input type="checkbox" name="example" id="checkbox1" onclick="toggleAbsoluteValues()">
-            <label>Absolute values</label>
-
-
-            <script>
-
-                function toggleAbsoluteValues() {
-
-                    // Get the checkbox element
-                    const checkBox1 = document.getElementById( 'checkbox1' )
-
-                    // Toggle labels based on checkbox status
-                    allNavigators.forEach( (navigator) => {
-
-                        if( checkBox1.checked === true ) {
-                            navigator.showAbsoluteValues( true )
-                        }
-                        else {
-                            navigator.showAbsoluteValues( false )
-                        }
-
-                        navigator.update()
-                    } )
-
-                }
-            </script>
-
-        </div>
-
-
-        <!--Absolute Chart Widths Checkbox-->
-        <div class="preference-control ui checkbox">
-            <input type="checkbox" name="example" id="absolute-chart-widths-checkbox"
-                   onclick="toggleAbsoluteChartWidths()">
-            <label>Absolute chart widths</label>
-
-
-            <script>
-
-                function toggleAbsoluteChartWidths() {
-
-                    // Get the checkbox element
-                    const checkBox1 = document.getElementById( 'absolute-chart-widths-checkbox' )
-
-                    // Toggle labels based on checkbox status
-                    allNavigators.forEach( navigator => {
-
-                        if( checkBox1.checked === true ) {
-                            navigator.showAbsoluteChartWidths( true )
-                        }
-                        else {
-                            navigator.showAbsoluteChartWidths( false )
-                        }
-
-                        navigator.update()
-                    } )
-
-                }
-            </script>
-
-        </div>
-
-
-        <!--            &lt;!&ndash;Show Category Texts Checkbox&ndash;&gt;-->
-        <!--            <div class="preference-control ui checkbox">-->
-        <!--                <input type="checkbox" name="example" id="show-category-texts-checkbox" onclick="toggleCategoryTexts()">-->
-        <!--                <label>Hide category texts</label>-->
-
-
-        <!--                <script>-->
-
-        <!--                    function toggleCategoryTexts() {-->
-
-        <!--                        // Get the checkbox element-->
-        <!--                        const checkBox1 = document.getElementById("show-category-texts-checkbox")-->
-
-        <!--                        allNavigators.forEach( navigator => {-->
-
-        <!--                            if (checkBox1.checked === true ){-->
-        <!--                                navigator.showCategoryCaptions = true-->
-        <!--                            } else {-->
-        <!--                                navigator.showCategoryCaptions = false-->
-        <!--                            }-->
-
-        <!--                            navigator.update()-->
-        <!--                        })-->
-
-
-        <!--                    }-->
-        <!--                </script>-->
-
-        <!--            </div>-->
-
-
         <!--Color Scheme Dropdown-->
         <div class="preference-control">
             <!--<p>ColorScheme</p>-->
-            <select class="ui dropdown"
+            <label for="navigator-1-color-scheme-dropdown" class="preference-control-label">
+                Color scheme:
+            </label>
+            <select
+                    class="ui dropdown"
                     id="navigator-1-color-scheme-dropdown"
                     onchange="setColorScheme()">
 
-                <option value="">ColorScheme</option>
+                <option value=Titanic-2>Titanic-2</option>
+                <option value=Titanic>Titanic</option>
                 <option value=Single-Hue>Single-Hue</option>
                 <option value=Multi-Hue>Multi-Hue</option>
-                <option value=Titanic>Titanic</option>
-                <option value=Titanic-2>Titanic-2</option>
                 <option value='Blues'>Blues</option>
                 <option value='Greens'>Greens</option>
                 <option value='Greys'>Greys</option>
@@ -478,42 +314,194 @@
         </div>
 
 
-        <!--Animation Duration Slider-->
-        <div class="preference-control">
+        <!-- Panel Width Slider -->
+        <div id="panel-width-control" class="preference-control">
 
-            <p>Animation duration: <span id="animation-duration-text">600</span></p>
-
+            <label for=panel-width-slider  class="preference-control-label">
+                Panel width: <span id="panel-width-text">100</span>px
+            </label>
             <input type="range"
                    class="slider"
-                   id=animation-duration-slider
-                   value=600
-                   max=2500
+                   id=panel-width-slider
+                   value=100
+                   step=10
                    min=100
-                   onchange="setAnimationDuration()"
+                   max=400
+                   onchange="setPanelWidth()"
             >
+
+            <script>
+
+                // PANEL WIDTH SLIDER //
+                function setPanelWidth() {
+
+                    // Get slider value and text
+                    const slider = document.getElementById( 'panel-width-slider' )
+                    const text = document.getElementById( 'panel-width-text' )
+
+                    // Update displayed text
+                    text.innerText = Number( slider.value )
+
+                    // Change the value
+                    allNavigators.forEach( (navigatorObject) => {
+
+                        navigatorObject
+                            .width( Number( slider.value ) )
+                            .update()
+
+                    } )
+
+                }
+            </script>
+
+
+        </div>
+
+
+        <!--Category Connectors checkbox-->
+        <div class="preference-control ui checkbox">
+            <input
+                    id="category-connectors-checkbox"
+                    type="checkbox"
+                    onclick="toggleConnectorPolygons()"
+                    checked="checked"
+            >
+            <label for="category-connectors-checkbox" class="preference-control-label">
+                Category connectors
+            </label>
 
 
             <script>
 
-                function setAnimationDuration() {
+                function toggleConnectorPolygons() {
 
-                    // Get slider value and text
-                    const animationDurationSlider = document.getElementById( 'animation-duration-slider' )
-                    const animationDurationText = document.getElementById( 'animation-duration-text' )
+                    // Get the checkbox element
+                    const checkBox1 = document.getElementById( 'category-connectors-checkbox' )
 
-                    // Update animation duration text
-                    animationDurationText.innerText = Number( animationDurationSlider.value )
-
-                    // Change animation duration
+                    // Toggle labels based on checkbox status
                     allNavigators.forEach( (navigator) => {
 
-                        navigator
-                            .animationDuration( Number( animationDurationSlider.value ) )
-                            .update()
+                        if( checkBox1.checked === true ) {
+                            navigator.showConnectorPolygons( true )
+                        }
+                        else {
+                            navigator.showConnectorPolygons( false )
+                        }
+
+                        navigator.update()
                     } )
 
                 }
+            </script>
 
+        </div>
+
+
+        <!--Absolute Values Checkbox-->
+        <div class="preference-control ui checkbox">
+            <input type="checkbox" id="checkbox1" onclick="toggleAbsoluteValues()">
+            <label for="checkbox1" class="preference-control-label">
+                Absolute values
+            </label>
+
+
+            <script>
+
+                function toggleAbsoluteValues() {
+
+                    // Get the checkbox element
+                    const checkBox1 = document.getElementById( 'checkbox1' )
+
+                    // Toggle labels based on checkbox status
+                    allNavigators.forEach( (navigator) => {
+
+                        if( checkBox1.checked === true ) {
+                            navigator.showAbsoluteValues( true )
+                        }
+                        else {
+                            navigator.showAbsoluteValues( false )
+                        }
+
+                        navigator.update()
+                    } )
+
+                }
+            </script>
+
+        </div>
+
+
+        <!--Absolute Chart Widths Checkbox-->
+        <div class="preference-control ui checkbox">
+            <input type="checkbox"
+                   id="absolute-chart-widths-checkbox"
+                   onclick="toggleAbsoluteChartWidths()">
+            <label for="absolute-chart-widths-checkbox" class="preference-control-label">
+                Absolute chart widths
+            </label>
+
+
+            <script>
+
+                function toggleAbsoluteChartWidths() {
+
+                    // Get the checkbox element
+                    const checkBox1 = document.getElementById( 'absolute-chart-widths-checkbox' )
+
+                    // Toggle labels based on checkbox status
+                    allNavigators.forEach( navigator => {
+
+                        if( checkBox1.checked === true ) {
+                            navigator.showAbsoluteChartWidths( true )
+                        }
+                        else {
+                            navigator.showAbsoluteChartWidths( false )
+                        }
+
+                        navigator.update()
+                    } )
+
+                }
+            </script>
+
+        </div>
+
+
+        <!-- Stroke Color Dropdown-->
+        <div id="stroke-color-control" class="preference-control">
+
+            <!--<p>ColorScheme</p>-->
+            <label for="stroke-color-dropdown" class="preference-control-label">
+                Stroke color:<br>
+            </label>
+            <select class="ui dropdown"
+                    id="stroke-color-dropdown"
+                    onchange="setStrokeColor()"
+            >
+
+                <option value="white">White</option>
+                <option value="black">Black</option>
+
+            </select>
+
+            <script>
+                function setStrokeColor() {
+
+                    // Get dropdown value
+                    const dropdown = document.getElementById( 'stroke-color-dropdown' )
+                    const selectedValue = dropdown.value
+                    // const selectedValue = dropdown.options[dropdown.selectedIndex]
+
+                    // Change the value
+                    allNavigators.forEach( (navigatorObject, navigatorName) => {
+
+                        navigatorObject
+                            .stroke( `${selectedValue}` )
+                            .update()
+
+                    } )
+
+                }
             </script>
 
         </div>
@@ -522,8 +510,9 @@
         <!-- Stroke Width Slider-->
         <div id="stroke-width-control" class="preference-control">
 
-            <p>Stroke width: <span id="stroke-width-text">0.5</span>px</p>
-
+            <label for=stroke-width-slider class="preference-control-label">
+                Stroke width: <span id="stroke-width-text">0.5</span>px
+            </label>
             <input type="range"
                    class="slider"
                    id=stroke-width-slider
@@ -558,41 +547,47 @@
                 }
             </script>
 
-
         </div>
 
-        <!-- Stroke Color Dropdown-->
-        <div id="stroke-color-control" class="preference-control">
 
-            <!--<p>ColorScheme</p>-->
-            <select class="ui dropdown"
-                    id="stroke-color-dropdown"
-                    onchange="setStrokeColor()"
+        <!--Animation Duration Slider-->
+        <div class="preference-control">
+
+
+            <label for=animation-duration-slider class="preference-control-label">
+                Animation duration: <span id="animation-duration-text">600</span>ms
+            </label>
+            <input type="range"
+                   class="slider"
+                   id=animation-duration-slider
+                   value=600
+                   max=2500
+                   min=100
+                   onchange="setAnimationDuration()"
             >
 
-                <option value="white">White</option>
-                <option value="black">Black</option>
-
-            </select>
 
             <script>
-                function setStrokeColor() {
 
-                    // Get dropdown value
-                    const dropdown = document.getElementById( 'stroke-color-dropdown' )
-                    const selectedValue = dropdown.value
-                    // const selectedValue = dropdown.options[dropdown.selectedIndex]
+                function setAnimationDuration() {
 
-                    // Change the value
-                    allNavigators.forEach( (navigatorObject, navigatorName) => {
+                    // Get slider value and text
+                    const animationDurationSlider = document.getElementById( 'animation-duration-slider' )
+                    const animationDurationText = document.getElementById( 'animation-duration-text' )
 
-                        navigatorObject
-                            .stroke( `${selectedValue}` )
+                    // Update animation duration text
+                    animationDurationText.innerText = Number( animationDurationSlider.value )
+
+                    // Change animation duration
+                    allNavigators.forEach( (navigator) => {
+
+                        navigator
+                            .animationDuration( Number( animationDurationSlider.value ) )
                             .update()
-
                     } )
 
                 }
+
             </script>
 
         </div>
