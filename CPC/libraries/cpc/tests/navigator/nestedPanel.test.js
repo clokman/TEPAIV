@@ -2801,6 +2801,24 @@ describe ('Color Themes', () => {
 describe( 'Connector Polygons', () => {
 
 
+
+    // Helper Function(s) //
+
+    function visibilityAttributesOfAllConnectorPolygonsOnDom() {
+
+        const visibilityOfConnectorPolygonElements = []
+        const allConnectorPolygonElements = document.querySelectorAll( '.connector-polygon' )
+        allConnectorPolygonElements.forEach( connectorPolygonElement => {
+
+            const visibilityStatus = connectorPolygonElement.getAttribute( 'visibility' )
+            visibilityOfConnectorPolygonElements.push( visibilityStatus )
+
+        } )
+        return visibilityOfConnectorPolygonElements
+    }
+
+
+
     test( 'The right number of connector polygons should exist between categories by default', () => {
 
 
@@ -2818,8 +2836,8 @@ describe( 'Connector Polygons', () => {
         expect (panelZero.has.numberOfVisibleCategories() ).toBe( 7 )
         expect (childPanel.has.numberOfVisibleCategories() ).toBe( 7 )
 
-        const numberOfPolygonElementsOnDom = document.querySelectorAll( '.connector-polygon' )
-        expect( numberOfPolygonElementsOnDom.length ).toBe( 7 )
+        const allPolygonElementsOnDom = document.querySelectorAll( '.connector-polygon' )
+        expect( allPolygonElementsOnDom.length ).toBe( 7 )
 
 
 
@@ -2838,9 +2856,72 @@ describe( 'Connector Polygons', () => {
 
 
 
-    test( /*TODO*/ 'It should be possible to toggle visibility of connector polygons', () => {
+    test( 'It should be possible to toggle visibility of all connector polygons in NestedPanel', () => {
 
 
+        initializeDomWithSvg()
+
+        // Initialize panels
+        const {panelZero, childPanel} = initializeDomWith.panelZero.and.child()
+
+
+
+        // Sample LinkableRectangles from DOM
+        const panelZeroMaleRectangle = panelZero.objects('gender').objects('male').objects('rectangle')
+        const childPanelMaleRectangle = childPanel.objects('gender').objects('male').objects('rectangle')
+
+        // Sampled LinkableRectangles should be visible (initial state)
+        expect( panelZeroMaleRectangle.connectorRight().visibility() ).toBe( 'visible' )
+        expect( childPanelMaleRectangle.connectorLeft().visibility() ).toBe( 'visible' )
+
+        expect( childPanelMaleRectangle.visibilityOfAllConnectorsInEnsemble() ).toBe( 'visible' )
+        expect( panelZeroMaleRectangle.visibilityOfAllConnectorsInEnsemble() ).toBe( 'visible' )
+
+        // All connector elements on DOM should be initially visible
+        const visibilityOfConnectorPolygonElementsBeforeToggle = visibilityAttributesOfAllConnectorPolygonsOnDom()
+        expect( visibilityOfConnectorPolygonElementsBeforeToggle ).toEqual(
+            ["visible", "visible", "visible", "visible", "visible", "visible", "visible"]
+        )
+
+
+
+        // HIDE connector polygons via NestedPanel interface (and not LinkableRectangle interface)
+        panelZero.showConnectorPolygons(false).update()
+
+
+
+        // Sampled LinkableRectangles should now be hidden (toggled state)
+        expect( panelZeroMaleRectangle.connectorRight().visibility() ).toBe( 'hidden' )
+        expect( childPanelMaleRectangle.connectorLeft().visibility() ).toBe( 'hidden' )
+
+        expect( childPanelMaleRectangle.visibilityOfAllConnectorsInEnsemble() ).toBe( 'hidden' )
+        expect( panelZeroMaleRectangle.visibilityOfAllConnectorsInEnsemble() ).toBe( 'hidden' )
+
+        // All connector elements on DOM should now be visible
+        const visibilityOfConnectorPolygonElementsAfterToggle1 = visibilityAttributesOfAllConnectorPolygonsOnDom()
+        expect( visibilityOfConnectorPolygonElementsAfterToggle1 ).toEqual(
+            ["hidden", "hidden", "hidden", "hidden", "hidden", "hidden", "hidden"]
+        )
+
+
+
+        // SHOW connector polygons again via NestedPanel interface (and not LinkableRectangle interface)
+        panelZero.showConnectorPolygons(true).update()
+
+
+
+        // Sampled LinkableRectangles should now be visible again (toggled state)
+        expect( panelZeroMaleRectangle.connectorRight().visibility() ).toBe( 'visible' )
+        expect( childPanelMaleRectangle.connectorLeft().visibility() ).toBe( 'visible' )
+
+        expect( childPanelMaleRectangle.visibilityOfAllConnectorsInEnsemble() ).toBe( 'visible' )
+        expect( panelZeroMaleRectangle.visibilityOfAllConnectorsInEnsemble() ).toBe( 'visible' )
+
+        // All connector elements on DOM should now be visible
+        const visibilityOfConnectorPolygonElementsAfterToggle2 = visibilityAttributesOfAllConnectorPolygonsOnDom()
+        expect( visibilityOfConnectorPolygonElementsAfterToggle2 ).toEqual(
+            ["visible", "visible", "visible", "visible", "visible", "visible", "visible"]
+        )
 
     } )
 

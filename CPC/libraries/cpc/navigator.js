@@ -1602,6 +1602,7 @@
 
             // Parameters
             this._showAbsoluteChartWidths = false
+            this._showConnectorPolygons = true
 
             // Formulas
             this.absoluteWidthOfChildPanel = (childPanelObject) => {
@@ -1902,6 +1903,29 @@
             if (!!thisPanel.objectToSpawnFrom) {
                 thisPanel.bgFill( thisPanel.objectToSpawnFrom.fill() )
             }
+
+            // WARNING: Do not move the procedure below (for adjusting connector polygons) to lower level objects
+            // such as Chart or Category. Although there is some micromanagement here while reaching to the
+            // LinkedRectangle via Chart -> Category -> LinkedRectangle path, NestedPanel is conceptualy the lowest
+            // level in which two categories are linked to each other. If this functionality is taken  to lower
+            // levels of abstraction (e.g., by implementing a `Category.linkRight()` method), things may get
+            // unnecessarily complicated at those levels, and the metaphor may be violated.
+            thisPanel.objects().forEach( (chartObject, categoryName) => {
+                chartObject.objects().forEach( (categoryObject, categoryName) => {
+
+                    // Get linkable rectangle object of each category in thisPanel
+                    const linkableRectangle = categoryObject.objects( 'rectangle' )
+
+                    // Toggle connector polygons if necessary
+                    this.showConnectorPolygons()    /* use of `this` is intentional, so that the value propagates to
+                                                    children */
+                        ? linkableRectangle.visibilityOfAllConnectorsInEnsemble( 'visible' )
+                        : linkableRectangle.visibilityOfAllConnectorsInEnsemble( 'hidden' )
+
+                })
+                
+            })
+
 
 
             // If there are child panels
@@ -2300,6 +2324,28 @@
 
         }
 
+
+        /**
+         * Toggles visibility of all connector polygons
+         * @param value {Boolean}
+         * @returns {NestedPanel|*}
+         */
+        showConnectorPolygons(value) {
+
+            // Getter
+            if (!arguments.length){
+                return this._showConnectorPolygons
+            }
+
+            // Setter
+            else{
+                value.mustBeOfType('Boolean')
+                this._showConnectorPolygons = value
+
+                return this
+            }
+
+        }
 
 
         _pushAnySiblingsOfParentRightward( thisPanel=this ){
