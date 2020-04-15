@@ -2242,6 +2242,27 @@ describe( 'Connector Polygons', () => {
         } )
 
 
+        test( 'Singleton objects should not throw error when `visibilityOfAllConnectorsInEnsemble()` method is' +
+            ' called', () => {
+
+            // Create LinkedRectangle objects
+            const singletonRectangle = new shape.LinkableRectangle()
+                .id( 'singleton-rectangle' )
+
+
+            // GETTER of singleton should not throw an exception
+            expect( singletonRectangle.visibilityOfAllConnectorsInEnsemble() )
+                .toBeDefined()
+
+            // SETTER of singleton should not throw an exception
+            expect( singletonRectangle.visibilityOfAllConnectorsInEnsemble('visible').update() )
+                .toBeDefined()
+            expect( singletonRectangle.visibilityOfAllConnectorsInEnsemble('hidden').update() )
+                .toBeDefined()
+
+
+        } )
+
     } )
 
 } )

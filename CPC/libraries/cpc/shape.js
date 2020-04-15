@@ -731,22 +731,25 @@
                 if( this._visibilityOfAllConnectorsInEnsembleIsAwaitingPropagation ) {
 
 
-                    if ( this.visibilityOfAllConnectorsInEnsemble() === 'visible' ){
+                    if( !!this.ensembleObject ) {
 
-                        this.ensembleObject.members().forEach( (member, memberName) => {
-                            member.visibilityOfConnectorRight( 'visible' )
-                            member.visibilityOfConnectorLeft( 'visible' )
-                        })
+                        if( this.visibilityOfAllConnectorsInEnsemble() === 'visible' ) {
 
-                    }
+                            this.ensembleObject.members().forEach( (member, memberName) => {
+                                member.visibilityOfConnectorRight( 'visible' )
+                                member.visibilityOfConnectorLeft( 'visible' )
+                            } )
 
-                    if ( this.visibilityOfAllConnectorsInEnsemble() === 'hidden' ){
+                        }
 
-                        this.ensembleObject.members().forEach( (member, memberName) => {
-                            member.visibilityOfConnectorRight( 'hidden' )
-                            member.visibilityOfConnectorLeft( 'hidden' )
-                        })
+                        if( this.visibilityOfAllConnectorsInEnsemble() === 'hidden' ) {
 
+                            this.ensembleObject.members().forEach( (member, memberName) => {
+                                member.visibilityOfConnectorRight( 'hidden' )
+                                member.visibilityOfConnectorLeft( 'hidden' )
+                            } )
+
+                        }
                     }
 
                     this._visibilityOfAllConnectorsInEnsembleIsAwaitingPropagation = false
