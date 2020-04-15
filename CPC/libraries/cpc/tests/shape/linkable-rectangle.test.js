@@ -2220,7 +2220,7 @@ describe( 'Connector Polygons', () => {
             expect( middleRectangle.visibilityOfConnectorLeft() ).toBe( 'hidden' )
             expect( rightRectangle.visibilityOfConnectorLeft() ).toBe( 'hidden' )
             expect( connector1.visibility() ).toBe( 'hidden' )
-            // Connector 2 should still be visible
+            // Connector 2 should also be hidden
             expect( middleRectangle.visibilityOfConnectorRight() ).toBe( 'hidden' )
             expect( rightRectangle.visibilityOfConnectorLeft() ).toBe( 'hidden' )
             expect( connector2.visibility() ).toBe( 'hidden' )
