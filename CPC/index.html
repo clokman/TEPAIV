@@ -616,11 +616,6 @@
     let mySvg = new container.Svg(15000, 15000, parentD3Element)
 
 
-    //// NAVIGATOR ////
-    const horizontalDistanceBetweenNavigators = 1600
-    const verticalDistanceBetweenNavigators = 900
-
-
     const { datasetPath, columNamesToIgnore, columsToForceAsCategoricalData, height } = parseDatasetDropdown()
 
     let navigator1 = new navigator.Navigator()
@@ -631,7 +626,6 @@
         columsToForceAsCategoricalData
     ).then( that => {
 
-        // that.x( navigator1.x() + horizontalDistanceBetweenNavigators )
         that.colorSet( 'Titanic-2' )
             .height(height)
             .x(300)

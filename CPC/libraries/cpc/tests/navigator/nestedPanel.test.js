@@ -2822,7 +2822,7 @@ describe( 'Connector Polygons', () => {
     test( 'The right number of connector polygons should exist between categories by default', () => {
 
 
-        initializeDomWithSvg()  /* Do not delete this line. Othewise, when many tests are ran in tandem,
+        initializeDomWithSvg()  /* Do not delete this line. Otherwise, when many tests are ran in tandem,
                                     `childPanel.has.numberOfVisibleCategories()` returns double the amount of
                                      expected elements. This is likely due to leftovers from a previous test, (even
                                      though the DOM is cleared during `initializeDomWith.panelZero.and.child()`. */

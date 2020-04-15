@@ -1900,6 +1900,7 @@
 
         }
 
+
         /**
          * Adjusts the current panel and triggers adjustments downstream
          */
@@ -2318,7 +2319,7 @@
          */
         _createConnectors(){
 
-            // WARNING: This method call may be decreasing performance significantly
+            // WARNING/TODO: This method call may be decreasing performance significantly
 
             this.objects().forEach( (chartObject, chartName) => {
 
@@ -2336,7 +2337,8 @@
                     // Link objects
                     const leftRectangle = equivalentCategoryObjectInLeftPanel.objects( 'rectangle' )
                     const rightRectangle = categoryObject.objects( 'rectangle' )
-                    leftRectangle.linkRight( rightRectangle ).update()  /* the `update` that is called here should not
+                    leftRectangle
+                        .linkRight( rightRectangle ).update()  /* the `update` that is called here should not
                                                                           interrupt the animation because this
                                                                            method is (and should always be) called
                                                                            within a `setTimeOut` block)

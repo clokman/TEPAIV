@@ -174,7 +174,7 @@ describe ('Instantiation', () => {
     document.body.innerHTML = ''
 
     // Create svg container
-    const svg = new container.Svg()
+    new container.Svg()
 
 
     // Create Navigator object
@@ -225,7 +225,7 @@ describe ('Instantiation', () => {
         'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
         ['Name']
     )
-    returnedObjectType = returnedObject.constructor.name
+    const returnedObjectType = returnedObject.constructor.name
     expect(returnedObjectType).toBe('Navigator')
 
     })
@@ -258,7 +258,7 @@ describe ('Loading Data', () => {
 
         // Create Navigator object and tag it for later selectability
         const myNavigator = new navigator.Navigator()
-        myNavigator
+        await myNavigator
             .id('my-navigator')
             .build()
 
@@ -320,11 +320,9 @@ describe ('Loading Data', () => {
             .getElementsByClassName('panel')[0]
         const panelElementId = panelElement.getAttribute('id')
         const panelElementClass = panelElement.getAttribute('class')
-        const panelElementDepth = panelElement.getAttribute('depth')
 
         expect(panelElementId).toBe('panel-0-0')
         expect(panelElementClass).toBe('panel')
-
 
         // Verify that the data-related flags are switched after update()
         expect(myNavigator._awaitingDomUpdateAfterDataChange).toBe(false)
@@ -496,7 +494,7 @@ describe ('Interactivity', () => {
 
         // Create Navigator object and tag it for later selectability
         const myNavigator = new navigator.Navigator()
-        myNavigator
+        await myNavigator
             .id('my-navigator')
             .build()
 
@@ -1020,7 +1018,7 @@ describe ('Color Sets', () => {
 
         // After the click: Check the color of an arbitrary category of PANEL-1 on DOM
         const actualColorsOnDomForGenderCategoryInPanelOneAfterClick = myNavigator.objects('panel-0-0').objects('Gender').actualColors()
-        expect ( actualColorsOnDomForGenderCategoryInPanelZeroAfterClick )
+        expect ( actualColorsOnDomForGenderCategoryInPanelOneAfterClick )
             .toEqual(["rgb(80, 80, 80)", "rgb(151, 151, 151)"])
 
 
@@ -1237,7 +1235,7 @@ async function initializeDomWithTitanicTinyNavigator( build=true ) {
     // Clear JEST's DOM to prevent leftovers from previous tests
     document.body.innerHTML = ''
     // Create svg container
-    const svg = new container.Svg(1200, 900)
+    new container.Svg(1200, 900)
     // Create Navigator object
     const myNavigator = new navigator.Navigator()
     //// Load a dataset into navigator
@@ -1295,7 +1293,7 @@ async function initializeDomWithCovid19TinyNavigator( build=true ) {
     // Clear JEST's DOM to prevent leftovers from previous tests
     document.body.innerHTML = ''
     // Create svg container
-    const svg = new container.Svg(1200, 900)
+    new container.Svg(1200, 900)
     // Create Navigator object
     const myNavigator = new navigator.Navigator()
     //// Load a dataset into navigator

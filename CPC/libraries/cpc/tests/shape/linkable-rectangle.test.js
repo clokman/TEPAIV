@@ -4,12 +4,12 @@
 //// POLYFILLS ////
 
 // Import polyfill for fetch() method
-if ( typeof fetch !== 'function' ) {
+if( typeof fetch !== 'function' ) {
     global.fetch = require( 'node-fetch-polyfill' )
 }
 
 // Import polyfill for Object.fromEntries() method
-if ( typeof Object.fromEntries !== 'function' ) {
+if( typeof Object.fromEntries !== 'function' ) {
     Object.fromEntries = require( 'object.fromentries' )
 }
 
@@ -1259,8 +1259,8 @@ describe( 'Connector Polygons', () => {
 
         let myRectangle
         let leftRectangle
-          , middleRectangle
-          , rightRectangle
+            , middleRectangle
+            , rightRectangle
 
         // Setup
         beforeEach( () => {
@@ -2167,7 +2167,7 @@ describe( 'Connector Polygons', () => {
 
 
             // Toggle visibility status of connector 1 via a rectangle it is connected to
-            leftRectangle.visibilityOfConnectorRight('hidden').update()
+            leftRectangle.visibilityOfConnectorRight( 'hidden' ).update()
 
             // Connector 1 should now be hidden
             expect( leftRectangle.visibilityOfConnectorRight() ).toBe( 'hidden' )
@@ -2181,7 +2181,7 @@ describe( 'Connector Polygons', () => {
 
 
             // Toggle visibility status of connector 2 via a rectangle it is connected to
-            rightRectangle.visibilityOfConnectorLeft('hidden').update()
+            rightRectangle.visibilityOfConnectorLeft( 'hidden' ).update()
 
             // Connector 1 should remain be hidden
             expect( leftRectangle.visibilityOfConnectorRight() ).toBe( 'hidden' )
@@ -2213,7 +2213,7 @@ describe( 'Connector Polygons', () => {
 
 
             // Hide all connectors via one of the rectangles in the ensemble
-            leftRectangle.visibilityOfAllConnectorsInEnsemble('hidden').update()
+            leftRectangle.visibilityOfAllConnectorsInEnsemble( 'hidden' ).update()
 
             // Connector 1 should now be hidden
             expect( leftRectangle.visibilityOfConnectorRight() ).toBe( 'hidden' )
@@ -2228,7 +2228,7 @@ describe( 'Connector Polygons', () => {
 
 
             // Show all connectors via one of the rectangles in the ensemble
-            rightRectangle.visibilityOfAllConnectorsInEnsemble('visible').update()
+            rightRectangle.visibilityOfAllConnectorsInEnsemble( 'visible' ).update()
 
             // Connector 1 should now be visible
             expect( leftRectangle.visibilityOfConnectorRight() ).toBe( 'visible' )
