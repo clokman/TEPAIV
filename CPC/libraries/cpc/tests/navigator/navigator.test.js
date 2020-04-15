@@ -769,6 +769,105 @@ describe ('Absolute Chart Widths', () => {
 
 
 
+//// Show/hide Connectors ///////////////////////////////////////////////////////////////
+
+describe( 'Show/hide (All) Connectors', () => {
+
+
+    // Helper Function(s) //
+
+    function visibilityAttributesOfAllConnectorPolygonsOnDom() {
+
+        const visibilityOfConnectorPolygonElements = []
+        const allConnectorPolygonElements = document.querySelectorAll( '.connector-polygon' )
+        allConnectorPolygonElements.forEach( connectorPolygonElement => {
+
+            const visibilityStatus = connectorPolygonElement.getAttribute( 'visibility' )
+            visibilityOfConnectorPolygonElements.push( visibilityStatus )
+
+        } )
+        return visibilityOfConnectorPolygonElements
+    }
+
+
+    test( 'It should be possible to show toggle connectors in a Navigator via an instance method', async () => {
+
+        // Init
+        jest.useFakeTimers()
+        const {myNavigator, panelZero, childPanel} = await initializeDomWithTitanicTinyNavigator.and.childPanel()
+        jest.runOnlyPendingTimers()
+
+
+        // Get default state of connector polygons in navigator
+        expect( myNavigator.showConnectorPolygons() ).toBe( true )
+
+
+        // Sample LinkableRectangles from DOM
+        const panelZeroSurvivedRectangle = panelZero.objects('Status').objects('Survived').objects('rectangle')
+        const childPanelSurvivedRectangle = childPanel.objects('Status').objects('Survived').objects('rectangle')
+
+        // Sampled LinkableRectangles should be visible (initial state)
+        expect( panelZeroSurvivedRectangle.connectorRight().visibility() ).toBe( 'visible' )
+        expect( childPanelSurvivedRectangle.connectorLeft().visibility() ).toBe( 'visible' )
+
+        expect( panelZeroSurvivedRectangle.visibilityOfAllConnectorsInEnsemble() ).toBe( 'visible' )
+        expect( childPanelSurvivedRectangle.visibilityOfAllConnectorsInEnsemble() ).toBe( 'visible' )
+
+        // All connector elements on DOM should be initially visible
+        const visibilityOfConnectorPolygonElementsBeforeToggle = visibilityAttributesOfAllConnectorPolygonsOnDom()
+        expect( visibilityOfConnectorPolygonElementsBeforeToggle ).toEqual(
+            [ "visible", "visible", "visible" ]
+        )
+
+
+
+        // HIDE connector polygons via Navigator interface (and not NestedPanel nor LinkedRectangle interface)
+        myNavigator.showConnectorPolygons(false).update()
+        expect( myNavigator.showConnectorPolygons() ).toBe( false )
+
+
+
+        // Sampled LinkableRectangles should now be hidden (toggled state)
+        expect( panelZeroSurvivedRectangle.connectorRight().visibility() ).toBe( 'hidden' )
+        expect( childPanelSurvivedRectangle.connectorLeft().visibility() ).toBe( 'hidden' )
+
+        expect( childPanelSurvivedRectangle.visibilityOfAllConnectorsInEnsemble() ).toBe( 'hidden' )
+        expect( panelZeroSurvivedRectangle.visibilityOfAllConnectorsInEnsemble() ).toBe( 'hidden' )
+
+        // All connector elements on DOM should now be visible
+        const visibilityOfConnectorPolygonElementsAfterToggle1 = visibilityAttributesOfAllConnectorPolygonsOnDom()
+        expect( visibilityOfConnectorPolygonElementsAfterToggle1 ).toEqual(
+            [ "hidden", "hidden", "hidden"]
+        )
+
+
+
+        // SHOW connector polygons again via Navigator interface (and not NestedPanel nor LinkedRectangle interface)
+        myNavigator.showConnectorPolygons(true).update()
+
+
+
+        // Sampled LinkableRectangles should now be visible again (toggled state)
+        expect( panelZeroSurvivedRectangle.connectorRight().visibility() ).toBe( 'visible' )
+        expect( childPanelSurvivedRectangle.connectorLeft().visibility() ).toBe( 'visible' )
+
+        expect( childPanelSurvivedRectangle.visibilityOfAllConnectorsInEnsemble() ).toBe( 'visible' )
+        expect( panelZeroSurvivedRectangle.visibilityOfAllConnectorsInEnsemble() ).toBe( 'visible' )
+
+        // All connector elements on DOM should now be visible
+        const visibilityOfConnectorPolygonElementsAfterToggle2 = visibilityAttributesOfAllConnectorPolygonsOnDom()
+        expect( visibilityOfConnectorPolygonElementsAfterToggle2 ).toEqual(
+            [ "visible", "visible", "visible" ]
+        )
+
+
+    } )
+
+
+} )
+
+
+
 //// Continuous Data ///////////////////////////////////////////////////////////////
 
 describe ('Continuous Data', () => {
@@ -1156,6 +1255,30 @@ async function initializeDomWithTitanicTinyNavigator( build=true ) {
     jest.runAllTimers()
 
     return myNavigator
+}
+
+
+
+initializeDomWithTitanicTinyNavigator.and = {
+
+    childPanel: async () => {
+
+        jest.useRealTimers()
+
+        const myNavigator = await initializeDomWithTitanicTinyNavigator()
+
+        // Create a second panel in navigator
+        domUtils.simulateClickOn('#panel-0-0 #Male')
+        jest.runOnlyPendingTimers()
+
+
+        const panelZero = myNavigator.objects('panel-0-0')
+        const childPanel = myNavigator.objects('panel-1-0')
+
+        return { myNavigator, panelZero, childPanel }
+
+    }
+
 }
 
 

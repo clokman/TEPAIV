@@ -55,8 +55,11 @@
             this._height = this.initParams.height
 
             this._colorSet = 'Single-Hue'
+
             this._showAbsoluteValues = false
             this._showAbsoluteChartWidths = false
+            this._showConnectorPolygons = true
+
             this._animationDuration = 600
             this._strokeWidth = '0.5px'
             this._stroke = 'rgba(255, 255, 255, 1.0)'
@@ -389,6 +392,7 @@
                     .height( this.height() )
                     .showAbsoluteValues( this.showAbsoluteValues() )
                     .showAbsoluteChartWidths( this.showAbsoluteChartWidths() )
+                    .showConnectorPolygons( this.showConnectorPolygons() )
                     .colorSet( this.colorSet() )
                     .animationDuration( this.animationDuration() )
                     .strokeWidth( this.strokeWidth() )
@@ -613,6 +617,25 @@
                 return this
             }
 
+        }
+
+
+
+        showConnectorPolygons(value) {
+        
+            // Getter
+            if (!arguments.length){
+                return this._showConnectorPolygons
+            }
+        
+            // Setter
+            else{
+                value.mustBeOfType('Boolean')
+                this._showConnectorPolygons = value
+                
+                return this
+            }
+            
         }
 
 
