@@ -289,6 +289,37 @@
 
         </div>
 
+        <!--Category Connectors checkbox-->
+        <div class="preference-control ui checkbox">
+            <input type="checkbox" name="example" id="category-connectors-checkbox" onclick="toggleConnectorPolygons()">
+            <label>Category connectors</label>
+
+
+            <script>
+
+                function toggleConnectorPolygons() {
+
+                    // Get the checkbox element
+                    const checkBox1 = document.getElementById( 'category-connectors-checkbox' )
+
+                    // Toggle labels based on checkbox status
+                    allNavigators.forEach( (navigator) => {
+
+                        if( checkBox1.checked === true ) {
+                            navigator.showConnectorPolygons( true )
+                        }
+                        else {
+                            navigator.showConnectorPolygons( false )
+                        }
+
+                        navigator.update()
+                    } )
+
+                }
+            </script>
+
+        </div>
+
 
         <!--Absolute Values Checkbox-->
         <div class="preference-control ui checkbox">
