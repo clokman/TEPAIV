@@ -407,6 +407,65 @@
         </div>
 
 
+        <!-- Connector opacity -->
+        <div id="connector-opacity-control" class="preference-control">
+
+            <label for=connector-opacity-slider  class="preference-control-label">
+                Connector opacity: <span id="connector-opacity-text">1</span>
+            </label>
+            <input
+                    id=connector-opacity-slider
+                    class="slider"
+                    type="range"
+                    value=1
+                    step=0.05
+                    min=0
+                    max=1
+                    onchange="setConnectorOpacity()"
+            >
+
+            <script>
+
+                // CONNECTOR OPACITY SLIDER //
+                function setConnectorOpacity() {
+
+                    // Get slider value and text
+                    const slider = document.getElementById( 'connector-opacity-slider' )
+                    const text = document.getElementById( 'connector-opacity-text' )
+
+                    // Update displayed text
+                    text.innerText = Number( slider.value )
+
+                    // Change the value
+                    allNavigators.forEach( (navigatorObject) => {
+
+                        navigatorObject
+                            .opacityOfConnectorPolygons( Number( slider.value ) )
+                            .update()
+
+
+                    // Toggle (show/hide) category connectors checkbox if value is (not) 0
+                    if (slider.value === '0')
+                        document.getElementById('category-connectors-checkbox').checked = false
+
+                    if (slider.value > '0')
+                            document.getElementById('category-connectors-checkbox').checked = true
+
+
+
+                    } )
+
+
+
+
+
+                }
+            </script>
+
+
+        </div>
+
+
         <!--Absolute Values Checkbox-->
         <div class="preference-control ui toggle checkbox">
             <input type="checkbox" id="checkbox1" onclick="toggleAbsoluteValues()">
@@ -475,10 +534,6 @@
             </script>
 
         </div>
-
-
-
-
 
 
         <!-- Stroke Color Dropdown-->
