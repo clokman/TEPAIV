@@ -788,7 +788,7 @@ describe( 'Show/hide (All) Connectors', () => {
     }
 
 
-    test( 'It should be possible to show toggle connectors in a Navigator via an instance method', async () => {
+    test( 'It should be possible to show toggle connectors in a Navigator via a Navigator method', async () => {
 
         // Init
         jest.useFakeTimers()
@@ -856,6 +856,105 @@ describe( 'Show/hide (All) Connectors', () => {
         const visibilityOfConnectorPolygonElementsAfterToggle2 = visibilityAttributesOfAllConnectorPolygonsOnDom()
         expect( visibilityOfConnectorPolygonElementsAfterToggle2 ).toEqual(
             [ "visible", "visible", "visible" ]
+        )
+
+
+    } )
+
+
+} )
+
+
+
+
+
+
+//// Change connector opacity ///////////////////////////////////////////////////////////////
+
+describe( 'Change connector opacity', () => {
+
+
+    // Helper Function(s) //
+
+    function opacityLevelsOfAllConnectorPolygonsOnDom() {
+
+        const opacityLevelsOfConnectorPolygonElements = []
+        const allConnectorPolygonElements = document.querySelectorAll( '.connector-polygon' )
+        allConnectorPolygonElements.forEach( connectorPolygonElement => {
+
+            const opacityLevel = connectorPolygonElement.getAttribute( 'opacity' )
+            opacityLevelsOfConnectorPolygonElements.push( opacityLevel )
+
+        } )
+        return opacityLevelsOfConnectorPolygonElements
+    }
+
+
+    test( 'It should be possible to change the opacity of connectors in a Navigator via a Navigator method', async () => {
+
+        // Setup
+        jest.useFakeTimers()
+        const {myNavigator, panelZero, childPanel} = await initializeDomWithTitanicTinyNavigator.and.childPanel()
+        jest.runOnlyPendingTimers()
+
+
+        // Get default state of connector polygons in navigator
+        expect( myNavigator.opacityOfConnectorPolygons() ).toBe( 1 )
+
+
+        // Sample LinkableRectangles from DOM
+        const panelZeroSurvivedRectangle = panelZero.objects('Status').objects('Survived').objects('rectangle')
+        const childPanelSurvivedRectangle = childPanel.objects('Status').objects('Survived').objects('rectangle')
+
+        // Sampled LinkableRectangles should be visible (initial state)
+        expect( panelZeroSurvivedRectangle.connectorRight().opacity() ).toBe( 1 )
+        expect( childPanelSurvivedRectangle.connectorLeft().opacity() ).toBe( 1 )
+
+        expect( panelZeroSurvivedRectangle.opacityOfAllConnectorsInEnsemble() ).toBe( 1 )
+        expect( childPanelSurvivedRectangle.opacityOfAllConnectorsInEnsemble() ).toBe( 1 )
+
+        // All connector elements on DOM should be initially visible
+        expect( opacityLevelsOfAllConnectorPolygonsOnDom() ).toEqual(
+            [ "1", "1", "1" ]
+        )
+
+
+
+        // HIDE connector polygons via Navigator interface (and not NestedPanel nor LinkedRectangle interface)
+        myNavigator.opacityOfConnectorPolygons( 0.5 ).update()
+        expect( myNavigator.opacityOfConnectorPolygons() ).toBe( 0.5 )
+
+
+
+        // Sampled LinkableRectangles should now be hidden (toggled state)
+        expect( panelZeroSurvivedRectangle.connectorRight().opacity() ).toBe( 0.5 )
+        expect( childPanelSurvivedRectangle.connectorLeft().opacity() ).toBe( 0.5 )
+
+        expect( childPanelSurvivedRectangle.opacityOfAllConnectorsInEnsemble() ).toBe( 0.5 )
+        expect( panelZeroSurvivedRectangle.opacityOfAllConnectorsInEnsemble() ).toBe( 0.5 )
+
+        // All connector elements on DOM should now be visible
+        expect( opacityLevelsOfAllConnectorPolygonsOnDom() ).toEqual(
+            [ "0.5", "0.5", "0.5"]
+        )
+
+
+
+        // SHOW connector polygons again via Navigator interface (and not NestedPanel nor LinkedRectangle interface)
+        myNavigator.opacityOfConnectorPolygons( 1.0 ).update()
+
+
+
+        // Sampled LinkableRectangles should now be visible again (toggled state)
+        expect( panelZeroSurvivedRectangle.connectorRight().opacity() ).toBe( 1 )
+        expect( childPanelSurvivedRectangle.connectorLeft().opacity() ).toBe( 1 )
+
+        expect( childPanelSurvivedRectangle.opacityOfAllConnectorsInEnsemble() ).toBe( 1 )
+        expect( panelZeroSurvivedRectangle.opacityOfAllConnectorsInEnsemble() ).toBe( 1 )
+
+        // All connector elements on DOM should now be visible
+        expect( opacityLevelsOfAllConnectorPolygonsOnDom() ).toEqual(
+            [ "1", "1", "1" ]
         )
 
 

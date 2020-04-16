@@ -59,6 +59,7 @@
             this._showAbsoluteValues = false
             this._showAbsoluteChartWidths = false
             this._showConnectorPolygons = true
+            this._opacityOfConnectorPolygons = 1.0
 
             this._animationDuration = 600
             this._strokeWidth = '0.5px'
@@ -393,6 +394,7 @@
                     .showAbsoluteValues( this.showAbsoluteValues() )
                     .showAbsoluteChartWidths( this.showAbsoluteChartWidths() )
                     .showConnectorPolygons( this.showConnectorPolygons() )
+                    .opacityOfConnectorPolygons( this.opacityOfConnectorPolygons() )
                     .colorSet( this.colorSet() )
                     .animationDuration( this.animationDuration() )
                     .strokeWidth( this.strokeWidth() )
@@ -632,6 +634,24 @@
             else{
                 value.mustBeOfType('Boolean')
                 this._showConnectorPolygons = value
+                
+                return this
+            }
+            
+        }
+
+
+        opacityOfConnectorPolygons(value) {
+        
+            // Getter
+            if (!arguments.length){
+                return this._opacityOfConnectorPolygons
+            }
+        
+            // Setter
+            else{
+                value.mustBeOfType('Number')
+                this._opacityOfConnectorPolygons = value
                 
                 return this
             }
