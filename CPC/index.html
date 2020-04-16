@@ -15,9 +15,18 @@
     <script type="text/javascript" src="./libraries/external/lodash.js"></script>
 
     <!--    Semantic UI     -->
-    <link rel="stylesheet" type="text/css" href="libraries/external/semantic/dist/semantic.min.css">
     <script src="libraries/external/jquery-3.1.1.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="libraries/external/semantic/dist/semantic.min.css">
     <script src="libraries/external/semantic/dist/semantic.min.js"></script>
+
+
+
+    <!--    Fomantic UI-->
+    <!--    You MUST include jQuery before Fomantic -->
+    <!--    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>-->
+    <!--    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.4/dist/semantic.min.css">-->
+    <!--    <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.4/dist/semantic.min.js"></script>-->
+
 
 
     <!--     VUE     -->
@@ -50,6 +59,7 @@
     <script type="text/javascript" src="./libraries/cpc/shape.js"></script>
     <script type="text/javascript" src="./libraries/cpc/navigator.js"></script>
     <script type="text/javascript" src="./libraries/cpc/controls.js"></script>
+
 
 
 </head>
@@ -359,7 +369,7 @@
 
 
         <!--Category Connectors checkbox-->
-        <div class="preference-control ui checkbox">
+        <div class="preference-control ui toggle checkbox" id="category-connectors-control">
             <input
                     id="category-connectors-checkbox"
                     type="checkbox"
@@ -398,7 +408,7 @@
 
 
         <!--Absolute Values Checkbox-->
-        <div class="preference-control ui checkbox">
+        <div class="preference-control ui toggle checkbox">
             <input type="checkbox" id="checkbox1" onclick="toggleAbsoluteValues()">
             <label for="checkbox1" class="preference-control-label">
                 Absolute values
@@ -432,7 +442,7 @@
 
 
         <!--Absolute Chart Widths Checkbox-->
-        <div class="preference-control ui checkbox">
+        <div class="preference-control ui toggle checkbox">
             <input type="checkbox"
                    id="absolute-chart-widths-checkbox"
                    onclick="toggleAbsoluteChartWidths()">
@@ -465,6 +475,10 @@
             </script>
 
         </div>
+
+
+
+
 
 
         <!-- Stroke Color Dropdown-->
