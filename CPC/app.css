@@ -17,8 +17,8 @@
 
 .preferences-pane {
     zoom: 0.7;
-    -moz-transform: scale(0.7);  /* zoom for Firefox */
-    -moz-transform-origin: 50% 0;  /* zoom for Firefox */
+    /*-moz-transform: scale(0.7);  !* zoom for Firefox *!*/
+    /*-moz-transform-origin: 50% 0;  !* zoom for Firefox *!*/
 
     display: flex;
     display: -webkit-box;
@@ -39,8 +39,8 @@
 
 .navigator-area {
     zoom: 0.7;
-    -moz-transform: scale(0.7);  /* zoom for Firefox */
-    -moz-transform-origin: 0 0;  /* zoom for Firefox */
+    /*-moz-transform: scale(0.7);  !* zoom for Firefox *!*/
+    /*-moz-transform-origin: 0 0;  !* zoom for Firefox *!*/
 
     flex: auto;
 
