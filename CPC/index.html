@@ -386,12 +386,12 @@
                 function toggleConnectorPolygons() {
 
                     // Get the checkbox element
-                    const checkBox1 = document.getElementById( 'category-connectors-checkbox' )
+                    const visibilityCheckbox = document.getElementById( 'category-connectors-checkbox' )
 
                     // Toggle labels based on checkbox status
                     allNavigators.forEach( (navigator) => {
 
-                        if( checkBox1.checked === true ) {
+                        if( visibilityCheckbox.checked === true ) {
                             navigator.showConnectorPolygons( true )
                         }
                         else {
@@ -399,9 +399,19 @@
                         }
 
                         navigator.update()
+
                     } )
 
+
+                    // Do not allow opacity to remain 0
+                    const connectorOpacitySlider = $( '#connector-opacity-slider' )
+                    if( connectorOpacitySlider.val() === '0' ){
+                        connectorOpacitySlider.val(1)
+                        setConnectorOpacity()
+                    }
+
                 }
+
             </script>
 
         </div>
