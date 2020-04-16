@@ -1893,6 +1893,7 @@
                 .attr( 'stroke-width', this.strokeWidth() )
                 .attr( 'stroke', this.stroke() )
                 .attr( 'visibility', this.visibility() )
+                .attr( 'opacity', this.opacity() )
 
         }
 
