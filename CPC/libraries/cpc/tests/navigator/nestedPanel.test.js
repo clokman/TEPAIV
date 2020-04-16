@@ -893,7 +893,7 @@ describe ('Absolute Chart Widths', () => {
             expect( panelZero.showAbsoluteChartWidths() ).toBe( false )
 
             // Enable absolute chart widths
-            panelZero
+            await panelZero
                 .showAbsoluteChartWidths( true )
                 .build()
 

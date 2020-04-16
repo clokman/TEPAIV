@@ -2357,7 +2357,7 @@
         /**
          * Toggles visibility of all connector polygons
          * @param value {Boolean}
-         * @returns {NestedPanel|*}
+         * @returns {Boolean|NestedPanel|*}
          */
         showConnectorPolygons(value) {
 
