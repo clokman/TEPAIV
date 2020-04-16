@@ -30,6 +30,7 @@
             this._strokeWidth = '1px'
             this._stroke = 'rgba(0, 0, 0, 0.0)'
             this._visibility = 'visible'
+            this._opacity = 1.0
             this._htmlClass = null
             this._htmlId = null
             this._data = [null]
@@ -92,6 +93,24 @@
             else{
                 value.mustBeOfType('String')
                 this._visibility = value
+
+                return this
+            }
+
+        }
+
+
+        opacity(value) {
+
+            // Getter
+            if (!arguments.length){
+                return this._opacity
+            }
+
+            // Setter
+            else{
+                value.mustBeOfType('Number')
+                this._opacity = value
 
                 return this
             }
@@ -196,16 +215,17 @@
 
             this._selection
                 .transition().duration(transitionDuration)
+                .attr('class', this._htmlClass)
+                .attr('id', this._htmlId)
+                .attr('visibility', this._visibility)
+                .attr('opacity', this._opacity)
+                .attr('x', this._x)
+                .attr('y', this._y)
+                .attr('width', this._width)
+                .attr('height', this._height)
                 .attr('fill', this._fill)
                 .attr('stroke', this._stroke)
                 .attr('stroke-width', this._strokeWidth)
-                .attr('visibility', this._visibility)
-                .attr('x', this._x)
-                .attr('y', this._y)
-                .attr('class', this._htmlClass)
-                .attr('id', this._htmlId)
-                .attr('width', this._width)
-                .attr('height', this._height)
 
             return this
         }

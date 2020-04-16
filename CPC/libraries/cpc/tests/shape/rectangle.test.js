@@ -29,10 +29,10 @@ global.classUtils = require("../../../utils/classUtils")
 global.container = require("../../container")
 global.shape = require("../../shape")
 global.stringUtils = require("../../../utils/stringUtils")
+global.errorUtils = require("../../../utils/errorUtils")
 global.data = require("../../../cpc/data")
 
-const jestDom = require("../../../../../JestUtils/jest-dom")
-const initializeDomWithSvg = jestDom.initializeDomWithSvg
+const { initializeDomWithSvg, writeDomToFile } = require("../../../../../JestUtils/jest-dom")
 
 //// MODULES BEING TESTED ////
 const datasets = require("../../../../data/datasets")
@@ -433,3 +433,46 @@ describe ('class() and id()', () => {
     })
 
 })
+
+
+
+
+//// Opacity ///////////////////////////////////////////////////////////////
+
+describe( 'Opacity', () => {
+
+
+    // Helper Function(s) //
+
+    function opacityValueOfRectangleElement() {
+        return document.querySelector( 'rect' ).getAttribute( 'opacity' )
+    }
+
+
+    test( 'Get/set opacity', () => {
+
+        initializeDomWithSvg()
+        const myRectangle = new shape.Rectangle()
+
+        // Get initial opacity of rectangle
+        expect( myRectangle.opacity() ).toBe(1)
+        expect( opacityValueOfRectangleElement() ).toBe( '1' )
+
+
+        // Set new opacity of rectangle
+        myRectangle.opacity(0.5)
+
+        // Confirm new opacity value of object
+        expect( myRectangle.opacity() ).toBe(0.5)
+
+        // Reflect the change to DOM
+        myRectangle.update()
+
+        // Element on DOM should have changed its opacity
+        expect( opacityValueOfRectangleElement() ).toBe( '0.5' )
+
+
+    } )
+
+
+} )
