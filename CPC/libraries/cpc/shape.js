@@ -203,11 +203,15 @@
                 .append('rect')
                 .attr('class', this._htmlClass)
                 .attr('id', this._htmlId)
+                .attr('visibility', this._visibility)
+                .attr('opacity', this._opacity)
                 .attr('x', this._x)
                 .attr('y', this._y)
                 .attr('width', this._width)
                 .attr('height', this._height)
                 .attr('fill', this._fill)
+                .attr('stroke', this._stroke)
+                .attr('stroke-width', this._strokeWidth)
         }
 
 
@@ -426,14 +430,20 @@
             // Private Variables //
             this._connectorObjects = undefined  // a Map object
 
-            this._visibilityOfConnectorRight = 'visible'
-            this._visibilityStatusOfConnectorRightIsAwaitingPropagation = false
-
             this._visibilityOfConnectorLeft = 'visible'
-            this._visibilityStatusOfConnectorLeftIsAwaitingPropagation = false
+            this._aConnectorLeftRelatedFieldIsAwaitingPropagation = false
+
+            this._visibilityOfConnectorRight = 'visible'
+            this._aConnectorRightRelatedFieldIsAwaitingPropagation = false
 
             this._visibilityOfAllConnectorsInEnsemble = 'visible'
-            this._visibilityOfAllConnectorsInEnsembleIsAwaitingPropagation = false
+            this._opacityOfAllConnectorsInEnsemble = 1.0
+            this._aConnectorFieldIsAwaitingPropagationToAllConnectorsInEnsemble = false
+
+
+            this._opacityOfConnectorLeft = 1.0
+            this._opacityOfConnectorRight = 1.0
+
 
 
 
@@ -482,8 +492,8 @@
 
             // Sync member fields
             this.synchronizeAnySharedFieldsWithAnyOtherMembers()
-            adjustVisibilityOfAllConnectorsInEnsembleIfRequested.call(this)
-            propagateConnectorVisibilityToLinkedMember.call(this)
+            adjustAllConnectorsInEnsembleIfRequested.call(this)
+            propagateConnectorRelatedFieldsToImmediatelyAdjacentLinkedMember.call(this)
 
             // Create connector polygons
             createAndUpdateAnyConnectors.call(this)
@@ -683,6 +693,7 @@
                         .stroke( this.stroke() )
                         .strokeWidth( this.strokeWidth() )
                         .visibility( this.visibilityOfConnectorLeft() )
+                        .opacity( this.opacityOfConnectorLeft() )
 
                     // Update OR build the connector
                     aConnectorAlreadyExistsAtLeftSide
@@ -727,6 +738,7 @@
                         .stroke( this.stroke() )
                         .strokeWidth( this.strokeWidth() )
                         .visibility( this.visibilityOfConnectorRight() )
+                        .opacity( this.opacityOfConnectorRight() )
 
                     // Update OR build the connector
                     aConnectorAlreadyExistsAtRightSide
@@ -743,36 +755,33 @@
 
             }
 
-            
-            
 
-            function adjustVisibilityOfAllConnectorsInEnsembleIfRequested(){
 
-                if( this._visibilityOfAllConnectorsInEnsembleIsAwaitingPropagation ) {
+
+            function adjustAllConnectorsInEnsembleIfRequested(){
+
+                if( this._aConnectorFieldIsAwaitingPropagationToAllConnectorsInEnsemble ) {
 
 
                     if( !!this.ensembleObject ) {
 
-                        if( this.visibilityOfAllConnectorsInEnsemble() === 'visible' ) {
 
-                            this.ensembleObject.members().forEach( (member, memberName) => {
-                                member.visibilityOfConnectorRight( 'visible' )
-                                member.visibilityOfConnectorLeft( 'visible' )
-                            } )
+                        this.ensembleObject.members().forEach( (member, memberName) => {
 
-                        }
+                            // Adjust visibility
+                            member.visibilityOfConnectorRight( this.visibilityOfAllConnectorsInEnsemble() )
+                            member.visibilityOfConnectorLeft( this.visibilityOfAllConnectorsInEnsemble() )
 
-                        if( this.visibilityOfAllConnectorsInEnsemble() === 'hidden' ) {
+                            // Adjust opacity
+                            member.opacityOfConnectorRight( this.opacityOfAllConnectorsInEnsemble() )
+                            member.opacityOfConnectorLeft( this.opacityOfAllConnectorsInEnsemble() )
 
-                            this.ensembleObject.members().forEach( (member, memberName) => {
-                                member.visibilityOfConnectorRight( 'hidden' )
-                                member.visibilityOfConnectorLeft( 'hidden' )
-                            } )
 
-                        }
+                        } )
+
                     }
 
-                    this._visibilityOfAllConnectorsInEnsembleIsAwaitingPropagation = false
+                    this._aConnectorFieldIsAwaitingPropagationToAllConnectorsInEnsemble = false
 
                 }
 
@@ -783,30 +792,31 @@
              * Propagates connector visibility status to the linked member on the left or right (depending on the
              * existence of linked objects on the right or left side)
              */
-            function propagateConnectorVisibilityToLinkedMember(){
+            function propagateConnectorRelatedFieldsToImmediatelyAdjacentLinkedMember(){
 
                 // Copy value FROM the linked object on the left (if there is an object on the left side)
-                if( !!this.linkLeft() && this._visibilityStatusOfConnectorLeftIsAwaitingPropagation ){
+                if( !!this.linkLeft() && this._aConnectorLeftRelatedFieldIsAwaitingPropagation ){
 
-                    this.linkLeft()._visibilityOfConnectorRight = this.visibilityOfConnectorLeft() /* The
-                     private variable `_visibilityOfConnectorRight` is set without using a setter in order to
-                     prevent infinite calls from the setters of ensemble members to each other */
-                    this._visibilityStatusOfConnectorLeftIsAwaitingPropagation = false
-
-                }
-
-
-
-                if( !!this.linkRight() && this._visibilityStatusOfConnectorRightIsAwaitingPropagation ){
-
-                    this.linkRight()._visibilityOfConnectorLeft = this.visibilityOfConnectorRight() /* The
-                     private variable `_visibilityOfConnectorLeft` is set without using a setter in order to
-                     prevent infinite calls from the setters of ensemble members to each other */
-                    this._visibilityStatusOfConnectorRightIsAwaitingPropagation = false
+                    /* The private variables in this block (e.g., `_visibilityOfConnectorRight`) are set
+                    without using a setter in order to prevent infinite calls from the setters of ensemble
+                    members to each other */
+                    this.linkLeft()._visibilityOfConnectorRight = this.visibilityOfConnectorLeft()
+                    this.linkLeft()._opacityOfConnectorRight = this.opacityOfConnectorLeft()
+                    this._aConnectorLeftRelatedFieldIsAwaitingPropagation = false
 
                 }
 
 
+                if( !!this.linkRight() && this._aConnectorRightRelatedFieldIsAwaitingPropagation ){
+
+                    /* The private variables in this block (e.g., `_visibilityOfConnectorLeft`) are set
+                    without using a setter in order to prevent infinite calls from the setters of ensemble
+                    members to each other */
+                    this.linkRight()._visibilityOfConnectorLeft = this.visibilityOfConnectorRight()
+                    this.linkRight()._opacityOfConnectorLeft = this.opacityOfConnectorRight()
+                    this._aConnectorRightRelatedFieldIsAwaitingPropagation = false
+
+                }
 
 
             }
@@ -1058,6 +1068,54 @@
          * @param value {String}
          * @returns {string|LinkableRectangle}
          */
+        visibilityOfAllConnectorsInEnsemble(value) {
+
+            // Getter
+            if (!arguments.length){
+                return this._visibilityOfAllConnectorsInEnsemble
+            }
+
+            // Setter
+            else{
+                value.mustBeOfType('String')
+                this._visibilityOfAllConnectorsInEnsemble = value
+                this._aConnectorFieldIsAwaitingPropagationToAllConnectorsInEnsemble = true
+
+                return this
+            }
+
+        }
+
+
+        /**
+         *
+         * @param value {Number}
+         * @returns {string|LinkableRectangle}
+         */
+        opacityOfAllConnectorsInEnsemble(value) {
+
+            // Getter
+            if (!arguments.length){
+                return this._opacityOfAllConnectorsInEnsemble
+            }
+
+            // Setter
+            else{
+                value.mustBeOfType('Number')
+                this._opacityOfAllConnectorsInEnsemble = value
+                this._aConnectorFieldIsAwaitingPropagationToAllConnectorsInEnsemble = true
+
+                return this
+            }
+
+        }
+
+
+        /**
+         *
+         * @param value {String}
+         * @returns {string|LinkableRectangle}
+         */
         visibilityOfConnectorLeft(value) {
 
             // Getter
@@ -1069,7 +1127,7 @@
             else{
                 value.mustBeOfType('String')
                 this._visibilityOfConnectorLeft = value
-                this._visibilityStatusOfConnectorLeftIsAwaitingPropagation = true
+                this._aConnectorLeftRelatedFieldIsAwaitingPropagation = true
 
                 return this
             }
@@ -1093,7 +1151,7 @@
             else{
                 value.mustBeOfType('String')
                 this._visibilityOfConnectorRight = value
-                this._visibilityStatusOfConnectorRightIsAwaitingPropagation = true
+                this._aConnectorRightRelatedFieldIsAwaitingPropagation = true
 
                 return this
             }
@@ -1102,23 +1160,38 @@
 
 
 
-        /**
-         *
-         * @param value {String}
-         * @returns {string|LinkableRectangle}
-         */
-        visibilityOfAllConnectorsInEnsemble(value) {
+        opacityOfConnectorLeft(value) {
 
             // Getter
             if (!arguments.length){
-                return this._visibilityOfAllConnectorsInEnsemble
+                return this._opacityOfConnectorLeft
             }
 
             // Setter
             else{
-                value.mustBeOfType('String')
-                this._visibilityOfAllConnectorsInEnsemble = value
-                this._visibilityOfAllConnectorsInEnsembleIsAwaitingPropagation = true
+                value.mustBeOfType('Number')
+                this._opacityOfConnectorLeft = value
+                this._aConnectorLeftRelatedFieldIsAwaitingPropagation = true
+
+                return this
+            }
+
+        }
+
+
+
+        opacityOfConnectorRight(value) {
+
+            // Getter
+            if (!arguments.length){
+                return this._opacityOfConnectorRight
+            }
+
+            // Setter
+            else{
+                value.mustBeOfType('Number')
+                this._opacityOfConnectorRight = value
+                this._aConnectorRightRelatedFieldIsAwaitingPropagation = true
 
                 return this
             }

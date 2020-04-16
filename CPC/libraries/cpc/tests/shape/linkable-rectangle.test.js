@@ -2265,4 +2265,162 @@ describe( 'Connector Polygons', () => {
 
     } )
 
+
+
+
+    //// Connector Opacity ///////////////////////////////////////////////////////////////
+
+    describe( 'Connector Opacity', () => {
+
+        // Setup //
+
+        let middleRectangle,
+            rightRectangle,
+            leftRectangle
+        let connector1,
+            connector2
+
+        beforeEach( () => {
+
+            // Create rectangles
+            rightRectangle = new shape.LinkableRectangle()
+                .id( 'right-rectangle' )
+            middleRectangle = new shape.LinkableRectangle()
+                .id( 'middle-rectangle' )
+                .build()
+                .build()
+            leftRectangle = new shape.LinkableRectangle()
+                .id( 'left-rectangle' )
+                .build()
+
+            // Link rectangles
+            // [L]️ -c1-> [M] -c2-> [R]
+
+            leftRectangle.linkRight( middleRectangle ).update()
+            middleRectangle.linkRight( rightRectangle ).update()
+
+            // Get connectors
+            connector1 = leftRectangle.connectorRight()
+            connector2 = middleRectangle.connectorRight()
+
+
+        } )
+
+
+        test( 'It should be possible to change opacity of INDIVIDUAL connectors', () => {
+
+            // Status of rectangles at this point
+            // [L]️ -c1-> [M] -c2-> [R]
+
+            // Connectors should share the same opacity level with the rectangles they connect
+            // Check for connector 1
+            expect( leftRectangle.opacityOfConnectorRight() ).toBe( 1 )
+            expect( middleRectangle.opacityOfConnectorLeft() ).toBe( 1 )
+            expect( connector1.opacity() ).toBe( 1 )
+            // Check for connector 2
+            expect( middleRectangle.opacityOfConnectorRight() ).toBe( 1 )
+            expect( rightRectangle.opacityOfConnectorLeft() ).toBe( 1 )
+            expect( connector2.opacity() ).toBe( 1 )
+
+
+
+            // Toggle opacity level of connector 1 via a rectangle it is connected to
+            leftRectangle.opacityOfConnectorRight( 0.5 ).update()
+
+            // Connector 1 should now be hidden
+            expect( leftRectangle.opacityOfConnectorRight() ).toBe( 0.5 )
+            expect( middleRectangle.opacityOfConnectorLeft() ).toBe( 0.5 )
+            expect( connector1.opacity() ).toBe( 0.5 )
+            // Connector 2 should still be visible
+            expect( middleRectangle.opacityOfConnectorRight() ).toBe( 1 )
+            expect( rightRectangle.opacityOfConnectorLeft() ).toBe( 1 )
+            expect( connector2.opacity() ).toBe( 1 )
+
+
+
+            // Toggle opacity level of connector 2 via a rectangle it is connected to
+            rightRectangle.opacityOfConnectorLeft( 0.5 ).update()
+
+            // Connector 1 should remain be hidden
+            expect( leftRectangle.opacityOfConnectorRight() ).toBe( 0.5 )
+            expect( middleRectangle.opacityOfConnectorLeft() ).toBe( 0.5 )
+            expect( connector1.opacity() ).toBe( 0.5 )
+            // Connector 2 should now also be hidden
+            expect( middleRectangle.opacityOfConnectorRight() ).toBe( 0.5 )
+            expect( rightRectangle.opacityOfConnectorLeft() ).toBe( 0.5 )
+            expect( connector2.opacity() ).toBe( 0.5 )
+
+        } )
+
+
+        test( 'It should be possible to change the opacity of ALL connectors', () => {
+
+            // Status of rectangles at this point
+            // [L]️ -c1-> [M] -c2-> [R]
+
+            // Connectors should share the same opacity level with the rectangles they connect
+            // Check for connector 1
+            expect( leftRectangle.opacityOfConnectorRight() ).toBe( 1 )
+            expect( middleRectangle.opacityOfConnectorLeft() ).toBe( 1 )
+            expect( connector1.opacity() ).toBe( 1 )
+            // Check for connector 2
+            expect( middleRectangle.opacityOfConnectorRight() ).toBe( 1 )
+            expect( rightRectangle.opacityOfConnectorLeft() ).toBe( 1 )
+            expect( connector2.opacity() ).toBe( 1 )
+
+
+
+            // Change opacity of all connectors via one of the rectangles in the ensemble
+            leftRectangle.opacityOfAllConnectorsInEnsemble( 0.5 ).update()
+
+            // Connector 1 should now have 0.5 opacity
+            expect( leftRectangle.opacityOfConnectorRight() ).toBe( 0.5 )
+            expect( middleRectangle.opacityOfConnectorLeft() ).toBe( 0.5 )
+            expect( rightRectangle.opacityOfConnectorLeft() ).toBe( 0.5 )
+            expect( connector1.opacity() ).toBe( 0.5 )
+            // Connector 2 should now have also 0.5 opactity
+            expect( middleRectangle.opacityOfConnectorRight() ).toBe( 0.5 )
+            expect( rightRectangle.opacityOfConnectorLeft() ).toBe( 0.5 )
+            expect( connector2.opacity() ).toBe( 0.5 )
+
+
+
+            // Change the opacity of all connectors via one of the rectangles in the ensemble
+            rightRectangle.opacityOfAllConnectorsInEnsemble( 1.0 ).update()
+
+            // Connector 1 should now have an opacity of 1.0
+            expect( leftRectangle.opacityOfConnectorRight() ).toBe( 1 )
+            expect( middleRectangle.opacityOfConnectorLeft() ).toBe( 1 )
+            expect( connector1.opacity() ).toBe( 1 )
+            // Connector 2 should now have an opacity of 1.0 as well
+            expect( middleRectangle.opacityOfConnectorRight() ).toBe( 1 )
+            expect( rightRectangle.opacityOfConnectorLeft() ).toBe( 1 )
+            expect( connector2.opacity() ).toBe( 1 )
+
+        } )
+
+
+        test( 'Singleton objects should not throw error when `opacityOfAllConnectorsInEnsemble()` method is' +
+            ' called', () => {
+
+            // Create LinkedRectangle objects
+            const singletonRectangle = new shape.LinkableRectangle()
+                .id( 'singleton-rectangle' )
+
+
+            // GETTER of singleton should not throw an exception
+            expect( singletonRectangle.opacityOfAllConnectorsInEnsemble() )
+                .toBeDefined()
+
+            // SETTER of singleton should not throw an exception
+            expect( singletonRectangle.opacityOfAllConnectorsInEnsemble(0.5 ).update() )
+                .toBeDefined()
+            expect( singletonRectangle.opacityOfAllConnectorsInEnsemble(1.0 ).update() )
+                .toBeDefined()
+
+
+        } )
+
+    } )
+
 } )
