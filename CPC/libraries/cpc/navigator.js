@@ -1626,6 +1626,7 @@
             // Parameters
             this._showAbsoluteChartWidths = false
             this._showConnectorPolygons = true
+            this._opacityOfConnectorPolygons = 1.0
 
             // Formulas
             this.absoluteWidthOfChildPanel = (childPanelObject) => {
@@ -1945,6 +1946,9 @@
                                                     children */
                         ? linkableRectangle.visibilityOfAllConnectorsInEnsemble( 'visible' )
                         : linkableRectangle.visibilityOfAllConnectorsInEnsemble( 'hidden' )
+
+
+                    linkableRectangle.opacityOfAllConnectorsInEnsemble( this.opacityOfConnectorPolygons() )
 
                 })
                 
@@ -2370,6 +2374,29 @@
                 return this
             }
 
+        }
+        
+        
+        /**
+         * Adjusts the opacity of all connector polygons
+         * @param value {Number}
+         * @returns {Number|NestedPanel}
+         */
+        opacityOfConnectorPolygons(value) {
+        
+            // Getter
+            if (!arguments.length){
+                return this._opacityOfConnectorPolygons
+            }
+        
+            // Setter
+            else{
+                value.mustBeOfType('Number')
+                this._opacityOfConnectorPolygons = value
+                
+                return this
+            }
+            
         }
 
 

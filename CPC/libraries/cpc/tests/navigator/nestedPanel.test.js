@@ -2801,6 +2801,24 @@ describe ('Color Themes', () => {
 describe( 'Connector Polygons', () => {
 
 
+    let panelZero
+      , childPanel
+
+    // Setup
+    beforeEach( () => {
+
+        initializeDomWithSvg()  /* Do not delete this line. Otherwise, when many tests are ran in tandem,
+                                    `childPanel.has.numberOfVisibleCategories()` returns double the amount of
+                                     expected elements. This is likely due to leftovers from a previous test, (even
+                                     though the DOM is cleared during `initializeDomWith.panelZero.and.child()`. */
+
+        // Initialize panels (temporary names so that the deconstruction can work)
+        const {panelZero:panel0, childPanel:panel1} = initializeDomWith.panelZero.and.child()
+        panelZero = panel0
+        childPanel = panel1
+
+    })
+
 
     // Helper Function(s) //
 
@@ -2818,18 +2836,22 @@ describe( 'Connector Polygons', () => {
     }
 
 
+    function opacityLevelsOfAllConnectorPolygonsOnDom() {
+
+        const opacityLevelsOfConnectorPolygonElements = []
+        const allConnectorPolygonElements = document.querySelectorAll( '.connector-polygon' )
+        allConnectorPolygonElements.forEach( connectorPolygonElement => {
+
+            const opacityLevel = connectorPolygonElement.getAttribute( 'opacity' )
+            opacityLevelsOfConnectorPolygonElements.push( opacityLevel )
+
+        } )
+        return opacityLevelsOfConnectorPolygonElements
+    }
+
+
 
     test( 'The right number of connector polygons should exist between categories by default', () => {
-
-
-        initializeDomWithSvg()  /* Do not delete this line. Otherwise, when many tests are ran in tandem,
-                                    `childPanel.has.numberOfVisibleCategories()` returns double the amount of
-                                     expected elements. This is likely due to leftovers from a previous test, (even
-                                     though the DOM is cleared during `initializeDomWith.panelZero.and.child()`. */
-
-        // Initialize panels
-        const {panelZero, childPanel} = initializeDomWith.panelZero.and.child()
-
 
         // Count the number of categories and compare them with the number of connectors //
 
@@ -2856,14 +2878,7 @@ describe( 'Connector Polygons', () => {
 
 
 
-    test( 'It should be possible to toggle visibility of all connector polygons in NestedPanel', () => {
-
-
-        initializeDomWithSvg()
-
-        // Initialize panels
-        const {panelZero, childPanel} = initializeDomWith.panelZero.and.child()
-
+    test( 'Visibility: It should be possible to toggle visibility of all connector polygons in NestedPanel', () => {
 
 
         // Sample LinkableRectangles from DOM
@@ -2921,6 +2936,74 @@ describe( 'Connector Polygons', () => {
         const visibilityOfConnectorPolygonElementsAfterToggle2 = visibilityAttributesOfAllConnectorPolygonsOnDom()
         expect( visibilityOfConnectorPolygonElementsAfterToggle2 ).toEqual(
             ["visible", "visible", "visible", "visible", "visible", "visible", "visible"]
+        )
+
+    } )
+
+
+
+    test( 'Opacity: It should be possible to change opacity of all connector polygons in NestedPanel', () => {
+
+        jest.useFakeTimers()
+
+        // Sample LinkableRectangles from DOM
+        const panelZeroMaleRectangle = panelZero.objects('gender').objects('male').objects('rectangle')
+        const childPanelMaleRectangle = childPanel.objects('gender').objects('male').objects('rectangle')
+
+        // Sampled LinkableRectangles should be visible (initial state)
+        expect( panelZeroMaleRectangle.connectorRight().opacity() ).toBe( 1 )
+        expect( childPanelMaleRectangle.connectorLeft().opacity() ).toBe( 1 )
+
+        expect( childPanelMaleRectangle.opacityOfAllConnectorsInEnsemble() ).toBe( 1 )
+        expect( panelZeroMaleRectangle.opacityOfAllConnectorsInEnsemble() ).toBe( 1 )
+
+
+        jest.runAllTimers()
+
+
+        // All connector elements on DOM should be initially visible
+        expect( opacityLevelsOfAllConnectorPolygonsOnDom() ).toEqual(
+            ['1', '1', '1', '1', '1', '1', '1']
+        )
+
+
+
+        // HIDE connector polygons via NestedPanel interface (and not LinkableRectangle interface)
+        panelZero.opacityOfConnectorPolygons( 0.5 ).update()
+
+
+
+        // Sampled LinkableRectangles should now be hidden (toggled state)
+        expect( panelZeroMaleRectangle.connectorRight().opacity() ).toBe( 0.5 )
+        expect( childPanelMaleRectangle.connectorLeft().opacity() ).toBe( 0.5 )
+
+        expect( childPanelMaleRectangle.opacityOfAllConnectorsInEnsemble() ).toBe( 0.5 )
+        expect( panelZeroMaleRectangle.opacityOfAllConnectorsInEnsemble() ).toBe( 0.5 )
+
+        // All connector elements on DOM should now be visible
+        const opacityOfConnectorPolygonElementsAfterToggle1 = opacityLevelsOfAllConnectorPolygonsOnDom()
+        expect( opacityOfConnectorPolygonElementsAfterToggle1 ).toEqual(
+            ["0.5", "0.5", "0.5", "0.5", "0.5", "0.5", "0.5"]
+        )
+
+
+
+        // SHOW connector polygons again via NestedPanel interface (and not LinkableRectangle interface)
+        panelZero.opacityOfConnectorPolygons( 1 ).update()
+
+
+
+        // Sampled LinkableRectangles should now be visible again (toggled state)
+        expect( panelZeroMaleRectangle.connectorRight().opacity() ).toBe( 1 )
+        expect( childPanelMaleRectangle.connectorLeft().opacity() ).toBe( 1 )
+
+        expect( childPanelMaleRectangle.opacityOfAllConnectorsInEnsemble() ).toBe( 1 )
+        expect( panelZeroMaleRectangle.opacityOfAllConnectorsInEnsemble() ).toBe( 1 )
+
+        // All connector elements on DOM should now be visible
+        const opacityOfConnectorPolygonElementsAfterToggle2 = opacityLevelsOfAllConnectorPolygonsOnDom()
+        expect( opacityOfConnectorPolygonElementsAfterToggle2 ).toEqual(
+            ["1", "1", "1", "1", "1", "1", "1"]
         )
 
     } )
