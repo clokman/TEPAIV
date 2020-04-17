@@ -8,11 +8,11 @@
     <!--======================== EXTERNAL MODULES ========================-->
 
     <!--    D3     -->
-    <script type="text/javascript" src="/CPC/libraries/external/d3/d3.js"></script>
-    <script type="text/javascript" src="/CPC/libraries/external/d3/d3-array.js"></script>
+    <script type="text/javascript" src="/TEPAIV/CPC/libraries/external/d3/d3.js"></script>
+    <script type="text/javascript" src="/TEPAIV/CPC/libraries/external/d3/d3-array.js"></script>
 
     <!--    Lodash     -->
-    <script type="text/javascript" src="/CPC/libraries/external/lodash.js"></script>
+    <script type="text/javascript" src="/TEPAIV/CPC/libraries/external/lodash.js"></script>
 
     <!--    Semantic UI     -->
 <!--    <script src="libraries/external/jquery-3.1.1.min.js"></script>-->
@@ -20,7 +20,7 @@
 <!--    <script src="libraries/external/semantic/dist/semantic.min.js"></script>-->
 
 <!--    Semantic UI     -->
-        <script src="/CPC/libraries/external/jquery-3.1.1.min.js"></script>
+        <script src="/TEPAIV/CPC/libraries/external/jquery-3.1.1.min.js"></script>
 <!--    <link rel="stylesheet" type="text/css" href="libraries/external/semantic/dist/semantic.min.css">-->
 <!--    <script src="libraries/external/semantic/dist/semantic.min.js"></script>-->
 
@@ -42,27 +42,27 @@
 
 
     <!--======================== INTERNAL STYLE SHEET ======================-->
-    <link rel="stylesheet" type="text/css" href="/CPC/app.css">
+    <link rel="stylesheet" type="text/css" href="/TEPAIV/CPC/app.css">
 
 
     <!--========================== INTERNAL MODULES ========================-->
     <script type="text/javascript" src="./data/datasets.js"></script>
 
-    <script type="text/javascript" src="/CPC/libraries/utils/arrayUtils.js"></script>
-    <script type="text/javascript" src="/CPC/libraries/utils/classUtils.js"></script>
-    <script type="text/javascript" src="/CPC/libraries/utils/errorUtils.js"></script>
-    <script type="text/javascript" src="/CPC/libraries/utils/domUtils.js"></script>
-    <script type="text/javascript" src="/CPC/libraries/utils/jsUtils.js"></script>
-    <script type="text/javascript" src="/CPC/libraries/utils/stringUtils.js"></script>
-    <script type="text/javascript" src="/CPC/libraries/utils/mapUtils.js"></script>
-    <script type="text/javascript" src="/CPC/libraries/utils/statsUtils.js"></script>
-    <script type="text/javascript" src="/CPC/libraries/cpc/survey-data.js"></script>
-    <script type="text/javascript" src="/CPC/libraries/cpc/data.js"></script>
-    <script type="text/javascript" src="/CPC/libraries/cpc/dataset.js"></script>
-    <script type="text/javascript" src="/CPC/libraries/cpc/container.js"></script>
-    <script type="text/javascript" src="/CPC/libraries/cpc/shape.js"></script>
-    <script type="text/javascript" src="/CPC/libraries/cpc/navigator.js"></script>
-    <script type="text/javascript" src="/CPC/libraries/cpc/controls.js"></script>
+    <script type="text/javascript" src="/TEPAIV/CPC/libraries/utils/arrayUtils.js"></script>
+    <script type="text/javascript" src="/TEPAIV/CPC/libraries/utils/classUtils.js"></script>
+    <script type="text/javascript" src="/TEPAIV/CPC/libraries/utils/errorUtils.js"></script>
+    <script type="text/javascript" src="/TEPAIV/CPC/libraries/utils/domUtils.js"></script>
+    <script type="text/javascript" src="/TEPAIV/CPC/libraries/utils/jsUtils.js"></script>
+    <script type="text/javascript" src="/TEPAIV/CPC/libraries/utils/stringUtils.js"></script>
+    <script type="text/javascript" src="/TEPAIV/CPC/libraries/utils/mapUtils.js"></script>
+    <script type="text/javascript" src="/TEPAIV/CPC/libraries/utils/statsUtils.js"></script>
+    <script type="text/javascript" src="/TEPAIV/CPC/libraries/cpc/survey-data.js"></script>
+    <script type="text/javascript" src="/TEPAIV/CPC/libraries/cpc/data.js"></script>
+    <script type="text/javascript" src="/TEPAIV/CPC/libraries/cpc/dataset.js"></script>
+    <script type="text/javascript" src="/TEPAIV/CPC/libraries/cpc/container.js"></script>
+    <script type="text/javascript" src="/TEPAIV/CPC/libraries/cpc/shape.js"></script>
+    <script type="text/javascript" src="/TEPAIV/CPC/libraries/cpc/navigator.js"></script>
+    <script type="text/javascript" src="/TEPAIV/CPC/libraries/cpc/controls.js"></script>
 
 
 
@@ -144,7 +144,7 @@
                     const switchDataset = (name) => ({
 
                         'Titanic': {
-                            path: 'http://localhost:3000/CPC/data/titanic.csv',
+                            path: '/TEPAIV/CPC/data/titanic.csv',
                             columnsToOmit: [ 'NAME' ],
                             height: 750,
                             bgTitle: 'TITANIC DATASET'
@@ -152,13 +152,13 @@
                         },
 
                         'Titanic - Embark (Partial)': {
-                            path: 'http://localhost:3000/CPC/data/titanic-embark-partial.csv',
+                            path: '/TEPAIV/CPC/data/titanic-embark-partial.csv',
                             height: 750,
                             bgTitle: 'TITANIC DATASET'
                         },
 
                         'Titanic - Prediction Sample': {
-                            path: 'http://localhost:3000/CPC/data/titanicTinyWithMockPredictions.csv',
+                            path: '/TEPAIV/CPC/data/titanicTinyWithMockPredictions.csv',
                             columnsToOmit: ['Name', 'Ticket'],
                             columnsToForceAsCategorical: [],
                             height: 750,
@@ -166,7 +166,7 @@
                         },
 
                         'COVID-19': {
-                            path: 'http://localhost:3000/CPC/data/covid19/Covid19Geographic-7Countries.csv',
+                            path: '/TEPAIV/CPC/data/covid19/Covid19Geographic-7Countries.csv',
                             columnsToOmit: ['dateRep', 'day', 'year', 'geoId', 'countryterritoryCode', 'popData2018'],
                             columnsToForceAsCategorical: ['month'],
                             height: 750,
@@ -174,7 +174,7 @@
                         },
 
                         'Wine': {
-                            path: 'http://localhost:3000/CPC/data/Wine/Wine-FiveColumns.csv',
+                            path: '/TEPAIV/CPC/data/Wine/Wine-FiveColumns.csv',
                             columnsToOmit: [],
                             columnsToForceAsCategorical: [],
                             height: 750,
@@ -182,7 +182,7 @@
                         },
 
                         'Big Five (2 dimensions, generated)': {
-                            path: 'http://localhost:3000/CPC/data/SampleMixedData.csv',
+                            path: '/TEPAIV/CPC/data/SampleMixedData.csv',
                             columnsToOmit: [],
                             columnsToForceAsCategorical: [],
                             height: 750,
@@ -190,7 +190,7 @@
                         },
 
                         'Mushrooms (4 columns)': {
-                            path: 'http://localhost:3000/CPC/data/mushrooms/mushrooms-4columns.csv',
+                            path: '/TEPAIV/CPC/data/mushrooms/mushrooms-4columns.csv',
                             columnsToOmit: [],
                             columnsToForceAsCategorical: [],
                             height: 850,
@@ -198,7 +198,7 @@
                         },
 
                         'Mushrooms (8 columns)': {
-                            path: 'http://localhost:3000/CPC/data/mushrooms/mushrooms-8columns.csv',
+                            path: '/TEPAIV/CPC/data/mushrooms/mushrooms-8columns.csv',
                             columnsToOmit: [],
                             columnsToForceAsCategorical: [],
                             height: 1400,
