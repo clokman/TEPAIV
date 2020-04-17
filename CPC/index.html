@@ -108,7 +108,6 @@
 
     <div class="preferences-pane">
 
-
         <!--Dataset Dropdown-->
         <div class="preference-control">
             <label for="dataset-dropdown" class="preference-control-label">
@@ -684,6 +683,15 @@
 <!--======================== NAVIGATOR LOGIC ========================-->
 
 <script>
+
+
+    if (!navigator.userAgent.includes('Chrome') )
+        alert('It seems like you are viewing this page with a web browser that uses an engine other than Chrome. ' +
+            'Therefore, you may experience issues concerning the sizes of elements (e.g., control panel not fitting ' +
+            'the page, and the charts being too large). To fix this, please either zoom out to about 70 percent, or ' +
+            'view in Google Chrome / latest version of Safari / a Chrome-based web browser.')
+
+
 
     //// SVG  ////
 
