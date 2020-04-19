@@ -1,34 +1,3 @@
-//// IMPORTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//// POLYFILLS ////
-
-// Import polyfill for fetch() method
-if (typeof fetch !== 'function') {
-    global.fetch =  require('node-fetch-polyfill')
-}
-
-// Import polyfill for Object.fromEntries() method
-if (typeof Object.fromEntries !== 'function') {
-    Object.fromEntries = require('object.fromentries')
-}
-
-
-//// TESTING LIBRARIES ////
-require('../../../../JestUtils/jest-console')
-
-
-//// REQUIREMENTS ////
-global._ = require("../../../../JestUtils/external/lodash")
-global.container = require("../../cpc/container")
-global.jsUtils = require("../../utils/jsUtils")
-
-
-//// MODULES BEING TESTED ////
-const arrayUtils = require("../arrayUtils")
-
-
-
-
 
 //// UNIT TESTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -1,35 +1,3 @@
-//// IMPORTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//// POLYFILLS ////
-
-// Import polyfill for fetch() method
-if (typeof fetch !== 'function') {
-    global.fetch =  require('node-fetch-polyfill')
-}
-
-// Import polyfill for Object.fromEntries() method
-if (typeof Object.fromEntries !== 'function') {
-    Object.fromEntries = require('object.fromentries')
-}
-
-
-//// PURE NODE DEPENDENCIES ////
-jestConsole = require('../../../../JestUtils/jest-console')
-expectTable = jestConsole.expectTable
-
-
-//// UMD DEPENDENCIES ////
-global.d3 = {
-    ...require("../../external/d3/d3"),
-    ...require("../../external/d3/d3-array")
-}
-
-
-//// MODULE BEING TESTED IN CURRENT FILE ////
-require("../mapUtils")
-
-
-
 
 //// TESTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

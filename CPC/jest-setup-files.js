@@ -55,9 +55,23 @@ global.functionUtils = require("./libraries/utils/functionUtils")
 global.arrayUtils = require("./libraries/utils/arrayUtils")
 global.stringUtils = require("./libraries/utils/stringUtils")
 global.domUtils = require("./libraries/utils/domUtils")
+require('./libraries/utils/statsUtils')
 require('./libraries/utils/errorUtils')
 require('./libraries/utils/jsUtils')  // does not need to be required into a variable
 require('./libraries/utils/mapUtils')  // does not need to be required into a variable
+
+// A possible improvement:
+// global.__ = {
+//     ...require("../../utils/arrayUtils"),
+//     ...require("../../utils/classUtils"),
+//     ...require("../../utils/domUtils"),
+//     ...require("../../utils/errorUtils"),
+//     ...require("../../utils/jsUtils"),
+//     ...require("../../utils/mapUtils"),
+//     ...require("../../utils/stringUtils"),
+// }
+
+
 
 
 // CPC //

@@ -1,29 +1,4 @@
-//// IMPORTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//// POLYFILLS ////
-
-// Import polyfill for fetch() method
-if (typeof fetch !== 'function') {
-    global.fetch =  require('node-fetch-polyfill')
-}
-
-// Import polyfill for Object.fromEntries() method
-if (typeof Object.fromEntries !== 'function') {
-    Object.fromEntries = require('object.fromentries')
-}
-
-
-//// REQUIREMENTS ////
-
-global.d3 = {
-    ...require("../../external/d3/d3"),
-    ...require("../../external/d3/d3-array")
-}
-
-global.container = require("../../cpc/container")
-
-
-//// MODULES BEING TESTED ////
+//// IMPORTS SPECIFIC TO THIS TEST FILE ////////////////////////////////////////////////////////////////////////////////
 const functionUtils = require("../functionUtils")
     , injectCallbackIntoNamedFunction = functionUtils.injectIntoFunction
     , injectCallbackIntoMethod = functionUtils.injectIntoMethod
