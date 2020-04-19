@@ -33,12 +33,16 @@ d3.selection.prototype.transition = jest.fn( function(){return this} )
 
 
 
+
 // JestUtils //
 
 // These operate only in Node.js
 const jestConsole = require('../JestUtils/jest-console')
 global.expectTable = jestConsole.expectTable
+global.expectConsoleHistory =  jestConsole.expectConsoleHistory
+
 const jestDom = require('../JestUtils/jest-dom')
+global.initializeDomWithSvg = jestDom.initializeDomWithSvg
 global.writeDomToFile = jestDom.writeDomToFile
 
 
