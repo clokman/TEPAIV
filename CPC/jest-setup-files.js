@@ -40,6 +40,7 @@ d3.selection.prototype.transition = jest.fn( function(){return this} )
 const jestConsole = require('../JestUtils/jest-console')
 global.expectTable = jestConsole.expectTable
 global.expectConsoleHistory =  jestConsole.expectConsoleHistory
+global.clearConsoleHistory =  jestConsole.clearConsoleHistory
 
 const jestDom = require('../JestUtils/jest-dom')
 global.initializeDomWithSvg = jestDom.initializeDomWithSvg
