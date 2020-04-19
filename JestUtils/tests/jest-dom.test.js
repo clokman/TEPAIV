@@ -1,31 +1,7 @@
-//// IMPORTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//// IMPORTS SPECIFIC TO THIS TEST FILE ////////////////////////////////////////////////////////////////////////////////
 
-//// POLYFILLS ////
-
-// Import polyfill for fetch() method
-if (typeof fetch !== 'function') {
-    global.fetch =  require('node-fetch-polyfill')
-}
-
-// Import polyfill for Object.fromEntries() method
-if (typeof Object.fromEntries !== 'function') {
-    Object.fromEntries = require('object.fromentries')
-}
-
-//// REQUIREMENTS ////
-global.d3 = {
-    ...require("../external/d3/d3"),
-    ...require("../external/d3/d3-array")
-}
-global._ = require("../external/lodash")
-global.$ = require("../external/jquery-3.1.1.min")
-
-//// MODULES BEING TESTED ////
 const jestDom = require('../jest-dom')
 const writeDomToFile = jestDom.writeDomToFile
-
-
-
 
 
 //// TESTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -1,21 +1,6 @@
-//// IMPORTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//// POLYFILLS ////
+//// IMPORTS SPECIFIC TO THIS TEST FILE ////////////////////////////////////////////////////////////////////////////////
 
-// Import polyfill for fetch() method
-if (typeof fetch !== 'function') {
-    global.fetch =  require('node-fetch-polyfill')
-}
-
-// Import polyfill for Object.fromEntries() method
-if (typeof Object.fromEntries !== 'function') {
-    Object.fromEntries = require('object.fromentries')
-}
-
-//// REQUIREMENTS ////
-//...
-
-//// MODULES BEING TESTED ////
 const jestConsole = require('../jest-console')
 const expectTable = jestConsole.expectTable
 const expectLog = jestConsole.expectLog
@@ -23,12 +8,6 @@ const clearConsoleHistory = jestConsole.clearConsoleHistory
 const expectConsoleHistory = jestConsole.expectConsoleHistory
 const destroyWarnings = jestConsole.destroyWarnings
 
-
-global.d3 = {
-    ...require("../external/d3/d3"),
-    ...require("../external/d3/d3-array")
-}
-global._ = require("../external/lodash")
 
 
 //// TESTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////
