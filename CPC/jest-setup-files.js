@@ -1,7 +1,4 @@
-
-
-
-// Polyfills and Other Patches //
+// Polyfills and Other Patches /////////////////////////////////////////////////////////////////////////////
 
 require('jest-canvas-mock')
 
@@ -17,7 +14,8 @@ if (typeof Object.fromEntries !== 'function') {
 
 
 
-// External //
+
+// External ////////////////////////////////////////////////////////////////////////////////////////////////
 
 global.$ = require('./libraries/external/jquery-3.1.1.min') // Also an UMD dependency
 global._ = require("./libraries/external/lodash")
@@ -33,8 +31,7 @@ d3.selection.prototype.transition = jest.fn( function(){return this} )
 
 
 
-
-// JestUtils //
+// JestUtils //////////////////////////////////////////////////////////////////////////////////////////////
 
 // These operate only in Node.js
 const jestConsole = require('../JestUtils/jest-console')
@@ -48,7 +45,8 @@ global.writeDomToFile = jestDom.writeDomToFile
 
 
 
-// Utils //
+
+// Utils //////////////////////////////////////////////////////////////////////////////////////////////////
 
 global.classUtils = require("./libraries/utils/classUtils")
 global.functionUtils = require("./libraries/utils/functionUtils")
@@ -74,7 +72,7 @@ require('./libraries/utils/mapUtils')  // does not need to be required into a va
 
 
 
-// CPC //
+// CPC ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 global.data = require("./libraries/cpc/data")
 global.dataset = require("./libraries/cpc/dataset")
