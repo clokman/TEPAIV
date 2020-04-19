@@ -1,57 +1,5 @@
-//// IMPORTS
-// /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//// POLYFILLS ////
-
-// Import polyfill for fetch() method
-if( typeof fetch !== 'function' ) {
-    global.fetch = require( 'node-fetch-polyfill' )
-}
-
-// Import polyfill for Object.fromEntries() method
-if( typeof Object.fromEntries !== 'function' ) {
-    Object.fromEntries = require( 'object.fromentries' )
-}
-
-
-//// REQUIREMENTS ////
-require( '../../../../../JestUtils/jest-console' )
-
-
-global.d3 = {
-    ...require( '../../../external/d3/d3' ),
-    ...require( '../../../external/d3/d3-array' )
-}
-
-// Disable d3 transitions
-d3.selection.prototype.transition = jest.fn( function () {
-    return this
-} )
-d3.selection.prototype.duration = jest.fn( function () {
-    return this
-} )
-
-
-global.classUtils = require( '../../../utils/classUtils' )
-global.jsUtils = require( '../../../utils/jsUtils' )
-global.errorUtils = require( '../../../utils/errorUtils' )
-global.container = require( '../../container' )
-global.shape = require( '../../shape' )
-global.stringUtils = require( '../../../utils/stringUtils' )
-global.data = require( '../../../cpc/data' )
-global._ = require( '../../../external/lodash' )
-
-const { initializeDomWithSvg } = require( '../../../../../JestUtils/jest-dom' )
-const { hasType } = require( '../../../utils/jsUtils' )
-const { writeDomToFile } = require( '../../../../../JestUtils/jest-dom' )
-
-//// MODULES BEING TESTED ////
-
-
-
-
-//// UNIT TESTS
-// /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//// UNIT TESTS //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 //// Ensemble ///////////////////////////////////////////////////////////////

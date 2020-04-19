@@ -51,6 +51,7 @@ global.writeDomToFile = jestDom.writeDomToFile
 // Utils //
 
 global.classUtils = require("./libraries/utils/classUtils")
+global.functionUtils = require("./libraries/utils/functionUtils")
 global.arrayUtils = require("./libraries/utils/arrayUtils")
 global.stringUtils = require("./libraries/utils/stringUtils")
 global.domUtils = require("./libraries/utils/domUtils")

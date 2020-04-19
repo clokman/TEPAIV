@@ -1,54 +1,6 @@
 //// IMPORTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//// POLYFILLS ////
-
-// Import polyfill for fetch() method
-if (typeof fetch !== 'function') {
-    global.fetch =  require('node-fetch-polyfill')
-}
-
-// Import polyfill for Object.fromEntries() method
-if (typeof Object.fromEntries !== 'function') {
-    Object.fromEntries = require('object.fromentries')
-}
-
-
-//// PURE NODE DEPENDENCIES ////
-require('../../../../../JestUtils/jest-console')
-
-const jestDom = require('../../../../../JestUtils/jest-dom')
-    , wrdom = jestDom.writeDomToFile
-const initializeDomWithSvg = jestDom.initializeDomWithSvg
-
-
-//// UMD DEPENDENCIES ////
-
-global.d3 = {
-    ...require("../../../external/d3/d3"),
-    ...require("../../../external/d3/d3-array")
-}
-// Disable d3 transitions
-d3.selection.prototype.transition = jest.fn( function(){return this} )
-d3.selection.prototype.duration = jest.fn( function(){return this} )
-
-
-global.classUtils = require("../../../utils/classUtils")
-global.jsUtils = require("../../../utils/jsUtils")
-global.container = require("../../container")
-global.shape = require("../../shape")
-global.stringUtils = require("../../../utils/stringUtils")
-global.errorUtils = require("../../../utils/errorUtils")
-global.data = require("../../../cpc/data")
-
-require("../../../../../JestUtils/jest-dom")
-
-//// MODULE BEING TESTED IN CURRENT FILE ////
-const datasets = require("../../../../data/datasets")
-const navigator = require("../../navigator")
-
-
-
-
+// ...
 
 
 //// TESTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////

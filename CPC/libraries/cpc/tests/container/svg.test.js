@@ -1,36 +1,3 @@
-//// IMPORTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//// POLYFILLS ////
-
-// Import polyfill for fetch() method
-if (typeof fetch !== 'function') {
-    global.fetch =  require('node-fetch-polyfill')
-}
-
-// Import polyfill for Object.fromEntries() method
-if (typeof Object.fromEntries !== 'function') {
-    Object.fromEntries = require('object.fromentries')
-}
-
-
-//// REQUIREMENTS ////
-
-global.d3 = {
-    ...require("../../../external/d3/d3"),
-    ...require("../../../external/d3/d3-array")
-}
-
-global.container = require("../../container")
-global.shape = require("../../shape")
-global.classUtils = require("../../../utils/classUtils")
-
-//// MODULES BEING TESTED ////
-//...
-
-
-
-
-
 
 //// UNIT TESTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

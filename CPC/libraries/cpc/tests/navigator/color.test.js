@@ -1,66 +1,8 @@
-//// IMPORTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//// POLYFILLS ////
-
-// Import polyfill for fetch() method
-if (typeof fetch !== 'function') {
-    global.fetch =  require('node-fetch-polyfill')
-}
-
-// Import polyfill for Object.fromEntries() method
-if (typeof Object.fromEntries !== 'function') {
-    Object.fromEntries = require('object.fromentries')
-}
+//// IMPORTS SPECIFIC TO THIS TEST FILE ////////////////////////////////////////////////////////////////////////////////
 
 
-//// NODE-ONLY DEPENDENCIES ////
-require("../../../../../JestUtils/jest-console")
-require("../../../../../JestUtils/jest-dom")
-
-
-//// UMD DEPENDENCIES ////
-
-// D3 //
-global.d3 = {
-    ...require("../../../external/d3/d3"),
-    ...require("../../../external/d3/d3-array")
-}
-// Disable d3 transitions
-d3.selection.prototype.transition = jest.fn( function(){return this} )
-d3.selection.prototype.duration = jest.fn( function(){return this} )
-
-// Lodash //
-global._ = require("../../../external/lodash")
-
-// JQuery //
-global.$ = require("../../../external/jquery-3.1.1.min")
-
-
-// EXTENSIONS //
-require("../../../utils/errorUtils"),
-require("../../../utils/jsUtils"),
-require("../../../utils/mapUtils")
-
-// FUNCTIONAL UTILS //
-global.__ = {
-    ...require("../../../utils/arrayUtils"),
-    ...require("../../../utils/classUtils"),
-    ...require("../../../utils/domUtils"),
-    ...require("../../../utils/stringUtils")
-}
-
-// TODO: Three imports below are obsolete and should be removed. Utils is now imported with __.
-global.classUtils = require("../../../utils/classUtils")
-global.arrayUtils = require("../../../utils/arrayUtils")
-global.stringUtils = require("../../../utils/stringUtils")
-
-global.container = require("../../container")
-global.shape = require("../../shape")
-global.data = require("../../../cpc/data")
-global.dataset = require("../../../cpc/dataset")
-
-
-//// MODULE(S) BEING TESTED ////
+// Navigator class of CPC //
 const navigator = require("../../navigator")
 
 

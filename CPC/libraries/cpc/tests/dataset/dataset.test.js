@@ -1,39 +1,3 @@
-//// IMPORTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//// POLYFILLS ////
-
-// Import polyfill for fetch() method
-if (typeof fetch !== 'function') {
-    global.fetch =  require('node-fetch-polyfill')
-}
-
-// Import polyfill for Object.fromEntries() method
-if (typeof Object.fromEntries !== 'function') {
-    Object.fromEntries = require('object.fromentries')
-}
-
-//// TESTING LIBRARIES ////
-jestConsole = require("../../../../../JestUtils/jest-console")
-expectTable = jestConsole.expectTable
-
-//// REQUIREMENTS ////
-
-global.d3 = {
-    ...require("../../../external/d3/d3"),
-    ...require("../../../external/d3/d3-array")
-}
-global.data = require("../../data")
-global._ = require("../../../external/lodash")
-global.classUtils = require("../../../utils/classUtils")
-global.jsUtils = require("../../../utils/jsUtils")
-global.arrayUtils = require("../../../utils/arrayUtils")
-
-//// MODULES BEING TESTED ////
-const dataset = require("../../dataset")
-
-
-
-
 
 //// UNIT TESTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
