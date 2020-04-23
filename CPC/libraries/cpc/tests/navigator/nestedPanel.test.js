@@ -171,7 +171,7 @@ describe ('Data', () => {
         // Initialize with specified dataset
         const panelZeroWithSpecifiedData = new navigator.NestedPanel()
         await panelZeroWithSpecifiedData.summarizeDataset(
-            'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv'
+            'http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanicTiny.csv'
         )
         panelZeroWithSpecifiedData.build()
 
@@ -189,7 +189,7 @@ describe ('Data', () => {
         // Initialize with specified dataset
         const panelZeroWithSpecifiedDataAndOmittedColumns = new navigator.NestedPanel()
         await panelZeroWithSpecifiedDataAndOmittedColumns.summarizeDataset(
-            'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
+            'http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanicTiny.csv',
             ['Ticket']
         )
         panelZeroWithSpecifiedDataAndOmittedColumns.build()
@@ -794,7 +794,7 @@ describe ('Absolute Chart Widths', () => {
 
             // Summarize a dataset in panel0
             await panelZero.summarizeDataset(
-                'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv', 'Name')
+                'http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanicTiny.csv', 'Name')
             panelZero.update()
 
             // Turn on absolute chart widths
@@ -811,7 +811,7 @@ describe ('Absolute Chart Widths', () => {
 
             // Summarize a dataset in child panel
             await childPanel.summarizeDataset(
-                'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny-malesOnly.csv', 'Name')
+                'http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanicTiny-malesOnly.csv', 'Name')
 
             childPanel.build()
             jest.runOnlyPendingTimers()
@@ -900,7 +900,7 @@ describe ('Absolute Chart Widths', () => {
 
             // Summarize a dataset in panel0
             await panelZero.summarizeDataset(
-                'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv', 'Name')
+                'http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanicTiny.csv', 'Name')
             panelZero.update()
 
             // Add child panel
@@ -910,7 +910,7 @@ describe ('Absolute Chart Widths', () => {
 
             // Summarize a dataset in child panel
             await childPanel.summarizeDataset(
-                'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny-malesOnly.csv', 'Name')
+                'http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanicTiny-malesOnly.csv', 'Name')
             childPanel.update(0)
             jest.runOnlyPendingTimers()
 
@@ -940,7 +940,7 @@ describe ('Absolute Chart Widths', () => {
 
             // Summarize a dataset in panel0
             await panelZero.summarizeDataset(
-                'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv', 'Name')
+                'http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanicTiny.csv', 'Name')
             panelZero.update()
 
             // Add the first sibling panel
@@ -949,7 +949,7 @@ describe ('Absolute Chart Widths', () => {
 
             // Summarize a dataset in child panel
             await siblingPanel1.summarizeDataset(
-                'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny-malesOnly.csv', 'Name')
+                'http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanicTiny-malesOnly.csv', 'Name')
             siblingPanel1.update(0)
             jest.runOnlyPendingTimers()
 
@@ -960,7 +960,7 @@ describe ('Absolute Chart Widths', () => {
 
             // Summarize a dataset in child panel
             await siblingPanel2.summarizeDataset(
-                'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny-malesOnly.csv', 'Name')
+                'http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanicTiny-malesOnly.csv', 'Name')
             siblingPanel2.update(0)
             jest.runOnlyPendingTimers()
 
@@ -2281,7 +2281,7 @@ describe ('Inferences', () => {
 
                 // Summarize a dataset in panel0
                 await panelZero.summarizeDataset(
-                    'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv', 'Name')
+                    'http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanicTiny.csv', 'Name')
                 panelZero.update()
 
                 jest.runOnlyPendingTimers()

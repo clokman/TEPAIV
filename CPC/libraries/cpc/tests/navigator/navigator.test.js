@@ -139,7 +139,7 @@ describe ('Instantiation', () => {
 
     // Load a dataset
     await myNavigator.loadDataset(
-        'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
+        'http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanicTiny.csv',
         ['Name'],
         [],
         myNavigator.initParams.quantilesForContinuousColumns,  // `this` refers to myNavigator
@@ -173,7 +173,7 @@ describe ('Instantiation', () => {
 
     // Verify that `this` is returned after loading data
     const returnedObject = await myNavigator.loadDataset(
-        'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
+        'http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanicTiny.csv',
         ['Name']
     )
     const returnedObjectType = returnedObject.constructor.name
@@ -229,7 +229,7 @@ describe ('Loading Data', () => {
 
         // Load a dataset
         await myNavigator.loadDataset(
-            'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
+            'http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanicTiny.csv',
             ['Name'],
             [],
             this.quantilesForContinuousColumns,  // `this` refers to myNavigator
@@ -458,7 +458,7 @@ describe ('Interactivity', () => {
 
         // Load a dataset
         await myNavigator.loadDataset(
-            'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
+            'http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanicTiny.csv',
             ['Name']
         )
         myNavigator.update()
@@ -1118,7 +1118,7 @@ describe ('Color Sets', () => {
 //
 //     // Load a dataset into Navigator
 //     await myNavigator.loadDataset(
-//         'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv',
+//         'http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanicTiny.csv',
 //         ['Name']
 //     )
 //     myNavigator.update()
@@ -1289,7 +1289,7 @@ async function initializeDomWithTitanicTinyNavigator( build=true ) {
     // Create Navigator object
     const myNavigator = new navigator.Navigator()
     //// Load a dataset into navigator
-    myNavigator.initParams.datasetPath = 'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv'
+    myNavigator.initParams.datasetPath = 'http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanicTiny.csv'
     myNavigator.initParams.omitColumns = ['Name']
 
     myNavigator.x(200)
@@ -1347,7 +1347,7 @@ async function initializeDomWithCovid19TinyNavigator( build=true ) {
     // Create Navigator object
     const myNavigator = new navigator.Navigator()
     //// Load a dataset into navigator
-    myNavigator.initParams.datasetPath = 'http://localhost:3000/libraries/cpc/tests/dataset/Covid19Geographic-Tiny.csv'
+    myNavigator.initParams.datasetPath = 'http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/Covid19Geographic-Tiny.csv'
 
     myNavigator.x(200)
 

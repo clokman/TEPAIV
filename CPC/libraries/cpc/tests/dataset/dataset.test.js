@@ -13,7 +13,7 @@ describe ('D3: Learning tests for async reading with D3', () => {
 
         expect.assertions(2)
 
-        const titanicDataset = await d3.csv('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv')
+        const titanicDataset = await d3.csv('http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanic.csv')
 
         expect(titanicDataset.length).toBe(1309)
 
@@ -49,7 +49,7 @@ describe ('D3: Learning tests for async reading with D3', () => {
 
         async function wrapper(){
 
-            return await d3.csv('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv')
+            return await d3.csv('http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanic.csv')
 
         }
 
@@ -75,7 +75,7 @@ describe ('Initialization', () => {
 
             expect.assertions(11)
 
-            const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv')
+            const titanicDataset = new dataset.Dataset('http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanic.csv')
             await titanicDataset.build()
 
             expect(titanicDataset.data).toBeDefined()
@@ -147,7 +147,7 @@ describe ('Initialization', () => {
 
     test ('Continuous data: Read continuous data without discretization', async () => {
 
-        const bigFiveDatasetContinous = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/BigFivePersonalityTraits-Small.csv')
+        const bigFiveDatasetContinous = new dataset.Dataset('http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/BigFivePersonalityTraits-Small.csv')
         bigFiveDatasetContinous.initParams.transformContinuousColumnsToQuantiles = false
         await bigFiveDatasetContinous.build()
 
@@ -180,7 +180,7 @@ describe ('Initialization', () => {
 
     test ('Continuous data: Read continuous data with discretization', async () => {
 
-        const bigFiveDatasetDiscretized = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/BigFivePersonalityTraits-Small.csv')
+        const bigFiveDatasetDiscretized = new dataset.Dataset('http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/BigFivePersonalityTraits-Small.csv')
         await bigFiveDatasetDiscretized.build()
 
 
@@ -222,7 +222,7 @@ describe ('Inferences', () => {
 
     test ('Get column names in the imported dataset', async () => {
 
-        const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv')
+        const titanicDataset = new dataset.Dataset('http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanic.csv')
         await titanicDataset.build()
 
         // Verify that the property that holds column names is correctly set upon initiation
@@ -233,7 +233,7 @@ describe ('Inferences', () => {
 
 
 
-        const titanicDatasetWithOmittedColumn = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv', 'Name')
+        const titanicDatasetWithOmittedColumn = new dataset.Dataset('http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanic.csv', 'Name')
         await titanicDatasetWithOmittedColumn.build()
 
         // Verify that the property that holds column names is correctly set upon initiation
@@ -244,7 +244,7 @@ describe ('Inferences', () => {
 
     test ('Return column name when provided a category name', async () => {
 
-        const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv', 'Name')
+        const titanicDataset = new dataset.Dataset('http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanic.csv', 'Name')
         await titanicDataset.build()
 
         // Infer column name from given category name
@@ -271,7 +271,7 @@ describe ('Inferences', () => {
     test ('Column Type: Detect whether a column is continuous or categorical', async () => {
 
 
-        const mixedDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/SampleMixedData.csv')
+        const mixedDataset = new dataset.Dataset('http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/SampleMixedData.csv')
         mixedDataset.initParams.transformContinuousColumnsToQuantiles = false
         await mixedDataset.build()
 
@@ -317,7 +317,7 @@ describe ('Inferences', () => {
     test ('Column Type: Column types should be detected during instantiation', async () => {
 
 
-        const mixedDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/SampleMixedData.csv')
+        const mixedDataset = new dataset.Dataset('http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/SampleMixedData.csv')
         mixedDataset.initParams.transformContinuousColumnsToQuantiles = false
 
         await mixedDataset.build()
@@ -370,7 +370,7 @@ describe ('Omitting Columns', () => {
         expect.assertions(11)
 
         const titanicDataset = new dataset.Dataset(
-            'http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv',
+            'http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanic.csv',
             'Name'
         )
         await titanicDataset.build()
@@ -415,7 +415,7 @@ describe ('Splitting', () => {
 
     test ('Parse SplitQuery parameters', async () => {
 
-        const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv')
+        const titanicDataset = new dataset.Dataset('http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanic.csv')
         await titanicDataset.build()
 
 
@@ -435,7 +435,7 @@ describe ('Splitting', () => {
     test ('Return error if split query is invalid because of a bad column or category name', async () => {
 
 
-        const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv')
+        const titanicDataset = new dataset.Dataset('http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanic.csv')
         await titanicDataset.build()
 
 
@@ -457,7 +457,7 @@ describe ('Splitting', () => {
         // DRILLDOWN: d3.group().get()
         // SPLIT+SUMMARIZE: d3.rollup()
 
-        const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv', 'Name')
+        const titanicDataset = new dataset.Dataset('http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanic.csv', 'Name')
         await titanicDataset.build()
 
         // SPLIT using column name
@@ -544,7 +544,7 @@ describe ('Splitting', () => {
 
     test ('Query the dataset for counts of nested categories using private interface', async () => {
 
-        const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv')
+        const titanicDataset = new dataset.Dataset('http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanic.csv')
         await titanicDataset.build()
 
 
@@ -584,7 +584,9 @@ describe ('Splitting', () => {
 //         // DRILLDOWN: d3.group().get()
 //         // SPLIT+SUMMARIZE: d3.rollup()
 //
-//         const bigFiveDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/BigFivePersonalityTraits-Small.csv', 'Name')
+//         const bigFiveDataset = new
+//         dataset.Dataset('http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/BigFivePersonalityTraits-Small.csv',
+//         'Name')
 //         await bigFiveDataset.build()
 //
 //         // SPLIT using column name
@@ -669,7 +671,8 @@ describe ('Splitting', () => {
 //
 // test ('Should construct a query string', async () => {
 //
-//     const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv')
+//     const titanicDataset = new
+//     dataset.Dataset('http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanic.csv')
 //     await titanicDataset.build()
 //
 //     let myQuery1 = new dataset.DrilldownQueryTemplate( titanicDataset, ['Status'] )
@@ -700,7 +703,7 @@ describe ('Drilling Down ', () => {
    
     test ('Parse DrilldownQuery parameters', async () => {
 
-        const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv')
+        const titanicDataset = new dataset.Dataset('http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanic.csv')
         await titanicDataset.build()
 
 
@@ -725,7 +728,7 @@ describe ('Drilling Down ', () => {
         // DRILLDOWN: d3.group().get()
         // SPLIT+SUMMARIZE: d3.rollup()
 
-        const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv', 'Name')
+        const titanicDataset = new dataset.Dataset('http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanic.csv', 'Name')
         await titanicDataset.build()
 
         // DRILDOWN using a category name (i.e., 'Female')
@@ -859,7 +862,7 @@ describe ('Drilling Down ', () => {
         // DRILLDOWN: d3.group().get()
         // SPLIT+SUMMARIZE: d3.rollup()
 
-        const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv', 'Name')
+        const titanicDataset = new dataset.Dataset('http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanic.csv', 'Name')
         await titanicDataset.build()
 
 //
@@ -958,7 +961,7 @@ describe ('Summarizing', () => {
         // DRILLDOWN: d3.group().get()
         // SPLIT+SUMMARIZE: d3.rollup()
 
-        const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv', 'Name')
+        const titanicDataset = new dataset.Dataset('http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanic.csv', 'Name')
         await titanicDataset.build()
 
         const datasetSummary = titanicDataset.summarize()
@@ -982,7 +985,7 @@ describe ('Summarizing', () => {
         // DRILLDOWN: d3.group().get()
         // SPLIT+SUMMARIZE: d3.rollup()
 
-        const titanicDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv', 'Name')
+        const titanicDataset = new dataset.Dataset('http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanic.csv', 'Name')
         await titanicDataset.build()
 
 
@@ -1080,7 +1083,7 @@ describe ('Handling continuous data', () => {
 
             test ('Get names of continuous columns', async () => {
 
-                const mixedDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/SampleMixedData.csv')
+                const mixedDataset = new dataset.Dataset('http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/SampleMixedData.csv')
                 mixedDataset.initParams.transformContinuousColumnsToQuantiles = false
                 await mixedDataset.build()
 
@@ -1091,7 +1094,7 @@ describe ('Handling continuous data', () => {
 
             test ('Calculate quantiles of a column', async () => {
 
-                const mixedDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/SampleMixedData.csv')
+                const mixedDataset = new dataset.Dataset('http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/SampleMixedData.csv')
                 mixedDataset.initParams.transformContinuousColumnsToQuantiles = false
                 await mixedDataset.build()
 
@@ -1125,7 +1128,7 @@ describe ('Handling continuous data', () => {
             test ('Calculate quantiles of a column if a column has many `0` values in it (previously, a bug) ', async () => {
 
                 const mixedDataset = new dataset.Dataset(
-                    'http://localhost:3000/libraries/cpc/tests/dataset/Covid19Geographic-Tiny.csv',
+                    'http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/Covid19Geographic-Tiny.csv',
                     ['dateRep', 'day', 'year', 'month', 'countriesAndTerritories', 'geoId', 'countryterritoryCode', 'popData2018']
                 )
                 mixedDataset.initParams.transformContinuousColumnsToQuantiles = true
@@ -1159,7 +1162,7 @@ describe ('Handling continuous data', () => {
 
         test ('When a dataset with continuous column(s) is initialized, continuous values should automatically be discretized using quantiles', async () => {
 
-                const mixedDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/SampleMixedData.csv')
+                const mixedDataset = new dataset.Dataset('http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/SampleMixedData.csv')
                 await mixedDataset.build()
 
                 expect( mixedDataset.data ).toTabulateAs(`\
@@ -1195,7 +1198,7 @@ describe ('Handling continuous data', () => {
 
         test( 'Detect continuous columns but do NOT transform them', async () => {
 
-            const dataset_detectContinuousButDontTransform = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/Covid19Geographic-Tiny.csv')
+            const dataset_detectContinuousButDontTransform = new dataset.Dataset('http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/Covid19Geographic-Tiny.csv')
             dataset_detectContinuousButDontTransform.initParams.transformContinuousColumnsToQuantiles = false
 
             await dataset_detectContinuousButDontTransform.build()
@@ -1248,7 +1251,7 @@ describe ('Handling continuous data', () => {
 
         test( 'Detect continuous columns and transform them to quartiles', async () => {
 
-            const dataset_detectContinuousAndTransform = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/Covid19Geographic-Tiny.csv')
+            const dataset_detectContinuousAndTransform = new dataset.Dataset('http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/Covid19Geographic-Tiny.csv')
             dataset_detectContinuousAndTransform.initParams.transformContinuousColumnsToQuantiles = true
 
             await dataset_detectContinuousAndTransform.build()
@@ -1303,7 +1306,7 @@ describe ('Handling continuous data', () => {
             /* When a dataset column is made of numeric category values (e.g., "1") and not numbers (e.g., 1) columns,
             these number strings should NOT be read as continuous data (and not quantilized)' */
 
-            const dataset_detectContinuousForceCategoricalAndTransform = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/Covid19Geographic-Tiny.csv')
+            const dataset_detectContinuousForceCategoricalAndTransform = new dataset.Dataset('http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/Covid19Geographic-Tiny.csv')
             dataset_detectContinuousForceCategoricalAndTransform.initParams.transformContinuousColumnsToQuantiles = true
             dataset_detectContinuousForceCategoricalAndTransform.initParams.forcedCategoricalColumns = [  'dateRep', 'day', 'month', 'year' ]
 
@@ -1360,7 +1363,7 @@ describe ('Handling continuous data', () => {
 
         test ('If a Dataset is built without discretization, it should still be possible to call transformContinuousColumnsToQuantiles() method for discretizing the data after the built', async () => {
 
-        const mixedDatasetWithoutDiscretization = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/SampleMixedData.csv')
+        const mixedDatasetWithoutDiscretization = new dataset.Dataset('http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/SampleMixedData.csv')
         mixedDatasetWithoutDiscretization.initParams.transformContinuousColumnsToQuantiles = false
         await mixedDatasetWithoutDiscretization.build()
 
@@ -1419,7 +1422,7 @@ describe ('Handling continuous data', () => {
 
             test ('If specified during init, discretized categories should be named with Q1, Q2, etc instead of percentage ranges such as "25-50%" ', async () => {
 
-                const myDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/SampleMixedData.csv')
+                const myDataset = new dataset.Dataset('http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/SampleMixedData.csv')
                 myDataset.initParams.quantilesForContinuousColumns = [ 'Q1', 'Q2', 'Q3', 'Q4' ]
                 await myDataset.build()
 
@@ -1452,7 +1455,7 @@ describe ('Handling continuous data', () => {
             test( 'Order of quantiles should be as specified', async () => {
 
 
-                const myDataset = new dataset.Dataset('http://localhost:3000/libraries/cpc/tests/dataset/SampleMixedData.csv')
+                const myDataset = new dataset.Dataset('http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/SampleMixedData.csv')
                 myDataset.initParams.quantilesForContinuousColumns = [ 'Q1', 'Q2', 'Q3', 'Q4' ]
                 await myDataset.build()
 

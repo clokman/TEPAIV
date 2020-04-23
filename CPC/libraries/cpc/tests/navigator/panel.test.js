@@ -168,7 +168,7 @@ describe ('Instantiation', () => {
     test ('Visualize a dataset manually by changing Stacks in Panel', async () => {
 
         const titanicDataset = new dataset.Dataset(
-            'http://localhost:3000/libraries/cpc/tests/dataset/titanic.csv',
+            'http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanic.csv',
             'Name'
         )
         await titanicDataset.build()
@@ -466,7 +466,8 @@ describe ('Instantiation', () => {
     //
     //
     //     expect( navigator.Panel.initializeWith.data ).toBe( 'example' )
-    //     navigator.Panel.initializeWith.data = 'http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv'
+    //     navigator.Panel.initializeWith.data =
+    //     'http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanicTiny.csv'
     //
     //     // Create panel
     //     const myPanel = new navigator.Panel()
@@ -552,7 +553,7 @@ describe ('Custom initialization)', () => {
 
         // Initialize with specified dataset
         const panelZeroWithSpecifiedData = new navigator.Panel()
-        await panelZeroWithSpecifiedData.summarizeDataset('http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv', ['Ticket'])
+        await panelZeroWithSpecifiedData.summarizeDataset('http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanicTiny.csv', ['Ticket'])
         panelZeroWithSpecifiedData.build()
 
         expect( panelZeroWithSpecifiedData._stacks.data() ).toTabulateAs(`\
@@ -871,7 +872,7 @@ describe ('Data Operations', () => {
 
         // Summarize a dataset with panel
         await panelZero
-            .summarizeDataset('http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv', 'Name')
+            .summarizeDataset('http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanicTiny.csv', 'Name')
         panelZero.update()
 
         // Data should have been summarized correctly
@@ -920,7 +921,7 @@ describe ('Data Operations', () => {
             .update(0)
 
         // Summarize a dataset with panel
-        await panelZero.summarizeDataset('http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv', 'Name')
+        await panelZero.summarizeDataset('http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanicTiny.csv', 'Name')
         panelZero.update()
 
         // Data should have been summarized correctly
@@ -955,7 +956,7 @@ describe ('Data Operations', () => {
 
 
         // Summarize another dataset
-        await panelZero.summarizeDataset('http://localhost:3000/libraries/cpc/tests/dataset/BigFivePersonalityTraits-Small.csv', 'Name')
+        await panelZero.summarizeDataset('http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/BigFivePersonalityTraits-Small.csv', 'Name')
         panelZero.update()
 
         // Data should have been summarized correctly
@@ -983,7 +984,7 @@ describe ('Data Operations', () => {
 └───────────────────┴─────────────────────┴─────────┘`)
 
         // Summarize the first dataset again
-        await panelZero.summarizeDataset('http://localhost:3000/libraries/cpc/tests/dataset/titanicTiny.csv', 'Name')
+        await panelZero.summarizeDataset('http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanicTiny.csv', 'Name')
         panelZero.update()
 
         // Data should have been loaded correctly
