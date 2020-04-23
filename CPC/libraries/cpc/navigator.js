@@ -3242,7 +3242,7 @@
 
                 // Static:
                 paddingRight: 35,
-                fill: 'rgba(0, 0, 0, 0.3)'
+                fill: 'rgba(0, 0, 0, 0.35)'
             }
             this._chartLabelObject = null
 
