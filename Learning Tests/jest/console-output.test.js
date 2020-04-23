@@ -1,33 +1,17 @@
-//// IMPORTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//// POLYFILLS ////
-
-// Import polyfill for fetch() method
-if (typeof fetch !== 'function') {
-    global.fetch =  require('node-fetch-polyfill')
-}
-
-// Import polyfill for Object.fromEntries() method
-if (typeof Object.fromEntries !== 'function') {
-    Object.fromEntries = require('object.fromentries')
-}
-
-
-//// REQUIREMENTS ////
-//...
-
-//// MODULES BEING TESTED ////
-//...
-
-
-//// TESTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Setup
 
 let consoleHistory = ''
   , lastConsoleOutput = ''
 
-console["log"] = jest.fn(input => {
-    lastConsoleOutput = input
-    consoleHistory += input
+beforeEach( () => {
+
+
+    console["log"] = jest.fn(input => {
+        lastConsoleOutput = input
+        consoleHistory += input
+    })
+
 })
 
 

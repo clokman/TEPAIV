@@ -1,36 +1,5 @@
 // Also see: `Notebooks/D3:Grouping and Summarizing (Nested) Data`
 
-//// IMPORTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//// POLYFILLS ////
-
-// Import polyfill for fetch() method
-if (typeof fetch !== 'function') {
-    global.fetch =  require('node-fetch-polyfill')
-}
-
-// Import polyfill for Object.fromEntries() method
-if (typeof Object.fromEntries !== 'function') {
-    Object.fromEntries = require('object.fromentries')
-}
-
-//// TESTING LIBRARIES ////
-const jestConsole = require('../../JestUtils/jest-console')
-const expectTable = jestConsole.expectTable
-
-//// REQUIREMENTS ////
-
-global.d3 = {
-    ...require("../libraries/d3/d3"),
-    ...require("../libraries/d3/d3-array")
-}
-
-global._ = require("../libraries/lodash")
-
-//// MODULES BEING TESTED ////
-// Local variables here
-
-
 
 //// GROUP /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

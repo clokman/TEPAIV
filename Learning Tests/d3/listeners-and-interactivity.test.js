@@ -1,63 +1,6 @@
-//// DEPENDENCIES /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//// POLYFILLS ////
-
-// Import polyfill for fetch() method
-if (typeof fetch !== 'function') {
-    global.fetch =  require('node-fetch-polyfill')
-}
-
-// Import polyfill for Object.fromEntries() method
-if (typeof Object.fromEntries !== 'function') {
-    Object.fromEntries = require('object.fromentries')
-}
-
-require('jest-canvas-mock')
-
-
-//// PURE NODE DEPENDENCIES ////
-const jestConsole = require('../../JestUtils/jest-console')
-const expectConsoleHistory = jestConsole.expectConsoleHistory
-const clearConsoleHistory = jestConsole.clearConsoleHistory
-
-require('../../JestUtils/jest-dom')
-
-
-//// UMD DEPENDENCIES ////
-global.$ = require('../../CPC/libraries/external/jquery-3.1.1.min')
-
-global.d3 = {
-    ...require("../../CPC/libraries/external/d3/d3"),
-    ...require("../../CPC/libraries/external/d3/d3-array")
-}
-// Disable d3 transitions
-d3.selection.prototype.transition = jest.fn( function(){return this} )
-d3.selection.prototype.duration = jest.fn( function(){return this} )
-
-global._ = require("../../CPC/libraries/external/lodash")
-
-
-//// EXTENSIONS ////
-require("../../CPC/libraries/utils/errorUtils")
-require("../../CPC/libraries/utils/jsUtils")
-require("../../CPC/libraries/utils/mapUtils")
-
-global.classUtils = require("../../CPC/libraries/utils/classUtils")
-global.arrayUtils = require("../../CPC/libraries/utils/arrayUtils")
-global.domUtils = require("../../CPC/libraries/utils/domUtils")
-global.stringUtils = require("../../CPC/libraries/utils/stringUtils")
-
-//// CPC CLASSES ////
-global.data = require("../../CPC/libraries/cpc/data")
-global.dataset = require("../../CPC/libraries/cpc/dataset")
-global.container = require("../../CPC/libraries/cpc/container")
-global.shape = require("../../CPC/libraries/cpc/shape")
+// Import navigator
 const navigator = require("../../CPC/libraries/cpc/navigator")
-
-
-
-
-
 
 //// TESTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
