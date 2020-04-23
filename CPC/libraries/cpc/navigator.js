@@ -138,6 +138,7 @@
             // Update object registry
             this.objects(panelObject.id(), panelObject)
 
+
             // Update instance registry
             this._lastCreatedPanelName = panelObject.id()
             this._currentPanelDepth += 1
@@ -3241,7 +3242,7 @@
 
                 // Static:
                 paddingRight: 35,
-                fill: 'darkgray'
+                fill: 'rgba(0, 0, 0, 0.3)'
             }
             this._chartLabelObject = null
 
