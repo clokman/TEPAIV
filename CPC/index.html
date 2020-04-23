@@ -108,10 +108,18 @@
 
     <div class="preferences-pane">
 
+
+        <h3>Controls</h3>
+        <b>Drilldown:</b> Left click <br>
+        <b>Drilldown and Compare:</b> Shift + Left Click
+
+
+        <h3>Data</h3>
+
         <!--Dataset Dropdown-->
         <div class="preference-control">
             <label for="dataset-dropdown" class="preference-control-label">
-                Dataset:
+                Sample Dataset:
             </label>
             <select class="ui dropdown"
                     id="dataset-dropdown"
@@ -261,11 +269,17 @@
         </div>
 
 
+        <h3>Display Preferences</h3>
+
+
+        <h4>Panels</h4>
+
+
         <!--Color Scheme Dropdown-->
         <div class="preference-control">
             <!--<p>ColorScheme</p>-->
             <label for="navigator-1-color-scheme-dropdown" class="preference-control-label">
-                Color scheme:
+                Panel Colors:
             </label>
             <select
                     class="ui dropdown"
@@ -329,7 +343,7 @@
         <div id="panel-width-control" class="preference-control">
 
             <label for=panel-width-slider  class="preference-control-label">
-                Panel width: <span id="panel-width-text">100</span>px
+                Panel Width: <span id="panel-width-text">100</span>px
             </label>
             <input type="range"
                    class="slider"
@@ -368,6 +382,90 @@
 
         </div>
 
+        <!-- Stroke Color Dropdown-->
+        <div id="stroke-color-control" class="preference-control">
+
+            <!--<p>ColorScheme</p>-->
+            <label for="stroke-color-dropdown" class="preference-control-label">
+                Stroke Color:
+            </label>
+            <select class="ui dropdown"
+                    id="stroke-color-dropdown"
+                    onchange="setStrokeColor()"
+            >
+
+                <option value="white">White</option>
+                <option value="black">Black</option>
+
+            </select>
+
+            <script>
+                function setStrokeColor() {
+
+                    // Get dropdown value
+                    const dropdown = document.getElementById( 'stroke-color-dropdown' )
+                    const selectedValue = dropdown.value
+                    // const selectedValue = dropdown.options[dropdown.selectedIndex]
+
+                    // Change the value
+                    allNavigators.forEach( (navigatorObject, navigatorName) => {
+
+                        navigatorObject
+                            .stroke( `${selectedValue}` )
+                            .update()
+
+                    } )
+
+                }
+            </script>
+
+        </div>
+
+
+        <!-- Stroke Width Slider-->
+        <div id="stroke-width-control" class="preference-control">
+
+            <label for=stroke-width-slider class="preference-control-label">
+                Stroke Width: <span id="stroke-width-text">0.5</span>px
+            </label>
+            <input type="range"
+                   class="slider"
+                   id=stroke-width-slider
+                   value=0.5
+                   step=0.5
+                   max=6
+                   min=0
+                   onchange="setStrokeWidth()"
+            >
+
+            <script>
+
+                // STROKE WIDTH SLIDER //
+                function setStrokeWidth() {
+
+                    // Get slider value and text
+                    const slider = document.getElementById( 'stroke-width-slider' )
+                    const text = document.getElementById( 'stroke-width-text' )
+
+                    // Update displayed text
+                    text.innerText = Number( slider.value )
+
+                    // Change the value
+                    allNavigators.forEach( (navigatorObject, navigatorName) => {
+
+                        navigatorObject
+                            .strokeWidth( `${Number( slider.value )}px` )
+                            .update()
+
+                    } )
+
+                }
+            </script>
+
+        </div>
+
+
+        <h4>Connectors</h4>
 
         <!--Category Connectors checkbox-->
         <div class="preference-control ui toggle checkbox" id="category-connectors-control">
@@ -378,7 +476,7 @@
                     checked="checked"
             >
             <label for="category-connectors-checkbox" class="preference-control-label">
-                Category connectors
+                Category Connectors
             </label>
 
 
@@ -422,7 +520,7 @@
         <div id="connector-opacity-control" class="preference-control">
 
             <label for=connector-opacity-slider  class="preference-control-label">
-                Connector opacity: <span id="connector-opacity-text">1</span>
+                Connector Opacity: <span id="connector-opacity-text">1</span>
             </label>
             <input
                     id=connector-opacity-slider
@@ -455,11 +553,11 @@
                             .update()
 
 
-                    // Toggle (show/hide) category connectors checkbox if value is (not) 0
-                    if (slider.value === '0')
-                        document.getElementById('category-connectors-checkbox').checked = false
+                        // Toggle (show/hide) category connectors checkbox if value is (not) 0
+                        if (slider.value === '0')
+                            document.getElementById('category-connectors-checkbox').checked = false
 
-                    if (slider.value > '0')
+                        if (slider.value > '0')
                             document.getElementById('category-connectors-checkbox').checked = true
 
 
@@ -477,11 +575,52 @@
         </div>
 
 
+
+        <h4>Absolute Values</h4>
+
+
+
+
+        <!--Absolute Chart Widths Checkbox-->
+        <div class="preference-control ui toggle checkbox">
+            <input type="checkbox"
+                   id="absolute-chart-widths-checkbox"
+                   onclick="toggleAbsoluteChartWidths()">
+            <label for="absolute-chart-widths-checkbox" class="preference-control-label">
+                Absolute Chart Widths
+            </label>
+
+
+            <script>
+
+                function toggleAbsoluteChartWidths() {
+
+                    // Get the checkbox element
+                    const checkBox1 = document.getElementById( 'absolute-chart-widths-checkbox' )
+
+                    // Toggle labels based on checkbox status
+                    allNavigators.forEach( navigator => {
+
+                        if( checkBox1.checked === true ) {
+                            navigator.showAbsoluteChartWidths( true )
+                        }
+                        else {
+                            navigator.showAbsoluteChartWidths( false )
+                        }
+
+                        navigator.update()
+                    } )
+
+                }
+            </script>
+
+        </div>
+
         <!--Absolute Values Checkbox-->
         <div class="preference-control ui toggle checkbox">
             <input type="checkbox" id="checkbox1" onclick="toggleAbsoluteValues()">
             <label for="checkbox1" class="preference-control-label">
-                Absolute values
+                Absolute Labels
             </label>
 
 
@@ -511,131 +650,14 @@
         </div>
 
 
-        <!--Absolute Chart Widths Checkbox-->
-        <div class="preference-control ui toggle checkbox">
-            <input type="checkbox"
-                   id="absolute-chart-widths-checkbox"
-                   onclick="toggleAbsoluteChartWidths()">
-            <label for="absolute-chart-widths-checkbox" class="preference-control-label">
-                Absolute chart widths
-            </label>
-
-
-            <script>
-
-                function toggleAbsoluteChartWidths() {
-
-                    // Get the checkbox element
-                    const checkBox1 = document.getElementById( 'absolute-chart-widths-checkbox' )
-
-                    // Toggle labels based on checkbox status
-                    allNavigators.forEach( navigator => {
-
-                        if( checkBox1.checked === true ) {
-                            navigator.showAbsoluteChartWidths( true )
-                        }
-                        else {
-                            navigator.showAbsoluteChartWidths( false )
-                        }
-
-                        navigator.update()
-                    } )
-
-                }
-            </script>
-
-        </div>
-
-
-        <!-- Stroke Color Dropdown-->
-        <div id="stroke-color-control" class="preference-control">
-
-            <!--<p>ColorScheme</p>-->
-            <label for="stroke-color-dropdown" class="preference-control-label">
-                Stroke color
-            </label>
-            <select class="ui dropdown"
-                    id="stroke-color-dropdown"
-                    onchange="setStrokeColor()"
-            >
-
-                <option value="white">White</option>
-                <option value="black">Black</option>
-
-            </select>
-
-            <script>
-                function setStrokeColor() {
-
-                    // Get dropdown value
-                    const dropdown = document.getElementById( 'stroke-color-dropdown' )
-                    const selectedValue = dropdown.value
-                    // const selectedValue = dropdown.options[dropdown.selectedIndex]
-
-                    // Change the value
-                    allNavigators.forEach( (navigatorObject, navigatorName) => {
-
-                        navigatorObject
-                            .stroke( `${selectedValue}` )
-                            .update()
-
-                    } )
-
-                }
-            </script>
-
-        </div>
-
-
-        <!-- Stroke Width Slider-->
-        <div id="stroke-width-control" class="preference-control">
-
-            <label for=stroke-width-slider class="preference-control-label">
-                Stroke width: <span id="stroke-width-text">0.5</span>px
-            </label>
-            <input type="range"
-                   class="slider"
-                   id=stroke-width-slider
-                   value=0.5
-                   step=0.5
-                   max=6
-                   min=0
-                   onchange="setStrokeWidth()"
-            >
-
-            <script>
-
-                // STROKE WIDTH SLIDER //
-                function setStrokeWidth() {
-
-                    // Get slider value and text
-                    const slider = document.getElementById( 'stroke-width-slider' )
-                    const text = document.getElementById( 'stroke-width-text' )
-
-                    // Update displayed text
-                    text.innerText = Number( slider.value )
-
-                    // Change the value
-                    allNavigators.forEach( (navigatorObject, navigatorName) => {
-
-                        navigatorObject
-                            .strokeWidth( `${Number( slider.value )}px` )
-                            .update()
-
-                    } )
-
-                }
-            </script>
-
-        </div>
-
+        <h4>Miscellaneous</h4>
 
         <!--Animation Duration Slider-->
         <div class="preference-control">
 
 
             <label for=animation-duration-slider class="preference-control-label">
-                Animation duration: <span id="animation-duration-text">600</span>ms
+                Animation Duration: <span id="animation-duration-text">600</span>ms
             </label>
             <input type="range"
                    class="slider"

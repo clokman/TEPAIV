@@ -19,6 +19,7 @@
 }
 
 
+
 .preferences-pane {
     zoom: 0.7;
     /*-moz-transform: scale(0.7);  !* zoom for Firefox *!*/
@@ -36,9 +37,20 @@
     -webkit-flex-direction: column;
 
     background: lightgrey;
-    padding: 0;
+    padding: 1.4em;
     margin: 0;
 }
+
+
+.preferences-pane h3 {
+    margin-bottom: 0em;
+}
+
+
+.preference-control-label{
+   margin-right: 0.5em;
+}
+
 
 
 .navigator-area {
@@ -66,10 +78,10 @@
 .preference-control {
 
     /*background: yellowgreen;*/
-    margin-top: 10px;
-    margin-bottom: 10px;
-    margin-left: 10px;
-    padding: 0.4em;
+    /*margin-top: 5px;*/
+    /*margin-bottom: 5px;*/
+    /*margin-left: 5px;*/
+    padding-top: 0.5em;
     /*line-height: 150px;*/
     /*color: white;*/
     /*font-weight: bold;*/
