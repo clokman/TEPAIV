@@ -939,7 +939,7 @@
             this._adjustAll()
 
             this._updateYAxisLabels()
-            if (this._backgroundObject){
+            if (!!this._backgroundObject){
                 this._backgroundObject.update(transitionDuration)
             }
 
