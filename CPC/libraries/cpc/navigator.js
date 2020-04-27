@@ -3242,7 +3242,8 @@
 
                 // Static:
                 paddingRight: 35,
-                fill: 'rgba(0, 0, 0, 0.35)'
+                fill: preferences.chart.attributeLabelFill
+
             }
             this._chartLabelObject = null
 

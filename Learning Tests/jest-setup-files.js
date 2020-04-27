@@ -74,6 +74,7 @@ require('../CPC/libraries/utils/mapUtils')  // does not need to be required into
 
 // CPC ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+global.preferences = require("../CPC/preferences")
 global.data = require("../CPC/libraries/cpc/data")
 global.dataset = require("../CPC/libraries/cpc/dataset")
 global.container = require("../CPC/libraries/cpc/container")
