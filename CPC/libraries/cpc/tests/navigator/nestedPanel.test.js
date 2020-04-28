@@ -1163,9 +1163,9 @@ describe ('Add Child Panels: Should add child panels correctly', () => {
 
         // Confirm the change in relation to default values
         expect(  myPanel.innerPaddingTop() )
-            .toBe( myPanel._defaults.innerPadding.top + 50 )
+            .toBe( preferences.panel.innerPaddingTop + 50 )
         expect(  myPanel.innerPaddingBottom() )
-            .toBe( myPanel._defaults.innerPadding.bottom + 25 )
+            .toBe( preferences.panel.innerPaddingBottom + 25 )
 
 
         // Reset padding values
@@ -1173,10 +1173,9 @@ describe ('Add Child Panels: Should add child panels correctly', () => {
 
         // Padding values should be reset to their defaults
         expect(  myPanel.innerPaddingTop() )
-            .toBe( myPanel._defaults.innerPadding.top )
+            .toBe( preferences.panel.innerPaddingTop )
         expect(  myPanel.innerPaddingBottom() )
-            .toBe( myPanel._defaults.innerPadding.bottom )
-
+            .toBe( preferences.panel.innerPaddingBottom )
 
 
     })

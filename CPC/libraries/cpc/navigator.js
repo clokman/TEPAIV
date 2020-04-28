@@ -821,40 +821,15 @@
             }
 
 
-            this._defaults = {
-
-                x: preferences.panel.x,
-                y: preferences.panel.y,
-                width: preferences.panel.width,
-                height: preferences.panel.height,
-
-                innerPadding: {
-                    top: preferences.panel.innerPaddingTop,
-                    bottom: preferences.panel.innerPaddingBottom,
-                    left: preferences.panel.innerPaddingLeft,
-                    right: preferences.panel.innerPaddingRight,
-                    extraPaddingForLeftEdgeOfPanel0Bg: preferences.panel.innerPaddingExtraForLeftEdgeOfPanel0Bg
-                },
-
-                paddingBetweenCharts: preferences.panel.paddingBetweenCharts,
-
-                bgFill: preferences.panel.bgFill,
-
-                strokeWidth: preferences.panel.strokeWidth,
-                stroke: preferences.panel.stroke,
-
-            }
-
-
-            this._bgFill = this._defaults.bgFill
+            this._bgFill = preferences.panel.bgFill
 
             this._bgText = 'Panel label'
             this._bgTextFill = 'darkgray'
 
             this._backgroundObject = null
 
-            this._strokeWidth = this._defaults.strokeWidth
-            this._stroke = this._defaults.stroke
+            this._strokeWidth = preferences.panel.strokeWidth
+            this._stroke = preferences.panel.stroke
 
             this._yAxisLabelsAreVisible = false
 
@@ -864,20 +839,20 @@
             }
 
 
-            this._x = this._defaults.x
-            this._y = this._defaults.y
+            this._x = preferences.panel.x
+            this._y = preferences.panel.y
 
 
-            this._width = this._defaults.width
-            this._height = this._defaults.height
+            this._width = preferences.panel.width
+            this._height = preferences.panel.height
 
 
             this._innerPadding = {  // reflects current values in a given time
-                top: this._defaults.innerPadding.top,
-                bottom: this._defaults.innerPadding.bottom,
-                left: this._defaults.innerPadding.left,
-                right: this._defaults.innerPadding.right,
-                extraPaddingForLeftEdgeOfPanel0Bg: this._defaults.innerPadding.extraPaddingForLeftEdgeOfPanel0Bg
+                top: preferences.panel.innerPaddingTop,
+                bottom: preferences.panel.innerPaddingBottom,
+                left: preferences.panel.innerPaddingLeft,
+                right: preferences.panel.innerPaddingRight,
+                extraPaddingForLeftEdgeOfPanel0Bg: preferences.panel.innerPaddingExtraForLeftEdgeOfPanel0Bg,
             }
 
             // Formulas
@@ -1103,8 +1078,8 @@
         _resetVerticalInnerPadding(){
 
             // Set padding values to their default values
-            this.innerPaddingTop( this._defaults.innerPadding.top )
-            this.innerPaddingBottom ( this._defaults.innerPadding.bottom )
+            this.innerPaddingTop( preferences.panel.innerPaddingTop)
+            this.innerPaddingBottom ( preferences.panel.innerPaddingBottom )
 
             return this
         }
@@ -1117,7 +1092,7 @@
 
         _chartHeights() {
 
-            const totalPaddingBetweenCharts = this.innerHeight() * this._defaults.paddingBetweenCharts
+            const totalPaddingBetweenCharts = this.innerHeight() * preferences.panel.paddingBetweenCharts
 
             const chartHeights = (this.innerHeight() - totalPaddingBetweenCharts) / this._chartCount()
             const roundedChartHeights = Math.round(chartHeights)
@@ -1134,7 +1109,7 @@
             const yScale = d3.scaleBand()
                 .domain(d3.range(this._chartCount()))
                 .rangeRound([rangeStart, rangeEnd])
-                .paddingInner(this._defaults.paddingBetweenCharts)
+                .paddingInner(preferences.panel.paddingBetweenCharts )
 
             return yScale(value)
         }
@@ -1766,7 +1741,7 @@
             // Automatically assign background color based on the parent (if there is one)
             this._bgFill = this.has.parentPanel
                 ? this.objectToSpawnFrom.fill()
-                : this._defaults.bgFill
+                : preferences.panel.bgFill
 
 
             // Set properties based on parent
