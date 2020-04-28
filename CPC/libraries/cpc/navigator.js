@@ -821,38 +821,38 @@
             }
 
 
-            this._bgFill = preferences.panel.bgFill
+            this._bgFill = cpcDefaults.panel.bgFill
 
             this._bgText = 'Panel label'
             this._bgTextFill = 'darkgray'
 
             this._backgroundObject = null
 
-            this._strokeWidth = preferences.panel.strokeWidth
-            this._stroke = preferences.panel.stroke
+            this._strokeWidth = cpcDefaults.panel.strokeWidth
+            this._stroke = cpcDefaults.panel.stroke
 
             this._yAxisLabelsAreVisible = false
 
             this._outerPadding = {  // distance between parent and child panel
-                top: preferences.panel.outerPaddingTop,
-                bottom: preferences.panel.outerPaddingBottom
+                top: cpcDefaults.panel.outerPaddingTop,
+                bottom: cpcDefaults.panel.outerPaddingBottom
             }
 
 
-            this._x = preferences.panel.x
-            this._y = preferences.panel.y
+            this._x = cpcDefaults.panel.x
+            this._y = cpcDefaults.panel.y
 
 
-            this._width = preferences.panel.width
-            this._height = preferences.panel.height
+            this._width = cpcDefaults.panel.width
+            this._height = cpcDefaults.panel.height
 
 
             this._innerPadding = {  // reflects current values in a given time
-                top: preferences.panel.innerPaddingTop,
-                bottom: preferences.panel.innerPaddingBottom,
-                left: preferences.panel.innerPaddingLeft,
-                right: preferences.panel.innerPaddingRight,
-                extraPaddingForLeftEdgeOfPanel0Bg: preferences.panel.innerPaddingExtraForLeftEdgeOfPanel0Bg,
+                top: cpcDefaults.panel.innerPaddingTop,
+                bottom: cpcDefaults.panel.innerPaddingBottom,
+                left: cpcDefaults.panel.innerPaddingLeft,
+                right: cpcDefaults.panel.innerPaddingRight,
+                extraPaddingForLeftEdgeOfPanel0Bg: cpcDefaults.panel.innerPaddingExtraForLeftEdgeOfPanel0Bg,
             }
 
             // Formulas
@@ -1078,8 +1078,8 @@
         _resetVerticalInnerPadding(){
 
             // Set padding values to their default values
-            this.innerPaddingTop( preferences.panel.innerPaddingTop)
-            this.innerPaddingBottom ( preferences.panel.innerPaddingBottom )
+            this.innerPaddingTop( cpcDefaults.panel.innerPaddingTop)
+            this.innerPaddingBottom ( cpcDefaults.panel.innerPaddingBottom )
 
             return this
         }
@@ -1092,7 +1092,7 @@
 
         _chartHeights() {
 
-            const totalPaddingBetweenCharts = this.innerHeight() * preferences.panel.paddingBetweenCharts
+            const totalPaddingBetweenCharts = this.innerHeight() * cpcDefaults.panel.paddingBetweenCharts
 
             const chartHeights = (this.innerHeight() - totalPaddingBetweenCharts) / this._chartCount()
             const roundedChartHeights = Math.round(chartHeights)
@@ -1109,7 +1109,7 @@
             const yScale = d3.scaleBand()
                 .domain(d3.range(this._chartCount()))
                 .rangeRound([rangeStart, rangeEnd])
-                .paddingInner(preferences.panel.paddingBetweenCharts )
+                .paddingInner(cpcDefaults.panel.paddingBetweenCharts )
 
             return yScale(value)
         }
@@ -1668,7 +1668,7 @@
             }
 
 
-            this._paddingBetweenSiblingPanels = preferences.nestedPanel.paddingBetweenSiblingPanels
+            this._paddingBetweenSiblingPanels = cpcDefaults.nestedPanel.paddingBetweenSiblingPanels
 
 
             // TODO: `has` object should report only primitives. All properties in `has` object that returns
@@ -1741,7 +1741,7 @@
             // Automatically assign background color based on the parent (if there is one)
             this._bgFill = this.has.parentPanel
                 ? this.objectToSpawnFrom.fill()
-                : preferences.panel.bgFill
+                : cpcDefaults.panel.bgFill
 
 
             // Set properties based on parent
@@ -3214,7 +3214,7 @@
 
                 // Static:
                 paddingRight: 35,
-                fill: preferences.chart.attributeLabelFill
+                fill: cpcDefaults.chart.attributeLabelFill
 
             }
             this._chartLabelObject = null

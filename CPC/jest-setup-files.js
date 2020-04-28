@@ -74,7 +74,7 @@ require('./libraries/utils/mapUtils')  // does not need to be required into a va
 
 // CPC ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-global.preferences = require("./preferences")
+global.cpcDefaults = require("./cpcDefaults")
 global.data = require("./libraries/cpc/data")
 global.dataset = require("./libraries/cpc/dataset")
 global.container = require("./libraries/cpc/container")

@@ -4,7 +4,7 @@
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
         typeof define === 'function' && define.amd ? define(['exports'], factory) :
-            (factory((global.preferences = global.preferences || {})));
+            (factory((global.cpcDefaults = global.cpcDefaults || {})));
 }(this, (function (exports) { 'use strict';
 //////////////////////////////////////////////////////////////////////////////////////
 
