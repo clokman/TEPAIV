@@ -822,25 +822,26 @@
 
 
             this._defaults = {
-                x: 25,
-                y: 25,
-                width: 100,
-                height: 500,
+
+                x: preferences.panel.x,
+                y: preferences.panel.y,
+                width: preferences.panel.width,
+                height: preferences.panel.height,
 
                 innerPadding: {
-                    top: 30,
-                    bottom: 10,
-                    left: 10,
-                    right: 15,
-                    extraPaddingForLeftEdgeOfPanel0Bg: 20
+                    top: preferences.panel.innerPaddingTop,
+                    bottom: preferences.panel.innerPaddingBottom,
+                    left: preferences.panel.innerPaddingLeft,
+                    right: preferences.panel.innerPaddingRight,
+                    extraPaddingForLeftEdgeOfPanel0Bg: preferences.panel.innerPaddingExtraForLeftEdgeOfPanel0Bg
                 },
 
-                paddingBetweenCharts: 0.05,  // proportion
+                paddingBetweenCharts: preferences.panel.paddingBetweenCharts,
 
-                bgFill: 'lightgray',
+                bgFill: preferences.panel.bgFill,
 
-                strokeWidth: '0.5px',
-                stroke: 'rgba(255, 255, 255, 1.0)'
+                strokeWidth: preferences.panel.strokeWidth,
+                stroke: preferences.panel.stroke,
 
             }
 
@@ -857,9 +858,9 @@
 
             this._yAxisLabelsAreVisible = false
 
-            this._outerPadding = {  // distance between parent and child panel in pixels
-                top: 15,
-                bottom: 30
+            this._outerPadding = {  // distance between parent and child panel
+                top: preferences.panel.outerPaddingTop,
+                bottom: preferences.panel.outerPaddingBottom
             }
 
 
