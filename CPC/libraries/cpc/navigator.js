@@ -831,7 +831,7 @@
                     top: 30,
                     bottom: 10,
                     left: 10,
-                    right: 10,
+                    right: 15,
                     extraPaddingForLeftEdgeOfPanel0Bg: 20
                 },
 
@@ -859,7 +859,7 @@
 
             this._outerPadding = {  // distance between parent and child panel in pixels
                 top: 15,
-                bottom: 38
+                bottom: 30
             }
 
 
