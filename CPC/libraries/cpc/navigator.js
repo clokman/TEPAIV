@@ -1692,11 +1692,7 @@
             }
 
 
-            // Add defaults for the NestedPanel to the defaults property of Panel
-            // NOTE: Defaults should ONLY be called to get default values, and not current values
-            this._defaults.paddingBetweenSiblingPanels = 5  // in pixels
-
-            this._paddingBetweenSiblingPanels = this._defaults.paddingBetweenSiblingPanels
+            this._paddingBetweenSiblingPanels = preferences.nestedPanel.paddingBetweenSiblingPanels
 
 
             // TODO: `has` object should report only primitives. All properties in `has` object that returns

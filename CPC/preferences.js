@@ -14,13 +14,22 @@ const navigator = {
 }
 
 
+const nestedPanel = {
+
+    paddingBetweenSiblingPanels: 5  // in pixels
+
+}
+
+
 const panel = {
 
 }
 
 
 const chart = {
+
     attributeLabelFill: 'rgba(0, 0, 0, 0.35)'
+
 }
 
 
@@ -46,6 +55,7 @@ const text = {
 
     //// MODULE.EXPORTS ////
     exports.navigator = navigator;
+    exports.nestedPanel = nestedPanel;
     exports.panel = panel;
     exports.chart = chart;
     exports.category = category;
