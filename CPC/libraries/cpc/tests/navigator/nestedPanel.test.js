@@ -542,8 +542,8 @@ describe ('Spatial Inferences', () => {
         jest.runOnlyPendingTimers()
 
         // Get right edges
-        expect( panelZero.rightEdge() ).toBe( 520 )
-        expect( childPanel.rightEdge() ).toBe( 510 )
+        expect( panelZero.rightEdge() ).toBe( 530 )
+        expect( childPanel.rightEdge() ).toBe( 515 )
         expect( grandChildPanel.rightEdge() ).toBe( 500 )
 
         // Get the actual right edges from DOM
@@ -598,9 +598,9 @@ describe ('Spatial Inferences', () => {
 
         const {panelZero, childPanel, grandChildPanel} = initializeDomWith.panelZero.and.childAndGrandchild()
 
-        expect( panelZero.rightEdgeOfCharts() ).toBe( 290 )
-        expect( childPanel.rightEdgeOfCharts() ).toBe( 390 )
-        expect( grandChildPanel.rightEdgeOfCharts() ).toBe( 490 )
+        expect( panelZero.rightEdgeOfCharts() ).toBe( 285 )
+        expect( childPanel.rightEdgeOfCharts() ).toBe( 385 )
+        expect( grandChildPanel.rightEdgeOfCharts() ).toBe( 485 )
 
 
         const xCoordinateOfOneChartInPanel0_fromDom = document.querySelector( '#panel-0-0 .chart rect' ).getAttribute('x')
