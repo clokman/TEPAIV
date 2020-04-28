@@ -16,7 +16,7 @@ const navigator = {
 
 const nestedPanel = {
 
-    paddingBetweenSiblingPanels: 5  // in pixels
+    paddingBetweenSiblingPanels: 7  // in pixels
 
 }
 
