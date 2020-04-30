@@ -1993,7 +1993,7 @@
 
                 this._respawnInPlaceOfExistingSiblingPanel()
                 this._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
-                this._recursivelyAlignChartsInParentPanelsWithChartsInThisPanel()
+                this._recursivelyAlignChartsInParentPanelsAndInTheirSiblingsWithChartsInThisPanel()
 
 
                 this.updateAllPanels(0)
@@ -2005,7 +2005,7 @@
 
                 this._pushAnySiblingsOfParentRightward()
                 this._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
-                this._recursivelyAlignChartsInParentPanelsWithChartsInThisPanel()
+                this._recursivelyAlignChartsInParentPanelsAndInTheirSiblingsWithChartsInThisPanel()
                 this._createBridgeFromSpawnRoot()
                 this._verticallyMaximizeFromBridgeAsChildPanel()
                 this.updateAllPanels( this._animation.duration.extendBridge )
@@ -2120,7 +2120,7 @@
             parent.bgExtensionRight(0)
 
             // Given the new parameters of parent, tell all ancestors to acknowledge the changes
-            parent._recursivelyAlignChartsInParentPanelsWithChartsInThisPanel()
+            parent._recursivelyAlignChartsInParentPanelsAndInTheirSiblingsWithChartsInThisPanel()
             parent._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
 
         }
@@ -2580,7 +2580,7 @@
 
 
 
-        _recursivelyAlignChartsInParentPanelsWithChartsInThisPanel(thisPanel=this) {
+        _recursivelyAlignChartsInParentPanelsAndInTheirSiblingsWithChartsInThisPanel(thisPanel=this) {
 
             // Establish conditions
 
@@ -2606,9 +2606,11 @@
 
                 // Bubble up if parent also has a parent
                 if ( thisPanel.has.grandParentPanel ){
-                    this._recursivelyAlignChartsInParentPanelsWithChartsInThisPanel(parentPanel)
+                    this._recursivelyAlignChartsInParentPanelsAndInTheirSiblingsWithChartsInThisPanel(parentPanel)
                 }
 
+
+                // Propagate to siblings of parent panel, if there are any
                 if( parentPanel.has.sibling ){
 
                     // Select siblings of parent panel
@@ -3074,7 +3076,7 @@
             // Main procedure
             this._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
 
-            this._recursivelyAlignChartsInParentPanelsWithChartsInThisPanel()
+            this._recursivelyAlignChartsInParentPanelsAndInTheirSiblingsWithChartsInThisPanel()
             this._createBridgeFromSpawnRoot()
             this._verticallyMaximizeFromBridgeAsChildPanel()
             this.updateAllPanels( this._animation.duration.collapseBackground )
