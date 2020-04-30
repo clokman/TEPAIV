@@ -470,8 +470,6 @@ describe ('Width', () => {
         jest.runOnlyPendingTimers()
         jest.runAllTimers()
 
-        writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/1.html')
-
         expect( panelZeroBackgroundEndsAtCorrectLocation() ).toBeTruthy()
         expect( childPanelBackgroundEndsAtCorrectLocation() ).toBeTruthy()
 
@@ -484,8 +482,6 @@ describe ('Width', () => {
 
         jest.runOnlyPendingTimers()
         jest.runAllTimers()
-
-        writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/2.html')
 
         expect( panelZeroBackgroundEndsAtCorrectLocation() ).toBeTruthy()
         expect( childPanelBackgroundEndsAtCorrectLocation() ).toBeTruthy()
