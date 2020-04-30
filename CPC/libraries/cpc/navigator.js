@@ -2875,19 +2875,19 @@
                 && this.has.beenFullyInstantiated // only calculate this if this panel is fully instantiated
                        // The `.has` method above is different; it is the `has` method of Map class.
                     ? ( () => {
-                           // Find this panel's index in parent's registry
-                           const childrenIdsInParentPanelRegistry = Array.from( this.parentPanel.childrenPanels.keys() )
-                           const indexOfThisPanel = childrenIdsInParentPanelRegistry.findIndex( (id) => { return id === this.id() } )
-                           const inclusiveStartIndexOfSlice = indexOfThisPanel + 1
+                       // Find this panel's index in parent's registry
+                       const childrenIdsInParentPanelRegistry = Array.from( this.parentPanel.childrenPanels.keys() )
+                       const indexOfThisPanel = childrenIdsInParentPanelRegistry.findIndex( (id) => { return id === this.id() } )
+                       const inclusiveStartIndexOfSlice = indexOfThisPanel + 1
 
-                           // Get all objects that are on the right side of this index
-                            const allObjectsInParentPanelRegistry = Array.from( this.parentPanel.childrenPanels )
-                            const objectsOnTheRightSideOfThisPanel_asArray = allObjectsInParentPanelRegistry.slice( inclusiveStartIndexOfSlice )
-                            const objectsOnTheRightSideOfThisPanel = (
-                                objectsOnTheRightSideOfThisPanel_asArray.length
-                                    ? new Map(objectsOnTheRightSideOfThisPanel_asArray)
-                                    : null
-                            )
+                       // Get all objects that are on the right side of this index
+                        const allObjectsInParentPanelRegistry = Array.from( this.parentPanel.childrenPanels )
+                        const objectsOnTheRightSideOfThisPanel_asArray = allObjectsInParentPanelRegistry.slice( inclusiveStartIndexOfSlice )
+                        const objectsOnTheRightSideOfThisPanel = (
+                            objectsOnTheRightSideOfThisPanel_asArray.length
+                                ? new Map(objectsOnTheRightSideOfThisPanel_asArray)
+                                : null
+                        )
 
                             return objectsOnTheRightSideOfThisPanel
                     }) ()
