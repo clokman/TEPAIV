@@ -3030,12 +3030,11 @@ describe( 'Synchronizing Inner Padding with Parents and Children', () => {
 
         const {panelZero, siblingPanel1, siblingPanel2, siblingPanel3, childPanelOfSibling2 } = initializeDomWith.panelZero.and.threeSiblingChildren.and.childOfOnlyMiddleSibling()
 
-        writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/annecigimam.html')
-
 
         // Ensure that there are no infinite recursions, etc
-        // expect( navigator.NestedPanel.prototype._recursivelyAlignChartsInAnyChildrenPanelsWithChartsInThisPanel )
-        //     .toHaveBeenCalledTimes(2)
+        expect( navigator.NestedPanel.prototype._recursivelyAlignChartsInAnyChildrenPanelsWithChartsInThisPanel )
+            .toHaveBeenCalledTimes(2)
+
 
         // Get top and bottom edges of chart areas in all panels
         const topEdgeOfPanelZeroChartsArea = panelZero.objects('status').objects('died').objects('rectangle').topLeftCorner()[1]
@@ -3066,7 +3065,6 @@ describe( 'Synchronizing Inner Padding with Parents and Children', () => {
         expect( bottomEdgeOfPanelZeroChartsArea ).toBe( bottomEdgeOfSiblingPanel2ChartsArea )
         expect( bottomEdgeOfPanelZeroChartsArea ).toBe( bottomEdgeOfSiblingPanel3ChartsArea )
         expect( bottomEdgeOfPanelZeroChartsArea ).toBe( bottomEdgeOfchildPanelOfSibling2ChartsArea )
-
 
 
     } )
