@@ -1269,6 +1269,23 @@ describe ('Stroke Properties ', () => {
 
 
 
+//// Helper Function Tests: Initialize DOM With... ///////////////////////////////////////////////////////////////
+
+describe( 'Helper Function Tests: Initialize DOM With...', () => {
+
+
+    // UNCOMMENT TESTS IN THIS SECTION TO VIEW THEM IN DOM
+
+    test( 'Titanic Tiny navigator and Grandchild panel', async () => {
+
+        await initializeDomWithTitanicTinyNavigator.and.grandChildPanel()
+        // writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/mi.html')
+
+    })
+
+
+} )
+
 
 //// Helper Functions  ///////////////////////////////////////////////////////////////
 
@@ -1325,6 +1342,32 @@ initializeDomWithTitanicTinyNavigator.and = {
 
         return { myNavigator, panelZero, childPanel }
 
+    },
+
+
+    grandChildPanel: async () => {
+
+        jest.useFakeTimers()
+
+        const myNavigator = await initializeDomWithTitanicTinyNavigator()
+
+        // Create a 2nd panel in navigator
+        domUtils.simulateClickOn('#panel-0-0 #Died')
+        jest.runOnlyPendingTimers()
+
+
+        // Create a 3rd panel in navigator
+        domUtils.simulateClickOn('#panel-1-0 #Female')
+        jest.runOnlyPendingTimers()
+
+
+        // Assign each panel object to a variable
+        const panelZero = myNavigator.objects('panel-0-0')
+        const childPanel = myNavigator.objects('panel-1-0')
+        const grandChildPanel = myNavigator.objects('panel-2-0')
+
+        return { myNavigator, panelZero, childPanel, grandChildPanel }
+
     }
 
 }
@@ -1361,6 +1404,3 @@ async function initializeDomWithCovid19TinyNavigator( build=true ) {
 
     return myNavigator
 }
-
-
-
