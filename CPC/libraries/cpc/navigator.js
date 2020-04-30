@@ -2625,7 +2625,7 @@
                         siblingOfParent.innerPaddingBottom( parentPanel.innerPaddingBottom() )
 
                         // Let siblings propagate values to their children
-                        siblingOfParent._recursivelyAlignChartsInChildrenPanelsWithChartsInThisPanel()
+                        siblingOfParent._recursivelyAlignChartsInAnyChildrenPanelsWithChartsInThisPanel()
 
                     })
 
@@ -2639,7 +2639,7 @@
         }
 
 
-        _recursivelyAlignChartsInChildrenPanelsWithChartsInThisPanel(thisPanel=this) {
+        _recursivelyAlignChartsInAnyChildrenPanelsWithChartsInThisPanel(thisPanel=this) {
 
             // Establish conditions
 
@@ -2667,7 +2667,7 @@
 
                     // Propagate to the children of children if there are any
                     if ( !!childPanel.childrenPanels.size ){
-                        this._recursivelyAlignChartsInChildrenPanelsWithChartsInThisPanel( childPanel )
+                        this._recursivelyAlignChartsInAnyChildrenPanelsWithChartsInThisPanel( childPanel )
                     }
 
 

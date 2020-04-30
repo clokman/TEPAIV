@@ -2967,7 +2967,7 @@ describe( 'Synchronizing Inner Padding with Parents and Children', () => {
 
         jest.spyOn(
             navigator.NestedPanel.prototype,
-             '_recursivelyAlignChartsInChildrenPanelsWithChartsInThisPanel'
+             '_recursivelyAlignChartsInAnyChildrenPanelsWithChartsInThisPanel'
         )
 
         const {panelZero, childPanel, grandChildPanel1, grandChildPanel2} = initializeDomWith.panelZero.and.childThatHasTwoSiblingChildren()
@@ -2980,12 +2980,12 @@ describe( 'Synchronizing Inner Padding with Parents and Children', () => {
 
         // Align the top and bottom edges of chart areas of children with the panelZero
         panelZero
-            ._recursivelyAlignChartsInChildrenPanelsWithChartsInThisPanel()
+            ._recursivelyAlignChartsInAnyChildrenPanelsWithChartsInThisPanel()
             .update()
 
 
         // Ensure that there are no infinite recursions, etc
-        expect( navigator.NestedPanel.prototype._recursivelyAlignChartsInChildrenPanelsWithChartsInThisPanel )
+        expect( navigator.NestedPanel.prototype._recursivelyAlignChartsInAnyChildrenPanelsWithChartsInThisPanel )
             .toHaveBeenCalledTimes(2)
 
         // Get top and bottom edges of chart areas in all panels
@@ -3025,7 +3025,7 @@ describe( 'Synchronizing Inner Padding with Parents and Children', () => {
 
         jest.spyOn(
             navigator.NestedPanel.prototype,
-            '_recursivelyAlignChartsInChildrenPanelsWithChartsInThisPanel'
+            '_recursivelyAlignChartsInAnyChildrenPanelsWithChartsInThisPanel'
         )
 
         const {panelZero, siblingPanel1, siblingPanel2, siblingPanel3, childPanelOfSibling2 } = initializeDomWith.panelZero.and.threeSiblingChildren.and.childOfOnlyMiddleSibling()
@@ -3034,7 +3034,7 @@ describe( 'Synchronizing Inner Padding with Parents and Children', () => {
 
 
         // Ensure that there are no infinite recursions, etc
-        // expect( navigator.NestedPanel.prototype._recursivelyAlignChartsInChildrenPanelsWithChartsInThisPanel )
+        // expect( navigator.NestedPanel.prototype._recursivelyAlignChartsInAnyChildrenPanelsWithChartsInThisPanel )
         //     .toHaveBeenCalledTimes(2)
 
         // Get top and bottom edges of chart areas in all panels
