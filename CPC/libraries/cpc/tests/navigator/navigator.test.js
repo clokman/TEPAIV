@@ -1311,7 +1311,7 @@ initializeDomWithTitanicTinyNavigator.and = {
 
     childPanel: async () => {
 
-        jest.useRealTimers()
+        jest.useFakeTimers()
 
         const myNavigator = await initializeDomWithTitanicTinyNavigator()
 
