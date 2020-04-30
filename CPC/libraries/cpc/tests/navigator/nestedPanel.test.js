@@ -2957,6 +2957,64 @@ describe( 'Connector Polygons', () => {
 
 
 
+//// Innner Padding Synchronization ///////////////////////////////////////////////////////////////
+
+describe( 'Synchronizing Inner Padding with Parents and Children', () => {
+
+
+    test( 'When padding of a parent panel is changed, children should adapt', async () => {
+
+
+        const {panelZero, childPanel, grandChildPanel1, grandChildPanel2} = initializeDomWith.panelZero.and.childThatHasTwoSiblingChildren()
+
+        // Change bottom and top edge of panelZero chart area
+        panelZero
+            .innerPaddingTop(100)
+            .innerPaddingBottom(75)
+            .update()
+
+        // Align the top and bottom edges of chart areas of children with the panelZero
+        panelZero
+            ._recursivelyAlignChartsInChildrenPanelsWithChartsInThisPanel()
+            .update()
+
+
+        // Get top and bottom edges of chart areas in all panels
+        const topEdgeOfPanelZeroChartsArea = panelZero.objects('status').objects('died').objects('rectangle').topLeftCorner()[1]
+        const bottomEdgeOfPanelZeroChartsArea = panelZero.objects('gender').objects('male').objects('rectangle').bottomLeftCorner()[1]
+
+        const topEdgeOfChildPanelChartsArea = childPanel.objects('status').objects('died').objects('rectangle').topLeftCorner()[1]
+        const bottomEdgeOfChildPanelChartsArea = childPanel.objects('gender').objects('male').objects('rectangle').bottomLeftCorner()[1]
+
+        const topEdgeOfGrandchildPanel1ChartsArea = grandChildPanel1.objects('status').objects('died').objects('rectangle').topLeftCorner()[1]
+        const bottomEdgeOfGrandchildPanel1ChartsArea = grandChildPanel1.objects('gender').objects('male').objects('rectangle').bottomLeftCorner()[1]
+
+        const topEdgeOfGrandchildPanel2ChartsArea = grandChildPanel2.objects('status').objects('died').objects('rectangle').topLeftCorner()[1]
+        const bottomEdgeOfGrandchildPanel2ChartsArea = grandChildPanel2.objects('gender').objects('male').objects('rectangle').bottomLeftCorner()[1]
+
+
+
+        // Top edges of charts should be aligned
+        expect( topEdgeOfPanelZeroChartsArea ).toBe( topEdgeOfChildPanelChartsArea )
+        expect( topEdgeOfPanelZeroChartsArea ).toBe( topEdgeOfGrandchildPanel1ChartsArea )
+        expect( topEdgeOfPanelZeroChartsArea ).toBe( topEdgeOfGrandchildPanel2ChartsArea )
+
+        // Bottom edges of charts should be aligned
+        expect( bottomEdgeOfPanelZeroChartsArea ).toBe( bottomEdgeOfChildPanelChartsArea )
+        expect( bottomEdgeOfPanelZeroChartsArea ).toBe( bottomEdgeOfGrandchildPanel1ChartsArea )
+        expect( bottomEdgeOfPanelZeroChartsArea ).toBe( bottomEdgeOfGrandchildPanel2ChartsArea )
+
+
+    } )
+
+
+
+} )
+
+
+
+
+
 
 //// HELPER FUNCTIONS /////////////////////////////////////////////////////////////
 

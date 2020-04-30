@@ -2610,6 +2610,51 @@
                 }
 
 
+            }
+
+
+            return this
+
+        }
+
+
+        _recursivelyAlignChartsInChildrenPanelsWithChartsInThisPanel(thisPanel=this) {
+
+            // Establish conditions
+
+            if ( !!thisPanel.childrenPanels.size ){
+
+                // Infer child during recursion
+                const childrenPanels = thisPanel.childrenPanels
+
+
+                // Get padding values
+                const selfInnerPaddingTop = thisPanel.innerPaddingTop()
+                const selfInnerPaddingBottom = thisPanel.innerPaddingBottom()
+
+
+                // Adjust padding values of children panel(s)
+                childrenPanels.forEach( childPanel => {
+
+                    const childOuterPaddingTop = childPanel._outerPadding.top
+                    const childOuterPaddingBottom = childPanel._outerPadding.bottom
+
+                    childPanel
+                        .innerPaddingTop( selfInnerPaddingTop - childOuterPaddingTop )
+                        .innerPaddingBottom( selfInnerPaddingBottom - childOuterPaddingBottom + childOuterPaddingTop  )
+
+
+                    // Propagate to the children of children if there are any
+                    if ( !!childPanel.childrenPanels.size ){
+                        this._recursivelyAlignChartsInChildrenPanelsWithChartsInThisPanel( childPanel )
+                    }
+
+
+                })
+
+
+
+
 
             }
 
@@ -2617,6 +2662,8 @@
             return this
 
         }
+
+
 
         _recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel(thisPanel=this) {
 
