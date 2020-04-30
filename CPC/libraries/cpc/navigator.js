@@ -2609,6 +2609,25 @@
                     this._recursivelyAlignChartsInParentPanelsWithChartsInThisPanel(parentPanel)
                 }
 
+                if( parentPanel.has.sibling ){
+
+                    // Select siblings of parent panel
+                    const allChildrenOfGrandparent = Array.from( parentPanel.parentPanel.childrenPanels.values() )
+                    const siblingsOfParent = allChildrenOfGrandparent.filter( (childOfGrandparent) => childOfGrandparent !== thisPanel.parentPanel  )
+
+                    // Synchronize top and bottom inner padding values of parent with its siblings
+                    siblingsOfParent.forEach( (siblingOfParent) => {
+
+                        // Propagate values from parent to its siblings
+                        siblingOfParent.innerPaddingTop( parentPanel.innerPaddingTop() )
+                        siblingOfParent.innerPaddingBottom( parentPanel.innerPaddingBottom() )
+
+                        // Let siblings propagate values to their children
+                        siblingOfParent._recursivelyAlignChartsInChildrenPanelsWithChartsInThisPanel()
+
+                    })
+
+                }
 
             }
 

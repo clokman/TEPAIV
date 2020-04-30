@@ -3019,6 +3019,59 @@ describe( 'Synchronizing Inner Padding with Parents and Children', () => {
 
 
 
+    test( 'When a new child panel is added, top and bottom inner padding of parent panels AND THEIR SIBLINGS should' +
+        ' adapt', async () => {
+
+
+        jest.spyOn(
+            navigator.NestedPanel.prototype,
+            '_recursivelyAlignChartsInChildrenPanelsWithChartsInThisPanel'
+        )
+
+        const {panelZero, siblingPanel1, siblingPanel2, siblingPanel3, childPanelOfSibling2 } = initializeDomWith.panelZero.and.threeSiblingChildren.and.childOfOnlyMiddleSibling()
+
+        writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/annecigimam.html')
+
+
+        // Ensure that there are no infinite recursions, etc
+        // expect( navigator.NestedPanel.prototype._recursivelyAlignChartsInChildrenPanelsWithChartsInThisPanel )
+        //     .toHaveBeenCalledTimes(2)
+
+        // Get top and bottom edges of chart areas in all panels
+        const topEdgeOfPanelZeroChartsArea = panelZero.objects('status').objects('died').objects('rectangle').topLeftCorner()[1]
+        const bottomEdgeOfPanelZeroChartsArea = panelZero.objects('gender').objects('male').objects('rectangle').bottomLeftCorner()[1]
+
+        const topEdgeOfSiblingPanel1ChartsArea = siblingPanel1.objects('status').objects('died').objects('rectangle').topLeftCorner()[1]
+        const bottomEdgeOfSiblingPanel1ChartsArea = siblingPanel1.objects('gender').objects('male').objects('rectangle').bottomLeftCorner()[1]
+
+        const topEdgeOfSiblingPanel2ChartsArea = siblingPanel2.objects('status').objects('died').objects('rectangle').topLeftCorner()[1]
+        const bottomEdgeOfSiblingPanel2ChartsArea = siblingPanel2.objects('gender').objects('male').objects('rectangle').bottomLeftCorner()[1]
+
+        const topEdgeOfSiblingPanel3ChartsArea = siblingPanel3.objects('status').objects('died').objects('rectangle').topLeftCorner()[1]
+        const bottomEdgeOfSiblingPanel3ChartsArea = siblingPanel3.objects('gender').objects('male').objects('rectangle').bottomLeftCorner()[1]
+
+
+        const topEdgeOfchildPanelOfSibling2ChartsArea = childPanelOfSibling2.objects('status').objects('died').objects('rectangle').topLeftCorner()[1]
+        const bottomEdgeOfchildPanelOfSibling2ChartsArea = childPanelOfSibling2.objects('gender').objects('male').objects('rectangle').bottomLeftCorner()[1]
+
+
+        // Top edges of charts should be aligned
+        expect( topEdgeOfPanelZeroChartsArea ).toBe( topEdgeOfSiblingPanel1ChartsArea )
+        expect( topEdgeOfPanelZeroChartsArea ).toBe( topEdgeOfSiblingPanel2ChartsArea )
+        expect( topEdgeOfPanelZeroChartsArea ).toBe( topEdgeOfSiblingPanel3ChartsArea )
+        expect( topEdgeOfPanelZeroChartsArea ).toBe( topEdgeOfchildPanelOfSibling2ChartsArea )
+
+        // Bottom edges of charts should be aligned
+        expect( bottomEdgeOfPanelZeroChartsArea ).toBe( bottomEdgeOfSiblingPanel1ChartsArea )
+        expect( bottomEdgeOfPanelZeroChartsArea ).toBe( bottomEdgeOfSiblingPanel2ChartsArea )
+        expect( bottomEdgeOfPanelZeroChartsArea ).toBe( bottomEdgeOfSiblingPanel3ChartsArea )
+        expect( bottomEdgeOfPanelZeroChartsArea ).toBe( bottomEdgeOfchildPanelOfSibling2ChartsArea )
+
+
+
+    } )
+
+
 } )
 
 
