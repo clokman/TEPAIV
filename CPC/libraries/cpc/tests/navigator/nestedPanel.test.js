@@ -2964,7 +2964,7 @@ describe( 'Synchronizing Inner Padding with Parents and Children', () => {
 
     test( 'When top or bottom inner padding of a parent panel is changed, children should adapt', async () => {
 
-
+        jest.clearAllMocks()
         jest.spyOn(
             navigator.NestedPanel.prototype,
              '_recursivelyAlignChartsInAnyChildrenPanelsWithChartsInThisPanel'
@@ -3022,7 +3022,7 @@ describe( 'Synchronizing Inner Padding with Parents and Children', () => {
     test( 'When a new child panel is added, top and bottom inner padding of parent panels AND THEIR SIBLINGS should' +
         ' adapt', async () => {
 
-
+        jest.clearAllMocks()
         jest.spyOn(
             navigator.NestedPanel.prototype,
             '_recursivelyAlignChartsInAnyChildrenPanelsWithChartsInThisPanel'
