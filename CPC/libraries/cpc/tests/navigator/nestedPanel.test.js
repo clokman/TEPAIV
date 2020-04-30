@@ -291,7 +291,7 @@ describe ('Width', () => {
             panelZero,
             siblingPanel1, siblingPanel2, siblingPanel3,
             childPanelOfSibling1, childPanelOfSibling2, childPanelOfSibling3
-        } = initializeDomWith.panelZero.and.twoSiblingChildrenThatEachHasOneChild()
+        } = initializeDomWith.panelZero.and.threeSiblingChildrenThatEachHasOneChild()
 
 
         // Modify deep child's width
@@ -491,7 +491,7 @@ describe ('Width', () => {
 
     test ('When the width of the deeply nested grandchildren of two sibling panels change, inter-panel distances should be correct ', () => {
 
-        initializeDomWith.panelZero.and.twoSiblingChildrenThatEachHasOneChild()
+        initializeDomWith.panelZero.and.threeSiblingChildrenThatEachHasOneChild()
 
         //TODO [FEB]: This scenario leads to panels not being updated correctly.
         // Therefore, this test MUST be written
@@ -3171,7 +3171,7 @@ initializeDomWith.panelZero.and = {
     },
 
 
-    twoSiblingChildrenThatEachHasOneChild: function(){
+    threeSiblingChildrenThatEachHasOneChild: function(){
 
         jest.useFakeTimers()
 
@@ -3298,10 +3298,10 @@ describe ('initializeDomWith...', () => {
     })
 
 
-    test ('initializeDomWith.panelZero.and.twoSiblingChildrenThatEachHasOneChild', () => {
+    test ('initializeDomWith.panelZero.and.threeSiblingChildrenThatEachHasOneChild', () => {
         // Uncomment to write html output to file
-        // initializeDomWith.panelZero.and.twoSiblingChildrenThatEachHasOneChild()
-        // writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/initializeDomWith.panelZero.and.twoSiblingChildrenThatEachHasOneChild.html')
+        // initializeDomWith.panelZero.and.threeSiblingChildrenThatEachHasOneChild()
+        // writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/initializeDomWith.panelZero.and.threeSiblingChildrenThatEachHasOneChild.html')
     })
 
 
