@@ -2965,6 +2965,11 @@ describe( 'Synchronizing Inner Padding with Parents and Children', () => {
     test( 'When padding of a parent panel is changed, children should adapt', async () => {
 
 
+        jest.spyOn(
+            navigator.NestedPanel.prototype,
+             '_recursivelyAlignChartsInChildrenPanelsWithChartsInThisPanel'
+        )
+
         const {panelZero, childPanel, grandChildPanel1, grandChildPanel2} = initializeDomWith.panelZero.and.childThatHasTwoSiblingChildren()
 
         // Change bottom and top edge of panelZero chart area
@@ -2977,6 +2982,12 @@ describe( 'Synchronizing Inner Padding with Parents and Children', () => {
         panelZero
             ._recursivelyAlignChartsInChildrenPanelsWithChartsInThisPanel()
             .update()
+
+
+        // Ensure that there are no infinite recursions, etc
+        expect( navigator.NestedPanel.prototype._recursivelyAlignChartsInChildrenPanelsWithChartsInThisPanel )
+            .toHaveBeenCalledTimes(2)
+
 
 
         // Get top and bottom edges of chart areas in all panels
@@ -3003,6 +3014,7 @@ describe( 'Synchronizing Inner Padding with Parents and Children', () => {
         expect( bottomEdgeOfPanelZeroChartsArea ).toBe( bottomEdgeOfChildPanelChartsArea )
         expect( bottomEdgeOfPanelZeroChartsArea ).toBe( bottomEdgeOfGrandchildPanel1ChartsArea )
         expect( bottomEdgeOfPanelZeroChartsArea ).toBe( bottomEdgeOfGrandchildPanel2ChartsArea )
+
 
 
     } )
