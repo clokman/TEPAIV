@@ -3300,11 +3300,11 @@ describe ('initializeDomWith...', () => {
     })
 
 
-    // test ('initializeDomWith.panelZero.and.child.without.genderChart()', () => {
-    //     // Uncomment to write html output to file
-    //     initializeDomWith.panelZero.and.child.without.genderChart()
-    //     writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/initializeDomWith.panelZero.and.child.without.genderChart().html')
-    // })
+    test ('initializeDomWith.panelZero.and.child.without.genderChart()', () => {
+        // Uncomment to write html output to file
+        // initializeDomWith.panelZero.and.child.without.genderChart()
+        // writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/initializeDomWith.panelZero.and.child.without.genderChart().html')
+    })
 
 
 })
