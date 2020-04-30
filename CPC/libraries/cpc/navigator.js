@@ -2889,7 +2889,7 @@
                                 : null
                         )
 
-                            return objectsOnTheRightSideOfThisPanel
+                        return objectsOnTheRightSideOfThisPanel
                     }) ()
 
                     : null
