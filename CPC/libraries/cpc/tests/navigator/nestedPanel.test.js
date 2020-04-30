@@ -291,7 +291,7 @@ describe ('Width', () => {
             panelZero,
             siblingPanel1, siblingPanel2, siblingPanel3,
             childPanelOfSibling1, childPanelOfSibling2, childPanelOfSibling3
-        } = initializeDomWith.panelZero.and.threeSiblingChildrenThatEachHasOneChild()
+        } = initializeDomWith.panelZero.and.threeSiblingChildren.and.childrenOfEachSibling()
 
 
         // Modify deep child's width
@@ -491,7 +491,7 @@ describe ('Width', () => {
 
     test ('When the width of the deeply nested grandchildren of two sibling panels change, inter-panel distances should be correct ', () => {
 
-        initializeDomWith.panelZero.and.threeSiblingChildrenThatEachHasOneChild()
+        initializeDomWith.panelZero.and.threeSiblingChildren.and.childrenOfEachSibling()
 
         //TODO [FEB]: This scenario leads to panels not being updated correctly.
         // Therefore, this test MUST be written
@@ -2962,7 +2962,7 @@ describe( 'Connector Polygons', () => {
 describe( 'Synchronizing Inner Padding with Parents and Children', () => {
 
 
-    test( 'When padding of a parent panel is changed, children should adapt', async () => {
+    test( 'When top or bottom inner padding of a parent panel is changed, children should adapt', async () => {
 
 
         jest.spyOn(
@@ -2987,8 +2987,6 @@ describe( 'Synchronizing Inner Padding with Parents and Children', () => {
         // Ensure that there are no infinite recursions, etc
         expect( navigator.NestedPanel.prototype._recursivelyAlignChartsInChildrenPanelsWithChartsInThisPanel )
             .toHaveBeenCalledTimes(2)
-
-
 
         // Get top and bottom edges of chart areas in all panels
         const topEdgeOfPanelZeroChartsArea = panelZero.objects('status').objects('died').objects('rectangle').topLeftCorner()[1]
@@ -3171,7 +3169,44 @@ initializeDomWith.panelZero.and = {
     },
 
 
-    threeSiblingChildrenThatEachHasOneChild: function(){
+    childThatHasTwoSiblingChildren: function () {
+
+        jest.useFakeTimers()
+
+        const {panelZero, childPanel, grandChildPanel:grandChildPanel1} = initializeDomWith.panelZero.and.childAndGrandchild()
+
+        jest.runOnlyPendingTimers()
+
+        // Change the label of a grandchild to fit to this recipe
+        grandChildPanel1
+            .bgText('grandChildPanel1')
+            .update()
+
+        // Create a second grandchild panel as a sibling to the first one
+        let grandChildPanel2  // declaration must be outside the setTimer function
+        setTimeout(() => {
+            const spawnObjectForGrandChildPanel = childPanel.objects('class').objects('second-class')
+            grandChildPanel2 = new navigator.NestedPanel(childPanel, spawnObjectForGrandChildPanel, 'sibling')
+            grandChildPanel2
+                .bgText('grandChildPanel2')
+                .build()
+
+        }, 1000)
+        jest.runOnlyPendingTimers()
+
+        jest.runAllTimers()
+
+        return {panelZero, childPanel, grandChildPanel1, grandChildPanel2}
+
+    }
+
+}
+
+
+initializeDomWith.panelZero.and.threeSiblingChildren.and = {
+
+
+    childrenOfEachSibling: function(){
 
         jest.useFakeTimers()
 
@@ -3221,36 +3256,29 @@ initializeDomWith.panelZero.and = {
     },
 
 
-    childThatHasTwoSiblingChildren: function () {
+    childOfOnlyMiddleSibling: function(){
 
         jest.useFakeTimers()
 
-        const {panelZero, childPanel, grandChildPanel:grandChildPanel1} = initializeDomWith.panelZero.and.childAndGrandchild()
+        const {panelZero, siblingPanel1, siblingPanel2, siblingPanel3} = initializeDomWith.panelZero.and.threeSiblingChildren()
 
-        jest.runOnlyPendingTimers()
-
-        // Change the label of a grandchild to fit to this recipe
-        grandChildPanel1
-            .bgText('grandChildPanel1')
-            .update()
-
-        // Create a second grandchild panel as a sibling to the first one
-        let grandChildPanel2  // declaration must be outside the setTimer function
-        setTimeout(() => {
-            const spawnObjectForGrandChildPanel = childPanel.objects('class').objects('second-class')
-            grandChildPanel2 = new navigator.NestedPanel(childPanel, spawnObjectForGrandChildPanel, 'sibling')
-            grandChildPanel2
-                .bgText('grandChildPanel2')
+        // Create the child of second sibling)
+        let childPanelOfSibling2
+        setTimeout(  () => {
+            const spawnObjectForChildPanelOfSibling2 = siblingPanel2.objects('gender').objects('male')
+            childPanelOfSibling2 = new navigator.NestedPanel(siblingPanel2, spawnObjectForChildPanelOfSibling2)
+            childPanelOfSibling2
+                .bgText('childPanelOfSibling2')
                 .build()
-
-        }, 1000)
+        }, 5000)
         jest.runOnlyPendingTimers()
 
         jest.runAllTimers()
 
-        return {panelZero, childPanel, grandChildPanel1, grandChildPanel2}
+        return  {panelZero, siblingPanel1, siblingPanel2, siblingPanel3, childPanelOfSibling2 }
 
     }
+
 
 }
 
@@ -3298,10 +3326,17 @@ describe ('initializeDomWith...', () => {
     })
 
 
-    test ('initializeDomWith.panelZero.and.threeSiblingChildrenThatEachHasOneChild', () => {
+    test ('initializeDomWith.panelZero.and.threeSiblingChildren.and.childrenOfEachSibling', () => {
         // Uncomment to write html output to file
-        // initializeDomWith.panelZero.and.threeSiblingChildrenThatEachHasOneChild()
-        // writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/initializeDomWith.panelZero.and.threeSiblingChildrenThatEachHasOneChild.html')
+        // initializeDomWith.panelZero.and.threeSiblingChildren.and.childrenOfEachSibling()
+        // writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/initializeDomWith.panelZero.and.threeSiblingChildren.and.childrenOfEachSibling.html')
+    })
+
+
+    test ('initializeDomWith.panelZero.and.threeSiblingChildren.and.childOfOnlyMiddleSibling', () => {
+        // Uncomment to write html output to file
+        // initializeDomWith.panelZero.and.threeSiblingChildren.and.childOfOnlyMiddleSibling()
+        // writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/initializeDomWith.panelZero.and.threeSiblingChildren.and.childOfOnlyMiddleSibling.html')
     })
 
 
