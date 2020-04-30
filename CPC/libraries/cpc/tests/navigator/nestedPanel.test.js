@@ -2957,7 +2957,7 @@ describe( 'Connector Polygons', () => {
 
 
 
-//// Innner Padding Synchronization ///////////////////////////////////////////////////////////////
+//// Inner Padding Synchronization ///////////////////////////////////////////////////////////////
 
 describe( 'Synchronizing Inner Padding with Parents and Children', () => {
 
