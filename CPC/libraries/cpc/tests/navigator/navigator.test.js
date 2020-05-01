@@ -423,7 +423,7 @@ describe ('Position and Dimensions', () => {
 
 //// Interactivity ////////////////////////////////////////////////////////////////////////
 
-describe ('Interactivity', () => {
+describe ('Visualizing Queries', () => {
 
 
     test ('Clicking on a category must make a query and visualize query results with a new panel', async () => {
