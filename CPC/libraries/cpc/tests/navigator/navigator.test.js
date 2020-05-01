@@ -1341,6 +1341,7 @@ initializeDomWithTitanicTinyNavigator.and = {
 
 
 
+
 /**
  * A simple testing template that creates a Navigator object with a very small dataset.
  * @param build {Boolean} If set to false, would initialize Navigator without calling the `build()` method.
@@ -1353,6 +1354,74 @@ async function initializeDomWithCovid19TinyNavigator( build=true ) {
         build: build
     } )
 }
+
+
+async function initializeDomWithTitanicEmbarkTinyNavigator ( build=true ) {
+    return await createNavigator({
+        datasetPath: 'http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanic-embark-tiny.csv',
+        build: build
+    } )
+}
+
+
+initializeDomWithTitanicEmbarkTinyNavigator.and = {
+
+
+    twoSiblingChildren: async (build=true) => {
+
+        jest.useFakeTimers()
+
+        const myNavigator = await initializeDomWithTitanicEmbarkTinyNavigator( build )
+
+        // Create 1st sibling panel
+        domUtils.simulateClickOn('#panel-0-0 #Southampton')
+        jest.runOnlyPendingTimers()
+
+
+        // Create 2nd sibling panel
+        domUtils.simulateClickOn('#panel-0-0 #Queenstown', 'shift')
+        jest.runOnlyPendingTimers()
+
+
+        // Assign each panel object to a variable
+        const panelZero = myNavigator.objects('panel-0-0')
+        const leftSiblingPanel = myNavigator.objects('panel-1-0')
+        const rightSiblingPanel = myNavigator.objects('panel-1-1')
+
+        return { myNavigator, panelZero, leftSiblingPanel, rightSiblingPanel }
+
+    }
+
+}
+
+
+initializeDomWithTitanicEmbarkTinyNavigator.and.twoSiblingChildren.and = {
+
+    theirOwnChildren: async (build=true) => {
+
+        const { myNavigator, panelZero, leftSiblingPanel, rightSiblingPanel } =
+            await initializeDomWithTitanicEmbarkTinyNavigator.and.twoSiblingChildren( build )
+
+
+        // Create 1st grandchild panel
+        domUtils.simulateClickOn('#panel-1-0 #Male')
+        jest.runOnlyPendingTimers()
+
+
+        // Create 2nd grandchild panel
+        domUtils.simulateClickOn('#panel-1-1 #Male')
+        jest.runOnlyPendingTimers()
+
+
+        // Assign each new panel object to a variable
+        const leftGrandChildPanel = leftSiblingPanel.childrenPanels.get('panel-2-0')
+        const rightGrandchildPanel = rightSiblingPanel.childrenPanels.get('panel-2-0')
+
+        return { myNavigator, panelZero, leftSiblingPanel, rightSiblingPanel, leftGrandChildPanel, rightGrandchildPanel }
+
+    }
+}
+
 
 
 /**
@@ -1400,6 +1469,23 @@ describe( 'Helper Function Tests: Initialize DOM With...', () => {
         // await initializeDomWithTitanicTinyNavigator.and.grandChildPanel()
         // writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/mi.html')
 
+    })
+
+    test( 'Titanic Embark Tiny navigator', async () => {
+        // await initializeDomWithTitanicEmbarkTinyNavigator()
+        // writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/initializeDomWithTitanicEmbarkTinyNavigator.html')
+    })
+
+
+    test( 'Titanic Embark Tiny navigator and two sibling children', async () => {
+        // await initializeDomWithTitanicEmbarkTinyNavigator.and.twoSiblingChildren()
+        // writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/initializeDomWithTitanicEmbarkTinyNavigator.and.twoSiblingChildren.html')
+    })
+
+
+    test( 'Titanic Embark Tiny navigator and two sibling children and their own children', async () => {
+        // await initializeDomWithTitanicEmbarkTinyNavigator.and.twoSiblingChildren.and.theirOwnChildren()
+        // writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/initializeDomWithTitanicEmbarkTinyNavigator.and.twoSiblingChildren.and.theirOwnChildren.html')
     })
 
 
