@@ -1269,23 +1269,6 @@ describe ('Stroke Properties ', () => {
 
 
 
-//// Helper Function Tests: Initialize DOM With... ///////////////////////////////////////////////////////////////
-
-describe( 'Helper Function Tests: Initialize DOM With...', () => {
-
-
-    // UNCOMMENT TESTS IN THIS SECTION TO VIEW THEM IN DOM
-
-    test( 'Titanic Tiny navigator and Grandchild panel', async () => {
-
-        await initializeDomWithTitanicTinyNavigator.and.grandChildPanel()
-        // writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/mi.html')
-
-    })
-
-
-} )
-
 
 //// Helper Functions  ///////////////////////////////////////////////////////////////
 
@@ -1297,29 +1280,13 @@ describe( 'Helper Function Tests: Initialize DOM With...', () => {
  */
 async function initializeDomWithTitanicTinyNavigator( build=true ) {
 
-    jest.useFakeTimers()
+    const navigator0 =  await createNavigator({
+        datasetPath: 'http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanicTiny.csv',
+        build: build,
+        omitColumns: ['Name']
+    } )
 
-    // Clear JEST's DOM to prevent leftovers from previous tests
-    document.body.innerHTML = ''
-    // Create svg container
-    new container.Svg(1200, 900)
-    // Create Navigator object
-    const myNavigator = new navigator.Navigator()
-    //// Load a dataset into navigator
-    myNavigator.initParams.datasetPath = 'http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanicTiny.csv'
-    myNavigator.initParams.omitColumns = ['Name']
-
-    myNavigator.x(200)
-
-    if (build){
-        await myNavigator.build()
-    }
-
-
-    jest.runOnlyPendingTimers()
-    jest.runAllTimers()
-
-    return myNavigator
+    return navigator0
 }
 
 
@@ -1381,20 +1348,37 @@ initializeDomWithTitanicTinyNavigator.and = {
  */
 async function initializeDomWithCovid19TinyNavigator( build=true ) {
 
+    return await createNavigator({
+        datasetPath: 'http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/Covid19Geographic-Tiny.csv',
+        build: build
+    } )
+}
+
+
+/**
+ *
+ * @param datasetPath {string}
+ * @param build {boolean}
+ * @param omitColumns {Array} - An array of strings
+ * @returns {Promise<Navigator>}
+ */
+async function createNavigator( { datasetPath, build = true, omitColumns=[] } = {} ) {
+
     jest.useFakeTimers()
 
     // Clear JEST's DOM to prevent leftovers from previous tests
     document.body.innerHTML = ''
     // Create svg container
-    new container.Svg(1200, 900)
+    new container.Svg( 1200, 900 )
     // Create Navigator object
     const myNavigator = new navigator.Navigator()
     //// Load a dataset into navigator
-    myNavigator.initParams.datasetPath = 'http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/Covid19Geographic-Tiny.csv'
+    myNavigator.initParams.datasetPath = datasetPath
+    myNavigator.initParams.omitColumns = omitColumns
 
-    myNavigator.x(200)
+    myNavigator.x( 200 )
 
-    if (build){
+    if( build ) {
         await myNavigator.build()
     }
 
@@ -1404,3 +1388,28 @@ async function initializeDomWithCovid19TinyNavigator( build=true ) {
 
     return myNavigator
 }
+
+//// Helper Function Tests: Initialize DOM With... ///////////////////////////////////////////////////////////////
+
+describe( 'Helper Function Tests: Initialize DOM With...', () => {
+
+
+    // UNCOMMENT TESTS IN THIS SECTION TO VIEW THEM IN DOM
+
+    test( 'Titanic Tiny navigator and Grandchild panel', async () => {
+        // await initializeDomWithTitanicTinyNavigator.and.grandChildPanel()
+        // writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/mi.html')
+
+    })
+
+
+    test( 'Titanic Tiny navigator and Grandchild panel', async () => {
+        // await initializeDomWithTitanicTinyNavigator.and.grandChildPanel()
+        // writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/mi.html')
+
+    })
+
+
+} )
+
+
