@@ -731,7 +731,7 @@
     let mySvg = new container.Svg(15000, 15000, parentD3Element)
 
 
-    const { datasetPath, columNamesToIgnore, columsToForceAsCategoricalData, height } = parseDatasetDropdown()
+    const { datasetPath, columNamesToIgnore, columsToForceAsCategoricalData, height, bgTitle } = parseDatasetDropdown()
 
     let navigator1 = new navigator.Navigator()
 
@@ -746,6 +746,10 @@
             .x(225)
             .y(60)
             .build()
+
+
+        that.objects('panel-0-0').bgText( bgTitle ).update()
+
 
     } )
 
