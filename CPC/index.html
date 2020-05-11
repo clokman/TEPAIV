@@ -230,6 +230,10 @@
                         ? switchDataset( selectedValue ).columnsToForceAsCategorical
                         : []
 
+                    const x = !!switchDataset( selectedValue ).x
+                        ? switchDataset( selectedValue ).x
+                        : 225
+
                     const height = !!switchDataset( selectedValue ).height
                         ? switchDataset( selectedValue ).height
                         : 700
@@ -238,13 +242,13 @@
                         ? switchDataset( selectedValue ).bgTitle
                         : 'Dataset'
 
-                    return { datasetPath, columNamesToIgnore, columsToForceAsCategoricalData, height, bgTitle }
+                    return { datasetPath, columNamesToIgnore, columsToForceAsCategoricalData, x, height, bgTitle }
                 }
 
 
                 async function loadSelectedDataset() {
 
-                    const { datasetPath, columNamesToIgnore, columsToForceAsCategoricalData, height, bgTitle } = parseDatasetDropdown()
+                    const { datasetPath, columNamesToIgnore, columsToForceAsCategoricalData, x, height, bgTitle } = parseDatasetDropdown()
 
                     if( !!navigator1 )
                         navigator1.remove()
@@ -253,12 +257,12 @@
 
                     navigator1.loadDataset(
                         datasetPath,
-                        columNamesToIgnore,
+                        columNamesToIgnore,  // TODO: Typo fixed
                         columsToForceAsCategoricalData
                     ).then( that => {
 
                         that.colorSet( 'Titanic-2' )
-                            .x(225)
+                            .x(x)
                             .y(60)
                             .height(height)
                             .build()
@@ -731,7 +735,7 @@
     let mySvg = new container.Svg(15000, 15000, parentD3Element)
 
 
-    const { datasetPath, columNamesToIgnore, columsToForceAsCategoricalData, height, bgTitle } = parseDatasetDropdown()
+    const { datasetPath, columNamesToIgnore, columsToForceAsCategoricalData, x, height, bgTitle } = parseDatasetDropdown()
 
     let navigator1 = new navigator.Navigator()
 
@@ -743,7 +747,7 @@
 
         that.colorSet( 'Titanic-2' )
             .height(height)
-            .x(225)
+            .x(x)
             .y(60)
             .build()
 
