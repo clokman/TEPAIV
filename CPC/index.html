@@ -142,6 +142,7 @@
                 <option value="Big Five (2 dimensions, generated)">Big Five (2 dimensions, generated)</option>
                 <option value="Mushrooms (4 columns)">Mushrooms (4 columns)</option>
                 <option value="Mushrooms (8 columns)">Mushrooms (8 columns)</option>
+                <option value="US Census-Income 1994">US Census-Income 1994</option>
             </select>
 
             <script>
@@ -216,6 +217,15 @@
                             columnsToForceAsCategorical: [],
                             height: 1400,
                             bgTitle: 'MUSHROOM DATASET'
+                        },
+
+                        'US Census-Income 1994':{
+                            path: '/TEPAIV/CPC/data/census/USCensus1994-AdultIncome.csv',
+                            columnsToOmit: ['relationship', 'race', 'hours-per-week', 'age', 'occupation', 'education', 'education-years', 'work-class', 'fnlwgt', 'capital-gain', 'capital-loss', 'native-country'],
+                            columnsToForceAsCategorical: [],
+                            x: 300,
+                            height: 900,
+                            bgTitle: 'CENSUS / INCOME (ADULT)'
                         }
 
                     })[ name ]
