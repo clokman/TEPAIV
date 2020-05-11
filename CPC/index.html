@@ -233,11 +233,11 @@
 
                     const datasetPath = switchDataset( selectedValue ).path
 
-                    const columNamesToIgnore = !!switchDataset( selectedValue ).columnsToOmit
+                    const columnNamesToIgnore = !!switchDataset( selectedValue ).columnsToOmit
                         ? switchDataset( selectedValue ).columnsToOmit
                         : []
 
-                    const columsToForceAsCategoricalData = !!switchDataset( selectedValue ).columnsToForceAsCategorical
+                    const columnsToForceAsCategoricalData = !!switchDataset( selectedValue ).columnsToForceAsCategorical
                         ? switchDataset( selectedValue ).columnsToForceAsCategorical
                         : []
 
@@ -253,13 +253,13 @@
                         ? switchDataset( selectedValue ).bgTitle
                         : 'Dataset'
 
-                    return { datasetPath, columNamesToIgnore, columsToForceAsCategoricalData, x, height, bgTitle }
+                    return { datasetPath, columnNamesToIgnore, columnsToForceAsCategoricalData, x, height, bgTitle }
                 }
 
 
                 async function loadSelectedDataset() {
 
-                    const { datasetPath, columNamesToIgnore, columsToForceAsCategoricalData, x, height, bgTitle } = parseDatasetDropdown()
+                    const { datasetPath, columnNamesToIgnore, columnsToForceAsCategoricalData, x, height, bgTitle } = parseDatasetDropdown()
 
                     if( !!navigator1 )
                         navigator1.remove()
@@ -268,8 +268,8 @@
 
                     navigator1.loadDataset(
                         datasetPath,
-                        columNamesToIgnore,  // TODO: Typo fixed
-                        columsToForceAsCategoricalData
+                        columnNamesToIgnore,
+                        columnsToForceAsCategoricalData
                     ).then( that => {
 
                         that.colorSet( 'Titanic-2' )
@@ -749,14 +749,14 @@
     let mySvg = new container.Svg(15000, 15000, parentD3Element)
 
 
-    const { datasetPath, columNamesToIgnore, columsToForceAsCategoricalData, x, height, bgTitle } = parseDatasetDropdown()
+    const { datasetPath, columnNamesToIgnore, columnsToForceAsCategoricalData, x, height, bgTitle } = parseDatasetDropdown()
 
     let navigator1 = new navigator.Navigator()
 
     navigator1.loadDataset(
         datasetPath,
-        columNamesToIgnore,
-        columsToForceAsCategoricalData
+        columnNamesToIgnore,
+        columnsToForceAsCategoricalData
     ).then( that => {
 
         that.colorSet( 'Titanic-2' )
