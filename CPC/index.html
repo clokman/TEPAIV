@@ -228,6 +228,7 @@
                             bgTitle: 'CENSUS / INCOME (ADULT)'
                         }
 
+
                     })[ name ]
 
                     const datasetPath = switchDataset( selectedValue ).path
@@ -275,6 +276,8 @@
                             .x(x)
                             .y(60)
                             .height(height)
+                            .opacityOfConnectorPolygons( +$( '#connector-opacity-slider' ).val() )  // slider values should be retrieved with jquery's val() method
+                            .stroke( document.getElementById( 'stroke-color-dropdown' ).value )
                             .build()
 
 
@@ -759,6 +762,8 @@
             .height(height)
             .x(x)
             .y(60)
+            .opacityOfConnectorPolygons( +$( '#connector-opacity-slider' ).val() )  // slider values should be retrieved with jquery's val() method
+            .stroke( document.getElementById( 'stroke-color-dropdown' ).value )
             .build()
 
 
