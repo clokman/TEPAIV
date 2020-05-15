@@ -134,15 +134,21 @@
                     onchange="loadSelectedDataset()"
             >
 
-                <option value="Titanic">Titanic</option>
                 <option value="Titanic - Embark (Partial)">Titanic - Embark (Partial)</option>
                 <option value="Titanic - Prediction Sample">Titanic - Prediction Sample</option>
-                <option value="COVID-19">COVID-19</option>
                 <option value="Wine">Wine</option>
                 <option value="Big Five (2 dimensions, generated)">Big Five (2 dimensions, generated)</option>
                 <option value="Mushrooms (4 columns)">Mushrooms (4 columns)</option>
                 <option value="Mushrooms (8 columns)">Mushrooms (8 columns)</option>
+                <option value="">------------ ↓ New ↓ ------------</option>
+                <option value="Titanic">Titanic (Updated)</option>
+                <option value="COVID-19">COVID-19 (Updated)</option>
                 <option value="US Census-Income 1994">US Census-Income 1994</option>
+                <option value="Hair-Eye Color">Hair-Eye Color</option>
+                <option value="UC Berkeley Admissions">UC Berkeley Admissions</option>
+                <option value="Iris">Iris</option>
+                <option value="Father-Son Occupation">Father-Son Occupation</option>
+                <option value="Ovary Cancer">Ovary Cancer</option>
             </select>
 
             <script>
@@ -158,7 +164,7 @@
                     const switchDataset = (name) => ({
 
                         'Titanic': {
-                            path: '/TEPAIV/CPC/data/titanic.csv',
+                            path: '/TEPAIV/CPC/data/TitanicR_.csv',
                             columnsToOmit: [ 'NAME' ],
                             height: 750,
                             bgTitle: 'TITANIC DATASET'
@@ -180,8 +186,8 @@
                         },
 
                         'COVID-19': {
-                            path: '/TEPAIV/CPC/data/covid19/Covid19Geographic-7Countries.csv',
-                            columnsToOmit: ['dateRep', 'day', 'year', 'geoId', 'countryterritoryCode', 'popData2018', 'population'],
+                            path: '/TEPAIV/CPC/data/covid19/Covid19Cases-7Countries.hl.csv',
+                            columnsToOmit: ['day', 'year', 'caseId'],
                             columnsToForceAsCategorical: ['month'],
                             height: 750,
                             bgTitle: 'COVID-19 DATASET (APR 11)'
@@ -226,8 +232,38 @@
                             x: 300,
                             height: 900,
                             bgTitle: 'CENSUS / INCOME (ADULT)'
-                        }
+                        },
 
+                        'Hair-Eye Color': {
+                            path: '/TEPAIV/CPC/data/hair-eye-color/HairEyeColor.hl.csv',
+                            height: 750,
+                            bgTitle: 'HAIR-EYE COLOR'
+                        },
+
+                        'UC Berkeley Admissions': {
+                            path: '/TEPAIV/CPC/data/ucb-admissions/UCBAdmissions.hl.csv',
+                            height: 750,
+                            bgTitle: 'UC BERKELEY ADMISSIONS'
+                        },
+
+                        'Iris': {
+                            path: '/TEPAIV/CPC/data/Iris/Iris.hl.csv',
+                            height: 750,
+                            bgTitle: 'IRIS'
+                        },
+
+                        'Father-Son Occupation': {
+                            path: '/TEPAIV/CPC/data/father-son-occupation/FatherSonOccupation.hl.csv',
+                            height: 750,
+                            columnsToForceAsCategorical: ['father', 'son'],
+                            bgTitle: 'FATHER-SON OCCUPATION'
+                        },
+
+                        'Ovary Cancer': {
+                            path: '/TEPAIV/CPC/data/ovary-cancer/OvaryCancer.hl.csv',
+                            height: 750,
+                            bgTitle: 'OVARY CANCER'
+                        },
 
                     })[ name ]
 
