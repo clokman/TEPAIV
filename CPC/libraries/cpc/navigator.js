@@ -4256,7 +4256,8 @@
 
         schemeSets: new Map()
             .set('Titanic', ['Purples', 'Inferno', 'PuBuGn', 'Oranges', 'Greys', 'Blues'])
-            .set('Titanic-2', ['Greys', 'Purples', 'Plasma', 'PuBu'])
+            .set('Titanic-2', ['Greys', 'Purples', 'Plasma', 'PuBu', 'Greens', 'Reds'])
+            .set('Embark', ['Greys', 'Inferno', 'Purples', 'PuBu', 'Greens', 'Magma'])
             .set('Single-Hue', ['Purples', 'Blues', 'Greens', 'Oranges', 'Greys', 'Reds'])
             .set('Multi-Hue', ['RdPu', 'BuPu', 'PuBu', 'YlGn', 'OrRd', 'PuBuGn', 'PuRd', 'PuRd', 'BuGn', 'YlGnBu', 'YlOrBr', 'YlOrRd'])
             .set('Blues', ['Blues'])
@@ -4273,6 +4274,7 @@
             .set('PuBu', ['PuBu'])
             .set('PuRd', ['PuRd'])
             .set('RdPu', ['RdPu'])
+            .set('RdGy', ['RdGy'])
             .set('YlGnBu', ['YlGnBu'])
             .set('YlGn', ['YlGn'])
             .set('YlOrBr', ['YlOrBr'])
@@ -4284,6 +4286,9 @@
             .set('Cool', ['Cool'])
             .set('CubehelixDefault', ['CubehelixDefault'])
             .set('Plasma', ['Plasma'])
+            .set('Rainbow', ['Rainbow'])
+            .set('Sinebow', ['Sinebow'])
+            .set('Spectral', ['Spectral'])
 
 
         , getChartSchemeBySchemeSetNameAndCircularIndex: function (schemeSet, i) {

@@ -21,15 +21,15 @@ test ('LIST: List scheme sets and the schemes they contain', () => {
 │ (index) │      0       │                          1                           │
 ├─────────┼──────────────┼──────────────────────────────────────────────────────┤
 │    0    │  'Titanic'   │ [ 'Purples', 'Inferno', 'PuBuGn', ... 3 more items ] │
-│    1    │ 'Titanic-2'  │  [ 'Greys', 'Purples', 'Plasma', ... 1 more item ]   │
-│    2    │ 'Single-Hue' │  [ 'Purples', 'Blues', 'Greens', ... 3 more items ]  │
-│    3    │ 'Multi-Hue'  │     [ 'RdPu', 'BuPu', 'PuBu', ... 9 more items ]     │
-│    4    │   'Blues'    │                     [ 'Blues' ]                      │
-│    5    │   'Greens'   │                     [ 'Greens' ]                     │
-│    6    │   'Greys'    │                     [ 'Greys' ]                      │
-│    7    │  'Oranges'   │                    [ 'Oranges' ]                     │
-│    8    │  'Purples'   │                    [ 'Purples' ]                     │
-│    9    │    'Reds'    │                      [ 'Reds' ]                      │
+│    1    │ 'Titanic-2'  │  [ 'Greys', 'Purples', 'Plasma', ... 3 more items ]  │
+│    2    │   'Embark'   │ [ 'Greys', 'Inferno', 'Purples', ... 3 more items ]  │
+│    3    │ 'Single-Hue' │  [ 'Purples', 'Blues', 'Greens', ... 3 more items ]  │
+│    4    │ 'Multi-Hue'  │     [ 'RdPu', 'BuPu', 'PuBu', ... 9 more items ]     │
+│    5    │   'Blues'    │                     [ 'Blues' ]                      │
+│    6    │   'Greens'   │                     [ 'Greens' ]                     │
+│    7    │   'Greys'    │                     [ 'Greys' ]                      │
+│    8    │  'Oranges'   │                    [ 'Oranges' ]                     │
+│    9    │  'Purples'   │                    [ 'Purples' ]                     │
 └─────────┴──────────────┴──────────────────────────────────────────────────────┘
 ˅˅˅ NaN more rows`, 0, 10)
 
@@ -49,34 +49,39 @@ test ('CIRCULAR INDEXING: Circular scheme indexing and iteration', () => {
 │ (iteration index) │        Key         │                        Values                        │
 ├───────────────────┼────────────────────┼──────────────────────────────────────────────────────┤
 │         0         │     'Titanic'      │ [ 'Purples', 'Inferno', 'PuBuGn', ... 3 more items ] │
-│         1         │    'Titanic-2'     │  [ 'Greys', 'Purples', 'Plasma', ... 1 more item ]   │
-│         2         │    'Single-Hue'    │  [ 'Purples', 'Blues', 'Greens', ... 3 more items ]  │
-│         3         │    'Multi-Hue'     │     [ 'RdPu', 'BuPu', 'PuBu', ... 9 more items ]     │
-│         4         │      'Blues'       │                     [ 'Blues' ]                      │
-│         5         │      'Greens'      │                     [ 'Greens' ]                     │
-│         6         │      'Greys'       │                     [ 'Greys' ]                      │
-│         7         │     'Oranges'      │                    [ 'Oranges' ]                     │
-│         8         │     'Purples'      │                    [ 'Purples' ]                     │
-│         9         │       'Reds'       │                      [ 'Reds' ]                      │
-│        10         │       'BuGn'       │                      [ 'BuGn' ]                      │
-│        11         │       'BuPu'       │                      [ 'BuPu' ]                      │
-│        12         │       'GnBu'       │                      [ 'GnBu' ]                      │
-│        13         │       'OrRd'       │                      [ 'OrRd' ]                      │
-│        14         │      'PuBuGn'      │                     [ 'PuBuGn' ]                     │
-│        15         │       'PuBu'       │                      [ 'PuBu' ]                      │
-│        16         │       'PuRd'       │                      [ 'PuRd' ]                      │
-│        17         │       'RdPu'       │                      [ 'RdPu' ]                      │
-│        18         │      'YlGnBu'      │                     [ 'YlGnBu' ]                     │
-│        19         │       'YlGn'       │                      [ 'YlGn' ]                      │
-│        20         │      'YlOrBr'      │                     [ 'YlOrBr' ]                     │
-│        21         │      'YlOrRd'      │                     [ 'YlOrRd' ]                     │
-│        22         │     'Viridis'      │                    [ 'Viridis' ]                     │
-│        23         │     'Inferno'      │                    [ 'Inferno' ]                     │
-│        24         │      'Magma'       │                     [ 'Magma' ]                      │
-│        25         │       'Warm'       │                      [ 'Warm' ]                      │
-│        26         │       'Cool'       │                      [ 'Cool' ]                      │
-│        27         │ 'CubehelixDefault' │                [ 'CubehelixDefault' ]                │
-│        28         │      'Plasma'      │                     [ 'Plasma' ]                     │
+│         1         │    'Titanic-2'     │  [ 'Greys', 'Purples', 'Plasma', ... 3 more items ]  │
+│         2         │      'Embark'      │ [ 'Greys', 'Inferno', 'Purples', ... 3 more items ]  │
+│         3         │    'Single-Hue'    │  [ 'Purples', 'Blues', 'Greens', ... 3 more items ]  │
+│         4         │    'Multi-Hue'     │     [ 'RdPu', 'BuPu', 'PuBu', ... 9 more items ]     │
+│         5         │      'Blues'       │                     [ 'Blues' ]                      │
+│         6         │      'Greens'      │                     [ 'Greens' ]                     │
+│         7         │      'Greys'       │                     [ 'Greys' ]                      │
+│         8         │     'Oranges'      │                    [ 'Oranges' ]                     │
+│         9         │     'Purples'      │                    [ 'Purples' ]                     │
+│        10         │       'Reds'       │                      [ 'Reds' ]                      │
+│        11         │       'BuGn'       │                      [ 'BuGn' ]                      │
+│        12         │       'BuPu'       │                      [ 'BuPu' ]                      │
+│        13         │       'GnBu'       │                      [ 'GnBu' ]                      │
+│        14         │       'OrRd'       │                      [ 'OrRd' ]                      │
+│        15         │      'PuBuGn'      │                     [ 'PuBuGn' ]                     │
+│        16         │       'PuBu'       │                      [ 'PuBu' ]                      │
+│        17         │       'PuRd'       │                      [ 'PuRd' ]                      │
+│        18         │       'RdPu'       │                      [ 'RdPu' ]                      │
+│        19         │       'RdGy'       │                      [ 'RdGy' ]                      │
+│        20         │      'YlGnBu'      │                     [ 'YlGnBu' ]                     │
+│        21         │       'YlGn'       │                      [ 'YlGn' ]                      │
+│        22         │      'YlOrBr'      │                     [ 'YlOrBr' ]                     │
+│        23         │      'YlOrRd'      │                     [ 'YlOrRd' ]                     │
+│        24         │     'Viridis'      │                    [ 'Viridis' ]                     │
+│        25         │     'Inferno'      │                    [ 'Inferno' ]                     │
+│        26         │      'Magma'       │                     [ 'Magma' ]                      │
+│        27         │       'Warm'       │                      [ 'Warm' ]                      │
+│        28         │       'Cool'       │                      [ 'Cool' ]                      │
+│        29         │ 'CubehelixDefault' │                [ 'CubehelixDefault' ]                │
+│        30         │      'Plasma'      │                     [ 'Plasma' ]                     │
+│        31         │     'Rainbow'      │                    [ 'Rainbow' ]                     │
+│        32         │     'Sinebow'      │                    [ 'Sinebow' ]                     │
+│        33         │     'Spectral'     │                    [ 'Spectral' ]                    │
 └───────────────────┴────────────────────┴──────────────────────────────────────────────────────┘`)
 
     // Retrieve some color scheme names by index
@@ -202,13 +207,13 @@ test ('WRONG SCHEME SET REQUESTED: Wrong scheme set name during circular indexin
 │ (index) │      0       │                          1                           │
 ├─────────┼──────────────┼──────────────────────────────────────────────────────┤
 │    0    │  'Titanic'   │ [ 'Purples', 'Inferno', 'PuBuGn', ... 3 more items ] │
-│    1    │ 'Titanic-2'  │  [ 'Greys', 'Purples', 'Plasma', ... 1 more item ]   │
-│    2    │ 'Single-Hue' │  [ 'Purples', 'Blues', 'Greens', ... 3 more items ]  │
-│    3    │ 'Multi-Hue'  │     [ 'RdPu', 'BuPu', 'PuBu', ... 9 more items ]     │
-│    4    │   'Blues'    │                     [ 'Blues' ]                      │
-│    5    │   'Greens'   │                     [ 'Greens' ]                     │
-│    6    │   'Greys'    │                     [ 'Greys' ]                      │
-│    7    │  'Oranges'   │                    [ 'Oranges' ]                     │
+│    1    │ 'Titanic-2'  │  [ 'Greys', 'Purples', 'Plasma', ... 3 more items ]  │
+│    2    │   'Embark'   │ [ 'Greys', 'Inferno', 'Purples', ... 3 more items ]  │
+│    3    │ 'Single-Hue' │  [ 'Purples', 'Blues', 'Greens', ... 3 more items ]  │
+│    4    │ 'Multi-Hue'  │     [ 'RdPu', 'BuPu', 'PuBu', ... 9 more items ]     │
+│    5    │   'Blues'    │                     [ 'Blues' ]                      │
+│    6    │   'Greens'   │                     [ 'Greens' ]                     │
+│    7    │   'Greys'    │                     [ 'Greys' ]                      │
 └─────────┴──────────────┴──────────────────────────────────────────────────────┘
 ˅˅˅ NaN more rows`, 0, 8)
 
@@ -218,15 +223,15 @@ test ('WRONG SCHEME SET REQUESTED: Wrong scheme set name during circular indexin
 
     expect( () => {
         navigator.color.getChartSchemeBySchemeSetNameAndCircularIndex('WRONG-THEME-NAME', 0)
-    }).toThrow("'WRONG-THEME-NAME' is not as valid value. Expected values are: 'Titanic, Titanic-2, Single-Hue, Multi-Hue, Blues, Greens, Greys, Oranges, Purples, Reds, BuGn, BuPu, GnBu, OrRd, PuBuGn, PuBu, PuRd, RdPu, YlGnBu, YlGn, YlOrBr, YlOrRd, Viridis, Inferno, Magma, Warm, Cool, CubehelixDefault, Plasma'.")
+    }).toThrow("'WRONG-THEME-NAME' is not as valid value. Expected values are: 'Titanic, Titanic-2, Embark, Single-Hue, Multi-Hue, Blues, Greens, Greys, Oranges, Purples, Reds, BuGn, BuPu, GnBu, OrRd, PuBuGn, PuBu, PuRd, RdPu, RdGy, YlGnBu, YlGn, YlOrBr, YlOrRd, Viridis, Inferno, Magma, Warm, Cool, CubehelixDefault, Plasma, Rainbow, Sinebow, Spectral'.")
 
     expect( () => {
         navigator.color.getChartSchemeBySchemeSetNameAndCircularIndex('Grays', 0)
-    }).toThrow("'Grays' is not as valid value. Expected values are: 'Titanic, Titanic-2, Single-Hue, Multi-Hue, Blues, Greens, Greys, Oranges, Purples, Reds, BuGn, BuPu, GnBu, OrRd, PuBuGn, PuBu, PuRd, RdPu, YlGnBu, YlGn, YlOrBr, YlOrRd, Viridis, Inferno, Magma, Warm, Cool, CubehelixDefault, Plasma'.") // Should be 'Greys', not 'Gray'
+    }).toThrow("'Grays' is not as valid value. Expected values are: 'Titanic, Titanic-2, Embark, Single-Hue, Multi-Hue, Blues, Greens, Greys, Oranges, Purples, Reds, BuGn, BuPu, GnBu, OrRd, PuBuGn, PuBu, PuRd, RdPu, RdGy, YlGnBu, YlGn, YlOrBr, YlOrRd, Viridis, Inferno, Magma, Warm, Cool, CubehelixDefault, Plasma, Rainbow, Sinebow, Spectral'.") // Should be 'Greys', not 'Gray'
 
     expect( () => {
         navigator.color.getChartSchemeBySchemeSetNameAndCircularIndex('greys', 0)
-    }).toThrow("'greys' is not as valid value. Expected values are: 'Titanic, Titanic-2, Single-Hue, Multi-Hue, Blues, Greens, Greys, Oranges, Purples, Reds, BuGn, BuPu, GnBu, OrRd, PuBuGn, PuBu, PuRd, RdPu, YlGnBu, YlGn, YlOrBr, YlOrRd, Viridis, Inferno, Magma, Warm, Cool, CubehelixDefault, Plasma'.") // Should be 'Greys', not 'grey'
+    }).toThrow("'greys' is not as valid value. Expected values are: 'Titanic, Titanic-2, Embark, Single-Hue, Multi-Hue, Blues, Greens, Greys, Oranges, Purples, Reds, BuGn, BuPu, GnBu, OrRd, PuBuGn, PuBu, PuRd, RdPu, RdGy, YlGnBu, YlGn, YlOrBr, YlOrRd, Viridis, Inferno, Magma, Warm, Cool, CubehelixDefault, Plasma, Rainbow, Sinebow, Spectral'.") // Should be 'Greys', not 'grey'
 })
 
 
