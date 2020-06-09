@@ -822,7 +822,18 @@
     ]
 
 
-
+    // When window finished loading
+    window.load( () => {
+        setColorScheme()
+        setPanelWidth()
+        setStrokeColor()
+        setStrokeWidth()
+        toggleConnectorPolygons()
+        toggleAbsoluteChartWidths()
+        setConnectorOpacity()
+        toggleAbsoluteValues()
+        setAnimationDuration()
+    })
 
 </script>
 
