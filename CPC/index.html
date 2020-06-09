@@ -134,7 +134,7 @@
                     onchange="loadSelectedDataset()"
             >
 
-                <option value="Titanic - Embark (Partial)">Titanic - Embark (Partial)</option>
+                <option value="Titanic - Embark">Titanic - Embark</option>
                 <option value="Titanic - Prediction Sample">Titanic - Prediction Sample</option>
                 <option value="Wine">Wine</option>
                 <option value="Big Five (2 dimensions, generated)">Big Five (2 dimensions, generated)</option>
@@ -165,14 +165,16 @@
 
                         'Titanic': {
                             path: '/TEPAIV/CPC/data/TitanicR.hl.csv',
-                            columnsToOmit: [ 'NAME' ],
+                            columnsToOmit: [ ],
                             height: 750,
                             bgTitle: 'TITANIC DATASET'
 
                         },
 
-                        'Titanic - Embark (Partial)': {
-                            path: '/TEPAIV/CPC/data/titanic-embark-partial.csv',
+                        'Titanic - Embark': {
+                            path: '/TEPAIV/CPC/data/TitanicResearch.csv',
+                            columnsToOmit: [ 'name', 'sibsp', 'parch', 'boat'],
+                            columnsToForceAsCategorical: [ 'sex', 'class', 'status' ],
                             height: 750,
                             bgTitle: 'TITANIC DATASET'
                         },
