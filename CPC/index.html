@@ -823,17 +823,21 @@
 
 
     // When window finished loading
-    window.load( () => {
-        setColorScheme()
-        setPanelWidth()
-        setStrokeColor()
+    // window.onload( setStrokeWidth() )
+    window.onload( initialize() )
+    function initialize(){
         setStrokeWidth()
-        toggleConnectorPolygons()
-        toggleAbsoluteChartWidths()
-        setConnectorOpacity()
-        toggleAbsoluteValues()
-        setAnimationDuration()
-    })
+        // setPanelWidth()
+    }
+    // TODO: Functions below should be combined within one window.load() statement (wrapping them in one arrow function did not work)
+    // window.load( toggleAbsoluteChartWidths() )
+    // window.load(  )
+    // window.load( setColorScheme() )
+    // window.load( setStrokeColor() )
+    // window.load( toggleConnectorPolygons() )
+    // window.load( setConnectorOpacity() )
+    // window.load( toggleAbsoluteValues() )
+    // window.load( setAnimationDuration() )
 
 </script>
 
