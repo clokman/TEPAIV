@@ -4257,7 +4257,7 @@
         schemeSets: new Map()
             .set('Titanic', ['Purples', 'Inferno', 'PuBuGn', 'Oranges', 'Greys', 'Blues'])
             .set('Titanic-2', ['Greys', 'Purples', 'Plasma', 'PuBu', 'Greens', 'Reds'])
-            .set('Embark', ['Greys', 'Inferno', 'Purples', 'PuBu', 'Greens', 'Magma'])
+            .set('Embark', ['Greys', 'Inferno', 'Purples', 'PuBu', 'Greens', 'Reds'])
             .set('Single-Hue', ['Purples', 'Blues', 'Greens', 'Oranges', 'Greys', 'Reds'])
             .set('Multi-Hue', ['RdPu', 'BuPu', 'PuBu', 'YlGn', 'OrRd', 'PuBuGn', 'PuRd', 'PuRd', 'BuGn', 'YlGnBu', 'YlOrBr', 'YlOrRd'])
             .set('Blues', ['Blues'])
