@@ -316,6 +316,7 @@
                             .height(height)
                             .opacityOfConnectorPolygons( +$( '#connector-opacity-slider' ).val() )  // slider values should be retrieved with jquery's val() method
                             .stroke( document.getElementById( 'stroke-color-dropdown' ).value )
+                            .strokeWidth(`${ Number(document.getElementById( 'stroke-width-slider' ).value) }px`)
                             .build()
 
 
