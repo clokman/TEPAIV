@@ -297,26 +297,44 @@
 
                 async function loadSelectedDataset() {
 
+                    // Get properties according to the selected dataset in the dataset selector dropdown
                     const { datasetPath, columnNamesToIgnore, columnsToForceAsCategoricalData, x, height, bgTitle } = parseDatasetDropdown()
+                    // Parse control panel preferences
+                    const { strokeWidthSliderValue, panelWidthSliderValue, isAbsoluteChartWidthsCheckboxChecked, isAbsoluteValuesCheckboxChecked, colorSchemeDropdownValue, isCategoryConnectorsCheckboxChecked, animationDurationSliderValue } = parseControlPanelValues()
 
+
+                    // Remove any existing navigator
                     if( !!navigator1 )
                         navigator1.remove()
 
+                    // Create a new Navigator
                     navigator1 = new navigator.Navigator()
 
+                    // Load data according to parsed specification
                     navigator1.loadDataset(
                         datasetPath,
                         columnNamesToIgnore,
                         columnsToForceAsCategoricalData
                     ).then( that => {
 
-                        that.colorSet( 'Titanic-2' )
-                            .x(x)
-                            .y(60)
-                            .height(height)
+                        // const strokeWidthSliderValue = Number( document.getElementById( 'stroke-width-slider' ).value)
+                        // const panelWidthSliderValue = Number( document.getElementById( 'panel-width-slider' ).value)
+                        // const isAbsoluteChartWidthsCheckboxChecked = document.getElementById( 'absolute-chart-widths-checkbox' ).checked
+                        // const isAbsoluteValuesCheckboxChecked = document.getElementById( 'absolute-values-checkbox' ).checked
+
+                        // Set Navigator's properties
+                        that.colorSet( colorSchemeDropdownValue )
+                            .x( x )
+                            .y( 60 )
+                            .height( height )
+                            .width( panelWidthSliderValue )
                             .opacityOfConnectorPolygons( +$( '#connector-opacity-slider' ).val() )  // slider values should be retrieved with jquery's val() method
                             .stroke( document.getElementById( 'stroke-color-dropdown' ).value )
-                            .strokeWidth(`${ Number(document.getElementById( 'stroke-width-slider' ).value) }px`)
+                            .strokeWidth(`${ strokeWidthSliderValue }px`)
+                            .showAbsoluteChartWidths( isAbsoluteChartWidthsCheckboxChecked )
+                            .showAbsoluteValues( isAbsoluteValuesCheckboxChecked )
+                            .showConnectorPolygons( isCategoryConnectorsCheckboxChecked )
+                            .animationDuration( animationDurationSliderValue )
                             .build()
 
 
@@ -343,13 +361,14 @@
         <!--Color Scheme Dropdown-->
         <div class="preference-control">
             <!--<p>ColorScheme</p>-->
-            <label for="navigator-1-color-scheme-dropdown" class="preference-control-label">
+            <label for="color-scheme-dropdown" class="preference-control-label">
                 Panel Colors:
             </label>
             <select
-                    class="ui dropdown"
-                    id="navigator-1-color-scheme-dropdown"
-                    onchange="setColorScheme()">
+                class="ui dropdown"
+                id="color-scheme-dropdown"
+                onchange="setColorScheme()"
+            >
 
                 <option value=Titanic-2>Titanic-2</option>
                 <option value=Embark>Embark</option>
@@ -392,7 +411,7 @@
                 function setColorScheme() {
 
                     // Get dropdown value
-                    const dropdown = document.getElementById( 'navigator-1-color-scheme-dropdown' )
+                    const dropdown = document.getElementById( 'color-scheme-dropdown' )
                     const selectedValue = dropdown.value
                     // const selectedValue = dropdown.options[dropdown.selectedIndex]
 
@@ -413,12 +432,12 @@
         <div id="panel-width-control" class="preference-control">
 
             <label for=panel-width-slider  class="preference-control-label">
-                Panel Width: <span id="panel-width-text">100</span>px
+                Panel Width: <span id="panel-width-text">200</span>px
             </label>
             <input type="range"
                    class="slider"
                    id=panel-width-slider
-                   value=100
+                   value=200
                    step=10
                    min=100
                    max=800
@@ -656,7 +675,9 @@
         <div class="preference-control ui toggle checkbox">
             <input type="checkbox"
                    id="absolute-chart-widths-checkbox"
-                   onclick="toggleAbsoluteChartWidths()">
+                   onclick="toggleAbsoluteChartWidths()"
+                   checked="checked"
+            >
             <label for="absolute-chart-widths-checkbox" class="preference-control-label">
                 Absolute Chart Widths
             </label>
@@ -689,8 +710,12 @@
 
         <!--Absolute Values Checkbox-->
         <div class="preference-control ui toggle checkbox">
-            <input type="checkbox" id="checkbox1" onclick="toggleAbsoluteValues()">
-            <label for="checkbox1" class="preference-control-label">
+            <input
+                type="checkbox"
+                id="absolute-values-checkbox"
+                onclick="toggleAbsoluteValues()"
+            >
+            <label for="absolute-values-checkbox" class="preference-control-label">
                 Absolute Labels
             </label>
 
@@ -700,7 +725,7 @@
                 function toggleAbsoluteValues() {
 
                     // Get the checkbox element
-                    const checkBox1 = document.getElementById( 'checkbox1' )
+                    const checkBox1 = document.getElementById( 'absolute-values-checkbox' )
 
                     // Toggle labels based on checkbox status
                     allNavigators.forEach( (navigator) => {
@@ -786,30 +811,47 @@
     }
 
 
-    //// SVG  ////
 
+    //// CREATE THE FIRST NAVIGATOR  ////
+
+    // Select parent container
     const parentD3Element = d3.select( '.navigator-area' )
 
+    // Create SVG
     let mySvg = new container.Svg(15000, 15000, parentD3Element)
 
-
+    // Get properties according to the selected (in this case, the first) dataset in the dataset selector dropdown
     const { datasetPath, columnNamesToIgnore, columnsToForceAsCategoricalData, x, height, bgTitle } = parseDatasetDropdown()
+    // Parse control panel preferences
+    const { strokeWidthSliderValue, panelWidthSliderValue, isAbsoluteChartWidthsCheckboxChecked, isAbsoluteValuesCheckboxChecked, colorSchemeDropdownValue, isCategoryConnectorsCheckboxChecked, animationDurationSliderValue } = parseControlPanelValues()
 
+    // Create a new Navigator
     let navigator1 = new navigator.Navigator()
 
+    // Load dataset to Navigator
     navigator1.loadDataset(
         datasetPath,
         columnNamesToIgnore,
         columnsToForceAsCategoricalData
     ).then( that => {
 
-        that.colorSet( 'Titanic-2' )
-            .height(height)
-            .x(x)
-            .y(60)
+
+        // Set Navigator's properties
+        that.colorSet( colorSchemeDropdownValue )
+            .height( height )
+            .width( panelWidthSliderValue )
+            .x( x )
+            .y( 60 )
             .opacityOfConnectorPolygons( +$( '#connector-opacity-slider' ).val() )  // slider values should be retrieved with jquery's val() method
             .stroke( document.getElementById( 'stroke-color-dropdown' ).value )
+            .strokeWidth(`${ strokeWidthSliderValue }px`)
+            .showAbsoluteChartWidths( isAbsoluteChartWidthsCheckboxChecked )
+            .showAbsoluteValues( isAbsoluteValuesCheckboxChecked )
+            .showConnectorPolygons( isCategoryConnectorsCheckboxChecked )
+            .animationDuration( animationDurationSliderValue )
             .build()
+
+
 
 
         that.objects('panel-0-0').bgText( bgTitle ).update()
@@ -823,22 +865,30 @@
     ]
 
 
-    // When window finished loading
-    // window.onload( setStrokeWidth() )
-    window.onload( initialize() )
-    function initialize(){
-        setStrokeWidth()
-        // setPanelWidth()
+    // HELPER FUNCTION(S)
+
+    function parseControlPanelValues() {
+
+        const strokeWidthSliderValue = Number( document.getElementById( 'stroke-width-slider' ).value )
+        const panelWidthSliderValue = Number( document.getElementById( 'panel-width-slider' ).value )
+        const animationDurationSliderValue = Number( document.getElementById( 'animation-duration-slider' ).value )
+        const isAbsoluteChartWidthsCheckboxChecked = document.getElementById( 'absolute-chart-widths-checkbox' ).checked
+        const isAbsoluteValuesCheckboxChecked = document.getElementById( 'absolute-values-checkbox' ).checked
+        const colorSchemeDropdownValue = document.getElementById( 'color-scheme-dropdown' ).value
+        const isCategoryConnectorsCheckboxChecked = document.getElementById( 'category-connectors-checkbox' ).checked
+
+        return {
+            strokeWidthSliderValue,
+            panelWidthSliderValue,
+            isAbsoluteChartWidthsCheckboxChecked,
+            isAbsoluteValuesCheckboxChecked,
+            colorSchemeDropdownValue,
+            isCategoryConnectorsCheckboxChecked,
+            animationDurationSliderValue
+        }
     }
-    // TODO: Functions below should be combined within one window.load() statement (wrapping them in one arrow function did not work)
-    // window.load( toggleAbsoluteChartWidths() )
-    // window.load(  )
-    // window.load( setColorScheme() )
-    // window.load( setStrokeColor() )
-    // window.load( toggleConnectorPolygons() )
-    // window.load( setConnectorOpacity() )
-    // window.load( toggleAbsoluteValues() )
-    // window.load( setAnimationDuration() )
+
+
 
 </script>
 
