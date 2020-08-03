@@ -1,6 +1,6 @@
 # Transparent Explanations for Predictive Analytics Using Interactive Visualization (TEPAIV) 
 This repository contains prototype interactive visualizations developed during the TEPAIV project, Particularly the 
-Faceted Frequency Browser. 
+'Faceted Frequency Browser'. 
 
 The latest prototype of the Faceted Frequency Browser can be interacted with at:
 [https://clokman.github.io/TEPAIV/CPC/](https://clokman.github.io/TEPAIV/CPC/) .
