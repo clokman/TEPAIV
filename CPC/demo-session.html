@@ -210,9 +210,9 @@
     setTimeout( () => {
 
         // Remove instructions
-        instructions.text('Now, some further possibilities').remove()
+        instructions.text('').update()
 
-    }, 29000)
+    }, 28500)
 
 
     //// ANIMATED DEMO =================================================================
@@ -380,7 +380,17 @@
         categoryN.y(230).height(120).percentage(70).update(1500)
     }, 70000)
 
+    // End message
+    setTimeout( () => {
 
+        // Remove instructions
+        instructions
+            .x(10)
+            .y(400)
+            .text('This API was used to create "Faceted Frequency Browser" in a similar way.')
+            .update()
+
+    }, 1000)
 
     // =======================================================================================
 
