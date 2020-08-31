@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Faceted Frequency Browser</title>
+
+    <!--======================== EXTERNAL MODULES ========================-->
+
+    <!--    D3     -->
+    <script type="text/javascript" src="/TEPAIV/CPC/libraries/external/d3/d3.js"></script>
+    <script type="text/javascript" src="/TEPAIV/CPC/libraries/external/d3/d3-array.js"></script>
+
+    <!--    Lodash     -->
+    <script type="text/javascript" src="/TEPAIV/CPC/libraries/external/lodash.js"></script>
+
+    <!--    JQUERY     -->
+    <script src="/TEPAIV/CPC/libraries/external/jquery-3.1.1.min.js"></script>
+
+    <!--    Semantic UI     -->
+    <!--    NOTE: jQuery must be included before Semantic -->
+    <link rel="stylesheet" type="text/css" href="/TEPAIV/CPC/libraries/external/semantic/dist/semantic.min.css">
+    <script src="/TEPAIV/CPC/libraries/external/semantic/dist/semantic.min.js"></script>
+
+
+
+    <!--======================== INTERNAL STYLE SHEET ======================-->
+    <link rel="stylesheet" type="text/css" href="/TEPAIV/CPC/app.css">
+
+
+    <!--========================== INTERNAL MODULES ========================-->
+    <script type="text/javascript" src="/TEPAIV/CPC/cpcDefaults.js"></script>
+    <script type="text/javascript" src="./data/datasets.js"></script>
+
+    <script type="text/javascript" src="/TEPAIV/CPC/libraries/utils/arrayUtils.js"></script>
+    <script type="text/javascript" src="/TEPAIV/CPC/libraries/utils/classUtils.js"></script>
+    <script type="text/javascript" src="/TEPAIV/CPC/libraries/utils/errorUtils.js"></script>
+    <script type="text/javascript" src="/TEPAIV/CPC/libraries/utils/domUtils.js"></script>
+    <script type="text/javascript" src="/TEPAIV/CPC/libraries/utils/jsUtils.js"></script>
+    <script type="text/javascript" src="/TEPAIV/CPC/libraries/utils/stringUtils.js"></script>
+    <script type="text/javascript" src="/TEPAIV/CPC/libraries/utils/mapUtils.js"></script>
+    <script type="text/javascript" src="/TEPAIV/CPC/libraries/utils/statsUtils.js"></script>
+    <script type="text/javascript" src="/TEPAIV/CPC/libraries/cpc/survey-data.js"></script>
+    <script type="text/javascript" src="/TEPAIV/CPC/libraries/cpc/data.js"></script>
+    <script type="text/javascript" src="/TEPAIV/CPC/libraries/cpc/dataset.js"></script>
+    <script type="text/javascript" src="/TEPAIV/CPC/libraries/cpc/container.js"></script>
+    <script type="text/javascript" src="/TEPAIV/CPC/libraries/cpc/shape.js"></script>
+    <script type="text/javascript" src="/TEPAIV/CPC/libraries/cpc/navigator.js"></script>
+    <script type="text/javascript" src="/TEPAIV/CPC/libraries/cpc/controls.js"></script>
+
+
+
+</head>
+
+<body>
+
+
+<script>
+
+
+    // NOTE: API commands are wrapped in `setTimeout` blocks in order to simulate user actions.
+
+    //// BASIC SHAPES ////
+    const mySvg = new container.Svg()
+    mySvg.width(1280).update()
+
+
+    const instructions = new shape.Text()
+
+    instructions
+        .text('Welcome to this API demo. On the left, you are seeing the results of this code:')
+        .x(475)
+        .update(0)
+
+
+    const currentCode = new shape.Text()
+    currentCode
+        .text('')
+        .x(475)
+        .y(50)
+        .update(0)
+
+    // Create rectangle  [[[ Create first - configure later ]]]
+    const myRectangle = new shape.Rectangle()
+
+
+    // Step 1
+    setTimeout( () => {
+
+        // Move horizontally
+        myRectangle.x(400).update()
+
+        // Update current code text
+        currentCode.text('myRectangle.x(400).update()').update()
+
+    }, 1000)
+
+
+    // Step 2
+    setTimeout( () => {
+
+        // Move vertically AND slowly
+        myRectangle.y(400).update(4000)
+
+        // Update current code text
+        currentCode.text('myRectangle.y(400).update(4000)  // 4000 is transition duration in ms.').update()
+
+    }, 3000)
+
+
+    // Step 3
+    setTimeout( () => {
+
+        // Move AND change color
+        myRectangle.x(0).fill('dodgerblue').update(3000)
+
+        // Update current code text
+        currentCode.text('myRectangle.x(0).fill(\'dodgerblue\').update(3000)').update()
+
+    }, 8000)
+
+
+    // Step 4
+    setTimeout( () => {
+
+        // Change width
+        myRectangle.width(400).update(1500)
+
+        // Update current code text
+        currentCode.text('myRectangle.width(400).update(1500)').update()
+
+    }, 12000)
+
+
+    // Step 5
+    setTimeout( () => {
+
+        // Multiple transformations
+        myRectangle.y(0).height(400).width(100).update(1500)
+
+        // Update current code text
+        currentCode.text('myRectangle.y(0).height(400).width(100).update(1500)').update()
+
+
+    }, 16000)
+
+
+    // Text shift step
+    setTimeout( () => {
+        // Shift instruction text location
+        instructions.x(125).update(2000)
+        currentCode.x(125).update(2000)
+    }, 17000)
+
+
+    // Step 6
+    let categoryFemale
+    setTimeout( () => {
+
+        // Add category inside
+        categoryFemale = new navigator.Category()
+
+        // Update current code text
+        currentCode.text('categoryFemale = new navigator.Category()').update()
+
+
+    }, 21000)
+
+
+    // Step 7
+    setTimeout( () => {
+
+        // Change category percentage AND color
+        categoryFemale.percentage(12).fill('lightblue').update(1000)
+
+        // Update current code text
+        currentCode.text('categoryFemale.percentage(12).fill(\'lightblue\').update(1000)').update()
+
+
+    }, 23000)
+
+
+    // Step 8
+    setTimeout( () => {
+
+        // Change caption color
+        categoryFemale.textFill('black').update(3000)
+
+
+        // Update current code text
+        currentCode.text('categoryFemale.textFill(\'black\').update(3000)').update()
+
+
+    }, 25000)
+
+
+
+    // Update instructions, remove current code
+    setTimeout( () => {
+
+        // Update instructions
+        instructions.text('Now, some further possibilities').update()
+
+        // Remove current code text
+        currentCode.remove()
+
+    }, 27000)
+
+
+    // Remove instructions
+    setTimeout( () => {
+
+        // Remove instructions
+        instructions.text('Now, some further possibilities').remove()
+
+    }, 29000)
+
+
+    //// ANIMATED DEMO =================================================================
+
+    // Enlarge background
+    setTimeout(() => {
+        myRectangle.width(myRectangle.width() + 100).update(1500)
+        myRectangle.width(myRectangle.width() - 50).update(1500)
+    }, 28000)
+
+
+    // Transform category to panel
+    setTimeout(() => {
+        categoryFemale
+            .text('Females')
+            .textAlignment('top-left')
+            .height(350)
+            .width(100)
+            .update(1500)
+    }, 30000)
+
+
+    // Create three categories inside the new panel
+    setTimeout(() => {
+        categoryA = new navigator.Category().x(50).y(75).percentage(33).update(1500)
+        categoryB = new navigator.Category().x(50).y(125).percentage(33).update(1500)
+        categoryFirstClass = new navigator.Category().x(50).y(175).percentage(33).update(1500)
+    }, 32000)
+
+
+    // Increase vertical space between categories
+    setTimeout(() => {
+        categoryB.y( categoryB.y() + 5 ).update(1500)
+        categoryFirstClass.y( categoryFirstClass.y() + 10 ).update(1500)
+    }, 34000)
+
+
+    // Enlarge the 1st class category to span panel height
+    setTimeout(() => {
+        categoryFirstClass.height(150).update(1500)
+    }, 36000)
+
+
+    // Update percentages
+    setTimeout(() => {
+        categoryA.percentage(20).update()
+        categoryB.percentage(20).update()
+        categoryFirstClass.percentage(60).update()
+    }, 38000)
+
+    // Color one category
+    setTimeout(() => {
+        categoryFirstClass.fill('salmon').update(1500)
+    }, 40000)
+
+
+    // Make room for another panel
+    setTimeout(() => {
+        myRectangle.width( myRectangle.width() + 90 ).update(1500)
+        categoryFemale.width( myRectangle.width() - 50 ).update(1500)
+    }, 42000)
+
+
+    // Maximize the 1st class category into a second panel
+    setTimeout(() => {
+        categoryFirstClass.x(120).y(35).width(75).height(325).update(1500)
+        categoryFirstClass.textAlignment('top-left').update(1500)
+        categoryFirstClass.text('1st class').update(1500)
+    }, 44000)
+
+
+    // Add three categories in 1st class
+    setTimeout(() => {
+        categoryX = new navigator.Category().x(133).y(75).height(50).percentage(20).update(1500)
+        categoryY = new navigator.Category().x(133).y(130).height(60).percentage(30).update(1500)
+        categoryZ = new navigator.Category().x(133).y(195).height(150).percentage(50).update(1500)
+    }, 46000)
+
+
+    // Change category colours
+    setTimeout(() => {
+        categoryX.fill('#fee6e4').textFill('darkgray').update(1500)
+        categoryY.fill('#fdc4be').update(1000)
+        categoryZ.fill('#fba298').update(1000)
+    }, 48000)
+
+
+    // Remove older categories
+    setTimeout(() => {
+        categoryA.remove()
+        categoryB.remove()
+    }, 50000)
+
+
+    // Maximize females
+    setTimeout(() => {
+        eulerPadding = 10
+        categoryFemale
+            .x( myRectangle.x() + eulerPadding )
+            .y( myRectangle.y() + eulerPadding )
+            .width( myRectangle.width() - eulerPadding - categoryFemale.x() )
+            .height( myRectangle.height() - eulerPadding - categoryFemale.y() )
+            .text('')
+            .update(1500)
+    }, 52000)
+
+
+    // Maximize 1st class
+    setTimeout(() => {
+        categoryFirstClass
+            .x( categoryFemale.x() + eulerPadding )
+            .y( categoryFemale.y() + eulerPadding )
+            .width( categoryFemale.width() - eulerPadding - categoryFemale.x() )
+            .height( categoryFemale.height() - eulerPadding - categoryFemale.y() )
+            .update(1500)
+    }, 54000)
+
+
+    // Enlarge categories
+    setTimeout(() => {
+        categoryX.x(35).width(173).update(1500)
+        categoryY.x(35).width(173).update(1500)
+        categoryZ.x(35).width(173).update(1500)
+    }, 56000)
+
+
+    // COMPLEX ANIMATIONS
+
+    // Extend category
+    setTimeout(() => {
+        horizontalExtension = new shape.Rectangle().x(35).y(130).width(173).height(60).fill("rgb(253, 196, 190)").update(0)
+        horizontalExtension.x(205).width(250).update(1500)
+    }, 58000)
+
+
+    setTimeout(() => {
+        verticalExtension = new shape.Rectangle().x(255).y(130).width(200).height(60).fill("rgb(253, 196, 190)").update(0)
+        verticalExtension.y(40).height(320).update(1500)
+    }, 60000)
+
+
+    // Extend backgrounds
+    setTimeout(() => {categoryFirstClass.width(450).update(1000)
+    },62000)
+    setTimeout(() => {categoryFemale.width(470).update(1000)
+    }, 64000)
+    setTimeout(() => { myRectangle.width(490).update(1500)
+    }, 66000)
+
+
+    // Copy categories from previous panel and move them to new panel
+    setTimeout(() => {
+        /// Add three categories in 2nd new panel
+        categoryM = new navigator.Category().x(35).y(75).width(173).height(50).fill('rgb(254, 230, 228)').update(0)
+        categoryM.x(270).width(173).update(1500)
+
+        categoryN = new navigator.Category().x(35).y(195).width(173).height(150).fill('rgb(251, 162, 152)').update(0)
+        categoryN.x(270).width(173).update(1500)
+    }, 68000)
+
+
+    // Adjust sizes of copied categories to fill the new panel
+    setTimeout(() => {
+        categoryM.y(55).height(170).percentage(50).update(1500)
+        categoryN.y(230).height(120).percentage(70).update(1500)
+    }, 70000)
+
+
+
+    // =======================================================================================
+
+
+
+</script>
+
+
+
+</body>
+</html>
