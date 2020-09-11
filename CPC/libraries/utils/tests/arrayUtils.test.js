@@ -150,7 +150,7 @@ describe ('Inferences', () => {
         expect( continuousDataWithBooleans.containsMostlyNumbers() ).toBe( false )
         expect( continuousDataWithBooleans.containsMostlyNumbers(25, 0.8) ).toBe( true )
 
-        // Mostly booelans
+        // Mostly booleans
         const continuousDataWithMostlyFalses = [ false,false,false,false,false,false,false,false, '9','10' ]
         expect( continuousDataWithMostlyFalses.containsMostlyNumbers() ).toBe( false )
 
