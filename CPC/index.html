@@ -145,6 +145,7 @@
                 <option value="Mushrooms (8 columns)">Mushrooms (8 columns)</option>
                 <option value="">------------ ↓ New ↓ ------------</option>
                 <option value="Titanic">Titanic</option>
+                <option value="Titanic - Minimal">Titanic - Minimal</option>
                 <option value="COVID-19">COVID-19 (Large data, ±5s load time)</option>
                 <option value="US Census-Income 1994">US Census-Income 1994</option>
                 <option value="Hair-Eye Color">Hair-Eye Color</option>
@@ -171,7 +172,14 @@
                             columnsToOmit: [ ],
                             height: 750,
                             bgTitle: 'TITANIC PASSENGERS'
+                        },
 
+
+                        'Titanic - Minimal': {
+                            path: '/TEPAIV/CPC/data/titanic/TitanicR-minimal.csv',
+                            columnsToOmit: [ 'age' ],
+                            height: 750,
+                            bgTitle: 'TITANIC PASSENGERS'
                         },
 
                         'Titanic - Enriched': {
