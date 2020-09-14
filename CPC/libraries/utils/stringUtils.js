@@ -1,5 +1,5 @@
 //// UMD HEAD ////////////////////////////////////////////////////////////////////////
-// UMD head and foot patterns adapted from d3.js (Copyright 2019 Mike Bostock)
+// UMD head and foot patterns adapted from d3.js
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
         typeof define === 'function' && define.amd ? define(['exports'], factory) :
