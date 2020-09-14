@@ -20,13 +20,6 @@
     <script src="libraries/external/semantic/dist/semantic.min.js"></script>
 
 
-    <!--     VUE     -->
-    <!-- Vue development version, includes helpful console warnings -->
-    <!--    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>-->
-
-    <!-- Vue production version, optimized for size and speed -->
-    <!--<script src="https://cdn.jsdelivr.net/npm/vue"></script>-->
-
 
     <!--======================== INTERNAL STYLE SHEET ======================-->
     <link rel="stylesheet" type="text/css" href="app.css">
@@ -50,47 +43,10 @@
     <script type="text/javascript" src="./libraries/cpc/shape.js" ></script>
     <script type="text/javascript" src="./libraries/cpc/navigator.js" ></script>
     <script type="text/javascript" src="./libraries/cpc/controls.js" ></script>
-
-
+    <script type="text/javascript" src="./cpcDefaults.js" ></script>
 </head>
 
 <body>
-
-
-
-    <!--======================== CONTROLS ========================-->
-
-
-    <!--========== OMIT COLUMNS TEXTBOX ==========-->
-
-    <!--        <br><br>-->
-    <!--        <div id='omit-columns-input' class="ui left action input">-->
-    <!--            <button class="ui white labeled icon button">-->
-    <!--                <i class="x icon"></i>-->
-    <!--                Omit Columns-->
-    <!--            </button>-->
-    <!--            <input v-model="vueValue" type="text" placeholder="Name,Gender..." value="">-->
-
-    <!--        &lt;!&ndash;<p>{{ vueValue.split(',') }}</p>&ndash;&gt;-->
-
-    <!--        </div>-->
-
-    <!--        <br><br>-->
-
-
-    <!--        <script type="text/javascript">-->
-
-    <!--            let omittedColumns = new Vue({-->
-
-    <!--                el: '#omit-columns-input',-->
-    <!--                data: {-->
-    <!--                    vueValue: 'Name'-->
-    <!--                }-->
-    <!--            })-->
-
-    <!--            let ignoredColumnsFromInput = omittedColumns.vueValue.split(',')-->
-
-    <!--        </script>-->
 
 
     <div class="main-container">
@@ -205,38 +161,6 @@
                 </script>
 
             </div>
-
-
-<!--            &lt;!&ndash;Show Category Texts Checkbox&ndash;&gt;-->
-<!--            <div class="preference-control ui checkbox">-->
-<!--                <input type="checkbox" name="example" id="show-category-texts-checkbox" onclick="toggleCategoryTexts()">-->
-<!--                <label>Hide category texts</label>-->
-
-
-<!--                <script>-->
-
-<!--                    function toggleCategoryTexts() {-->
-
-<!--                        // Get the checkbox element-->
-<!--                        const checkBox1 = document.getElementById("show-category-texts-checkbox")-->
-
-<!--                        allNavigators.forEach( navigator => {-->
-
-<!--                            if (checkBox1.checked === true ){-->
-<!--                                navigator.showCategoryCaptions = true-->
-<!--                            } else {-->
-<!--                                navigator.showCategoryCaptions = false-->
-<!--                            }-->
-
-<!--                            navigator.update()-->
-<!--                        })-->
-
-
-<!--                    }-->
-<!--                </script>-->
-
-<!--            </div>-->
-
 
             <!--Color Scheme Dropdown-->
             <div class="preference-control">
@@ -430,12 +354,9 @@
     </div>
 
 
-    <!--======================== LATEST DEMO ========================-->
-    <!--    <script type="text/javascript" src="demos/cpc-horizontal-static/demo.js"></script>-->
 
     <!--======================== NAVIGATORS LOGIC ========================-->
     <script type="text/javascript" src="./single.js"></script>
-
 
 
 
@@ -444,32 +365,8 @@
     <script>
 
         const allNavigators = [
-            // navigator1,
-            navigator2,
-            // navigator3,
-            // navigator4,
-            // navigator5,
-            // navigator6,
-            // navigatorB1,
-            // navigatorB2,
-            // navigatorB2,
-            // navigatorB3
+            navigator1,
         ]
-
-//         const darkenFilter =  document.createElement("DEFS");
-//         darkenFilter.innerHTML = (`\
-//  <filter id="darken">
-//       <feColorMatrix
-//           type='matrix'
-//           values=".5   0   0   0   0
-//                  0  .5   0   0   0
-//                  0   0  .5   0   0
-//                  0   0   0   1   0 "
-//          />
-// </filter>`)
-//         const svg = document.querySelector('SVG')
-//         svg.appendChild(darkenFilter)
-
 
     </script>
 
