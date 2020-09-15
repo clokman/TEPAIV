@@ -697,10 +697,11 @@
 
                     // Update OR build the connector
                     aConnectorAlreadyExistsAtLeftSide
-                        ? connectorPolygon.update()
+                        ? connectorPolygon
+                            .update()
                         : connectorPolygon
-                        .id(connectorId)
-                        .build()
+                            .id(connectorId)
+                            .build()
 
 
                     // Register connector Polygon in self and in linked object's registry
@@ -742,7 +743,8 @@
 
                     // Update OR build the connector
                     aConnectorAlreadyExistsAtRightSide
-                        ? connectorPolygon.update()
+                        ? connectorPolygon
+                            .update()
                         : connectorPolygon
                             .id(connectorId)
                             .build()
