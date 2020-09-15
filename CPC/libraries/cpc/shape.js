@@ -507,7 +507,7 @@
                 }
             })
             ensemble.forEach( objectInEnsemble => {
-                if(objectInEnsemble){
+                if(!!objectInEnsemble){
                     objectInEnsemble.updateTriggeredByEnsembleMember = false
                 }
             })
