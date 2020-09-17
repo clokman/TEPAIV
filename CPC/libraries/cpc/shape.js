@@ -292,6 +292,7 @@
     let ensemblesRegistry = new Map()
     // MixIn Class //
     /**
+     * THIS IS A 'MIXIN' CLASS --- NOT TO BE USED OUTSIDE A CONSTRUCTOR
      * This class holds the generic methods that concern an ensemble member, and is designed to be used as a 'mixin'
      * to another class. The class that uses this class as a mixin inherits the EnsembleMember properties and methods.
      * @example
