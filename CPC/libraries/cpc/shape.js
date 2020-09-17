@@ -289,8 +289,16 @@
 
 
 
-    // MixIn
     let ensemblesRegistry = new Map()
+    // MixIn Class //
+    /**
+     * This class holds the generic methods that concern an ensemble member, and is designed to be used as a 'mixin'
+     * to another class. The class that uses this class as a mixin inherits the EnsembleMember properties and methods.
+     * @example
+     * // This is how the mixin operation is carried out in the constructor of the LinkableRectangle class
+     * const ensembleMember = new EnsembleMember()  // initialize this class
+     * Object.assign(LinkableRectangle.prototype, ensembleMember)  // mix it to another
+     */
     class EnsembleMember {
 
         constructor(){
