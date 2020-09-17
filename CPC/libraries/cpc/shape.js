@@ -298,6 +298,8 @@
      * // This is how the mixin operation is carried out in the constructor of the LinkableRectangle class
      * const ensembleMember = new EnsembleMember()  // initialize this class
      * Object.assign(LinkableRectangle.prototype, ensembleMember)  // mix it to another
+     * @see {container.Ensemble} for the class that manages the Ensemble registry
+     * @see {LinkableRectangle} for a class that mixes this class in itself
      */
     class EnsembleMember {
 
@@ -415,6 +417,12 @@
 
     let _uniqueIdCounterForLinkableRectangle = 0  // for assigning unique ids
 
+    /**
+     * A class that creates rectangles that can belong to ensembles---grouping of members that share and
+     * synchronize properties.
+     * @see EnsembleMember
+     * @see {container.Ensemble} for the class that manages the Ensemble registry
+     */
     class LinkableRectangle extends Rectangle{
 
         constructor(parentContainerSelection=d3.select('body').select('svg')){

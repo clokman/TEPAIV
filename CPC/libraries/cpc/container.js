@@ -337,6 +337,8 @@ class Group {
 
     /**
      * A container class that acts as registry and does not have any DOM functionality.
+     * @see shape.EnsembleMember
+     * @see shape.LinkableRectangle
      */
     class Ensemble extends Group{
 
