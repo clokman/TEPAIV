@@ -448,7 +448,7 @@
 
 
             this._customParentContainerSelectionForConnectors = undefined
-            this.updateTriggeredByEnsembleMember = false
+            this.updateTriggeredByAdjacentObject = false
 
 
 
@@ -483,8 +483,8 @@
             this.validateLinkingLogic()
             validateIdsOfLinkingObjects.call(this)
 
-            // Possible ensemble (null values are ok)
-            const ensemble = [ this, this.linkLeft(), this.linkRight() ]
+            // Possible list of all adjacent objects (null values are ok)
+            const adjacentObjects = [ this, this.linkLeft(), this.linkRight() ]
 
             // Register
             registerAnyLinkedObjectsInEachOther.call(this)
@@ -499,16 +499,16 @@
             createAndUpdateAnyConnectors.call(this)
 
 
-            // Trigger updates in all ensemble members
-            ensemble.forEach( objectInEnsemble => {
-                if(!!objectInEnsemble && objectInEnsemble !== this && !objectInEnsemble.updateTriggeredByEnsembleMember){
-                    objectInEnsemble.updateTriggeredByEnsembleMember = true
-                    objectInEnsemble.update()
+            // Trigger updates in all adjacent objects
+            adjacentObjects.forEach( adjacentObject => {
+                if(!!adjacentObject && adjacentObject !== this && !adjacentObject.updateTriggeredByAdjacentObject){
+                    adjacentObject.updateTriggeredByAdjacentObject = true
+                    adjacentObject.update()
                 }
             })
-            ensemble.forEach( objectInEnsemble => {
-                if(!!objectInEnsemble){
-                    objectInEnsemble.updateTriggeredByEnsembleMember = false
+            adjacentObjects.forEach( adjacentObject => {
+                if(!!adjacentObject){
+                    adjacentObject.updateTriggeredByAdjacentObject = false
                 }
             })
 
