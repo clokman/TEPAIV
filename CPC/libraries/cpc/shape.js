@@ -408,7 +408,6 @@
 
             }
 
-
         }
 
 
@@ -465,10 +464,7 @@
 
 
 
-
             this._customParentContainerSelectionForConnectors = undefined
-            this.updateTriggeredByAdjacentObject = false
-
 
 
             this._sharedSettersAndValues = undefined  /* is Map when assigned.  When this object makes a link with another
@@ -488,11 +484,34 @@
 
 
         build(){
-            this.update()
-            return super.update()
+            return this.updateAll()
         }
 
 
+
+        /**
+         * Updates the self and the and the ensemble
+         * @param transitionDuration{number}
+         * @return {LinkableRectangle}
+         */
+        updateAll(transitionDuration = 500){
+
+            this.update(transitionDuration)
+
+            if(!!this.ensembleObject){
+                this.ensembleObject.update(transitionDuration)
+            }
+
+            return this
+
+        }
+
+
+        /**
+         * Updates self
+         * @param transitionDuration{number}
+         * @return {LinkableRectangle}
+         */
         update(transitionDuration = 500) {
 
             // Adjust
@@ -516,21 +535,6 @@
 
             // Create connector polygons
             createAndUpdateAnyConnectors.call(this)
-
-
-            // Trigger updates in all adjacent objects
-            adjacentObjects.forEach( adjacentObject => {
-                if(!!adjacentObject && adjacentObject !== this && !adjacentObject.updateTriggeredByAdjacentObject){
-                    adjacentObject.updateTriggeredByAdjacentObject = true
-                    adjacentObject.update()
-                }
-            })
-            adjacentObjects.forEach( adjacentObject => {
-                if(!!adjacentObject){
-                    adjacentObject.updateTriggeredByAdjacentObject = false
-                }
-            })
-
 
             super.update(transitionDuration)
 
@@ -1677,6 +1681,7 @@
                 this._x = value
 
                 // Update x value of rectangle
+
                 this._rectangleObject.x(value)
 
                 // Recalculate percentage text position based on new rectangle parameters
@@ -1798,6 +1803,7 @@
         }
 
 
+        // TODO: Typo fixed in method name
         _calculateAndAdjustTextVisiblity(){
 
             const textShouldBeHidden = this.width() < this.minWidthForTextDisplay || this.height() < this.minHeightForTextDisplay

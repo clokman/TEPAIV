@@ -386,8 +386,8 @@ describe( 'Connectors', () => {
         rightLinkableRectangle = rightCaptionedRectangle.objects('rectangle')
 
         // Link LinkableRectangle objects
-        leftLinkableRectangle.linkRight(middleLinkableRectangle).update()
-        middleLinkableRectangle.linkRight(rightLinkableRectangle).update()
+        leftLinkableRectangle.linkRight(middleLinkableRectangle).updateAll()
+        middleLinkableRectangle.linkRight(rightLinkableRectangle).updateAll()
 
         // Current state:
         // [ Lcr [Llr] ] --> [ Mcr [Mlr] ] --> [ Rcr [Rlr] ]

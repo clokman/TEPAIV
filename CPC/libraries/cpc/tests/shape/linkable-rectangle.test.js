@@ -167,6 +167,73 @@ describe( 'Ensemble', () => {
         } )
 
     } )
+    
+
+
+    //// Flood Control ///////////////////////////////////////////////////////////////
+
+    describe( 'Flood Control', () => {
+
+
+
+        beforeEach( () => {
+
+            // Add spy
+            jest.clearAllMocks()
+            jest.spyOn(
+                shape.LinkableRectangle.prototype,
+                'update'
+            )
+
+        })
+
+        test( "There shouldn't be too many calls to the update method when an ensemble is being formed", () => {
+
+            // Initialize a rectangle
+            const leftRectangle = new shape.LinkableRectangle()
+                .id( 'left-rectangle' )
+                .build()
+            expect(shape.LinkableRectangle.prototype.update).toHaveBeenCalledTimes(1)
+
+            // Initialize another rectangle
+            const middleLeftRectangle = new shape.LinkableRectangle()
+                .id( 'middle-left-rectangle' )
+                .build()
+            expect(shape.LinkableRectangle.prototype.update).toHaveBeenCalledTimes(2)
+
+            const middleRightRectangle = new shape.LinkableRectangle()
+                .id( 'middle-right-rectangle' )
+                .build()
+            expect(shape.LinkableRectangle.prototype.update).toHaveBeenCalledTimes(3)
+
+            // Initialize another rectangle
+            const rightRectangle = new shape.LinkableRectangle()
+                .id( 'right-rectangle' )
+                .build()
+            expect(shape.LinkableRectangle.prototype.update).toHaveBeenCalledTimes(4)
+
+
+            // Link new rectangle to the other
+            leftRectangle.linkRight( middleLeftRectangle ).update()
+            expect(shape.LinkableRectangle.prototype.update).toHaveBeenCalledTimes(5)
+            leftRectangle.linkRight( middleLeftRectangle ).updateAll()
+            expect(shape.LinkableRectangle.prototype.update).toHaveBeenCalledTimes(8)
+
+
+            middleLeftRectangle.linkRight( middleRightRectangle ).update()
+            expect(shape.LinkableRectangle.prototype.update).toHaveBeenCalledTimes(9)
+            leftRectangle.linkRight( middleLeftRectangle ).updateAll()
+            expect(shape.LinkableRectangle.prototype.update).toHaveBeenCalledTimes(13)
+
+
+            middleRightRectangle.linkRight( rightRectangle ).update()
+            expect(shape.LinkableRectangle.prototype.update).toHaveBeenCalledTimes(14)
+            leftRectangle.linkRight( middleLeftRectangle ).updateAll()
+            expect(shape.LinkableRectangle.prototype.update).toHaveBeenCalledTimes(19)
+
+        } )
+
+    } )
 
 
 
@@ -452,7 +519,7 @@ describe( 'Inheritance of Field Values During Init', () => {
 
 
             // `customMiddleRectangle` should be dominant when setting values of ensemble during linking
-            customMiddleRectangle.linkRight( defaultRightRectangle ).update()
+            customMiddleRectangle.linkRight( defaultRightRectangle ).updateAll()
 
             expect( customMiddleRectangle.fill() ).toBe( 'salmon' )
             expect( defaultRightRectangle.fill() ).toBe( 'salmon' )
@@ -466,7 +533,7 @@ describe( 'Inheritance of Field Values During Init', () => {
 
 
             // `defaultLeftRectangle` should be dominant when setting values of ensemble during linking
-            defaultLeftRectangle.linkRight( customMiddleRectangle ).update()
+            defaultLeftRectangle.linkRight( customMiddleRectangle ).updateAll()
 
             expect( defaultLeftRectangle.fill() ).toBe( 'gray' )
             expect( customMiddleRectangle.fill() ).toBe( 'gray' )
@@ -1348,7 +1415,9 @@ describe( 'Connector Polygons', () => {
             middleRectangle
                 .linkLeft( leftRectangle )
                 .linkRight( rightRectangle )
-                .update()
+                .updateAll()
+
+            // middleRectangle.updateAll()
 
             expect( middleRectangle.connectorLeft().class() ).toBe( 'connector-polygon' )
             expect( middleRectangle.connectorRight().class() ).toBe( 'connector-polygon' )
@@ -2161,7 +2230,7 @@ describe( 'Connector Polygons', () => {
 
 
             // Hide all connectors via one of the rectangles in the ensemble
-            leftRectangle.visibilityOfAllConnectorsInEnsemble( 'hidden' ).update()
+            leftRectangle.visibilityOfAllConnectorsInEnsemble( 'hidden' ).updateAll()
 
             // Connector 1 should now be hidden
             expect( leftRectangle.visibilityOfConnectorRight() ).toBe( 'hidden' )
@@ -2176,7 +2245,7 @@ describe( 'Connector Polygons', () => {
 
 
             // Show all connectors via one of the rectangles in the ensemble
-            rightRectangle.visibilityOfAllConnectorsInEnsemble( 'visible' ).update()
+            rightRectangle.visibilityOfAllConnectorsInEnsemble( 'visible' ).updateAll()
 
             // Connector 1 should now be visible
             expect( leftRectangle.visibilityOfConnectorRight() ).toBe( 'visible' )
@@ -2319,7 +2388,7 @@ describe( 'Connector Polygons', () => {
 
 
             // Change opacity of all connectors via one of the rectangles in the ensemble
-            leftRectangle.opacityOfAllConnectorsInEnsemble( 0.5 ).update()
+            leftRectangle.opacityOfAllConnectorsInEnsemble( 0.5 ).updateAll()
 
             // Connector 1 should now have 0.5 opacity
             expect( leftRectangle.opacityOfConnectorRight() ).toBe( 0.5 )
@@ -2334,7 +2403,7 @@ describe( 'Connector Polygons', () => {
 
 
             // Change the opacity of all connectors via one of the rectangles in the ensemble
-            rightRectangle.opacityOfAllConnectorsInEnsemble( 1.0 ).update()
+            rightRectangle.opacityOfAllConnectorsInEnsemble( 1.0 ).updateAll()
 
             // Connector 1 should now have an opacity of 1.0
             expect( leftRectangle.opacityOfConnectorRight() ).toBe( 1 )
