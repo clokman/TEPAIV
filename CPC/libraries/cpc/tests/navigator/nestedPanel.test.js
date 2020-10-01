@@ -968,9 +968,9 @@ describe ('Absolute Chart Widths', () => {
             jest.runOnlyPendingTimers()
 
 
-            // No overaps should have occurred
-            panelZeroContainsSibling1 = panelZero.rightEdge() > siblingPanel1.rightEdge()
-            panelZeroContainsSibling2 = panelZero.rightEdge() > siblingPanel2.rightEdge()
+            // No overlaps should have occurred
+            const panelZeroContainsSibling1 = panelZero.rightEdge() > siblingPanel1.rightEdge()
+            const panelZeroContainsSibling2 = panelZero.rightEdge() > siblingPanel2.rightEdge()
 
             expect( panelZeroContainsSibling1 ).toBe( true )
             expect( panelZeroContainsSibling2 ).toBe( true )
