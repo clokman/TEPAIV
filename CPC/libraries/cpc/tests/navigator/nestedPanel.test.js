@@ -96,8 +96,8 @@ describe ('Nested Panel Instantiation', () => {
         const categoryObjectBeingSpawnedFrom = childPanel.objectToSpawnFrom
             , categoryRectangleElementBeingSpawnedFrom = categoryObjectBeingSpawnedFrom.objects('rectangle').select()
 
-        yCoordinateOfBridgeRectangleElement = bridgeRectangleElement.getAttribute('y')
-        yCoordinateOfCategoryRectangleBeingSpawnedFrom = categoryRectangleElementBeingSpawnedFrom.node().getAttribute('y')
+        const yCoordinateOfBridgeRectangleElement = bridgeRectangleElement.getAttribute('y')
+        const yCoordinateOfCategoryRectangleBeingSpawnedFrom = categoryRectangleElementBeingSpawnedFrom.node().getAttribute('y')
 
         expect(yCoordinateOfBridgeRectangleElement === yCoordinateOfCategoryRectangleBeingSpawnedFrom).toBeTruthy()
 
@@ -1129,13 +1129,13 @@ describe ('Add Child Panels: Should add child panels correctly', () => {
         initializeDomWithSvg()
 
         // Add panel #0
-        myNestedPanel = new navigator.NestedPanel().build()
+        const myNestedPanel = new navigator.NestedPanel().build()
         // Add child panel #1
-        spawnObjectForChild1 = myNestedPanel.objects('gender').objects('female')
-        myChildPanel1 = new navigator.NestedPanel(myNestedPanel, spawnObjectForChild1).build()
+        const spawnObjectForChild1 = myNestedPanel.objects('gender').objects('female')
+        const myChildPanel1 = new navigator.NestedPanel(myNestedPanel, spawnObjectForChild1).build()
         // Add child panel #2
-        spawnObjectForChild2 = myChildPanel1.objects('gender').objects('male')
-        myChildPanel2 = new navigator.NestedPanel(myChildPanel1, spawnObjectForChild2).build()
+        const spawnObjectForChild2 = myChildPanel1.objects('gender').objects('male')
+        const myChildPanel2 = new navigator.NestedPanel(myChildPanel1, spawnObjectForChild2).build()
 
 
         // Check the number of panels on DOM
@@ -1150,7 +1150,7 @@ describe ('Add Child Panels: Should add child panels correctly', () => {
         initializeDomWithSvg()
 
         // Add panel #0
-        myPanel = new navigator.Panel()
+        const myPanel = new navigator.Panel()
 
         // Change padding values
         myPanel
@@ -1702,8 +1702,8 @@ describe ('Inferences', () => {
 
             // Create panel 1
             // Create child panel
-            spawnObjectForChildPanel = panel0.objects('gender').objects('female')
-            childPanel = new navigator.NestedPanel(panel0, spawnObjectForChildPanel)
+            const spawnObjectForChildPanel = panel0.objects('gender').objects('female')
+            const childPanel = new navigator.NestedPanel(panel0, spawnObjectForChildPanel)
             childPanel.build()
             childPanel.updateAllPanels()
             jest.runOnlyPendingTimers()
