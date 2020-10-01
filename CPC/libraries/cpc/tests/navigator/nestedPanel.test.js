@@ -3049,22 +3049,21 @@ describe( 'Synchronizing Inner Padding with Parents and Children', () => {
         const topEdgeOfSiblingPanel3ChartsArea = siblingPanel3.objects('status').objects('died').objects('rectangle').topLeftCorner()[1]
         const bottomEdgeOfSiblingPanel3ChartsArea = siblingPanel3.objects('gender').objects('male').objects('rectangle').bottomLeftCorner()[1]
 
-
-        const topEdgeOfchildPanelOfSibling2ChartsArea = childPanelOfSibling2.objects('status').objects('died').objects('rectangle').topLeftCorner()[1]
-        const bottomEdgeOfchildPanelOfSibling2ChartsArea = childPanelOfSibling2.objects('gender').objects('male').objects('rectangle').bottomLeftCorner()[1]
+        const topEdgeOfChildPanelOfSibling2ChartsArea = childPanelOfSibling2.objects('status').objects('died').objects('rectangle').topLeftCorner()[1]
+        const bottomEdgeOfChildPanelOfSibling2ChartsArea = childPanelOfSibling2.objects('gender').objects('male').objects('rectangle').bottomLeftCorner()[1]
 
 
         // Top edges of charts should be aligned
         expect( topEdgeOfPanelZeroChartsArea ).toBe( topEdgeOfSiblingPanel1ChartsArea )
         expect( topEdgeOfPanelZeroChartsArea ).toBe( topEdgeOfSiblingPanel2ChartsArea )
         expect( topEdgeOfPanelZeroChartsArea ).toBe( topEdgeOfSiblingPanel3ChartsArea )
-        expect( topEdgeOfPanelZeroChartsArea ).toBe( topEdgeOfchildPanelOfSibling2ChartsArea )
+        expect( topEdgeOfPanelZeroChartsArea ).toBe( topEdgeOfChildPanelOfSibling2ChartsArea )
 
         // Bottom edges of charts should be aligned
         expect( bottomEdgeOfPanelZeroChartsArea ).toBe( bottomEdgeOfSiblingPanel1ChartsArea )
         expect( bottomEdgeOfPanelZeroChartsArea ).toBe( bottomEdgeOfSiblingPanel2ChartsArea )
         expect( bottomEdgeOfPanelZeroChartsArea ).toBe( bottomEdgeOfSiblingPanel3ChartsArea )
-        expect( bottomEdgeOfPanelZeroChartsArea ).toBe( bottomEdgeOfchildPanelOfSibling2ChartsArea )
+        expect( bottomEdgeOfPanelZeroChartsArea ).toBe( bottomEdgeOfChildPanelOfSibling2ChartsArea )
 
 
     } )
