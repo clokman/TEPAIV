@@ -856,7 +856,7 @@ describe ('Absolute Chart Widths', () => {
 [Build warning]: "showAbsoluteChartWidths()" is set to "true" but no data is provided during NestedPanel instance initialization. 
                     In this scenario, the NestedPanel is initiated with example data and it may not really visualize absolute values. 
                     Importantly, build parameters are calculated from this example data. If some other data is provided to the 
-                    NestePanel after the build operation with example data, animation glitches may occur. To display absolute values 
+                    NestedPanel after the build operation with example data, animation glitches may occur. To display absolute values 
                     correctly, a "Stacks" object should be provided as data before building the NestedPanel.`)
 
             destroyWarnings()
