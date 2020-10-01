@@ -664,6 +664,8 @@
              */
             function createAndUpdateAnyConnectors() {
 
+                const classNameForConnectors = 'connector-polygon'
+
                 const anObjectIsLinkedAtLeftSide = !!this.linkLeft()
                 const anObjectIsLinkedAtRightSide = !!this.linkRight()
 
@@ -701,7 +703,7 @@
 
                     // Adjust values of the connector
                     connectorPolygon
-                        .class('connector-polygon')
+                        .class( classNameForConnectors )
                         .points(
                             this.linkLeft().topRightCorner(),
                             this.topLeftCorner(),
@@ -748,6 +750,7 @@
 
                     // Adjust values of the connector
                     connectorPolygon
+                        .class( classNameForConnectors )
                         .points(
                             this.topRightCorner(),
                             this.linkRight().topLeftCorner(),
