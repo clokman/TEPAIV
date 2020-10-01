@@ -928,7 +928,7 @@ describe ('Continuous Data', () => {
             myNavigator.initParams.quantilesForContinuousColumns = [ 'Q1', 'Q2', 'Q3', 'Q4' ]
             await myNavigator.build()
 
-            myNavigator  // TODO
+            // TODO
 
         })
 
