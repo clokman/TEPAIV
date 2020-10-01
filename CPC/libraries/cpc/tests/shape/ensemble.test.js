@@ -462,6 +462,49 @@ describe( 'Shared properties of EnsembleMembers', () => {
     } )
 
 
+    test( 'It should be possible to update all ensemble members using the update method of the Ensemble class', () => {
+
+        initializeDomWithSvg()
+        const myEnsemble = new container.Ensemble()
+
+        const member1 = new shape.LinkableRectangle()  // `.build()` is not yet used on purpose, as this state
+        // reflects
+        // the most likely use scenario
+        const member2 = new shape.LinkableRectangle()
+
+        // Register members into Ensemble
+        myEnsemble.members( member1.id(), member1 )
+        myEnsemble.members( member2.id(), member2 )
+
+        // Specify which setters are shared
+        myEnsemble.sharedSettersAndValues( member1.fill.name, null )
+
+
+        // Register Ensemble in members
+        member1.ensembleObject = myEnsemble
+        member2.ensembleObject = myEnsemble
+
+
+        // Inject code to shared setters, so their arguments are registered
+        myEnsemble.hookRegistryToSharedSetters() // This is explicitly done here for this test during development
+        // but is automatically done in the final code
+
+
+        // Update fill property value of one member
+        expect( member1.fill() ).not.toBe( 'salmon' )
+        expect( member2.fill() ).not.toBe( 'salmon' )
+        member1.fill( 'salmon' ).update()
+
+
+        myEnsemble.update()
+
+
+        // The property values of both members should now be the same
+        expect( member1.fill() ).toBe( 'salmon' )
+        expect( member2.fill() ).toBe( 'salmon' )
+
+    } )
+
 
     test( '`hookRegistryToSharedSetters` should return error if registry is empty', () => {
 
