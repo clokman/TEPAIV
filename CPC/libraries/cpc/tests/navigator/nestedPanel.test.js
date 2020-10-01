@@ -649,7 +649,7 @@ describe ('Spatial Inferences', () => {
 
 
 
-//// Absolute vaules ///////////////////////////////////////////////////////////////
+//// Absolute values ///////////////////////////////////////////////////////////////
 
 describe ('Absolute values', () => {
 
@@ -2802,7 +2802,6 @@ describe( 'Connector Polygons', () => {
 
         const allPolygonElementsOnDom = document.querySelectorAll( '.connector-polygon' )
         expect( allPolygonElementsOnDom.length ).toBe( 7 )
-
 
 
 

@@ -364,8 +364,6 @@ describe( 'Shared properties of EnsembleMembers', () => {
         myEnsemble.sharedSettersAndValues( member1.fill.name, null )
 
 
-
-
     } )
 
 

@@ -362,7 +362,7 @@
 
             /**
              * Makes sure that an object's registry of linked objects does not contain the self or duplicate items.
-             *  This is to ensure that each 'connection slot' of an object (e.g., 'left' or 'top') is occuped by only
+             *  This is to ensure that each 'connection slot' of an object (e.g., 'left' or 'top') is occupied by only
              *  one other member of the ensemble.
              */
             this.validateLinkingLogic = function() {

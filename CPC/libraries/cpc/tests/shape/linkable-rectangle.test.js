@@ -159,7 +159,7 @@ describe( 'Ensemble', () => {
             expect( additionalRectangle.ensembleObject ).toEqual( leftRectangle.ensembleObject )
 
 
-            // And the ensemble object should have both the additional rectangle registered in it
+            // And the ensemble obj§ect should have both the additional rectangle registered in it
             expect( Array.from( leftRectangle.ensembleObject.members().keys() ) ).toEqual(
                 ['left-rectangle', 'right-rectangle', 'additional-rectangle']
             )
