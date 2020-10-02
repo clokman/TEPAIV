@@ -1339,23 +1339,12 @@ initializeDomWithTitanicTinyNavigator.and = {
 
 }
 
-
-
-
 /**
  * A simple testing template that creates a Navigator object with a very small dataset.
  * @param build {Boolean} If set to false, would initialize Navigator without calling the `build()` method.
  * @return {Promise<Navigator>}
+ * @async
  */
-async function initializeDomWithCovid19TinyNavigator( build=true ) {
-
-    return await createNavigator({
-        datasetPath: 'http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/Covid19Geographic-Tiny.csv',
-        build: build
-    } )
-}
-
-
 async function initializeDomWithTitanicEmbarkTinyNavigator ( build=true ) {
     return await createNavigator({
         datasetPath: 'http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanic-embark-tiny.csv',
@@ -1420,6 +1409,21 @@ initializeDomWithTitanicEmbarkTinyNavigator.and.twoSiblingChildren.and = {
         return { myNavigator, panelZero, leftSiblingPanel, rightSiblingPanel, leftGrandChildPanel, rightGrandchildPanel }
 
     }
+}
+
+
+/**
+ * A simple testing template that creates a Navigator object with a very small dataset.
+ * @param build {Boolean} If set to false, would initialize Navigator without calling the `build()` method.
+ * @return {Promise<Navigator>}
+ * @async
+ */
+async function initializeDomWithCovid19TinyNavigator( build=true ) {
+
+    return await createNavigator({
+        datasetPath: 'http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/Covid19Geographic-Tiny.csv',
+        build: build
+    } )
 }
 
 
