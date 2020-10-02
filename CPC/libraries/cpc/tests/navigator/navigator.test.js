@@ -1362,7 +1362,74 @@ async function initializeDomWithTitanicEmbarkTinyNavigator ( build=true ) {
 }
 
 
+
 initializeDomWithTitanicEmbarkTinyNavigator.and = {
+
+
+    grandChildPanel: async (build=true) => {
+
+        jest.useFakeTimers()
+
+        const myNavigator = await initializeDomWithTitanicEmbarkTinyNavigator( build )
+
+        // Create child
+        domUtils.simulateClickOn('#panel-0-0 #Died')
+        jest.runOnlyPendingTimers()
+
+
+        // Create grandchild
+        domUtils.simulateClickOn('#panel-1-0 #Female')
+        jest.runOnlyPendingTimers()
+
+
+        // Assign each panel object to a variable
+        const panelZero = myNavigator.objects('panel-0-0')
+        const childPanel = myNavigator.objects('panel-1-0')
+        const grandChildPanel = myNavigator.objects('panel-2-0')
+
+        return { myNavigator, panelZero, childPanel, grandChildPanel }
+
+    },
+
+
+    grandGrandChildPanel: async (build=true) => {
+
+        const {myNavigator, panelZero, childPanel, grandChildPanel} =
+            await initializeDomWithTitanicEmbarkTinyNavigator.and.grandChildPanel( build )
+
+        // Create grand grandchild
+        domUtils.simulateClickOn('#panel-2-0 #Cherbourg')
+        jest.runOnlyPendingTimers()
+
+
+        // Assign each panel object to a variable
+        const grandGrandChildPanel = myNavigator.objects('panel-3-0')
+
+        return { myNavigator, panelZero, childPanel, grandChildPanel, grandGrandChildPanel }
+
+    },
+
+
+    grandGrandGrandChildPanel: async (build=true) => {
+
+        const {myNavigator, panelZero, childPanel, grandChildPanel, grandGrandChildPanel} =
+            await initializeDomWithTitanicEmbarkTinyNavigator.and.grandGrandChildPanel( build )
+
+        // Create grand grandchild
+        /* TODO: Once the faulty ID generation is fixed (HTML IDs should not start with numbers, this selector
+            should be corrected. (Ideally, this selector should have been "#panel-3-0 #2nd-class". But because the
+            id '#2nd class' starts with anumber, it is an invalid id). */
+        domUtils.simulateClick(document.querySelectorAll('#panel-3-0 *')[4])
+        //  should be corrected)
+        jest.runOnlyPendingTimers()
+
+
+        // Assign each panel object to a variable
+        const grandGrandGrandChildPanel = myNavigator.objects('panel-4-0')
+
+        return { myNavigator, panelZero, childPanel, grandChildPanel, grandGrandChildPanel, grandGrandGrandChildPanel }
+
+    },
 
 
     twoSiblingChildren: async (build=true) => {
@@ -1491,8 +1558,8 @@ describe( 'Initialize DOM With "Titanic Tiny" navigator.', () => {
 
 
     test( 'Titanic Tiny navigator and Grandchild panel', async () => {
-        await initializeDomWithTitanicTinyNavigator.and.grandChildPanel()
-        writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/initializeDomWithTitanicTinyNavigator.and.grandChildPanel.html')
+    //     await initializeDomWithTitanicTinyNavigator.and.grandChildPanel()
+    //     writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/initializeDomWithTitanicTinyNavigator.and.grandChildPanel.html')
     })
 
 
@@ -1506,6 +1573,24 @@ describe( 'Initialize DOM With "Titanic EMBARK Tiny" navigator.', () => {
     test( 'Titanic Embark Tiny navigator', async () => {
         // await initializeDomWithTitanicEmbarkTinyNavigator()
         // writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/initializeDomWithTitanicEmbarkTinyNavigator.html')
+    })
+
+
+    test( 'Titanic Embark Tiny navigator and grandchild', async () => {
+        // await initializeDomWithTitanicEmbarkTinyNavigator.and.grandChildPanel()
+        // writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/initializeDomWithTitanicEmbarkTinyNavigator.and.grandChildPanel.html')
+    })
+
+
+    test( 'Titanic Embark Tiny navigator and grand grandchild', async () => {
+        // await initializeDomWithTitanicEmbarkTinyNavigator.and.grandGrandChildPanel()
+        // writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/initializeDomWithTitanicEmbarkTinyNavigator.and.grandGrandChildPanel.html')
+    })
+
+
+    test( 'Titanic Embark Tiny navigator and grand grand grandchild', async () => {
+         // await initializeDomWithTitanicEmbarkTinyNavigator.and.grandGrandGrandChildPanel()
+         // writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/initializeDomWithTitanicEmbarkTinyNavigator.and.grandGrandGrandChildPanel.html')
     })
 
 
@@ -1528,10 +1613,10 @@ describe( 'Initialize DOM With COVID19 Tiny navigator.', () => {
 
     // UNCOMMENT TESTS IN THIS SECTION TO VIEW THEIR RESULTS IN DOM //
 
-    // test( 'COVID Tiny navigator', async () => {
+    test( 'COVID Tiny navigator', async () => {
     // await initializeDomWithCovid19TinyNavigator()
     // writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/initializeDomWithCovid19TinyNavigator.html')
-    // })
+    })
 
 } )
 
