@@ -1273,6 +1273,10 @@ describe ('Stroke Properties ', () => {
 //// Helper Functions  ///////////////////////////////////////////////////////////////
 
 
+
+
+//// Titanic Tiny Navigator ////
+
 /**
  * A simple testing template that creates a Navigator object with a very small dataset.
  * @param build {Boolean} If set to false, would initialize Navigator without calling the `build()` method.
@@ -1338,6 +1342,11 @@ initializeDomWithTitanicTinyNavigator.and = {
     }
 
 }
+
+
+
+
+//// Titanic EMBARK Tiny Navigator ////
 
 /**
  * A simple testing template that creates a Navigator object with a very small dataset.
@@ -1412,6 +1421,11 @@ initializeDomWithTitanicEmbarkTinyNavigator.and.twoSiblingChildren.and = {
 }
 
 
+
+
+//// COVID19 Tiny Navigator ////
+
+
 /**
  * A simple testing template that creates a Navigator object with a very small dataset.
  * @param build {Boolean} If set to false, would initialize Navigator without calling the `build()` method.
@@ -1464,16 +1478,30 @@ async function createNavigator( { datasetPath, build = true, omitColumns=[] } = 
 
 //// Helper Function Tests: Initialize DOM With... ///////////////////////////////////////////////////////////////
 
-describe( 'Helper Function Tests: Initialize DOM With...', () => {
 
+describe( 'Initialize DOM With "Titanic Tiny" navigator.', () => {
 
-    // UNCOMMENT TESTS IN THIS SECTION TO VIEW THEM IN DOM
+    // UNCOMMENT TESTS IN THIS SECTION TO VIEW THEIR RESULTS IN DOM //
 
     test( 'Titanic Tiny navigator and Grandchild panel', async () => {
         // await initializeDomWithTitanicTinyNavigator.and.grandChildPanel()
         // writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/mi.html')
 
     })
+
+
+    test( 'Titanic Tiny navigator and Grandchild panel', async () => {
+        await initializeDomWithTitanicTinyNavigator.and.grandChildPanel()
+        writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/initializeDomWithTitanicTinyNavigator.and.grandChildPanel.html')
+    })
+
+
+} )
+
+
+describe( 'Initialize DOM With "Titanic EMBARK Tiny" navigator.', () => {
+
+    // UNCOMMENT TESTS IN THIS SECTION TO VIEW THEIR RESULTS IN DOM //
 
     test( 'Titanic Embark Tiny navigator', async () => {
         // await initializeDomWithTitanicEmbarkTinyNavigator()
@@ -1493,18 +1521,17 @@ describe( 'Helper Function Tests: Initialize DOM With...', () => {
     })
 
 
-    test( 'Titanic Tiny navigator and Grandchild panel', async () => {
-        // await initializeDomWithTitanicTinyNavigator.and.grandChildPanel()
-        // writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/mi.html')
-
-    })
+} )
 
 
-    test( 'COVID Tiny navigator', async () => {
-        // await initializeDomWithCovid19TinyNavigator()
-        // writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/covidTiny.html')
-    })
+describe( 'Initialize DOM With COVID19 Tiny navigator.', () => {
 
+    // UNCOMMENT TESTS IN THIS SECTION TO VIEW THEIR RESULTS IN DOM //
+
+    // test( 'COVID Tiny navigator', async () => {
+    // await initializeDomWithCovid19TinyNavigator()
+    // writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/initializeDomWithCovid19TinyNavigator.html')
+    // })
 
 } )
 
