@@ -2265,10 +2265,11 @@
                     const leftRectangle = equivalentCategoryObjectInLeftPanel.objects( 'rectangle' )
                     const rightRectangle = categoryObject.objects( 'rectangle' )
                     leftRectangle
-                        .linkRight( rightRectangle ).update()  /* the `update` that is called here should not
-                                                                          interrupt the animation because this
-                                                                           method is (and should always be) called
-                                                                           within a `setTimeOut` block)
+                        .linkRight( rightRectangle ).updateAll()  /* the `update` that is called here should not
+                                                                          interrupt the animation because the
+                                                                          _createConnectors method is (and should
+                                                                          always be) called within a `setTimeOut`
+                                                                          block)
                                                                       */
 
                 }
