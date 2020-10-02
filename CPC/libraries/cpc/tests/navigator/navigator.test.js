@@ -1500,6 +1500,12 @@ describe( 'Helper Function Tests: Initialize DOM With...', () => {
     })
 
 
+    test( 'COVID Tiny navigator', async () => {
+        // await initializeDomWithCovid19TinyNavigator()
+        // writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/covidTiny.html')
+    })
+
+
 } )
 
 
