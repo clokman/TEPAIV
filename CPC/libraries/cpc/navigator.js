@@ -1979,9 +1979,9 @@
             super.remove()
 
 
+            // De-register self from any parent's registry
             if ( this.has.parentPanel ){
 
-                // De-register self from children registry
                 this.parentPanel.childrenPanels.delete( this.id() )
 
                 // Update inferences
@@ -1989,10 +1989,10 @@
 
             }
 
+            // If this is panel zero, then clear its children (in case the panel re-appears in some future, it
+            // should have an empty registry)
+            if ( !this.has.parentPanel ){
 
-            if ( !this.has.parentPanel){
-
-                // Clear children (in case the panel re-appears in some future, it should not have any items in its registry)
                 this.childrenPanels.clear()
 
                 // Remove self
@@ -2001,9 +2001,9 @@
             }
 
 
-            // If this panel is  the only child of a panel
+            // If this panel is the only child of a panel, then just reset the parent panel's dimensions
             if ( !this.has.parentWithAnotherChild
-              && this.has.parentPanel){
+              && this.has.parentPanel ){
 
                 // Adjust parent panel
                 this._resetParentPanelAndPropagate()
@@ -2011,7 +2011,9 @@
             }
 
 
-            if ( this.has.parentWithAnotherChild){
+            // If this panel is not the only child, then find the rightmost edge of the remaining children panels
+            // of the parent, and set that parent's dimensions accordingly
+            if ( this.has.parentWithAnotherChild ){
 
                 // Select rightmost sibling
                 const rightmostSiblingObject = this.has.parentWithRightmostChildPanelObject
@@ -2030,7 +2032,7 @@
                     - rightmostEdgeOfParentPanelIfThereWereNoBgExtension
                     + this.parentPanel._innerPadding.right
 
-                this.parentPanel.bgExtensionRight(newBgExtensionValue)
+                this.parentPanel.bgExtensionRight( newBgExtensionValue )
                 this.parentPanel._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
 
             }
@@ -2270,7 +2272,7 @@
                                                                           _createConnectors method is (and should
                                                                           always be) called within a `setTimeOut`
                                                                           block)
-                                                                      */
+                                                                  */
 
                 }
             })
