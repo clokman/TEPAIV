@@ -1995,9 +1995,6 @@
 
                 this.childrenPanels.clear()
 
-                // Remove self
-                super.remove()
-
             }
 
 
