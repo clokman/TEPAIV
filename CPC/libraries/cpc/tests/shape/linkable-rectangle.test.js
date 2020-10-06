@@ -1933,7 +1933,7 @@ describe( 'Connector Polygons', () => {
             // Check parents of elements on DOM
             expect( leftLinkableRectangleElementOnDom.parentNode.nodeName ).toBe( 'svg' )
             expect( rightLinkableRectangleElementOnDom.parentNode.nodeName ).toBe( 'svg' )
-            expect( connectorElementOnDom.parentNode.nodeName ).toBe( 'svg' )
+            expect( connectorElementOnDom.parentNode.nodeName ).toBe( 'g' )
 
         } )
 
@@ -2280,6 +2280,83 @@ describe( 'Connector Polygons', () => {
 
         } )
 
+    } )
+
+
+
+
+    //// Parent Group Membership ///////////////////////////////////////////////////////////////
+
+    describe( 'Parent Group Membership', () => {
+
+        // Setup //
+
+        let middleRectangle,
+            rightRectangle,
+            leftRectangle
+        let connector1,
+            connector2
+
+        beforeEach( () => {
+
+            initializeDomWithSvg()
+
+            jest.useFakeTimers()
+
+            // Create rectangles
+            rightRectangle = new shape.LinkableRectangle()
+                .id( 'right-rectangle' )
+                .x( 400 )
+            middleRectangle = new shape.LinkableRectangle()
+                .id( 'middle-rectangle' )
+                .x(200)
+                .y(100)
+                .build()
+            leftRectangle = new shape.LinkableRectangle()
+                .id( 'left-rectangle' )
+                .x( 0 )
+                .build()
+
+            // Link rectangles
+            // [L]️ -c1-> [M] -c2-> [R]
+
+            leftRectangle.linkRight( middleRectangle ).update()
+            middleRectangle.linkRight( rightRectangle ).update()
+
+            // Get connectors
+            connector1 = leftRectangle.connectorRight()
+            connector2 = middleRectangle.connectorRight()
+
+            jest.runOnlyPendingTimers()
+
+        } )
+
+
+        test( 'Polygons should be created as children of group elements', () => {
+
+            // Select the polygon elements to be tested
+            const polygons = document.querySelectorAll( 'polygon' )
+
+            // Select the parents of polygons and the names of their parents
+            const parents = []
+            const parentNames = []
+            Array.from(polygons).forEach( polygonElement => {
+
+                const parent = polygonElement.parentNode
+                const parentName = parent.nodeName
+
+                parents.push( parent )
+                parentNames.push( parentName )
+
+            })
+
+            // Polygons should have the same parent
+            expect( parents[0] ).toEqual( parents[1] )
+
+            // Parent elements should be of type 'group'
+            expect( parentNames ).toEqual( ['g', 'g'] )
+
+        } )
     } )
 
 

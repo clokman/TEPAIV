@@ -703,7 +703,9 @@
                             // Create with custom parent container
                             ? new Polygon( this.customParentContainerSelectionForConnectors() )
                             // Create with default parent container
-                            : new Polygon( )
+                            : !!this.ensembleObject
+                                ? new Polygon( this.ensembleObject.select() )
+                                : new Polygon()
 
                     // Adjust values of the connector
                     connectorPolygon
@@ -749,7 +751,9 @@
                             // Create with custom parent container
                             ? new Polygon( this.customParentContainerSelectionForConnectors() )
                             // Create with default parent container
-                            : new Polygon( )
+                            : !!this.ensembleObject
+                                ? new Polygon( this.ensembleObject.select() )
+                                : new Polygon()
 
 
                     // Adjust values of the connector
