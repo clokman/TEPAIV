@@ -19,8 +19,11 @@ const version = "1.0"
 
 /**
  * Convenience method for .simulateClick(). Takes a selector string and simulates a click on the specified element.
- * @param selector {String}
+ * @param selector {String} - A CSS selector string
  * @param modifierKey{String} - 'shift' | 'ctrl' | 'alt' | 'meta'
+ * @example
+ *  simulateClickOn('#panel-0 ')
+ *  simulateClickOn('#panel-0 #first-class')
  */
 function simulateClickOn(selector, modifierKey){
 
@@ -46,8 +49,8 @@ function simulateClickOn(selector, modifierKey){
 /**
  * Takes an element selection and simulates a click event on the element.
  * Adapted from Chris Ferdinandi's code at `https://gomakethings.com/how-to-simulate-a-click-event-with-javascript/`
- * @param element {Element} element the element to simulate a click on
- * @param modifierKey {String} -  - 'shift' | 'ctrl' | 'alt' | 'meta'
+ * @param element {Element} The element to simulate a click on
+ * @param modifierKey {String} - 'shift' | 'ctrl' | 'alt' | 'meta'
  */
 function simulateClick (element, modifierKey) {
 

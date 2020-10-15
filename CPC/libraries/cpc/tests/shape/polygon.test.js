@@ -35,11 +35,11 @@ describe ('Instantiate', () => {
         const mySvg = new container.Svg(640, 480)
             , svgSelection = mySvg.select()
 
-        // Create a parent container for rectangle
+        // Create a parent container for polygon
         const myGroup = new container.Group(svgSelection)
             , groupSelection = myGroup.select()
 
-        // Create the rectangle
+        // Create the polygon
         const myPolygon = new shape.Polygon(groupSelection)
         myPolygon.build()
 

@@ -183,8 +183,9 @@
         _addListenerToFirstPanel() {
 
             // TODO: REF 1: THERE MAY BE NO NEED FOR _when a category is clicked method
-            // Here, simply document.listenForClicksAndRecordLastClickProperties can be used
-            // And as a callback to the listenForClicksAndRecordLastClickProperties method, the clicked categories, etc may be inferred.
+            //  Here, simply 'document.listenForClicksAndRecordLastClickProperties' can be used
+            //  And as a callback to the listenForClicksAndRecordLastClickProperties method, the clicked categories,
+            //  etc may be inferred.
 
 
             this._whenACategoryIsClicked( () =>
@@ -206,14 +207,15 @@
                 .on('click', (d, i, g) => {
 
                     // console.log('local listener reporting')
-
                     // console.log(`navigator click event records last click with shift: ${document.lastClick.wasWithShiftKey}`)
 
                     const clickedCategory = g[i]
                     const clickedChart = g[i].parentNode
                     const clickedPanelElement = g[i].parentNode.parentNode
 
-                    if (clickedPanelElement.getAttribute('class') === 'panel') {   // TODO: This if block is a workaround to prevent non-panel .category class objects from being processed. When the d3.selection issue is fixed, this block should not be in an if statement.
+                    // TODO: This if block is a workaround to prevent non-panel .category class objects from being
+                    //  processed. When the d3.selection issue is fixed, this block should not be in an if statement.
+                    if (clickedPanelElement.getAttribute('class') === 'panel') {
 
                         this._lastClickedCategoryName = clickedCategory.getAttribute('id')
                         this._lastClickedChartName = clickedChart.getAttribute('id')
@@ -230,9 +232,6 @@
                         this._registerLastClickedModifierKey()
 
 
-                        // this._goingDeeper = clickedPanelDepth === this._currentPanelDepth
-                        // this._stayingAtSameLevel = clickedPanelDepth === this._currentPanelDepth - 1
-                        // this._goingUpward = clickedPanelDepth === this._currentPanelDepth - 2  // TODO: This MUST be changed from a magic number to a generalizable algorithm
                         callback.call(this)  // execute the callback statement
 
                     }
@@ -278,24 +277,16 @@
                     const clickedPanelElement = g[i].parentNode
                     const clickedOnAPanelBackground = clickedPanelElement.getAttribute('class') === 'panel'
 
-                    if ( clickedOnAPanelBackground ) {   // TODO: This if block is a workaround to prevent non-panel .category class objects from being processed. When the d3.selection issue is fixed, this block should NOT be in an if statement.
+                    // TODO: This if block is a workaround to prevent non-panel .category class objects from being
+                    //  processed. When the d3.selection issue is fixed, this block should NOT be in an if statement.
+                    if ( clickedOnAPanelBackground ) {
 
                         this._lastClickedCategoryName = null
-                        // this._lastClickedCategoryName = clickedBackgroundElement.textContent // this is not a mistake; the id of a panel is the name of the category it is spawned from
-                        this._lastClickedPanelName = clickedPanelElement.getAttribute('id')
 
-                        // const clickedChart = this
-                        //     .objects( this._lastClickedPanelName )  // get panel
-                        //     ._objectToSpawnFrom
-                        //     .select().element.parentElement
-                        // this._lastClickedChartName = clickedChart.getAttribute('id')
+                        this._lastClickedPanelName = clickedPanelElement.getAttribute('id')
 
                         this._lastClickedPanelDepth = Number(clickedPanelElement.getAttribute('depthIndex'))
 
-                        // this._lastClickedCategoryObject = this
-                        //     .objects(this._lastClickedPanelName)
-                        //     .objects(this._lastClickedChartName)
-                        //     .objects(this._lastClickedCategoryName)
                         this._lastClickedPanelObject = this.objects(this._lastClickedPanelName)
 
                         callback.call(this)  // execute the callback statement
@@ -373,7 +364,9 @@
 
         _queryDataAndUpdateVisualization() {
 
-            // Remove any panels if necessary
+            // Previously: Remove any panels if necessary
+            // Now: Removal is not handled by NestedPanel. This code fragment should stay here as a pointer.
+            // Warning: Uncommenting this fragment would likely cause problems "shift + click" functionality
             // this._removeAnyPanelsDeeperThanTheClickedOne()
 
             // Query the data based on the clicked category
@@ -919,8 +912,10 @@
             )
         }
 
-
-        _updateDomIfStacksDataHasChanged() {  // TODO: This method introduces a new pattern: Now, after the data of an object is updated, myObject.update() method must be called to update DOM. This behavior MUST be implemented also for navigator.Chart() and other classes that allow updating their data with a setter.
+        // TODO: This method introduces a new pattern: Now, after the data of an object is updated, myObject.update()
+        //  method must be called to update DOM. This behavior MUST be implemented also for navigator.Chart() and
+        //  other classes that allow updating their data with a setter.
+        _updateDomIfStacksDataHasChanged() {
 
             if (this._awaitingDomUpdateAfterDataChange) {
 
@@ -3038,7 +3033,8 @@
         }
 
 
-        innerPaddingTop(value) {   // TODO: NOT TESTED
+        // TODO: NOT TESTED
+        innerPaddingTop(value) {
 
             // Getter
             if (!arguments.length) {
@@ -3068,7 +3064,8 @@
         }
 
 
-        innerPaddingBottom(value) {   // TODO: NOT TESTED
+        // TODO: NOT TESTED
+        innerPaddingBottom(value) {
 
             // Getter
             if (!arguments.length) {

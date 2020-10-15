@@ -218,6 +218,10 @@ class Group {
     }
 
 
+    /**
+     * @deprecated
+     * @return {Selection}
+     */
     selectSelf(){  // TODO: This method SHOULD be deleted because it is replaced by select()
         return this._selection
     }
@@ -342,9 +346,15 @@ class Group {
      */
     class Ensemble extends Group{
 
-        constructor( parentContainerSelectionOrObject=d3.select('body').select('svg') ) {
-            super( parentContainerSelectionOrObject )
 
+        /**
+         *
+         * @param parentContainerSelectionOrObject {Element} - If unspecified sets the parent to the SVG object by
+         * default.
+         */
+        constructor( parentContainerSelectionOrObject=d3.select('body').select('svg') ) {
+
+            super( parentContainerSelectionOrObject )
 
             // Assign ID number and unique ID
             this._idNumber = Ensemble.uniqueIdNumber()
@@ -353,7 +363,6 @@ class Group {
 
             // Increment unique ID counter
             Ensemble.uniqueIdNumber( Ensemble.uniqueIdNumber() + 1 )
-
 
 
             this._sharedSettersAndValues = null
@@ -372,14 +381,14 @@ class Group {
             const thereIsNoArgument = !arguments.length
             const thereIsOnlyOneArgument = arguments.length === 1
             const thereAreTwoArguments = arguments.length === 2
-            //
+
             // Get all objects
             if (thereIsNoArgument){
                 return this.objects().size > 0
                     ? this.objects()
                     : undefined
             }
-            //
+
             // Get an existing object
             if(thereIsOnlyOneArgument){
 
