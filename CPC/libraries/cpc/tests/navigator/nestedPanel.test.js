@@ -1265,6 +1265,33 @@ describe ('Remove: Remove child panels and panel zero', () => {
     })
 
 
+
+
+    test( 'After a grandparent panel is removed, there should be no leftover child elements in JS environment' +
+        ' (previously a bug)', () => {
+
+        const {panelZero, childPanel, grandChildPanel} = initializeDomWith.panelZero.and.childAndGrandchild()
+        panelZero.remove()
+
+        // There should not be any registered children or grandchildren
+        expect( panelZero.childrenPanels.size ).toBe(0)
+        expect( childPanel.childrenPanels.size ).toBe(0)
+        expect( grandChildPanel.childrenPanels.size ).toBe(0)
+
+    } )
+    
+    
+    test( 'Removing a high-level panel in a display with a deep query should leave behind no connector polygons from' +
+    'deep children (previously a bug)', () => {
+
+        const {panelZero, childPanel, grandChildPanel} = initializeDomWith.panelZero.and.childAndGrandchild()
+        panelZero.remove()
+
+        expect( document.querySelectorAll('polygon').length ).toBe( 0 )
+
+    } )
+
+
 })
 
 

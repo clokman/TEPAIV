@@ -1973,47 +1973,56 @@
         }
 
 
-        remove(){
+        remove( thisPanel=this ){
+
+            // Recursion for child panels
+            // NOTE: Panel removal time increases proportionally to the number of panels being removed.
+            // This child recursion was not found to be the reason for this.
+            // If a benchmark is required, the recursion can be disabled by commenting out this child recursion block.
+            if( !!thisPanel.childrenPanels ){
+                thisPanel.childrenPanels.forEach( (childPanel, childPanelName) => {
+                    childPanel.remove( childPanel )
+                })
+            }
+
 
             // Remove self
             super.remove()
 
 
             // De-register self from any parent's registry
-            if ( this.has.parentPanel ){
+            if ( thisPanel.has.parentPanel ){
 
-                this.parentPanel.childrenPanels.delete( this.id() )
+                thisPanel.parentPanel.childrenPanels.delete( thisPanel.id() )
 
                 // Update inferences
-                this._adjustDownstream()
+                thisPanel._adjustDownstream()
 
             }
 
             // If this is panel zero, then clear its children (in case the panel re-appears in some future, it
             // should have an empty registry)
-            if ( !this.has.parentPanel ){
-
-                this.childrenPanels.clear()
-
+            if ( !thisPanel.has.parentPanel ){
+                thisPanel.childrenPanels.clear()
             }
 
 
             // If this panel is the only child of a panel, then just reset the parent panel's dimensions
-            if ( !this.has.parentWithAnotherChild
-              && this.has.parentPanel ){
+            if ( !thisPanel.has.parentWithAnotherChild
+              && thisPanel.has.parentPanel ){
 
                 // Adjust parent panel
-                this._resetParentPanelAndPropagate()
+                thisPanel._resetParentPanelAndPropagate()
 
             }
 
 
             // If this panel is not the only child, then find the rightmost edge of the remaining children panels
             // of the parent, and set that parent's dimensions accordingly
-            if ( this.has.parentWithAnotherChild ){
+            if ( thisPanel.has.parentWithAnotherChild ){
 
                 // Select rightmost sibling
-                const rightmostSiblingObject = this.has.parentWithRightmostChildPanelObject
+                const rightmostSiblingObject = thisPanel.has.parentWithRightmostChildPanelObject
 
                 // Get the x coordinate of right edge of children area
                 const rightmostEdgeOfRightmostSiblingRemainingInParentPanel =
@@ -2021,21 +2030,20 @@
                     + rightmostSiblingObject.width()
 
                 const rightmostEdgeOfParentPanelIfThereWereNoBgExtension =
-                      this.parentPanel.x()
-                    + this.parentPanel.width()
+                      thisPanel.parentPanel.x()
+                    + thisPanel.parentPanel.width()
 
                 const newBgExtensionValue =
                       rightmostEdgeOfRightmostSiblingRemainingInParentPanel
                     - rightmostEdgeOfParentPanelIfThereWereNoBgExtension
-                    + this.parentPanel._innerPadding.right
+                    + thisPanel.parentPanel._innerPadding.right
 
-                this.parentPanel.bgExtensionRight( newBgExtensionValue )
-                this.parentPanel._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
+                thisPanel.parentPanel.bgExtensionRight( newBgExtensionValue )
+                thisPanel.parentPanel._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
 
             }
 
-
-            this.updateAllPanels()
+            thisPanel.updateAllPanels()
 
         }
 
