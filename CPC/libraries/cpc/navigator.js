@@ -1651,7 +1651,7 @@
                 : 0
 
             // Automatically generate and assign panel id
-            const panelId = generatePanelId.call( this )
+            const panelId = this.generatePanelId()
             this.id( panelId )//.update(0)  //   // `update()` commented out during init-build split
 
 
@@ -1688,24 +1688,6 @@
 
 
             // HELPER FUNCTIONS FOR BUILD METHOD //
-
-            /**
-             * In the absence of a custom ID given by the user, generates a panel id.
-             * @return {string}
-             */
-            function generatePanelId() {
-
-                 const panelId =
-                    !!this.id()       // if an id is provided by user
-                        ? this.id()   // use that id
-                        : this.has.parentPanel
-                        ? this.has.beenAddedAsSibling
-                            ? `panel-${this.depthIndex()}-${this.has.parentWithNumberOfChildren}`
-                            : `panel-${this.depthIndex()}-${0}`
-                        : 'panel-0-0'  // if there is no user-assigned id nor parent panel, give this id
-
-                return panelId
-            }
 
 
             function setPropertiesBasedOnParent() {
@@ -1778,6 +1760,24 @@
 
         }
 
+
+        /**
+         * Generates a panel ID unless a a custom ID given by the user.
+         * @return {string}
+         */
+        generatePanelId() {
+
+            const panelId =
+                !!this.id()       // if an id is provided by user
+                    ? this.id()   // use that id
+                    : this.has.parentPanel
+                    ? this.has.beenAddedAsSibling
+                        ? `panel-${this.depthIndex()}-${this.has.parentWithNumberOfChildren}`
+                        : `panel-${this.depthIndex()}-${0}`
+                    : 'panel-0-0'  // if there is no user-assigned id nor parent panel, give this id
+
+            return panelId
+        }
 
         updateAllPanels(transitionDuration) {
 
