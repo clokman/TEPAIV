@@ -1661,69 +1661,7 @@
                 : cpcDefaults.panel.bgFill
 
 
-            // Set properties based on parent
-            if (this.has.parentPanel) {
-
-                // Start off-screen
-                this.x(  0 - this.parentPanel.x() - this.parentPanel.width() )
-                    // .update(0)    // `update()` commented out during init-build split
-
-                const shouldShowAbsoluteChartWidths = this.showAbsoluteChartWidths() || this.parentPanel.showAbsoluteChartWidths()
-                if ( shouldShowAbsoluteChartWidths  ){
-                    this.showAbsoluteChartWidths(true)
-                }
-
-                const dataIsProvidedDuringInit = !!this.stacks()
-
-                if ( shouldShowAbsoluteChartWidths && !dataIsProvidedDuringInit  ) {
-
-                    // Warn if absolute chart widths is asked for but no data is provided during init
-                    console.warn(`[Build warning]: "showAbsoluteChartWidths()" is set to "true" but no data is provided during NestedPanel instance initialization. 
-                    In this scenario, the NestedPanel is initiated with example data and it may not really visualize absolute values. 
-                    Importantly, build parameters are calculated from this example data. If some other data is provided to the 
-                    NestedPanel after the build operation with example data, animation glitches may occur. To display absolute values 
-                    correctly, a "Stacks" object should be provided as data before building the NestedPanel.`)
-
-                    // If no data specified, build panel with example data
-                    if ( !this.stacks() ) {
-                        this._populateWithExampleData()
-                    }
-                }
-
-
-                this._width = this.showAbsoluteChartWidths() ||
-                ( !!this.parentPanel && this.parentPanel.showAbsoluteChartWidths() )
-                    ? this.parentPanel.absoluteWidthOfChildPanel( this )
-                    : this.parentPanel.width()
-
-                if (this.objectToSpawnFrom){
-
-                    this.preAnimationProperties = {
-                        objectToSpawnFrom: {
-                            height: this.objectToSpawnFrom.height(),
-                            y: this.objectToSpawnFrom.y()
-                        }
-                    }
-                }
-
-                const siblingPanelOnLeftSide = this.has.parentWithRightmostChildPanelObject
-
-                this.postCreationAnimationProperties = {
-
-                    x: this.has.beenAddedAsSibling
-
-                        ?    siblingPanelOnLeftSide.x()
-                           + siblingPanelOnLeftSide.width()
-                           + this._paddingBetweenSiblingPanels
-
-                        : this.parentPanel.x() + this.parentPanel.width(),
-
-                    y: this.parentPanel.y() + this._outerPadding.top,
-                    width: this.width(),
-                    height: this.parentPanel.height() - this._outerPadding.bottom
-
-                }
-            }
+            setPropertiesBasedOnParent.call( this )
 
 
             super.build()
@@ -1751,7 +1689,6 @@
 
             // HELPER FUNCTIONS FOR BUILD METHOD //
 
-
             /**
              * In the absence of a custom ID given by the user, generates a panel id.
              * @return {string}
@@ -1769,6 +1706,74 @@
 
                 return panelId
             }
+
+
+            function setPropertiesBasedOnParent() {
+
+                if( this.has.parentPanel ) {
+
+                    // Start off-screen
+                    this.x( 0 - this.parentPanel.x() - this.parentPanel.width() )
+                    // .update(0)    // `update()` commented out during init-build split
+
+                    const shouldShowAbsoluteChartWidths = this.showAbsoluteChartWidths() || this.parentPanel.showAbsoluteChartWidths()
+                    if( shouldShowAbsoluteChartWidths ) {
+                        this.showAbsoluteChartWidths( true )
+                    }
+
+                    const dataIsProvidedDuringInit = !!this.stacks()
+
+                    if( shouldShowAbsoluteChartWidths && !dataIsProvidedDuringInit ) {
+
+                        // Warn if absolute chart widths is asked for but no data is provided during init
+                        console.warn( `[Build warning]: "showAbsoluteChartWidths()" is set to "true" but no data is provided during NestedPanel instance initialization. 
+                    In this scenario, the NestedPanel is initiated with example data and it may not really visualize absolute values. 
+                    Importantly, build parameters are calculated from this example data. If some other data is provided to the 
+                    NestedPanel after the build operation with example data, animation glitches may occur. To display absolute values 
+                    correctly, a "Stacks" object should be provided as data before building the NestedPanel.` )
+
+                        // If no data specified, build panel with example data
+                        if( !this.stacks() ) {
+                            this._populateWithExampleData()
+                        }
+                    }
+
+
+                    this._width = this.showAbsoluteChartWidths() ||
+                    (!!this.parentPanel && this.parentPanel.showAbsoluteChartWidths())
+                        ? this.parentPanel.absoluteWidthOfChildPanel( this )
+                        : this.parentPanel.width()
+
+                    if( this.objectToSpawnFrom ) {
+
+                        this.preAnimationProperties = {
+                            objectToSpawnFrom: {
+                                height: this.objectToSpawnFrom.height(),
+                                y: this.objectToSpawnFrom.y()
+                            }
+                        }
+                    }
+
+                    const siblingPanelOnLeftSide = this.has.parentWithRightmostChildPanelObject
+
+                    this.postCreationAnimationProperties = {
+
+                        x: this.has.beenAddedAsSibling
+
+                            ? siblingPanelOnLeftSide.x()
+                            + siblingPanelOnLeftSide.width()
+                            + this._paddingBetweenSiblingPanels
+
+                            : this.parentPanel.x() + this.parentPanel.width(),
+
+                        y: this.parentPanel.y() + this._outerPadding.top,
+                        width: this.width(),
+                        height: this.parentPanel.height() - this._outerPadding.bottom
+
+                    }
+                }
+            }
+
 
 
         }
