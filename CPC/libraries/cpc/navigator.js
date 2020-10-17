@@ -1650,17 +1650,9 @@
                 ? this.parentPanel.depthIndex() + 1
                 : 0
 
-
             // Automatically generate and assign panel id
-            const panelId =
-                !!this.id()       // if an id is provided by user
-                    ? this.id()   // use that id
-                    : this.has.parentPanel
-                        ? this.has.beenAddedAsSibling
-                            ? `panel-${ this.depthIndex() }-${ this.has.parentWithNumberOfChildren }`
-                            : `panel-${ this.depthIndex() }-${ 0 }`
-                        : 'panel-0-0'  // if there is no user-assigned id nor parent panel, give this id
-            this.id(panelId)//.update(0)  //   // `update()` commented out during init-build split
+            const panelId = generatePanelId.call( this )
+            this.id( panelId )//.update(0)  //   // `update()` commented out during init-build split
 
 
             // Automatically assign background color based on the parent (if there is one)
@@ -1753,6 +1745,32 @@
             }, this.animationDuration())
 
             return this
+
+
+
+
+            // HELPER FUNCTIONS FOR BUILD METHOD //
+
+
+            /**
+             * In the absence of a custom ID given by the user, generates a panel id.
+             * @return {string}
+             */
+            function generatePanelId() {
+
+                 const panelId =
+                    !!this.id()       // if an id is provided by user
+                        ? this.id()   // use that id
+                        : this.has.parentPanel
+                        ? this.has.beenAddedAsSibling
+                            ? `panel-${this.depthIndex()}-${this.has.parentWithNumberOfChildren}`
+                            : `panel-${this.depthIndex()}-${0}`
+                        : 'panel-0-0'  // if there is no user-assigned id nor parent panel, give this id
+
+                return panelId
+            }
+
+
         }
 
 
