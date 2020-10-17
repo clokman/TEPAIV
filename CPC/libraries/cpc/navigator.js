@@ -1651,7 +1651,7 @@
                 : 0
 
             // Automatically generate and assign panel id
-            const panelId = this.generatePanelId()
+            const panelId = this._generatePanelId()
             this.id( panelId )//.update(0)  //   // `update()` commented out during init-build split
 
 
@@ -1765,7 +1765,7 @@
          * Generates a panel ID unless a a custom ID given by the user.
          * @return {string}
          */
-        generatePanelId() {
+        _generatePanelId() {
 
             const panelId =
                 !!this.id()       // if an id is provided by user
