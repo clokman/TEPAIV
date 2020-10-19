@@ -272,7 +272,7 @@ describe ('Loading Data', () => {
         const panelElementId = panelElement.getAttribute('id')
         const panelElementClass = panelElement.getAttribute('class')
 
-        expect(panelElementId).toBe('panel-0-0')
+        expect(panelElementId).toBe('panel-0')
         expect(panelElementClass).toBe('panel')
 
         // Verify that the data-related flags are switched after update()
@@ -287,16 +287,16 @@ describe ('Loading Data', () => {
         const objectsInNavigator = myNavigator.objects()
 
         expectTable(objectsInNavigator, `\
-┌───────────────────┬─────────────┬───────────────┐
-│ (iteration index) │     Key     │    Values     │
-├───────────────────┼─────────────┼───────────────┤
-│         0         │ 'panel-0-0' │ [NestedPanel] │
-└───────────────────┴─────────────┴───────────────┘`)
+┌───────────────────┬───────────┬───────────────┐
+│ (iteration index) │    Key    │    Values     │
+├───────────────────┼───────────┼───────────────┤
+│         0         │ 'panel-0' │ [NestedPanel] │
+└───────────────────┴───────────┴───────────────┘`)
 
 
 
         //// VERIFY THE FIRST PANEL IN NAVIGATOR CONTAINS A SUMMARY OF THE LOADED DATASET ////
-        const panelObjectOfPanelZero = myNavigator.objects('panel-0-0')
+        const panelObjectOfPanelZero = myNavigator.objects('panel-0')
         const stacksInFirstPanel = panelObjectOfPanelZero.stacks()
 
         expectTable(stacksInFirstPanel.data(), `\
@@ -360,14 +360,14 @@ describe ('Position and Dimensions', () => {
         jest.runAllTimers()
 
         // After built has completed, panel zero should have the right position and dimensions
-        expect( myNavigator.objects('panel-0-0').x() ).toBe( 225 )
-        expect( myNavigator.objects('panel-0-0').y() ).toBe( 50 )
-        expect ( myNavigator.objects('panel-0-0').width() ).toBe( 200 )
-        expect ( myNavigator.objects('panel-0-0').height() ).toBe( 500 )
+        expect( myNavigator.objects('panel-0').x() ).toBe( 225 )
+        expect( myNavigator.objects('panel-0').y() ).toBe( 50 )
+        expect ( myNavigator.objects('panel-0').width() ).toBe( 200 )
+        expect ( myNavigator.objects('panel-0').height() ).toBe( 500 )
 
 
         // // TODO [Puppeteer]: Uncomment after Puppeteer is set up
-        // // const xOnDom = document.querySelector( '#panel-0-0' ).getBoundingClientRect( )
+        // // const xOnDom = document.querySelector( '#panel-0' ).getBoundingClientRect( )
         // // expect( xOnDom ).toBe( 225 )
 
     })
@@ -405,14 +405,14 @@ describe ('Position and Dimensions', () => {
         expect( myNavigator.height() ).toBe( 500 )
 
         // Panel zero should have the right position and dimensions
-        expect( myNavigator.objects('panel-0-0').x() ).toBe( 225 )
-        expect( myNavigator.objects('panel-0-0').y() ).toBe( 50 )
-        expect ( myNavigator.objects('panel-0-0').width() ).toBe( 200 )
-        expect ( myNavigator.objects('panel-0-0').height() ).toBe( 500 )
+        expect( myNavigator.objects('panel-0').x() ).toBe( 225 )
+        expect( myNavigator.objects('panel-0').y() ).toBe( 50 )
+        expect ( myNavigator.objects('panel-0').width() ).toBe( 200 )
+        expect ( myNavigator.objects('panel-0').height() ).toBe( 500 )
 
 
         // // TODO [Puppeteer]: Uncomment after Puppeteer is set up
-        // // const xOnDom = document.querySelector( '#panel-0-0' ).getBoundingClientRect( )
+        // // const xOnDom = document.querySelector( '#panel-0' ).getBoundingClientRect( )
         // // expect( xOnDom ).toBe( 225 )
 
     })
@@ -490,7 +490,7 @@ describe ('Visualizing Queries', () => {
 
 
         // Go forward: Click a category in panel 0
-        domUtils.simulateClickOn('#panel-0-0 #Male')
+        domUtils.simulateClickOn('#panel-0 #Male')
         const numberOfPanelsAfterFirstClick = document.querySelectorAll('.panel').length
         expect(numberOfPanelsAfterFirstClick).toBe(2)
         const numberOfCategoriesAfterFirstClick = document.querySelectorAll('.category').length
@@ -498,14 +498,14 @@ describe ('Visualizing Queries', () => {
 
 
         // Go forward: Click a category in panel 1
-        domUtils.simulateClickOn('#panel-1-0 #Survived')
+        domUtils.simulateClickOn('#panel-0-0 #Survived')
         const numberOfPanelsAfterSecondClick = document.querySelectorAll('.panel').length
         expect(numberOfPanelsAfterSecondClick).toBe(3)
         const numberOfCategoriesAfterSecondClick = document.querySelectorAll('.category').length
         expect(numberOfCategoriesAfterSecondClick).toBe(9)
 
         // Go backward: Click a category in panel 0 (should replace panel 2 and remove panel 3)
-        domUtils.simulateClickOn('#panel-0-0 #Female')
+        domUtils.simulateClickOn('#panel-0 #Female')
         const numberOfPanelsAfterThirdClick = document.querySelectorAll('.panel').length
         expect(numberOfPanelsAfterThirdClick).toBe(2)
         const numberOfCategoriesAfterThirdClick = document.querySelectorAll('.category').length
@@ -556,8 +556,8 @@ describe ('Absolute Values: Toggle absolute values in category captions', () => 
 ┌───────────────────┬─────────────┬───────────────┐
 │ (iteration index) │     Key     │    Values     │
 ├───────────────────┼─────────────┼───────────────┤
-│         0         │ 'panel-0-0' │ [NestedPanel] │
-│         1         │ 'panel-1-0' │ [NestedPanel] │
+│         0         │  'panel-0'  │ [NestedPanel] │
+│         1         │ 'panel-0-0' │ [NestedPanel] │
 └───────────────────┴─────────────┴───────────────┘`)
 
         // Get initial caption texts on DOM
@@ -656,7 +656,7 @@ describe ('Absolute Chart Widths', () => {
             // Get default state in navigator
             expect( myNavigator.showAbsoluteChartWidths() ).toBe( false )
             // Get default state in first panel of navigator
-            expect( myNavigator.objects('panel-0-0').showAbsoluteChartWidths() )
+            expect( myNavigator.objects('panel-0').showAbsoluteChartWidths() )
                 .toBe( false )
 
 
@@ -668,7 +668,7 @@ describe ('Absolute Chart Widths', () => {
             // Check new value in navigator
             expect( myNavigator.showAbsoluteChartWidths() ).toBe( true )
             // Check new value in first panel
-            expect( myNavigator.objects('panel-0-0').showAbsoluteChartWidths() )
+            expect( myNavigator.objects('panel-0').showAbsoluteChartWidths() )
                 .toBe( true )
 
         })
@@ -693,13 +693,13 @@ describe ('Absolute Chart Widths', () => {
             jest.runOnlyPendingTimers()
             jest.runAllTimers()
 
-            domUtils.simulateClickOn('#panel-0-0 #Male')
+            domUtils.simulateClickOn('#panel-0 #Male')
             jest.runOnlyPendingTimers()
 
 
 
-            const panelZero = myNavigator.objects('panel-0-0')
-            const childPanel = myNavigator.objects('panel-1-0')
+            const panelZero = myNavigator.objects('panel-0')
+            const childPanel = myNavigator.objects('panel-0-0')
 
             jest.runAllTimers()
 
@@ -944,7 +944,7 @@ describe ('Continuous Data', () => {
             unforcedNavigator.initParams.columNamesToIgnore = [ 'dateRep', 'day', 'countriesAndTerritories', 'geoId', 'countryterritoryCode', 'popData2018' ]
             await unforcedNavigator.build()
 
-            expect( unforcedNavigator.objects('panel-0-0').stacks().data() ).toTabulateAs(`\
+            expect( unforcedNavigator.objects('panel-0').stacks().data() ).toTabulateAs(`\
 ┌───────────────────┬───────────────────────────┬──────────────────────────────────────────────┐
 │ (iteration index) │            Key            │                    Values                    │
 ├───────────────────┼───────────────────────────┼──────────────────────────────────────────────┤
@@ -960,14 +960,14 @@ describe ('Continuous Data', () => {
 │         9         │       'popData2018'       │ Stack { _data: [Map], _scaleFunction: null } │
 └───────────────────┴───────────────────────────┴──────────────────────────────────────────────┘`)
 
-            expect( unforcedNavigator.objects('panel-0-0').stacks('year').data() ).toTabulateAs(`\
+            expect( unforcedNavigator.objects('panel-0').stacks('year').data() ).toTabulateAs(`\
 ┌───────────────────┬──────┬───────────────────────────────────────────────────────────────────────────────────────────┐
 │ (iteration index) │ Key  │                                          Values                                           │
 ├───────────────────┼──────┼───────────────────────────────────────────────────────────────────────────────────────────┤
 │         0         │ 'Q4' │ Map(5) { 'label' => 'Q4', 'count' => 50, 'percentage' => 100, 'start' => 0, 'end' => 50 } │
 └───────────────────┴──────┴───────────────────────────────────────────────────────────────────────────────────────────┘`)
 
-            expect( unforcedNavigator.objects('panel-0-0').stacks('month').data() ).toTabulateAs(`\
+            expect( unforcedNavigator.objects('panel-0').stacks('month').data() ).toTabulateAs(`\
 ┌───────────────────┬──────┬──────────────────────────────────────────────────────────────────────────────────────────┐
 │ (iteration index) │ Key  │                                          Values                                          │
 ├───────────────────┼──────┼──────────────────────────────────────────────────────────────────────────────────────────┤
@@ -987,7 +987,7 @@ describe ('Continuous Data', () => {
 
 
             // Instead of quartiles, actual values (e.g., 2020) should now appear as keys
-            expect( forcedNavigator.objects('panel-0-0').stacks('year').data() ).toTabulateAs(`\
+            expect( forcedNavigator.objects('panel-0').stacks('year').data() ).toTabulateAs(`\
 ┌───────────────────┬────────┬─────────────────────────────────────────────────────────────────────────────────────────────┐
 │ (iteration index) │  Key   │                                           Values                                            │
 ├───────────────────┼────────┼─────────────────────────────────────────────────────────────────────────────────────────────┤
@@ -996,7 +996,7 @@ describe ('Continuous Data', () => {
 
             // Instead of quartiles, actual values (e.g., 2,3,4, which represent Feb, Mar, and Apr) should now
             // appear as keys
-            expect( forcedNavigator.objects('panel-0-0').stacks('month').data() ).toTabulateAs(`\
+            expect( forcedNavigator.objects('panel-0').stacks('month').data() ).toTabulateAs(`\
 ┌───────────────────┬─────┬──────────────────────────────────────────────────────────────────────────────────────────┐
 │ (iteration index) │ Key │                                          Values                                          │
 ├───────────────────┼─────┼──────────────────────────────────────────────────────────────────────────────────────────┤
@@ -1023,7 +1023,7 @@ describe ('Color Sets', () => {
 
         // Get initial color-related values
         expect( myNavigator.colorSet() ).toBe('Single-Hue')
-        const actualInitialColorsOnCanvasForGenderCategory = myNavigator.objects('panel-0-0')
+        const actualInitialColorsOnCanvasForGenderCategory = myNavigator.objects('panel-0')
             .objects('Gender').actualColors()
         expect( actualInitialColorsOnCanvasForGenderCategory ).toEqual([
             "rgb(34, 139, 69)", "rgb(115, 195, 120)"
@@ -1035,11 +1035,11 @@ describe ('Color Sets', () => {
 
         // Check if the new color set is set in one of the chart objects within the navigator
         expect( myNavigator.colorSet() ).toBe('Greys')
-        expect ( myNavigator.objects('panel-0-0').objects('Gender').colorScheme() )
+        expect ( myNavigator.objects('panel-0').objects('Gender').colorScheme() )
             .toBe( 'Greys')
         // Check the color of a category on DOM
         const actualColorsOnCanvasForGenderCategory =
-            myNavigator.objects('panel-0-0').objects('Gender').actualColors()
+            myNavigator.objects('panel-0').objects('Gender').actualColors()
         expect ( actualColorsOnCanvasForGenderCategory )
             .toEqual(["rgb(80, 80, 80)", "rgb(151, 151, 151)"])
 
@@ -1053,7 +1053,7 @@ describe ('Color Sets', () => {
         expect(numberOfPanelsBeforeClick).toBe(1)
 
         // Go deeper in Navigator: Click a category in panel 0
-        domUtils.simulateClickOn('#panel-0-0 #Male')
+        domUtils.simulateClickOn('#panel-0 #Male')
 
         // Check the number of panels before click
         const numberOfPanelsAfterFirstClick = document.querySelectorAll('.panel').length
@@ -1061,13 +1061,13 @@ describe ('Color Sets', () => {
 
 
         // After the click: Check the color of an arbitrary category of PANEL-0 on DOM
-        const actualColorsOnDomForGenderCategoryInPanelZeroAfterClick = myNavigator.objects('panel-0-0').objects('Gender').actualColors()
+        const actualColorsOnDomForGenderCategoryInPanelZeroAfterClick = myNavigator.objects('panel-0').objects('Gender').actualColors()
         expect ( actualColorsOnDomForGenderCategoryInPanelZeroAfterClick )
             .toEqual(["rgb(80, 80, 80)", "rgb(151, 151, 151)"])
 
 
         // After the click: Check the color of an arbitrary category of PANEL-1 on DOM
-        const actualColorsOnDomForGenderCategoryInPanelOneAfterClick = myNavigator.objects('panel-0-0').objects('Gender').actualColors()
+        const actualColorsOnDomForGenderCategoryInPanelOneAfterClick = myNavigator.objects('panel-0').objects('Gender').actualColors()
         expect ( actualColorsOnDomForGenderCategoryInPanelOneAfterClick )
             .toEqual(["rgb(80, 80, 80)", "rgb(151, 151, 151)"])
 
@@ -1084,9 +1084,9 @@ describe ('Color Sets', () => {
         myNavigator.colorSet('Reds').update()
 
         // After the click: Confirm that the child panel's background and bridge colors matches the color of the category this child panel is spawned from
-        const bgColorOfChildPanelAfterColorSetChange = myNavigator.objects('panel-1-0')._backgroundObject.fill()
-        const bgColorOfBridgeAfterColorSetChange = myNavigator.objects('panel-1-0')._bridgeObject.fill()
-        const colorOfCategoryThatChildPanelSpawnedFrom = myNavigator.objects('panel-1-0').objectToSpawnFrom.fill()
+        const bgColorOfChildPanelAfterColorSetChange = myNavigator.objects('panel-0-0')._backgroundObject.fill()
+        const bgColorOfBridgeAfterColorSetChange = myNavigator.objects('panel-0-0')._bridgeObject.fill()
+        const colorOfCategoryThatChildPanelSpawnedFrom = myNavigator.objects('panel-0-0').objectToSpawnFrom.fill()
 
         expect( bgColorOfChildPanelAfterColorSetChange )
             .toBe( colorOfCategoryThatChildPanelSpawnedFrom )
@@ -1176,7 +1176,7 @@ describe ('get(): Inferences should be made correctly', () => {
         // Select panelZero
         let panelZero = myNavigator.get('panelZero')
         expect( panelZero ).toBeDefined()
-        expect( panelZero.id() ).toBe( "panel-0-0" )
+        expect( panelZero.id() ).toBe( "panel-0" )
 
 
         // ADD A SECOND PANEL //
@@ -1187,7 +1187,7 @@ describe ('get(): Inferences should be made correctly', () => {
         // panelZero should still return
         panelZero = myNavigator.get('panelZero')
         expect( panelZero ).toBeDefined()
-        expect( panelZero.id() ).toBe( "panel-0-0" )
+        expect( panelZero.id() ).toBe( "panel-0" )
 
 
     })
@@ -1256,7 +1256,7 @@ describe ('Stroke Properties ', () => {
             expect( myNavigator.stroke() ).toBe( 'red' )
 
 
-            const panel0_0 = myNavigator.objects('panel-0-0')
+            const panel0_0 = myNavigator.objects('panel-0')
             expect( panel0_0.strokeWidth() ).toBe( '4px' )
             expect( panel0_0.stroke() ).toBe( 'red' )
 
@@ -1304,12 +1304,12 @@ initializeDomWithTitanicTinyNavigator.and = {
         const myNavigator = await initializeDomWithTitanicTinyNavigator()
 
         // Create a second panel in navigator
-        domUtils.simulateClickOn('#panel-0-0 #Male')
+        domUtils.simulateClickOn('#panel-0 #Male')
         jest.runOnlyPendingTimers()
 
 
-        const panelZero = myNavigator.objects('panel-0-0')
-        const childPanel = myNavigator.objects('panel-1-0')
+        const panelZero = myNavigator.objects('panel-0')
+        const childPanel = myNavigator.objects('panel-0-0')
 
         return { myNavigator, panelZero, childPanel }
 
@@ -1323,19 +1323,19 @@ initializeDomWithTitanicTinyNavigator.and = {
         const myNavigator = await initializeDomWithTitanicTinyNavigator()
 
         // Create a 2nd panel in navigator
-        domUtils.simulateClickOn('#panel-0-0 #Died')
+        domUtils.simulateClickOn('#panel-0 #Died')
         jest.runOnlyPendingTimers()
 
 
         // Create a 3rd panel in navigator
-        domUtils.simulateClickOn('#panel-1-0 #Female')
+        domUtils.simulateClickOn('#panel-0-0 #Female')
         jest.runOnlyPendingTimers()
 
 
         // Assign each panel object to a variable
-        const panelZero = myNavigator.objects('panel-0-0')
-        const childPanel = myNavigator.objects('panel-1-0')
-        const grandChildPanel = myNavigator.objects('panel-2-0')
+        const panelZero = myNavigator.objects('panel-0')
+        const childPanel = myNavigator.objects('panel-0-0')
+        const grandChildPanel = myNavigator.objects('panel-0-0-0')
 
         return { myNavigator, panelZero, childPanel, grandChildPanel }
 
@@ -1373,19 +1373,19 @@ initializeDomWithTitanicEmbarkTinyNavigator.and = {
         const myNavigator = await initializeDomWithTitanicEmbarkTinyNavigator( build )
 
         // Create child
-        domUtils.simulateClickOn('#panel-0-0 #Died')
+        domUtils.simulateClickOn('#panel-0 #Died')
         jest.runOnlyPendingTimers()
 
 
         // Create grandchild
-        domUtils.simulateClickOn('#panel-1-0 #Female')
+        domUtils.simulateClickOn('#panel-0-0 #Female')
         jest.runOnlyPendingTimers()
 
 
         // Assign each panel object to a variable
-        const panelZero = myNavigator.objects('panel-0-0')
-        const childPanel = myNavigator.objects('panel-1-0')
-        const grandChildPanel = myNavigator.objects('panel-2-0')
+        const panelZero = myNavigator.objects('panel-0')
+        const childPanel = myNavigator.objects('panel-0-0')
+        const grandChildPanel = myNavigator.objects('panel-0-0-0')
 
         return { myNavigator, panelZero, childPanel, grandChildPanel }
 
@@ -1398,12 +1398,12 @@ initializeDomWithTitanicEmbarkTinyNavigator.and = {
             await initializeDomWithTitanicEmbarkTinyNavigator.and.grandChildPanel( build )
 
         // Create grand grandchild
-        domUtils.simulateClickOn('#panel-2-0 #Cherbourg')
+        domUtils.simulateClickOn('#panel-0-0-0 #Cherbourg')
         jest.runOnlyPendingTimers()
 
 
         // Assign each panel object to a variable
-        const grandGrandChildPanel = myNavigator.objects('panel-3-0')
+        const grandGrandChildPanel = myNavigator.objects('panel-0-0-0-0')
 
         return { myNavigator, panelZero, childPanel, grandChildPanel, grandGrandChildPanel }
 
@@ -1417,15 +1417,15 @@ initializeDomWithTitanicEmbarkTinyNavigator.and = {
 
         // Create grand grandchild
         /* TODO: Once the faulty ID generation is fixed (HTML IDs should not start with numbers, this selector
-            should be corrected. (Ideally, this selector should have been "#panel-3-0 #2nd-class". But because the
+            should be corrected. (Ideally, this selector should have been "#panel-0-0-0-0 #2nd-class". But because the
             id '#2nd class' starts with anumber, it is an invalid id). */
-        domUtils.simulateClick(document.querySelectorAll('#panel-3-0 *')[4])
+        domUtils.simulateClick(document.querySelectorAll('#panel-0-0-0-0 *')[4])
         //  should be corrected)
         jest.runOnlyPendingTimers()
 
 
         // Assign each panel object to a variable
-        const grandGrandGrandChildPanel = myNavigator.objects('panel-4-0')
+        const grandGrandGrandChildPanel = myNavigator.objects('panel-0-0-0-0-0')
 
         return { myNavigator, panelZero, childPanel, grandChildPanel, grandGrandChildPanel, grandGrandGrandChildPanel }
 
@@ -1439,19 +1439,19 @@ initializeDomWithTitanicEmbarkTinyNavigator.and = {
         const myNavigator = await initializeDomWithTitanicEmbarkTinyNavigator( build )
 
         // Create 1st sibling panel
-        domUtils.simulateClickOn('#panel-0-0 #Southampton')
+        domUtils.simulateClickOn('#panel-0 #Southampton')
         jest.runOnlyPendingTimers()
 
 
         // Create 2nd sibling panel
-        domUtils.simulateClickOn('#panel-0-0 #Queenstown', 'shift')
+        domUtils.simulateClickOn('#panel-0 #Queenstown', 'shift')
         jest.runOnlyPendingTimers()
 
 
         // Assign each panel object to a variable
-        const panelZero = myNavigator.objects('panel-0-0')
-        const leftSiblingPanel = myNavigator.objects('panel-1-0')
-        const rightSiblingPanel = myNavigator.objects('panel-1-1')
+        const panelZero = myNavigator.objects('panel-0')
+        const leftSiblingPanel = myNavigator.objects('panel-0-0')
+        const rightSiblingPanel = myNavigator.objects('panel-0-1')
 
         return { myNavigator, panelZero, leftSiblingPanel, rightSiblingPanel }
 
@@ -1469,18 +1469,18 @@ initializeDomWithTitanicEmbarkTinyNavigator.and.twoSiblingChildren.and = {
 
 
         // Create 1st grandchild panel
-        domUtils.simulateClickOn('#panel-1-0 #Male')
+        domUtils.simulateClickOn('#panel-0-0 #Male')
         jest.runOnlyPendingTimers()
 
 
         // Create 2nd grandchild panel
-        domUtils.simulateClickOn('#panel-1-1 #Male')
+        domUtils.simulateClickOn('#panel-0-1 #Male')
         jest.runOnlyPendingTimers()
 
 
         // Assign each new panel object to a variable
-        const leftGrandChildPanel = leftSiblingPanel.childrenPanels.get('panel-2-0')
-        const rightGrandchildPanel = rightSiblingPanel.childrenPanels.get('panel-2-0')
+        const leftGrandChildPanel = leftSiblingPanel.childrenPanels.get('panel-0-0-0')
+        const rightGrandchildPanel = rightSiblingPanel.childrenPanels.get('panel-0-0-0')
 
         return { myNavigator, panelZero, leftSiblingPanel, rightSiblingPanel, leftGrandChildPanel, rightGrandchildPanel }
 

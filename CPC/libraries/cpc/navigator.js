@@ -1771,13 +1771,14 @@
                 !!this.id()       // if an id is provided by user
                     ? this.id()   // use that id
                     : this.has.parentPanel
-                    ? this.has.beenAddedAsSibling
-                        ? `panel-${this.depthIndex()}-${this.has.parentWithNumberOfChildren}`
-                        : `panel-${this.depthIndex()}-${0}`
-                    : 'panel-0-0'  // if there is no user-assigned id nor parent panel, give this id
+                        ? this.has.beenAddedAsSibling
+                            ? `${this.parentPanel.id()}-${this.has.parentWithNumberOfChildren}` // if siblings exist
+                            : `${this.parentPanel.id()}-${0}`  // if siblings don't exist
+                        : 'panel-0'  // if there is no user-assigned id nor parent panel, give this id
 
             return panelId
         }
+
 
         updateAllPanels(transitionDuration) {
 

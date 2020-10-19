@@ -153,6 +153,17 @@ describe ('Nested Panel Instantiation', () => {
 describe ('Panel IDs: Panel IDs must be generated correctly', () => {
 
 
+    test( 'ID of panel zero should be generated correctly', () => {
+
+        const panelZero = new navigator.NestedPanel()
+
+        const panelId = panelZero._generatePanelId()
+        expect( panelId ).toBe('panel-0')
+
+
+    } )
+
+
     test ('Init: First panel id', () => {
 
         initializeDomWithSvg()
@@ -165,7 +176,7 @@ describe ('Panel IDs: Panel IDs must be generated correctly', () => {
             .build()
 
 
-        expect( myPanel.id() ).toBe( 'panel-0-0' )
+        expect( myPanel.id() ).toBe( 'panel-0' )
 
     })
 
@@ -175,44 +186,44 @@ describe ('Panel IDs: Panel IDs must be generated correctly', () => {
         initializeDomWithSvg()
 
         // Create panel 0
-        const parentPanel = new navigator.NestedPanel()
+        const panelZero = new navigator.NestedPanel()
             .bgFill('#deebf7')
             .x(200).y(25)
             .yAxisLabels(true)
             .build()
 
 
-        // SIBLING #1.1 //
-        // Create sibling panel
-        const spawnObjectForSiblingPanel1 = parentPanel.objects('gender').objects('female')
+        // SIBLING #0-0 //
+        // Create the first sibling (i.e., the first child of panelZero)
+        const spawnObjectForSiblingPanel1 = panelZero.objects('gender').objects('female')
 
-        const siblingPanel1 = new navigator.NestedPanel(parentPanel, spawnObjectForSiblingPanel1)
+        const siblingPanel1 = new navigator.NestedPanel(panelZero, spawnObjectForSiblingPanel1)
         siblingPanel1.build()
 
         // Check the newly created sibling panel's ID
-        expect( siblingPanel1.id() ).toBe( 'panel-1-0' )
+        expect( siblingPanel1.id() ).toBe( 'panel-0-0' )
 
 
-        // SIBLING #1.2 //
-        // Create sibling panel
-        const spawnObjectForSiblingPanel2 = parentPanel.objects('gender').objects('male')
+        // SIBLING #0-1 //
+        // Create the second sibling
+        const spawnObjectForSiblingPanel2 = panelZero.objects('gender').objects('male')
 
-        const siblingPanel2 = new navigator.NestedPanel(parentPanel, spawnObjectForSiblingPanel2, 'sibling')
+        const siblingPanel2 = new navigator.NestedPanel(panelZero, spawnObjectForSiblingPanel2, 'sibling')
         siblingPanel2.build()
 
         // Check the newly created sibling panel's ID
-        expect( siblingPanel2.id() ).toBe( 'panel-1-1' )
+        expect( siblingPanel2.id() ).toBe( 'panel-0-1' )
 
 
-        // SIBLING #1.3 //
-        // Create sibling panel
-        const spawnObjectForSiblingPanel3 = parentPanel.objects('status').objects('died')
+        // SIBLING #0-2 //
+        // Create the third sibling
+        const spawnObjectForSiblingPanel3 = panelZero.objects('status').objects('died')
 
-        const siblingPanel3 = new navigator.NestedPanel(parentPanel, spawnObjectForSiblingPanel3, 'sibling')
+        const siblingPanel3 = new navigator.NestedPanel(panelZero, spawnObjectForSiblingPanel3, 'sibling')
         siblingPanel3.build()
 
         // Check the newly created sibling panel's ID
-        expect( siblingPanel3.id() ).toBe( 'panel-1-2' )
+        expect( siblingPanel3.id() ).toBe( 'panel-0-2' )
 
 
     })
@@ -222,56 +233,71 @@ describe ('Panel IDs: Panel IDs must be generated correctly', () => {
 
         initializeDomWithSvg()
 
+        jest.useFakeTimers()
+
         // Create panel 0
-        const parentPanel = new navigator.NestedPanel()
+        const panelZero = new navigator.NestedPanel()
             .bgFill('#deebf7')
             .x(200).y(25)
             .yAxisLabels(true)
             .build()
 
+        panelZero.bgText( panelZero.id() )   // for visually seeing the panel ID, in case wrdom function is used
 
-        // Create panel 1
-        // Create child panel
-        const spawnObjectForChildPanel = parentPanel.objects('gender').objects('female')
+        // SIBLING #0-0 (Child) //
+        // Create single panel
+        const spawnObjectForChildPanel = panelZero.objects('gender').objects('female')
 
-        const childPanel = new navigator.NestedPanel(parentPanel, spawnObjectForChildPanel)
+        const childPanel = new navigator.NestedPanel(panelZero, spawnObjectForChildPanel)
         childPanel.build()
+        childPanel.bgText( childPanel.id() )
+        jest.runOnlyPendingTimers()
 
         // Check the newly created child panel's ID
-        expect( childPanel.id() ).toBe( 'panel-1-0' )
+        expect( childPanel.id() ).toBe( 'panel-0-0' )
 
 
-        // SIBLING #2.1 //
+
+        // SIBLING #0-0-0 (Grandchild) //
         // Create sibling panel
-        const spawnObjectForSiblingPanel1 = childPanel.objects('gender').objects('female')
+        const spawnObjectForFirstGrandchild = childPanel.objects('gender').objects('female')
 
-        const siblingPanel1 = new navigator.NestedPanel(childPanel, spawnObjectForSiblingPanel1)
-        siblingPanel1.build()
+        const firstGrandchild = new navigator.NestedPanel(childPanel, spawnObjectForFirstGrandchild)
+        firstGrandchild.build()
+        firstGrandchild.bgText( firstGrandchild.id() )
+        jest.runOnlyPendingTimers()
 
         // Check the newly created sibling panel's ID
-        expect( siblingPanel1.id() ).toBe( 'panel-2-0' )
+        expect( firstGrandchild.id() ).toBe( 'panel-0-0-0' )
 
 
-        // SIBLING #2.2 //
+
+        // SIBLING #0-0-1 (Second Grandchild) //
         // Create sibling panel
-        const spawnObjectForSiblingPanel2 = childPanel.objects('gender').objects('male')
+        const spawnObjectForSecondGrandchild = childPanel.objects('gender').objects('male')
 
-        const siblingPanel2 = new navigator.NestedPanel(childPanel, spawnObjectForSiblingPanel2, 'sibling')
-        siblingPanel2.build()
+        const secondGrandchild = new navigator.NestedPanel(childPanel, spawnObjectForSecondGrandchild, 'sibling')
+        secondGrandchild.build()
+        secondGrandchild.bgText( secondGrandchild.id() )
+        jest.runOnlyPendingTimers()
 
         // Check the newly created sibling panel's ID
-        expect( siblingPanel2.id() ).toBe( 'panel-2-1' )
+        expect( secondGrandchild.id() ).toBe( 'panel-0-0-1' )
 
 
-        // SIBLING #2.3 //
+
+        // SIBLING #0-0-2 //
         // Create sibling panel
-        const spawnObjectForSiblingPanel3 = childPanel.objects('status').objects('died')
+        const spawnObjectForThirdGrandchild = childPanel.objects('status').objects('died')
 
-        const siblingPanel3 = new navigator.NestedPanel(childPanel, spawnObjectForSiblingPanel3, 'sibling')
-        siblingPanel3.build()
+        const thirdGrandchild = new navigator.NestedPanel(childPanel, spawnObjectForThirdGrandchild, 'sibling')
+        thirdGrandchild.build()
+        jest.runOnlyPendingTimers()
+        thirdGrandchild.bgText( thirdGrandchild.id() ).update(0)
+        jest.runOnlyPendingTimers()
 
         // Check the newly created sibling panel's ID
-        expect( siblingPanel3.id() ).toBe( 'panel-2-2' )
+        expect( thirdGrandchild.id() ).toBe( 'panel-0-0-2' )
 
 
     })
@@ -284,8 +310,8 @@ describe ('Panel IDs: Panel IDs must be generated correctly', () => {
         jest.useFakeTimers()
 
 
-        // PANEL #0.0 //
-        const panel0_0 = new navigator.NestedPanel()
+        // PANEL #0 //
+        const panelZero = new navigator.NestedPanel()
             .bgFill('#deebf7')
             .x(200).y(25)
             .yAxisLabels(true)
@@ -293,15 +319,15 @@ describe ('Panel IDs: Panel IDs must be generated correctly', () => {
 
 
 
-        // PANEL #1.0 //
+        // PANEL #0-0 //
         // Create child panel
-        let panel1_0
+        let childPanel
         setTimeout( () => {
 
-            const spawnObjectForPanel1_0 = panel0_0.objects('gender').objects('female')
+            const spawnObjectForChild = panelZero.objects('gender').objects('female')
 
-            panel1_0 = new navigator.NestedPanel(panel0_0, spawnObjectForPanel1_0)
-            panel1_0.build()
+            childPanel = new navigator.NestedPanel(panelZero, spawnObjectForChild)
+            childPanel.build()
 
         }, 1000)
 
@@ -309,26 +335,26 @@ describe ('Panel IDs: Panel IDs must be generated correctly', () => {
 
 
         // Check the newly created child panel's ID
-        expect( panel1_0.id() ).toBe( 'panel-1-0' )
+        expect( childPanel.id() ).toBe( 'panel-0-0' )
 
 
 
-        // REPLACEMENT PANEL #1.0  //
+        // REPLACEMENT CHILD PANEL #0-0  //
         // Replace existing panel at level 1
 
-        let replacementPanel1_0
+        let replacementChildPanel
         setTimeout( () => {
-            const spawnObjectForSecondPanel1_0 = panel0_0.objects('gender').objects('male')
+            const spawnObjectForReplacementChild = panelZero.objects('gender').objects('male')
 
-            replacementPanel1_0 = new navigator.NestedPanel(panel0_0, spawnObjectForSecondPanel1_0)
-            replacementPanel1_0.build()
+            replacementChildPanel = new navigator.NestedPanel(panelZero, spawnObjectForReplacementChild)
+            replacementChildPanel.build()
 
         }, 2000 )
 
         jest.runOnlyPendingTimers()
 
         // Check the newly created replacement panel's ID
-        expect( replacementPanel1_0.id() ).toBe( 'panel-1-0' )
+        expect( replacementChildPanel.id() ).toBe( 'panel-0-0' )
 
 
     })
@@ -341,8 +367,8 @@ describe ('Panel IDs: Panel IDs must be generated correctly', () => {
         jest.useFakeTimers()
 
 
-        // PANEL #0.0 //
-        const panel0_0 = new navigator.NestedPanel()
+        // PANEL #0 //
+        const panelZero = new navigator.NestedPanel()
             .bgFill('#deebf7')
             .x(200).y(25)
             .yAxisLabels(true)
@@ -350,15 +376,15 @@ describe ('Panel IDs: Panel IDs must be generated correctly', () => {
 
 
 
-        // PANEL #1.0 //
+        // PANEL #0-0 //
         // Create child panel
-        let panel1_0
+        let childPanel
         setTimeout( () => {
 
-            const spawnObjectForPanel1_0 = panel0_0.objects('gender').objects('female')
+            const spawnObjectForChild = panelZero.objects('gender').objects('female')
 
-            panel1_0 = new navigator.NestedPanel(panel0_0, spawnObjectForPanel1_0)
-            panel1_0.build()
+            childPanel = new navigator.NestedPanel(panelZero, spawnObjectForChild)
+            childPanel.build()
 
         }, 1000)
 
@@ -366,19 +392,19 @@ describe ('Panel IDs: Panel IDs must be generated correctly', () => {
 
 
         // Check the newly created child panel's ID
-        expect( panel1_0.id() ).toBe( 'panel-1-0' )
+        expect( childPanel.id() ).toBe( 'panel-0-0' )
 
 
 
-        // PANEL #1.1 //
+        // PANEL #0-1 //
         // Create sibling panel
-        let panel1_1
+        let secondChild
         setTimeout( () => {
 
-            const spawnObjectForSiblingPanel1_1 = panel0_0.objects('gender').objects('male')
+            const spawnObjectForSecondChild = panelZero.objects('gender').objects('male')
 
-            panel1_1 = new navigator.NestedPanel(panel0_0, spawnObjectForSiblingPanel1_1, 'sibling')
-            panel1_1.build()
+            secondChild = new navigator.NestedPanel(panelZero, spawnObjectForSecondChild, 'sibling')
+            secondChild.build()
 
         }, 2000)
 
@@ -386,28 +412,27 @@ describe ('Panel IDs: Panel IDs must be generated correctly', () => {
 
 
         // Check the newly created sibling panel's ID
-        expect( panel1_1.id() ).toBe( 'panel-1-1' )
+        expect( secondChild.id() ).toBe( 'panel-0-1' )
 
 
 
 
-        // REPLACEMENT PANEL #1.0  //
-        // Replace comparison panels
+        // REPLACEMENT PANEL #0-1  //
+        // Replace both of the comparison panels
 
-        let replacementPanel1_0
+        let replacerPanel
         setTimeout( () => {
-            const spawnObjectForSecondPanel1_0 = panel0_0.objects('gender').objects('male')
+            const spawnObjectForReplacerPanel = panelZero.objects('gender').objects('male')
 
-            replacementPanel1_0 = new navigator.NestedPanel(panel0_0, spawnObjectForSecondPanel1_0)
-            replacementPanel1_0.build()
+            replacerPanel = new navigator.NestedPanel(panelZero, spawnObjectForReplacerPanel)
+            replacerPanel.build()
 
         }, 2000 )
 
         jest.runOnlyPendingTimers()
 
         // Check the newly created replacement panel's ID
-        expect( replacementPanel1_0.id() ).toBe( 'panel-1-0' )
-
+        expect( replacerPanel.id() ).toBe( 'panel-0-0' )
 
     })
 
@@ -419,8 +444,8 @@ describe ('Panel IDs: Panel IDs must be generated correctly', () => {
 
         initializeDomWithSvg()
 
-        // Create panel 0
-        const parentPanel = new navigator.NestedPanel()
+        // Create panel zero
+        const panelZero = new navigator.NestedPanel()
             .bgFill('#deebf7')
             .x(200).y(25)
             .yAxisLabels(true)
@@ -429,23 +454,22 @@ describe ('Panel IDs: Panel IDs must be generated correctly', () => {
 
         // Create panel 1
         // Create a child panel
-        const spawnObjectForChildPanel = parentPanel.objects('gender').objects('female')
+        const spawnObjectForChildPanel = panelZero.objects('gender').objects('female')
 
-        const childPanel = new navigator.NestedPanel(parentPanel, spawnObjectForChildPanel)
+        const childPanel = new navigator.NestedPanel(panelZero, spawnObjectForChildPanel)
         childPanel.build()
 
         // Check the newly created child panel's ID
-        expect( childPanel.id() ).toBe( 'panel-1-0' )
+        expect( childPanel.id() ).toBe( 'panel-0-0' )
 
 
 
         // Re-Create (refresh) panel 1
-
-        const childPanel2 = new navigator.NestedPanel(parentPanel, spawnObjectForChildPanel)
+        const childPanel2 = new navigator.NestedPanel(panelZero, spawnObjectForChildPanel)
         childPanel2.build()
 
         // Check the newly created child panel's ID
-        expect( childPanel2.id() ).toBe( 'panel-1-0' )
+        expect( childPanel2.id() ).toBe( 'panel-0-0' )
 
 
     })
@@ -507,7 +531,7 @@ describe ('Inferences', () => {
 
 
             // Check the newly created child panel's ID
-            expect( childPanel.id() ).toBe( 'panel-1-0' )
+            expect( childPanel.id() ).toBe( 'panel-0-0' )
 
         })
 
@@ -548,7 +572,7 @@ describe ('Inferences', () => {
             expect( panel1.has.parentWithAnyChildButNoGrandchildren ).toBe( true )
 
             expect( panel1.has.parentWithRightmostChildPanelObject.hasType() ).toBe('NestedPanel')
-            expect( panel1.has.parentWithRightmostChildPanelObject.id() ).toBe('panel-1-0')
+            expect( panel1.has.parentWithRightmostChildPanelObject.id() ).toBe('panel-0-0')
 
             expect( panel1.has.leftSiblingObject ).toBe( null)
             expect( panel1._leftSiblingObject ).toBe( null)
@@ -602,7 +626,7 @@ describe ('Inferences', () => {
             expect( panel2.has.parentWithAnyChildButNoGrandchildren ).toBe( true )
 
             expect( panel2.has.parentWithRightmostChildPanelObject.hasType() ).toBe( 'NestedPanel' )
-            expect( panel2.has.parentWithRightmostChildPanelObject.id() ).toBe( 'panel-2-0' )
+            expect( panel2.has.parentWithRightmostChildPanelObject.id() ).toBe( 'panel-0-0-0' )
 
             expect( panel2.has.leftSiblingObject ).toBe( null)
             expect( panel2._leftSiblingObject ).toBe( null )
@@ -651,7 +675,7 @@ describe ('Inferences', () => {
             expect( panel1_0.has.parentWithAnyChildButNoGrandchildren ).toBe( true )
 
             expect( panel1_0.has.parentWithRightmostChildPanelObject.hasType() ).toBe( 'NestedPanel' )
-            expect( panel1_0.has.parentWithRightmostChildPanelObject.id() ).toBe( 'panel-1-0' )
+            expect( panel1_0.has.parentWithRightmostChildPanelObject.id() ).toBe( 'panel-0-0' )
 
             expect( panel1_0.has.leftSiblingObject ).toBe( null)
             expect( panel1_0._leftSiblingObject ).toBe( null )
@@ -681,12 +705,12 @@ describe ('Inferences', () => {
             expect( panel1_0.has.parentWithAnyChildButNoGrandchildren ).toBe( true )
 
             expect( panel1_0.has.parentWithRightmostChildPanelObject.hasType() ).toBe( 'NestedPanel' )
-            expect( panel1_0.has.parentWithRightmostChildPanelObject.id() ).toBe( 'panel-1-1' )
+            expect( panel1_0.has.parentWithRightmostChildPanelObject.id() ).toBe( 'panel-0-1' )
 
 
             const rightwardSiblingsOfPanel1_0 = panel1_0.has.siblingObjectsOnRightSide.keys()
             const rightwardSiblingsOfPanel1_0_printable = String( Array.from( rightwardSiblingsOfPanel1_0 ) )
-            expect( rightwardSiblingsOfPanel1_0_printable ).toBe( "panel-1-1" )
+            expect( rightwardSiblingsOfPanel1_0_printable ).toBe( "panel-0-1" )
 
 
             // Check inferred relationships for panel-1-1
@@ -702,12 +726,12 @@ describe ('Inferences', () => {
             expect( panel1_1.has.parentWithAnyChildButNoGrandchildren ).toBe( true )
 
             expect( panel1_1.has.parentWithRightmostChildPanelObject.hasType() ).toBe( 'NestedPanel' )
-            expect( panel1_1.has.parentWithRightmostChildPanelObject.id() ).toBe( 'panel-1-1' )
+            expect( panel1_1.has.parentWithRightmostChildPanelObject.id() ).toBe( 'panel-0-1' )
 
             expect( panel1_1.has.leftSiblingObject.hasType() ).toBe( 'NestedPanel')
-            expect( panel1_1.has.leftSiblingObject.id() ).toBe( 'panel-1-0' )
+            expect( panel1_1.has.leftSiblingObject.id() ).toBe( 'panel-0-0' )
             expect( panel1_1._leftSiblingObject.hasType() ).toBe( 'NestedPanel' )
-            expect( panel1_1._leftSiblingObject.id() ).toBe( 'panel-1-0' )
+            expect( panel1_1._leftSiblingObject.id() ).toBe( 'panel-0-0' )
 
 
 
@@ -764,7 +788,7 @@ describe ('Inferences', () => {
             expect( panel2_0.has.parentWithAnyChildButNoGrandchildren ).toBe( true )
 
             expect( panel2_0.has.parentWithRightmostChildPanelObject.hasType() ).toBe( 'NestedPanel' )
-            expect( panel2_0.has.parentWithRightmostChildPanelObject.id() ).toBe( 'panel-2-0' )
+            expect( panel2_0.has.parentWithRightmostChildPanelObject.id() ).toBe( 'panel-0-0-0' )
 
             expect( panel2_0.has.leftSiblingObject ).toBe( null)
             expect( panel2_0._leftSiblingObject ).toBe( null )
@@ -799,12 +823,12 @@ describe ('Inferences', () => {
             expect( panel2_1.has.parentWithAnyChildButNoGrandchildren ).toBe( true )
 
             expect( panel2_1.has.parentWithRightmostChildPanelObject.hasType() ).toBe( 'NestedPanel' )
-            expect( panel2_1.has.parentWithRightmostChildPanelObject.id() ).toBe( 'panel-2-1' )
+            expect( panel2_1.has.parentWithRightmostChildPanelObject.id() ).toBe( 'panel-0-0-1' )
 
             expect( panel2_1.has.leftSiblingObject.hasType() ).toBe( 'NestedPanel' )
-            expect( panel2_1.has.leftSiblingObject.id() ).toBe( 'panel-2-0' )
+            expect( panel2_1.has.leftSiblingObject.id() ).toBe( 'panel-0-0-0' )
             expect( panel2_1._leftSiblingObject.hasType() ).toBe( 'NestedPanel' )
-            expect( panel2_1._leftSiblingObject.id() ).toBe( 'panel-2-0' )
+            expect( panel2_1._leftSiblingObject.id() ).toBe( 'panel-0-0-0' )
 
 
             expect( panel2_1.has.siblingObjectsOnRightSide ).toBe( null )
@@ -836,12 +860,12 @@ describe ('Inferences', () => {
             expect( panel2_2.has.parentWithAnyChildButNoGrandchildren ).toBe( true )
 
             expect( panel2_2.has.parentWithRightmostChildPanelObject.hasType() ).toBe( 'NestedPanel' )
-            expect( panel2_2.has.parentWithRightmostChildPanelObject.id() ).toBe( 'panel-2-2' )
+            expect( panel2_2.has.parentWithRightmostChildPanelObject.id() ).toBe( 'panel-0-0-2' )
 
             expect( panel2_2.has.leftSiblingObject.hasType() ).toBe( 'NestedPanel' )
-            expect( panel2_2.has.leftSiblingObject.id() ).toBe( 'panel-2-1' )
+            expect( panel2_2.has.leftSiblingObject.id() ).toBe( 'panel-0-0-1' )
             expect( panel2_2._leftSiblingObject.hasType() ).toBe( 'NestedPanel' )
-            expect( panel2_2._leftSiblingObject.id() ).toBe( 'panel-2-1' )
+            expect( panel2_2._leftSiblingObject.id() ).toBe( 'panel-0-0-1' )
 
 
             expect( panel2_2.has.siblingObjectsOnRightSide ).toBe( null )
@@ -869,10 +893,10 @@ describe ('Inferences', () => {
 
             const rightwardSiblingsOfPanel2_0 = panel2_0.has.siblingObjectsOnRightSide.keys()
             const rightwardSiblingsOfPanel2_0_printable = String( Array.from( rightwardSiblingsOfPanel2_0 ) )
-            expect( rightwardSiblingsOfPanel2_0_printable ).toBe( "panel-2-1,panel-2-2" )
+            expect( rightwardSiblingsOfPanel2_0_printable ).toBe( "panel-0-0-1,panel-0-0-2" )
 
             expect( panel2_0.has.parentWithRightmostChildPanelObject.hasType() ).toBe( 'NestedPanel' )
-            expect( panel2_0.has.parentWithRightmostChildPanelObject.id() ).toBe( 'panel-2-2' )
+            expect( panel2_0.has.parentWithRightmostChildPanelObject.id() ).toBe( 'panel-0-0-2' )
 
 
         })
@@ -953,7 +977,7 @@ describe ('Inferences', () => {
             expect( panel2_0_of_1_0.has.beenFullyInstantiated ).toBe( true )
 
             expect( panel2_0_of_1_0.has.parentWithRightmostChildPanelObject.hasType() ).toBe( 'NestedPanel' )
-            expect( panel2_0_of_1_0.has.parentWithRightmostChildPanelObject.id() ).toBe( 'panel-2-0' )
+            expect( panel2_0_of_1_0.has.parentWithRightmostChildPanelObject.id() ).toBe( 'panel-0-0-0' )
 
             expect( panel2_0_of_1_0.has.leftSiblingObject ).toBe( null )
             expect( panel2_0_of_1_0._leftSiblingObject ).toBe( null )
@@ -963,11 +987,11 @@ describe ('Inferences', () => {
             // Check siblings on the right side of parent panel (special case needed for `NestedPanel._pushAnySiblingsOfParentRightward` method)
             const allSiblingsOfParent = panel2_0_of_1_0.parentPanel.parentPanel.childrenPanels.keys()
             const allSiblingsOfParent_printable = String( Array.from( allSiblingsOfParent ) )
-            expect ( allSiblingsOfParent_printable ).toBe( "panel-1-0,panel-1-1,panel-1-2" )
+            expect ( allSiblingsOfParent_printable ).toBe( "panel-0-0,panel-0-1,panel-0-2" )
 
             const rightwardSiblingsOfTheParentPanelOfPanel2_0_of_1_0 = panel2_0_of_1_0.parentPanel.has.siblingObjectsOnRightSide.keys()
             const rightwardSiblingsOfTheParentPanelOfPanel2_0_of_1_0_printable = String( Array.from( rightwardSiblingsOfTheParentPanelOfPanel2_0_of_1_0 ) )
-            expect ( rightwardSiblingsOfTheParentPanelOfPanel2_0_of_1_0_printable ).toBe( "panel-1-1,panel-1-2" )
+            expect ( rightwardSiblingsOfTheParentPanelOfPanel2_0_of_1_0_printable ).toBe( "panel-0-1,panel-0-2" )
 
         })
 
@@ -1516,14 +1540,14 @@ describe ('Spatial Inferences', () => {
         expect( grandChildPanel.rightEdge() ).toBe( 500 )
 
         // Get the actual right edges from DOM
-        const panelZeroXCoordinateOnDom = document.querySelector( '#panel-0-0 .background rect' ).getAttribute('x')
-        const panelZeroWidthOnDom = document.querySelector( '#panel-0-0 .background rect' ).getAttribute('width')
+        const panelZeroXCoordinateOnDom = document.querySelector( '#panel-0 .background rect' ).getAttribute('x')
+        const panelZeroWidthOnDom = document.querySelector( '#panel-0 .background rect' ).getAttribute('width')
 
-        const panelOneXCoordinateOnDom = document.querySelector( '#panel-1-0 .background rect' ).getAttribute('x')
-        const panelOneWidthOnDom = document.querySelector( '#panel-1-0 .background rect' ).getAttribute('width')
+        const panelOneXCoordinateOnDom = document.querySelector( '#panel-0-0 .background rect' ).getAttribute('x')
+        const panelOneWidthOnDom = document.querySelector( '#panel-0-0 .background rect' ).getAttribute('width')
 
-        const panelTwoXCoordinateOnDom = document.querySelector( '#panel-2-0 .background rect' ).getAttribute('x')
-        const panelTwoWidthOnDom = document.querySelector( '#panel-2-0 .background rect' ).getAttribute('width')
+        const panelTwoXCoordinateOnDom = document.querySelector( '#panel-0-0-0 .background rect' ).getAttribute('x')
+        const panelTwoWidthOnDom = document.querySelector( '#panel-0-0-0 .background rect' ).getAttribute('width')
 
         const panelZeroRightEdgeOnDom = Number(panelZeroXCoordinateOnDom) + Number(panelZeroWidthOnDom)
         const panelOneRightEdgeOnDom = Number(panelOneXCoordinateOnDom) + Number(panelOneWidthOnDom)
@@ -1548,9 +1572,9 @@ describe ('Spatial Inferences', () => {
 
 
         // Get the actual left edges from DOM
-        const panelZeroXCoordinateOnDom = document.querySelector( '#panel-0-0 .background rect' ).getAttribute('x')
-        const panelOneXCoordinateOnDom = document.querySelector( '#panel-1-0 .background rect' ).getAttribute('x')
-        const panelTwoXCoordinateOnDom = document.querySelector( '#panel-2-0 .background rect' ).getAttribute('x')
+        const panelZeroXCoordinateOnDom = document.querySelector( '#panel-0 .background rect' ).getAttribute('x')
+        const panelOneXCoordinateOnDom = document.querySelector( '#panel-0-0 .background rect' ).getAttribute('x')
+        const panelTwoXCoordinateOnDom = document.querySelector( '#panel-0-0-0 .background rect' ).getAttribute('x')
 
         const panelZeroLeftEdgeOnDom = Number(panelZeroXCoordinateOnDom)
         const panelOneLeftEdgeOnDom = Number(panelOneXCoordinateOnDom)
@@ -1572,14 +1596,14 @@ describe ('Spatial Inferences', () => {
         expect( grandChildPanel.rightEdgeOfCharts() ).toBe( 485 )
 
 
-        const xCoordinateOfOneChartInPanel0_fromDom = document.querySelector( '#panel-0-0 .chart rect' ).getAttribute('x')
-        const widthOfOneChartInPanel0_fromDom = document.querySelector( '#panel-0-0 .chart rect' ).getAttribute('width')
+        const xCoordinateOfOneChartInPanel0_fromDom = document.querySelector( '#panel-0 .chart rect' ).getAttribute('x')
+        const widthOfOneChartInPanel0_fromDom = document.querySelector( '#panel-0 .chart rect' ).getAttribute('width')
 
-        const xCoordinateOfOneChartInPanel1_fromDom = document.querySelector( '#panel-1-0 .chart rect' ).getAttribute('x')
-        const widthOfOneChartInPanel1_fromDom = document.querySelector( '#panel-1-0 .chart rect' ).getAttribute('width')
+        const xCoordinateOfOneChartInPanel1_fromDom = document.querySelector( '#panel-0-0 .chart rect' ).getAttribute('x')
+        const widthOfOneChartInPanel1_fromDom = document.querySelector( '#panel-0-0 .chart rect' ).getAttribute('width')
 
-        const xCoordinateOfOneChartInPanel2_fromDom = document.querySelector( '#panel-2-0 .chart rect' ).getAttribute('x')
-        const widthOfOneChartInPanel2_fromDom = document.querySelector( '#panel-2-0 .chart rect' ).getAttribute('width')
+        const xCoordinateOfOneChartInPanel2_fromDom = document.querySelector( '#panel-0-0-0 .chart rect' ).getAttribute('x')
+        const widthOfOneChartInPanel2_fromDom = document.querySelector( '#panel-0-0-0 .chart rect' ).getAttribute('width')
 
 
         const rightEdgeOfOneChartInPanel0_fromDom = Number( xCoordinateOfOneChartInPanel0_fromDom )  + Number( widthOfOneChartInPanel0_fromDom )
@@ -1603,9 +1627,9 @@ describe ('Spatial Inferences', () => {
         expect( grandChildPanel.leftEdgeOfCharts() ).toBe( 410 )
 
 
-        const xCoordinateOfOneChartInPanel0_fromDom = document.querySelector( '#panel-0-0 .chart rect' ).getAttribute('x')
-        const xCoordinateOfOneChartInPanel1_fromDom = document.querySelector( '#panel-1-0 .chart rect' ).getAttribute('x')
-        const xCoordinateOfOneChartInPanel2_fromDom = document.querySelector( '#panel-2-0 .chart rect' ).getAttribute('x')
+        const xCoordinateOfOneChartInPanel0_fromDom = document.querySelector( '#panel-0 .chart rect' ).getAttribute('x')
+        const xCoordinateOfOneChartInPanel1_fromDom = document.querySelector( '#panel-0-0 .chart rect' ).getAttribute('x')
+        const xCoordinateOfOneChartInPanel2_fromDom = document.querySelector( '#panel-0-0-0 .chart rect' ).getAttribute('x')
 
         const leftEdgeOfOneChartInPanel0_fromDom = Number( xCoordinateOfOneChartInPanel0_fromDom )
         const leftEdgeOfOneChartInPanel1_fromDom = Number( xCoordinateOfOneChartInPanel1_fromDom )
