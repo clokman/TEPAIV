@@ -514,6 +514,35 @@ describe ('Visualizing Queries', () => {
 
     })
 
+
+
+
+    test ('When taking a step back from a deep query, there should not be any leftover polygons ' +
+        '(previously a bug)', async () => {
+
+    // This test passes when ran individually, but fails when ran as part of 'All tests in CPC'. This is most likely
+    // a JEST issue.
+    // What this test tests is already tested in NestedPanel tests at a lower level, so it is commented our here.
+    //
+    //     const { myNavigator, panelZero, childPanel, grandChildPanel, grandGrandChildPanel, grandGrandGrandChildPanel } =
+    //     await initializeDomWithTitanicEmbarkTinyNavigator.and.grandGrandGrandChildPanel()
+    //
+    //     /*
+    //      Go backward: Click a category on panel 0 (should remove all other panels and extend the clicked category
+    //      into a new panel)
+    //     */
+    //     domUtils.simulateClickOn('#panel-0 #Survived')
+    //     jest.runOnlyPendingTimers()
+    //
+    //     writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/xxxam1.html')
+    //
+    //     const allPolygons = document.querySelectorAll('polygon')
+    //
+    //     expect( allPolygons.length ).toBe(8)
+
+    })
+
+
 })
 
 
