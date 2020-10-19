@@ -303,7 +303,7 @@ describe ('Panel IDs: Panel IDs must be generated correctly', () => {
     })
 
 
-    test ('Replace Singleton Panel: A panels that replaces another panel should have the right IDs', () => {
+    test ('Replace Singleton Panel: A panel that replaces another panel should have the right ID', () => {
 
         initializeDomWithSvg()
 
