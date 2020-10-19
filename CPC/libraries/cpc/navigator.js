@@ -267,7 +267,7 @@
         }
 
 
-        _whenABackgorundIsClicked(callback) {
+        _whenABackgroundIsClicked(callback) {
 
             this.select() // this first select is not a D3 method
                 .selectAll('.background')
@@ -293,7 +293,7 @@
 
                     }
 
-                    this._whenABackgorundIsClicked(callback)  // keep listening
+                    this._whenABackgroundIsClicked(callback)  // keep listening
 
                 })
 
@@ -393,7 +393,7 @@
 
 
         _listenForClicksOnPanelBackgroundsAndTreatClickedBackgroundsAsCollapsePoints() {
-            this._whenABackgorundIsClicked(
+            this._whenABackgroundIsClicked(
                 () => {
 
                     this._removeAnyPanelsDeeperThanTheClickedOne()
