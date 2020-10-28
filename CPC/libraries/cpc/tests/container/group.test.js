@@ -280,6 +280,45 @@ describe( 'Get Parent Selection', () => {
 } )
 
 
+//// Get Parent Object ///////////////////////////////////////////////////////////////////////
+
+
+describe( 'Get Parent Object', () => {
+
+
+    //// getAnyObject Method /////////////////////////////////////////////////////////////////
+
+    describe( 'getAnyObject Method', () => {
+
+        test( 'Method should return object', () => {
+
+            const myObject = new container.Group()
+            myObject
+                .id('my-object')
+                .update()
+
+            const result = container.Group.getAnyObject( myObject )
+            expect( result ).toBeDefined()
+            expect( result.id() ).toBe( 'my-object' )
+
+        } )
+
+
+        test( 'Method should return undefined if parameter is not an object', () => {
+
+            const myObject = new container.Group()
+            const mySelection = myObject.select()
+
+            const result = container.Group.getAnyObject( mySelection )
+            expect( result ).toBeUndefined()
+
+        } )
+
+    } )
+
+} )
+
+
 //// Visibility ///////////////////////////////////////////////////////////////////////////////
 
 describe ('Visibility', () => {

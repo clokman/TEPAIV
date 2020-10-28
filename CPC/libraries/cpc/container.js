@@ -305,6 +305,25 @@ class Group {
 
     }
 
+
+    /**
+     * If `parentContainerSelectionOrObject` parameter was provided an object, returns this object. If the parent
+     * selection has been given as a D3 `Selection`, returns undefined.
+     * @returns {Object|undefined}
+     */
+    getAnyParentObject(){
+
+        const parentParameter = this.parentContainerSelectionOrObject
+        if ( parentParameter.constructor.name !== 'Selection'  // if parent is not a D3 selection
+               && typeof (parentParameter) === 'object'  ) { // just a very general check, so it's not a string, etc.
+
+            return this.parentContainerSelectionOrObject
+
+        }
+
+    }
+
+
     /**
      * If the parameter is already a D3 Selection, returns it as it is. If the parameter is an object that an return a
      * D3 selection via one of its method, calls this method and returns the returned D3 selection.
