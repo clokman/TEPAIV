@@ -3309,7 +3309,7 @@
                 (eachCategoryData, eachCategoryId) => {
 
                     // Instantiate a Category object for each category in Stack
-                    const categoryObject = new Category(this._container)
+                    const categoryObject = new Category(this)
 
                     // Add the created objects to container registry
                     this.objects(eachCategoryId, categoryObject)
@@ -3984,9 +3984,9 @@
     class Category extends shape.CaptionedRectangle {
 
 
-        constructor(parentContainerSelection = d3.select('body').select('svg')) {
+        constructor(parentContainerSelectionOrObject = d3.select('body').select('svg')) {
 
-            super(parentContainerSelection)
+            super(parentContainerSelectionOrObject)
 
             // Private Parameters //
             this._percentage = 10
