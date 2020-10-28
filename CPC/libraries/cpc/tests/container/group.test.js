@@ -316,6 +316,60 @@ describe( 'Get Parent Object', () => {
 
     } )
 
+
+    //// Registration of any Parent Objects to Group Registry /////////////////////////////////////
+
+    describe( 'Registration of any Parent Objects to Group Registry', () => {
+
+
+        test( "If the parent is specified as an object, this should be registered in the Group object's registry",
+            () => {
+
+            // Create a parent object
+            const parent = new container.Group()
+            parent
+                .id( 'the-parent' )
+                .update()
+
+            // Create a child object
+            const child = new container.Group( parent )
+
+            //  Object should be correctly registered as the parent object
+            expect( child.parentObject ).toBeDefined()
+            expect( child.parentObject.id() ).toBe( 'the-parent' )
+
+            // D3 `Selection` of parent should also be correctly inferred and registered
+            expect( child.parentContainerSelection ).toBeDefined()
+            expect( child.parentContainerSelection.attr( 'id' ) ).toBe( 'the-parent' )
+
+        } )
+
+
+        test( "If the parent is specified as a D3 `Selection`, this should be registered as `undefined` in the Group" +
+            " object's registry", () => {
+
+            // Create a parent object
+            const parent = new container.Group()
+            parent
+                .id( 'the-parent' )
+                .update()
+
+            // Create a child object
+            const child = new container.Group( parent.select() )
+
+            expect( child.parentObject ).toBeUndefined()
+
+            // D3 `Selection` of parent should also be correctly inferred and registered
+            expect( child.parentContainerSelection ).toBeDefined()
+            expect( child.parentContainerSelection.attr( 'id' ) ).toBe( 'the-parent' )
+
+        } )
+
+
+    } )
+
+
+
 } )
 
 

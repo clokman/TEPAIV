@@ -105,6 +105,8 @@ class Group {
 
     constructor(parentContainerSelectionOrObject=d3.select('body').select('svg')) {
 
+        this.parentObject = container.Group.getAnyObject( parentContainerSelectionOrObject )
+
         // TODO: If there is  no SVG element already existing in DOM, init method should return an error
         this.parentContainerSelection = container.Group.getD3SelectionFromVariousParameterTypes(parentContainerSelectionOrObject)
 
@@ -311,15 +313,15 @@ class Group {
      * selection has been given as a D3 `Selection`, returns undefined.
      * @returns {Object|undefined}
      */
-    getAnyParentObject(){
+    static getAnyObject(parentSpecifier){
 
-        const parentParameter = this.parentContainerSelectionOrObject
-        if ( parentParameter.constructor.name !== 'Selection'  // if parent is not a D3 selection
-               && typeof (parentParameter) === 'object'  ) { // just a very general check, so it's not a string, etc.
+        const parameterIsAnObject =
+            parentSpecifier.constructor.name !== 'Selection'  // if parent is not a D3 selection
+            && typeof parentSpecifier === 'object'  // just a very general check, so it's not a string, etc.
 
-            return this.parentContainerSelectionOrObject
-
-        }
+        return parameterIsAnObject
+            ? parentSpecifier
+            : undefined
 
     }
 
