@@ -315,7 +315,6 @@ class Group {
 
         const parameterIsAD3Selection = classUtils.isInstanceOf(parentSpecifier, 'Selection')
 
-        const parameterIsAnObject = classUtils.isInstanceOf(parentSpecifier, 'Panel')
         const parameterIsASelectableObject = !!parentSpecifier.select  // checks if method exists
 
         if (parameterIsAD3Selection) {
