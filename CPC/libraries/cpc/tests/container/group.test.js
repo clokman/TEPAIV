@@ -320,31 +320,47 @@ describe( 'getAnyObject Method', () => {
 
 describe( 'Retrieving Ancestry Information', () => {
 
+    let grandParent
+      , parent
+      , child
+
+    beforeEach( () => {
+
+        initializeDomWithSvg()
+
+        // Create grandparent object
+        grandParent = new container.Group()
+        grandParent.id( 'grandparent' ).update()
+
+        // Create parent object
+        parent = new container.Group( grandParent )
+        parent.id( 'parent' ).update()
+
+        // Create child object
+        child = new container.Group( parent )
+        child.id( 'child' ).update()
+
+    })
+
 
     //// parentObject property /////////////////////////////////////
 
-    describe( 'parentObject property', () => {
+    describe( 'parentObject Property', () => {
 
 
         test( "If the parent is specified as an object, this should be registered in the Group object's registry",
             () => {
 
-                // Create a parent object
-                const parent = new container.Group()
-                parent
-                    .id( 'the-parent' )
-                    .update()
-
-                // Create a child object
-                const child = new container.Group( parent )
+                // State at initialization:
+                // grandParent <-- parent <-- child
 
                 //  Object should be correctly registered as the parent object
                 expect( child.parentObject ).toBeDefined()
-                expect( child.parentObject.id() ).toBe( 'the-parent' )
+                expect( child.parentObject.id() ).toBe( 'parent' )
 
                 // D3 `Selection` of parent should also be correctly inferred and registered
                 expect( child.parentContainerSelection ).toBeDefined()
-                expect( child.parentContainerSelection.attr( 'id' ) ).toBe( 'the-parent' )
+                expect( child.parentContainerSelection.attr( 'id' ) ).toBe( 'parent' )
 
             } )
 
@@ -352,22 +368,136 @@ describe( 'Retrieving Ancestry Information', () => {
         test( "If the parent is specified as a D3 `Selection`, this should be registered as `undefined` in the Group" +
             " object's registry", () => {
 
-            // Create a parent object
-            const parent = new container.Group()
-            parent
-                .id( 'the-parent' )
-                .update()
+            // State at initialization:
+            // grandParent <-- parent <-- child
 
-            // Create a child object
-            const child = new container.Group( parent.select() )
+            // Create a child object that has only a D3 Selection as parent (instead of an object)
+            const childWithSelectionParent = new container.Group( parent.select() )
 
-            expect( child.parentObject ).toBeUndefined()
+            expect( childWithSelectionParent.parentObject ).toBeUndefined()
 
             // D3 `Selection` of parent should also be correctly inferred and registered
-            expect( child.parentContainerSelection ).toBeDefined()
-            expect( child.parentContainerSelection.attr( 'id' ) ).toBe( 'the-parent' )
+            expect( childWithSelectionParent.parentContainerSelection ).toBeDefined()
+            expect( childWithSelectionParent.parentContainerSelection.attr( 'id' ) ).toBe( 'parent' )
 
         } )
+
+
+    } )
+
+
+
+    //// getLineage() Method ///////////////////////////////////////////////////////////////
+
+    describe( 'getLineage() Method', () => {
+
+
+        test( 'An object should be able to retrieve its ancestry information on demand', () => {
+
+            // State at initialization:
+            // grandParent <-- parent <-- child
+
+            // Grandparent should have no ancestor objects
+            expect( grandParent._getLineage().size ).toBe( 0 )
+
+            // Parent should have only one ancestor: the grandparent
+            expect( parent._getLineage() ).toBeDefined()
+            expect( parent._getLineage().size ).toBe( 1 )
+            expect( parent._getLineage() ).toTabulateAs(`\
+┌───────────────────┬───────────────┬─────────┐
+│ (iteration index) │      Key      │ Values  │
+├───────────────────┼───────────────┼─────────┤
+│         0         │ 'grandparent' │ [Group] │
+└───────────────────┴───────────────┴─────────┘`)
+
+            // Child should have two ancestors: parent and grandparent
+            expect( child._getLineage().size ).toBe( 2 )
+            expect( child._getLineage() ).toTabulateAs(`\
+┌───────────────────┬───────────────┬─────────┐
+│ (iteration index) │      Key      │ Values  │
+├───────────────────┼───────────────┼─────────┤
+│         0         │   'parent'    │ [Group] │
+│         1         │ 'grandparent' │ [Group] │
+└───────────────────┴───────────────┴─────────┘`)
+
+        } )
+
+
+
+    } )
+
+
+    //// parentObjects() Method ///////////////////////////////////////////////////////////////
+
+    describe( 'parentObjects() Method', () => {
+
+
+        test('parentObjects() method should return complete ancestry information if called without parameters' ,
+            () => {
+
+                // State at initialization:
+                // grandParent <-- parent <-- child
+
+                // Grandparent should have no ancestry information
+                expect( grandParent.parentObjects().size ).toBe( 0 )
+
+
+                // Parent should have one ancestor: grandparent
+                expect( parent.parentObjects() ).toTabulateAs(`\
+┌───────────────────┬───────────────┬─────────┐
+│ (iteration index) │      Key      │ Values  │
+├───────────────────┼───────────────┼─────────┤
+│         0         │ 'grandparent' │ [Group] │
+└───────────────────┴───────────────┴─────────┘`)
+
+                // Child should have two ancestors: parent and grandparent
+                expect( child.parentObjects() ).toTabulateAs(`\
+┌───────────────────┬───────────────┬─────────┐
+│ (iteration index) │      Key      │ Values  │
+├───────────────────┼───────────────┼─────────┤
+│         0         │   'parent'    │ [Group] │
+│         1         │ 'grandparent' │ [Group] │
+└───────────────────┴───────────────┴─────────┘`)
+
+            } )
+
+
+        test('parentObjects( "someID" ) should return specified ancestor object',
+            () => {
+
+                // State at initialization:
+                // grandParent <-- parent <-- child
+
+                // For parent:
+                // Request 'grandparent' by name
+                expect( parent.parentObjects('grandparent') ).toBeDefined()
+                expect( parent.parentObjects('grandparent' ).id() ).toBe( 'grandparent' )
+
+
+                // For child:
+                // Request 'parent' by name
+                expect( child.parentObjects('parent') ).toBeDefined()
+                expect( child.parentObjects('parent' ).id() ).toBe( 'parent' )
+                // Request 'grandparent' by name
+                expect( child.parentObjects('grandparent') ).toBeDefined()
+                expect( child.parentObjects('grandparent' ).id() ).toBe( 'grandparent' )
+
+            } )
+
+
+        test('parentObjects( "indvalidID" ) should return undefined',
+            () => {
+
+                // State at initialization:
+                // grandParent <-- parent <-- child
+
+                // Request invalid parent objects by name
+                expect( grandParent.parentObjects('someParent') ).toBeUndefined()
+                expect( parent.parentObjects('someParent') ).toBeUndefined()
+                expect( child.parentObjects('someParent') ).toBeUndefined()
+
+
+            } )
 
 
     } )

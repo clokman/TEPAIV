@@ -106,6 +106,7 @@ class Group {
     constructor(parentContainerSelectionOrObject=d3.select('body').select('svg')) {
 
         this.parentObject = container.Group.getAnyObject( parentContainerSelectionOrObject )
+        this._parentObjects = this._getLineage()
 
         // TODO: If there is  no SVG element already existing in DOM, init method should return an error
         this.parentContainerSelection = container.Group.getD3SelectionFromVariousParameterTypes(parentContainerSelectionOrObject)
@@ -305,6 +306,57 @@ class Group {
             return this
         }
 
+    }
+
+
+
+    /**
+     * Returns either complete ancestry information if no parameter is provided. If a parameter is provided, returns
+     * the parent that matches that ID. If parameter is provided but no matching ID was found, returns undefined.
+     * returns
+     * @param id {string}
+     * @returns {Map|Object|undefined}
+     * @see Group._getLineage
+     */
+    parentObjects(id){
+
+        if (!arguments.length){
+            return this._parentObjects
+        }
+        else {
+            return this._parentObjects.get(id)
+        }
+
+    }
+
+
+    /**
+     * Traverses the object hierarchy from child to parents and returns all of the parent objects in which the current
+     * object is nested. Outputs a `Map` that contains information such as:
+     * { grandparent: <Object>, parent: <Object> }
+     * @returns {Map<any, any>}
+     */
+    _getLineage() {
+
+        const lineage = new Map()
+
+        function traverseAndRegisterLineage(object) {
+
+            if( !!object.parentObject &&  // because an object may not always have a parent (e.g., panel-0)
+                !!object.parentObject.id ) {  // parent object must also have an id method
+                lineage.set(
+                    object.parentObject.id(),
+                    object.parentObject
+                )
+
+                traverseAndRegisterLineage( object.parentObject )
+            }
+
+        }
+
+        traverseAndRegisterLineage( this )
+
+        return lineage
     }
 
 
