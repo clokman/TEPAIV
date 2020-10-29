@@ -33,6 +33,40 @@ describe ('Instantiation', () => {
 
 
 
+//// Parent-Child Relationship ///////////////////////////////////////////////////////////////
+
+describe( 'Retrieve Ancestry Information', () => {
+
+
+    test( 'When called from a category in the chart, parentObject property and parentObjects() method should return ' +
+        'the chart',
+        () => {
+
+            // Create a parent object
+            const myChart = new navigator.Chart()
+            myChart
+                .id( 'my-chart' )
+                .update()
+
+            // Create a child object
+            const myCategory = new navigator.Category( myChart )
+
+            expect( myCategory.parentObjects() ).toBeDefined()
+            expect( myCategory.parentObjects().size ).toBe( 1 )
+            expect( myCategory.parentObjects() ).toTabulateAs(`\
+┌───────────────────┬────────────┬─────────┐
+│ (iteration index) │    Key     │ Values  │
+├───────────────────┼────────────┼─────────┤
+│         0         │ 'my-chart' │ [Chart] │
+└───────────────────┴────────────┴─────────┘`)
+
+        } )
+
+} )
+
+
+
+
 //// Coordinates ///////////////////////////////////////////////////////////////
 
 describe ('Coordinates', () => {
