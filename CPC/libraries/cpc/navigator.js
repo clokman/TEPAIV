@@ -962,7 +962,7 @@
             this.stacks().data().forEach(
                 (eachStackObject, eachStackId) => {
 
-                    const chart = new Chart(this.select())
+                    const chart = new Chart(this)
                         .stack(eachStackObject)
                         .id(eachStackId)
                         .x(this.innerX())
