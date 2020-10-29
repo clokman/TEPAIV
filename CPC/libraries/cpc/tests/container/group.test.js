@@ -252,6 +252,7 @@ describe( 'Remove Child Objects and Elements', () => {
 } )
 
 
+
 //// Get Parent Selection /////////////////////////////////////////////////////////////////////
 
 describe( 'Get Parent Selection', () => {
@@ -280,69 +281,72 @@ describe( 'Get Parent Selection', () => {
 } )
 
 
-//// Get Parent Object ///////////////////////////////////////////////////////////////////////
+
+//// getAnyObject Method /////////////////////////////////////////////////////////////////
+
+describe( 'getAnyObject Method', () => {
 
 
-describe( 'Get Parent Object', () => {
+    test( 'Method should return object', () => {
 
+        const myObject = new container.Group()
+        myObject
+            .id('my-object')
+            .update()
 
-    //// getAnyObject Method /////////////////////////////////////////////////////////////////
-
-    describe( 'getAnyObject Method', () => {
-
-        test( 'Method should return object', () => {
-
-            const myObject = new container.Group()
-            myObject
-                .id('my-object')
-                .update()
-
-            const result = container.Group.getAnyObject( myObject )
-            expect( result ).toBeDefined()
-            expect( result.id() ).toBe( 'my-object' )
-
-        } )
-
-
-        test( 'Method should return undefined if parameter is not an object', () => {
-
-            const myObject = new container.Group()
-            const mySelection = myObject.select()
-
-            const result = container.Group.getAnyObject( mySelection )
-            expect( result ).toBeUndefined()
-
-        } )
+        const result = container.Group.getAnyObject( myObject )
+        expect( result ).toBeDefined()
+        expect( result.id() ).toBe( 'my-object' )
 
     } )
 
 
-    //// Registration of any Parent Objects to Group Registry /////////////////////////////////////
+    test( 'Method should return undefined if parameter is not an object', () => {
 
-    describe( 'Registration of any Parent Objects to Group Registry', () => {
+        const myObject = new container.Group()
+        const mySelection = myObject.select()
+
+        const result = container.Group.getAnyObject( mySelection )
+        expect( result ).toBeUndefined()
+
+    } )
+
+
+} )
+
+
+
+//// Retrieving Ancestry Information ///////////////////////////////////////////////////////////////
+
+describe( 'Retrieving Ancestry Information', () => {
+
+
+    //// parentObject property /////////////////////////////////////
+
+    describe( 'parentObject property', () => {
 
 
         test( "If the parent is specified as an object, this should be registered in the Group object's registry",
             () => {
 
-            // Create a parent object
-            const parent = new container.Group()
-            parent
-                .id( 'the-parent' )
-                .update()
+                // Create a parent object
+                const parent = new container.Group()
+                parent
+                    .id( 'the-parent' )
+                    .update()
 
-            // Create a child object
-            const child = new container.Group( parent )
+                // Create a child object
+                const child = new container.Group( parent )
 
-            //  Object should be correctly registered as the parent object
-            expect( child.parentObject ).toBeDefined()
-            expect( child.parentObject.id() ).toBe( 'the-parent' )
+                //  Object should be correctly registered as the parent object
+                expect( child.parentObject ).toBeDefined()
+                expect( child.parentObject.id() ).toBe( 'the-parent' )
 
-            // D3 `Selection` of parent should also be correctly inferred and registered
-            expect( child.parentContainerSelection ).toBeDefined()
-            expect( child.parentContainerSelection.attr( 'id' ) ).toBe( 'the-parent' )
+                // D3 `Selection` of parent should also be correctly inferred and registered
+                expect( child.parentContainerSelection ).toBeDefined()
+                expect( child.parentContainerSelection.attr( 'id' ) ).toBe( 'the-parent' )
 
-        } )
+            } )
 
 
         test( "If the parent is specified as a D3 `Selection`, this should be registered as `undefined` in the Group" +
@@ -367,7 +371,6 @@ describe( 'Get Parent Object', () => {
 
 
     } )
-
 
 
 } )
