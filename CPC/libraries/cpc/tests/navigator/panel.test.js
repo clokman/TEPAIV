@@ -1031,6 +1031,38 @@ describe ('Statistics', () => {
 
 
 
+
+//// Retrieve Ancestry Information ///////////////////////////////////////////////////////////////
+
+describe( 'Retrieve Ancestry Information', () => {
+
+
+    test( 'When called from a chart in the panel, parentObject property and parentObjects() method should return ' +
+        'the panel',() => {
+
+            // Create a parent object
+            initializeDomWithSvg()
+            const myPanel = new navigator.Panel()
+            myPanel.id('my-panel')
+            myPanel.build()
+
+            // Select a component chart of Panel
+            expect( myPanel.objects('status').parentObject ).toBeDefined()
+            expect( myPanel.objects('status').parentObject.id() ).toBe( 'my-panel' )
+
+            expect( myPanel.objects('status').parentObjects() ).toTabulateAs(`\
+┌───────────────────┬────────────┬─────────┐
+│ (iteration index) │    Key     │ Values  │
+├───────────────────┼────────────┼─────────┤
+│         0         │ 'my-panel' │ [Panel] │
+└───────────────────┴────────────┴─────────┘`)
+
+        } )
+
+} )
+
+
+
 //// Inferences ///////////////////////////////////////////////////////////////
 
 describe ('Inferences', () => {
