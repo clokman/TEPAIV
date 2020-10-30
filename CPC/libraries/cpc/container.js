@@ -106,7 +106,6 @@ class Group {
     constructor(parentContainerSelectionOrObject=d3.select('body').select('svg')) {
 
         this.parentObject = container.Group.getAnyObject( parentContainerSelectionOrObject )
-        this._parentObjects = this._getLineage()
 
         // TODO: If there is  no SVG element already existing in DOM, init method should return an error
         this.parentContainerSelection = container.Group.getD3SelectionFromVariousParameterTypes(parentContainerSelectionOrObject)
@@ -311,8 +310,9 @@ class Group {
 
 
     /**
-     * Returns either complete ancestry information if no parameter is provided. If a parameter is provided, returns
-     * the parent that matches that ID. If parameter is provided but no matching ID was found, returns undefined.
+     * Convenience method for interacting with _getLineage(). Returns either complete ancestry information if no
+     * parameter is provided. If a parameter is provided, returns the parent that matches that ID. If parameter is
+     * provided but no matching ID was found, returns undefined.
      * returns
      * @param id {string}
      * @returns {Map|Object|undefined}
@@ -320,11 +320,13 @@ class Group {
      */
     parentObjects(id){
 
+        const parentObjects = this._getLineage()
+
         if (!arguments.length){
-            return this._parentObjects
+            return parentObjects
         }
         else {
-            return this._parentObjects.get(id)
+            return parentObjects.get(id)
         }
 
     }
