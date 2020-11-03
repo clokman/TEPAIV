@@ -404,12 +404,9 @@
 
         _updateCurrentDrillDownPathParameterBasedOnLastClickedCategory() {
 
-            const column = this._lastClickedChartName
-            const category = this._lastClickedCategoryName
-
-            // Modify last query based on clicked panel depth
-            this._currentDrilldownPathParameter = this._currentDrilldownPathParameter.slice(0, this._lastClickedPanelDepth)
-            this._currentDrilldownPathParameter.push({[column]: category})
+            this._currentDrilldownPathParameter = Navigator._generateQueryPathForCategory(
+                this._lastClickedCategoryObject
+            )
 
             // Update panel depth according to the new query
             this._currentPanelDepth = this._currentDrilldownPathParameter.length - 1

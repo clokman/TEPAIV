@@ -330,6 +330,109 @@ describe ('Loading Data', () => {
 
 describe( 'Querying Data', () => {
 
+    /*
+    This was previously a bug. Data was being mirrored between grandchild panels.
+     */
+
+    //// Query results in nested panels ///////////////////////////////////////////////////////////////
+
+    describe( 'Query results for similar grandchildren of sibling parents should be correct (previously a bug)', () => {
+
+        let myNavigator
+
+        beforeEach( async () => {
+
+            myNavigator = await initializeDomWithTitanicEmbarkTinyNavigator()
+            myNavigator
+                .showConnectorPolygons(false)
+                .showAbsoluteValues(true)
+                .update()
+
+            // Click on 'Survived'
+            domUtils.simulateClickOn('#panel-0 #Survived')
+            jest.runOnlyPendingTimers()
+
+            // Shift-click on 'Died'
+            domUtils.simulateClickOn('#panel-0 #Died', 'shift')
+            jest.runOnlyPendingTimers()
+
+        })
+
+
+        test( 'Query results should be correct in this configuration: Left sibling: a panel with a grandchild; right' +
+            ' sibling: a panel with a child', async () => {
+
+            // Click on 'Survived >> Male' to create a grandchild panel for left sibling
+            domUtils.simulateClickOn('#panel-0-0 #Male')
+            jest.runOnlyPendingTimers()
+
+            // Graphical representation of the state of the panels:
+            // ````````````````````````````````````````````````````````````````````````````````
+            // ``````````````````````````````-::::::::::::::::::::::::::::::-`ssssssssssssss+``
+            // ``````````````````````````````::::::::::::::::::::::::::::::::`yyyyyyyyyyyyyyo``
+            // ``````````````````````````````::::::::::::::://////////////:::`yyyyyyyyyyyyyyo``
+            // ``````````````````````````````::::::::::::::://////////////:::`yyyyyyyyyyyyyyo``
+            // ``````````````````````````````::::::::::::::://////////////:::`yyyyyyyyyyyyyyo``
+            // ``````````````````````````````::::::::::::::://////////////:::`yyyyyyyyyyyyyyo``
+            // ``````````````````````````````::::::::::::::://////////////:::`yyyyyyyyyyyyyyo``
+            // ``````````````````````````````::::::::::::::::::::::::::::::::`yyyyyyyyyyyyyyo``
+            // ``````````````````````````````-::::::::::::::::::::::::::::::-`ssssssssssssss+``
+            // ````````````````````````````````````````````````````````````````````````````````
+
+            // Check the number of Survived >> Male in three 'embark' locations
+            const survivedMalesInSouthampton = document.querySelector('#panel-0-0-0 #Southampton').textContent
+            expect( survivedMalesInSouthampton ).toBe( '15' )
+
+            const survivedMalesInQueenstown = document.querySelector('#panel-0-0-0 #Queenstown').textContent
+            expect( survivedMalesInQueenstown ).toBe( '3' )
+
+            const survivedMalesInCherbourg = document.querySelector('#panel-0-0-0 #Cherbourg').textContent
+            expect( survivedMalesInCherbourg ).toBe( '12' )
+
+        } )
+
+
+        test( 'Query results should be correct in this configuration: Both left and right siblings have a ' +
+            'grandchild', async () => {
+
+            // Graphical representation of the state of the panels:
+            // ````````````````````````````````````````````````````````````````````````````````
+            // ````````````````````````.::::::::::::::::::::::::::.yyyyyyyyyyyyssssssssssssyy.`
+            // ````````````````````````.::::::::::::////////////::.yyyyyyyyyyyy////////////oy.`
+            // ````````````````````````.::::::::::::////////////::.yyyyyyyyyyyy////////////oy.`
+            // ````````````````````````.::::::::::::////////////::.yyyyyyyyyyyy////////////oy.`
+            // ````````````````````````.::::::::::::////////////::.yyyyyyyyyyyy////////////oy.`
+            // ````````````````````````.::::::::::::////////////::.yyyyyyyyyyyy////////////oy.`
+            // ````````````````````````.::::::::::::::::::::::::::.yyyyyyyyyyyyssssssssssssyy.`
+            // ````````````````````````````````````````````````````````````````````````````````
+
+            // Click on 'Survived >> Male' to create a grandchild panel for left sibling
+            domUtils.simulateClickOn('#panel-0-0 #Male')
+            jest.runOnlyPendingTimers()
+
+
+            // Click on 'Died > Male' to create a grandchild panel for right sibling
+            domUtils.simulateClickOn('#panel-0-1 #Male')
+            jest.runOnlyPendingTimers()
+
+            writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/navnav2.html')
+
+
+            // Check the number of Survived >> Male in three 'embark' locations
+            const survivedMalesInSouthampton = document.querySelector('#panel-0-1-0 #Southampton').textContent
+            expect( survivedMalesInSouthampton ).toBe( '15' )
+
+            const survivedMalesInQueenstown = document.querySelector('#panel-0-1-0 #Queenstown').textContent
+            expect( survivedMalesInQueenstown ).toBe( '7' )
+
+            const survivedMalesInCherbourg = document.querySelector('#panel-0-1-0 #Cherbourg').textContent
+            expect( survivedMalesInCherbourg ).toBe( '15' )
+
+        } )
+
+    } )
+
+
 
     //// Infer new query path based on clicked category ///////////////////////////////////////////////////////////////
 
