@@ -1,5 +1,3 @@
-
-
 let consoleHistory = ''
 let lastConsoleOutput = ''
 let _warningsReceived = []
@@ -14,16 +12,16 @@ beforeEach( () => {
     console.log = jest.fn( argument => {
         lastConsoleOutput = argument
         consoleHistory += argument
-    })
+    } )
 
     console.warn = jest.fn( argument => {
         lastConsoleOutput = argument
         consoleHistory += argument
 
-        _warningsReceived.push(argument)
-    })
+        _warningsReceived.push( argument )
+    } )
 
-})
+} )
 
 const originalConsoleLog = console.log
 const originalConsoleWarn = console.warn
@@ -35,96 +33,96 @@ afterEach( () => {
     console.warn = originalConsoleWarn
 
     // print warnings to console
-    _warningsReceived.forEach( (warning) => {
-        console.warn(warning)
-    })
+    _warningsReceived.forEach( ( warning ) => {
+        console.warn( warning )
+    } )
 
 
-})
+} )
 
 
-expect.extend({
+expect.extend( {
 
-    toTabulateAs(tabularData, expectedOutput, startAt, maxRows) {
+    toTabulateAs( tabularData, expectedOutput, startAt, maxRows ) {
 
-        expectTable(tabularData, expectedOutput, startAt, maxRows)
+        expectTable( tabularData, expectedOutput, startAt, maxRows )
 
         // If the assertions in the function above did not fail:
-        return {pass:true, message:`Variable is tabulated as expected in given template`}
+        return { pass: true, message: `Variable is tabulated as expected in given template` }
 
     },
 
 
-    toLogAs(variable, expectedOutput, format) {
+    toLogAs( variable, expectedOutput, format ) {
 
-        expectLog(variable, expectedOutput, format)
+        expectLog( variable, expectedOutput, format )
 
         // If the assertions in the function above did not fail:
-        return {pass:true, message:`Variable is logged as expected in given template`}
+        return { pass: true, message: `Variable is logged as expected in given template` }
 
     }
 
-})
+} )
 
 
 
 
-const expectTable = function (tabularData, expectedOutput, startAt, maxRows){
+const expectTable = function ( tabularData, expectedOutput, startAt, maxRows ) {
 
-    const consoleOutput = _printVariableAsFormattedTable(tabularData, startAt, maxRows)
-    expect(consoleOutput).toBe(expectedOutput)
+    const consoleOutput = _printVariableAsFormattedTable( tabularData, startAt, maxRows )
+    expect( consoleOutput ).toBe( expectedOutput )
 
 }
 
 
-const _printVariableAsFormattedTable = function(tabularData, startAt, maxRows) {
+const _printVariableAsFormattedTable = function ( tabularData, startAt, maxRows ) {
 
     let consolePrefix = ''
         , consolePostfix = ''
         , preceedingNoOfRows
         , remainingNoOfRows
 
-    if (startAt || maxRows) {
+    if( startAt || maxRows ) {
 
-        if (startAt > 0) {
+        if( startAt > 0 ) {
             preceedingNoOfRows = startAt
             consolePrefix = `˄˄˄ ${preceedingNoOfRows} preceding rows\n`
         }
 
-        remainingNoOfRows = (tabularData.length) - (startAt + maxRows)
+        remainingNoOfRows = ( tabularData.length ) - ( startAt + maxRows )
 
-        tabularData = Array.from(tabularData).slice(startAt, startAt + maxRows)
+        tabularData = Array.from( tabularData ).slice( startAt, startAt + maxRows )
 
         consolePostfix = `\n˅˅˅ ${remainingNoOfRows} more rows`
     }
 
-    console.table(tabularData)
+    console.table( tabularData )
     const consoleOutput = consolePrefix + lastConsoleOutput + consolePostfix
     return consoleOutput
 }
 
 
-const expectLog = function(variable, expectedOutput, format='single-line'){
+const expectLog = function ( variable, expectedOutput, format = 'single-line' ) {
 
-    console.log(variable)
+    console.log( variable )
 
-    if (format==='single-line'){
-        expect(JSON.stringify(lastConsoleOutput)).toBe(expectedOutput)
+    if( format === 'single-line' ) {
+        expect( JSON.stringify( lastConsoleOutput ) ).toBe( expectedOutput )
     }
 
-    if (format==='pretty'){
-        expect(JSON.stringify(lastConsoleOutput, null, 2)).toBe(expectedOutput)
+    if( format === 'pretty' ) {
+        expect( JSON.stringify( lastConsoleOutput, null, 2 ) ).toBe( expectedOutput )
     }
 
 }
 
 
-const expectConsoleHistory = function(expectedHistory){
-    expect(consoleHistory).toBe(expectedHistory)
+const expectConsoleHistory = function ( expectedHistory ) {
+    expect( consoleHistory ).toBe( expectedHistory )
 }
 
 
-const getConsoleHistory = function(){
+const getConsoleHistory = function () {
     return consoleHistory
 }
 

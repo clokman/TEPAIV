@@ -1,11 +1,10 @@
-
 //// READ CONTINUOUS DATA ///////////////////////////////////////////////////////////////
 
-describe ('Treat continuous data', () => {
+describe( 'Treat continuous data', () => {
 
     // PREP //
 
-    test ('Read: Read in continuous data', async () => {
+    test( 'Read: Read in continuous data', async () => {
 
         let neuroticism = []
         let extraversion = []
@@ -13,20 +12,20 @@ describe ('Treat continuous data', () => {
         let agreeableness = []
         let conscientiousness = []
 
-        const data = await d3.csv('http://localhost:3000/data/BigFivePersonalityTraits.csv', (d) => {
+        const data = await d3.csv( 'http://localhost:3000/data/BigFivePersonalityTraits.csv', ( d ) => {
 
-            neuroticism.push(d.Neuroticism)
-            extraversion.push(d.Extraversion)
-            openness.push(d.Openness)
-            agreeableness.push(d.Agreeableness)
-            conscientiousness.push(d.Conscientiousness)
+            neuroticism.push( d.Neuroticism )
+            extraversion.push( d.Extraversion )
+            openness.push( d.Openness )
+            agreeableness.push( d.Agreeableness )
+            conscientiousness.push( d.Conscientiousness )
 
             return d
 
-        }) // when testing this functionality use an async test
+        } ) // when testing this functionality use an async test
 
 
-        expect( data ).toTabulateAs(`\
+        expect( data ).toTabulateAs( `\
 ┌─────────┬─────────────┬──────────────┬───────────┬───────────────┬───────────────────┐
 │ (index) │ Neuroticism │ Extraversion │ Openness  │ Agreeableness │ Conscientiousness │
 ├─────────┼─────────────┼──────────────┼───────────┼───────────────┼───────────────────┤
@@ -41,10 +40,10 @@ describe ('Treat continuous data', () => {
 │    8    │  '3.10417'  │   '3.8125'   │ '4.0625'  │   '3.77083'   │     '2.83333'     │
 │    9    │  '2.6875'   │  '3.54708'   │ '3.78667' │   '3.35417'   │     '3.10417'     │
 └─────────┴─────────────┴──────────────┴───────────┴───────────────┴───────────────────┘
-˅˅˅ 490 more rows`, 0,10)
+˅˅˅ 490 more rows`, 0, 10 )
 
 
-        expect( openness ).toTabulateAs(`\
+        expect( openness ).toTabulateAs( `\
 ┌─────────┬───────────┐
 │ (index) │  Values   │
 ├─────────┼───────────┤
@@ -59,9 +58,9 @@ describe ('Treat continuous data', () => {
 │    8    │ '4.0625'  │
 │    9    │ '3.78667' │
 └─────────┴───────────┘
-˅˅˅ 490 more rows`, 0,10)
+˅˅˅ 490 more rows`, 0, 10 )
 
-        expect( agreeableness ).toTabulateAs(`\
+        expect( agreeableness ).toTabulateAs( `\
 ┌─────────┬───────────┐
 │ (index) │  Values   │
 ├─────────┼───────────┤
@@ -76,14 +75,14 @@ describe ('Treat continuous data', () => {
 │    8    │ '3.77083' │
 │    9    │ '3.35417' │
 └─────────┴───────────┘
-˅˅˅ 490 more rows`, 0,10)
+˅˅˅ 490 more rows`, 0, 10 )
 
-    })
-
-
+    } )
 
 
-    test ('Detect: Detect continuous data', async () => {
+
+
+    test( 'Detect: Detect continuous data', async () => {
 
 
         let neuroticism = []
@@ -91,18 +90,18 @@ describe ('Treat continuous data', () => {
         let gender = []
         let monthMeasured = []
 
-        const data = await d3.csv('http://localhost:3000/data/SampleMixedData-WithMissingValues.csv', (d) => {
+        const data = await d3.csv( 'http://localhost:3000/data/SampleMixedData-WithMissingValues.csv', ( d ) => {
 
-            neuroticism.push(d.Neuroticism)
-            extraversion.push(d.Extraversion)
-            gender.push(d.Gender)
-            monthMeasured.push(d.MonthMeasured)
+            neuroticism.push( d.Neuroticism )
+            extraversion.push( d.Extraversion )
+            gender.push( d.Gender )
+            monthMeasured.push( d.MonthMeasured )
 
             return d
 
-        }) // when testing this functionality use an async test
+        } ) // when testing this functionality use an async test
 
-        expect(data).toTabulateAs(`\
+        expect( data ).toTabulateAs( `\
 ┌─────────┬─────────────┬──────────────┬────────┬───────────────┐
 │ (index) │ Neuroticism │ Extraversion │ Gender │ MonthMeasured │
 ├─────────┼─────────────┼──────────────┼────────┼───────────────┤
@@ -117,49 +116,49 @@ describe ('Treat continuous data', () => {
 │    8    │  '3.10417'  │   '3.8125'   │ 'Male' │  'September'  │
 │    9    │  '2.6875'   │  '3.54708'   │ 'Male' │   'October'   │
 └─────────┴─────────────┴──────────────┴────────┴───────────────┘
-˅˅˅ 89 more rows`, 0, 10)
+˅˅˅ 89 more rows`, 0, 10 )
 
 
 
-        expect( isContinuousData( neuroticism ) ).toTabulateAs(`\
+        expect( isContinuousData( neuroticism ) ).toTabulateAs( `\
 ┌────────────┬────────┐
 │  (index)   │ Values │
 ├────────────┼────────┤
 │ isANumber  │   23   │
 │ notANumber │   1    │
-└────────────┴────────┘`)
+└────────────┴────────┘` )
 
-        expect( isContinuousData( extraversion ) ).toTabulateAs(`\
+        expect( isContinuousData( extraversion ) ).toTabulateAs( `\
 ┌────────────┬────────┐
 │  (index)   │ Values │
 ├────────────┼────────┤
 │ isANumber  │   22   │
 │ notANumber │   2    │
-└────────────┴────────┘`)
+└────────────┴────────┘` )
 
-        expect( isContinuousData( gender ) ).toTabulateAs(`\
+        expect( isContinuousData( gender ) ).toTabulateAs( `\
 ┌────────────┬────────┐
 │  (index)   │ Values │
 ├────────────┼────────┤
 │ isANumber  │   0    │
 │ notANumber │   24   │
-└────────────┴────────┘`)
+└────────────┴────────┘` )
 
-        expect( isContinuousData( monthMeasured ) ).toTabulateAs(`\
+        expect( isContinuousData( monthMeasured ) ).toTabulateAs( `\
 ┌────────────┬────────┐
 │  (index)   │ Values │
 ├────────────┼────────┤
 │ isANumber  │   0    │
 │ notANumber │   24   │
-└────────────┴────────┘`)
+└────────────┴────────┘` )
 
 
-    })
+    } )
 
 
 
 
-    test ('Bin Simplified (SPLIT) : Bin continuous data using d3', async () => {
+    test( 'Bin Simplified (SPLIT) : Bin continuous data using d3', async () => {
 
         let neuroticism = []
         let extraversion = []
@@ -167,29 +166,29 @@ describe ('Treat continuous data', () => {
         let agreeableness = []
         let conscientiousness = []
 
-        const data = await d3.csv('http://localhost:3000/data/BigFivePersonalityTraits.csv', (d) => {
+        const data = await d3.csv( 'http://localhost:3000/data/BigFivePersonalityTraits.csv', ( d ) => {
 
-            neuroticism.push(d.Neuroticism)
-            extraversion.push(d.Extraversion)
-            openness.push(d.Openness)
-            agreeableness.push(d.Agreeableness)
-            conscientiousness.push(d.Conscientiousness)
+            neuroticism.push( d.Neuroticism )
+            extraversion.push( d.Extraversion )
+            openness.push( d.Openness )
+            agreeableness.push( d.Agreeableness )
+            conscientiousness.push( d.Conscientiousness )
 
             return d
 
-        }) // when testing this functionality use an async test
+        } ) // when testing this functionality use an async test
 
 
         const neuroticismQuartiles =
             d3.histogram()
-                .thresholds(3)  // <---- '3' yields quartiles. '4' would yield 5 bins, '5' would yield 6 bins.
-                                // For other threshold options, see https://github.com/d3/d3-array#histogram_thresholds
-                .domain([d3.min(neuroticism), d3.max(neuroticism)])
-                (neuroticism)
+                .thresholds( 3 )  // <---- '3' yields quartiles. '4' would yield 5 bins, '5' would yield 6 bins.
+                // For other threshold options, see https://github.com/d3/d3-array#histogram_thresholds
+                .domain( [ d3.min( neuroticism ), d3.max( neuroticism ) ] )
+                ( neuroticism )
 
 
-        expect( neuroticismQuartiles.length ).toBe(4)
-        expect( neuroticismQuartiles[0] ).toTabulateAs(`\
+        expect( neuroticismQuartiles.length ).toBe( 4 )
+        expect( neuroticismQuartiles[ 0 ] ).toTabulateAs( `\
 ┌─────────┬───────────┐
 │ (index) │  Values   │
 ├─────────┼───────────┤
@@ -208,9 +207,9 @@ describe ('Treat continuous data', () => {
 │   12    │ '1.9375'  │
 │   x0    │ '1.64583' │
 │   x1    │     2     │
-└─────────┴───────────┘`)
+└─────────┴───────────┘` )
 
-        expect( neuroticismQuartiles[1] ).toTabulateAs(`\
+        expect( neuroticismQuartiles[ 1 ] ).toTabulateAs( `\
 ┌─────────┬───────────┐
 │ (index) │  Values   │
 ├─────────┼───────────┤
@@ -225,9 +224,9 @@ describe ('Treat continuous data', () => {
 │    8    │  '2.625'  │
 │    9    │  '2.375'  │
 └─────────┴───────────┘
-˅˅˅ 306 more rows`,0, 10)
+˅˅˅ 306 more rows`, 0, 10 )
 
-        expect( neuroticismQuartiles[2] ).toTabulateAs(`\
+        expect( neuroticismQuartiles[ 2 ] ).toTabulateAs( `\
 ┌─────────┬───────────┐
 │ (index) │  Values   │
 ├─────────┼───────────┤
@@ -242,9 +241,9 @@ describe ('Treat continuous data', () => {
 │    8    │ '3.0625'  │
 │    9    │  '3.125'  │
 └─────────┴───────────┘
-˅˅˅ 157 more rows`, 0, 10)
+˅˅˅ 157 more rows`, 0, 10 )
 
-        expect( neuroticismQuartiles[3] ).toTabulateAs(`\
+        expect( neuroticismQuartiles[ 3 ] ).toTabulateAs( `\
 ┌─────────┬───────────┐
 │ (index) │  Values   │
 ├─────────┼───────────┤
@@ -254,31 +253,33 @@ describe ('Treat continuous data', () => {
 │    3    │  '4.375'  │
 │   x0    │     4     │
 │   x1    │  '4.375'  │
-└─────────┴───────────┘`)
+└─────────┴───────────┘` )
 
 
-    })
+    } )
 
 
 
-    test ('Bin (SPLIT): Bin continuous data without assigning columns to variables', async () => {
+    test( 'Bin (SPLIT): Bin continuous data without assigning columns to variables', async () => {
 
-        const mixedData = await d3.csv('http://localhost:3000/data/SampleMixedData.csv') // when testing this functionality use an async test
+        const mixedData = await d3.csv( 'http://localhost:3000/data/SampleMixedData.csv' ) // when testing this
+                                                                                           // functionality use an
+                                                                                           // async test
 
         const neuroticismQuartiles =
             d3.histogram()
-                .value( d => d.Neuroticism)
-                .thresholds(3)
-                .domain([ d3.min(mixedData, d => d.Neuroticism), d3.max(mixedData, d => d.Neuroticism) ])
-                (mixedData)
+                .value( d => d.Neuroticism )
+                .thresholds( 3 )
+                .domain( [ d3.min( mixedData, d => d.Neuroticism ), d3.max( mixedData, d => d.Neuroticism ) ] )
+                ( mixedData )
 
 
-        expect( neuroticismQuartiles.length ).toBe(3)
+        expect( neuroticismQuartiles.length ).toBe( 3 )
 
         // Neuroticism Bin 1
-        expect( neuroticismQuartiles[0].x0 ).toBe( '1.64583' )
-        expect( neuroticismQuartiles[0].x1 ).toBe( 2 )
-        expect( neuroticismQuartiles[0] ).toTabulateAs(`\
+        expect( neuroticismQuartiles[ 0 ].x0 ).toBe( '1.64583' )
+        expect( neuroticismQuartiles[ 0 ].x1 ).toBe( 2 )
+        expect( neuroticismQuartiles[ 0 ] ).toTabulateAs( `\
 ┌─────────┬─────────────┬──────────────┬──────────┬───────────────┬───────────┐
 │ (index) │ Neuroticism │ Extraversion │  Gender  │ MonthMeasured │  Values   │
 ├─────────┼─────────────┼──────────────┼──────────┼───────────────┼───────────┤
@@ -287,12 +288,12 @@ describe ('Treat continuous data', () => {
 │    2    │   '1.75'    │  '4.22917'   │ 'Female' │  'December'   │           │
 │   x0    │             │              │          │               │ '1.64583' │
 │   x1    │             │              │          │               │     2     │
-└─────────┴─────────────┴──────────────┴──────────┴───────────────┴───────────┘`)
+└─────────┴─────────────┴──────────────┴──────────┴───────────────┴───────────┘` )
 
         // Neuroticism Bin 2
-        expect( neuroticismQuartiles[1].x0 ).toBe( 2 )
-        expect( neuroticismQuartiles[1].x1 ).toBe( 3 )
-        expect( neuroticismQuartiles[1] ).toTabulateAs(`\
+        expect( neuroticismQuartiles[ 1 ].x0 ).toBe( 2 )
+        expect( neuroticismQuartiles[ 1 ].x1 ).toBe( 3 )
+        expect( neuroticismQuartiles[ 1 ] ).toTabulateAs( `\
 ┌─────────┬─────────────┬──────────────┬────────┬───────────────┐
 │ (index) │ Neuroticism │ Extraversion │ Gender │ MonthMeasured │
 ├─────────┼─────────────┼──────────────┼────────┼───────────────┤
@@ -307,12 +308,12 @@ describe ('Treat continuous data', () => {
 │    8    │   '2.375'   │  '3.77083'   │ 'Male' │  'December'   │
 │    9    │  '2.58333'  │  '3.02083'   │ 'Male' │    'March'    │
 └─────────┴─────────────┴──────────────┴────────┴───────────────┘
-˅˅˅ 44 more rows`,0, 10)
+˅˅˅ 44 more rows`, 0, 10 )
 
         // Neuroticism Bin 3
-        expect( neuroticismQuartiles[2].x0 ).toBe( 3 )
-        expect( neuroticismQuartiles[2].x1 ).toBe( "3.875" )
-        expect( neuroticismQuartiles[2] ).toTabulateAs(`\
+        expect( neuroticismQuartiles[ 2 ].x0 ).toBe( 3 )
+        expect( neuroticismQuartiles[ 2 ].x1 ).toBe( '3.875' )
+        expect( neuroticismQuartiles[ 2 ] ).toTabulateAs( `\
 ┌─────────┬─────────────┬──────────────┬──────────┬───────────────┐
 │ (index) │ Neuroticism │ Extraversion │  Gender  │ MonthMeasured │
 ├─────────┼─────────────┼──────────────┼──────────┼───────────────┤
@@ -327,13 +328,13 @@ describe ('Treat continuous data', () => {
 │    8    │  '3.22917'  │  '3.20833'   │  'Male'  │     'May'     │
 │    9    │  '3.0625'   │  '3.14583'   │  'Male'  │  'September'  │
 └─────────┴─────────────┴──────────────┴──────────┴───────────────┘
-˅˅˅ 32 more rows`, 0, 10)
+˅˅˅ 32 more rows`, 0, 10 )
 
 
-    })
+    } )
 
 
-    test ('Bin (SPLIT): Via custom `Bin` function  ', async () => {
+    test( 'Bin (SPLIT): Via custom `Bin` function  ', async () => {
 
         const mixedData = await d3.csv( 'http://localhost:3000/data/SampleMixedData.csv' )
 
@@ -341,9 +342,9 @@ describe ('Treat continuous data', () => {
 
 
         // Extraversion Bin 1
-        expect( mixedDataBinnedByExtraversion[0].x0 ).toBe( '2.52083' )
-        expect( mixedDataBinnedByExtraversion[0].x1 ).toBe( 3 )
-        expect( mixedDataBinnedByExtraversion[0] ).toTabulateAs(`\
+        expect( mixedDataBinnedByExtraversion[ 0 ].x0 ).toBe( '2.52083' )
+        expect( mixedDataBinnedByExtraversion[ 0 ].x1 ).toBe( 3 )
+        expect( mixedDataBinnedByExtraversion[ 0 ] ).toTabulateAs( `\
 ┌─────────┬─────────────┬──────────────┬──────────┬───────────────┬───────────┐
 │ (index) │ Neuroticism │ Extraversion │  Gender  │ MonthMeasured │  Values   │
 ├─────────┼─────────────┼──────────────┼──────────┼───────────────┼───────────┤
@@ -360,12 +361,12 @@ describe ('Treat continuous data', () => {
 │   10    │  '2.85417'  │  '2.83333'   │ 'Female' │  'November'   │           │
 │   x0    │             │              │          │               │ '2.52083' │
 │   x1    │             │              │          │               │     3     │
-└─────────┴─────────────┴──────────────┴──────────┴───────────────┴───────────┘`)
+└─────────┴─────────────┴──────────────┴──────────┴───────────────┴───────────┘` )
 
         // Extraversion Bin 2
-        expect( mixedDataBinnedByExtraversion[1].x0 ).toBe( 3 )
-        expect( mixedDataBinnedByExtraversion[1].x1 ).toBe( 3.5 )
-        expect( mixedDataBinnedByExtraversion[1] ).toTabulateAs(`\
+        expect( mixedDataBinnedByExtraversion[ 1 ].x0 ).toBe( 3 )
+        expect( mixedDataBinnedByExtraversion[ 1 ].x1 ).toBe( 3.5 )
+        expect( mixedDataBinnedByExtraversion[ 1 ] ).toTabulateAs( `\
 ┌─────────┬─────────────┬──────────────┬──────────┬───────────────┐
 │ (index) │ Neuroticism │ Extraversion │  Gender  │ MonthMeasured │
 ├─────────┼─────────────┼──────────────┼──────────┼───────────────┤
@@ -380,12 +381,12 @@ describe ('Treat continuous data', () => {
 │    8    │  '3.0625'   │    '3.25'    │  'Male'  │   'August'    │
 │    9    │  '2.41667'  │   '3.4375'   │  'Male'  │   'October'   │
 └─────────┴─────────────┴──────────────┴──────────┴───────────────┘
-˅˅˅ 32 more rows`,0, 10)
+˅˅˅ 32 more rows`, 0, 10 )
 
         // Extraversion Bin 3
-        expect( mixedDataBinnedByExtraversion[2].x0 ).toBe( 3.5 )
-        expect( mixedDataBinnedByExtraversion[2].x1 ).toBe( 4 )
-        expect( mixedDataBinnedByExtraversion[2] ).toTabulateAs(`\
+        expect( mixedDataBinnedByExtraversion[ 2 ].x0 ).toBe( 3.5 )
+        expect( mixedDataBinnedByExtraversion[ 2 ].x1 ).toBe( 4 )
+        expect( mixedDataBinnedByExtraversion[ 2 ] ).toTabulateAs( `\
 ┌─────────┬─────────────┬──────────────┬────────┬───────────────┐
 │ (index) │ Neuroticism │ Extraversion │ Gender │ MonthMeasured │
 ├─────────┼─────────────┼──────────────┼────────┼───────────────┤
@@ -400,13 +401,13 @@ describe ('Treat continuous data', () => {
 │    8    │  '2.85417'  │   '3.5625'   │ 'Male' │   'January'   │
 │    9    │   '2.875'   │  '3.58333'   │ 'Male' │  'February'   │
 └─────────┴─────────────┴──────────────┴────────┴───────────────┘
-˅˅˅ 29 more rows`,0,10)
+˅˅˅ 29 more rows`, 0, 10 )
 
 
         // Extraversion Bin 4
-        expect( mixedDataBinnedByExtraversion[3].x0 ).toBe( 4 )
-        expect( mixedDataBinnedByExtraversion[3].x1 ).toBe( '4.41667' )
-        expect( mixedDataBinnedByExtraversion[3] ).toTabulateAs(`\
+        expect( mixedDataBinnedByExtraversion[ 3 ].x0 ).toBe( 4 )
+        expect( mixedDataBinnedByExtraversion[ 3 ].x1 ).toBe( '4.41667' )
+        expect( mixedDataBinnedByExtraversion[ 3 ] ).toTabulateAs( `\
 ┌─────────┬─────────────┬──────────────┬──────────┬───────────────┬───────────┐
 │ (index) │ Neuroticism │ Extraversion │  Gender  │ MonthMeasured │  Values   │
 ├─────────┼─────────────┼──────────────┼──────────┼───────────────┼───────────┤
@@ -419,12 +420,12 @@ describe ('Treat continuous data', () => {
 │    6    │   '1.75'    │  '4.22917'   │ 'Female' │  'December'   │           │
 │   x0    │             │              │          │               │     4     │
 │   x1    │             │              │          │               │ '4.41667' │
-└─────────┴─────────────┴──────────────┴──────────┴───────────────┴───────────┘`)
+└─────────┴─────────────┴──────────────┴──────────┴───────────────┴───────────┘` )
 
-    })
+    } )
 
 
-    test ('Bin and Summarize: Via custom `Bin` function  ', async () => {
+    test( 'Bin and Summarize: Via custom `Bin` function  ', async () => {
 
         const mixedData = await d3.csv( 'http://localhost:3000/data/SampleMixedData.csv' )
 
@@ -439,9 +440,9 @@ describe ('Treat continuous data', () => {
 
             manualRollup.set( binName, bin )
 
-        })
+        } )
 
-        expect( manualRollup ).toTabulateAs(`\
+        expect( manualRollup ).toTabulateAs( `\
 ┌───────────────────┬─────────────┬──────────────────────────────────────────────────────────────────────────┐
 │ (iteration index) │     Key     │                                  Values                                  │
 ├───────────────────┼─────────────┼──────────────────────────────────────────────────────────────────────────┤
@@ -449,16 +450,16 @@ describe ('Treat continuous data', () => {
 │         1         │   '3-3.5'   │   [ [Object], [Object], [Object], ... 39 more items, x0: 3, x1: 3.5 ]    │
 │         2         │   '3.5-4'   │   [ [Object], [Object], [Object], ... 36 more items, x0: 3.5, x1: 4 ]    │
 │         3         │ '4-4.41667' │ [ [Object], [Object], [Object], ... 4 more items, x0: 4, x1: '4.41667' ] │
-└───────────────────┴─────────────┴──────────────────────────────────────────────────────────────────────────┘`)
+└───────────────────┴─────────────┴──────────────────────────────────────────────────────────────────────────┘` )
 
-    })
+    } )
 
 
-    test ('Quantile Scale + Rollup: Use quantile scale during rollup to bin in the most efficient way', async () => {
+    test( 'Quantile Scale + Rollup: Use quantile scale during rollup to bin in the most efficient way', async () => {
 
         const mixedData = await d3.csv( 'http://localhost:3000/data/SampleMixedData.csv' )
 
-        expect( mixedData ).toTabulateAs(`\
+        expect( mixedData ).toTabulateAs( `\
 ┌─────────┬─────────────┬──────────────┬──────────┬───────────────┐
 │ (index) │ Neuroticism │ Extraversion │  Gender  │ MonthMeasured │
 ├─────────┼─────────────┼──────────────┼──────────┼───────────────┤
@@ -468,26 +469,26 @@ describe ('Treat continuous data', () => {
 │    3    │  '3.29167'  │  '3.29167'   │ 'Female' │    'April'    │
 │    4    │  '3.02083'  │  '3.29167'   │ 'Female' │     'May'     │
 └─────────┴─────────────┴──────────────┴──────────┴───────────────┘
-˅˅˅ 94 more rows`, 0, 5)
+˅˅˅ 94 more rows`, 0, 5 )
 
-        const outputCategories = d3.range(4)
+        const outputCategories = d3.range( 4 )
 
-        const min =d3.min( mixedData, d => d['Extraversion'] )
-        const max =d3.max( mixedData, d => d['Extraversion'] )
+        const min = d3.min( mixedData, d => d[ 'Extraversion' ] )
+        const max = d3.max( mixedData, d => d[ 'Extraversion' ] )
 
 
         const quantizeScale = d3.scaleQuantize()
-            .domain( [min, max] )
+            .domain( [ min, max ] )
             .range( outputCategories )
 
-        const continuousRollup = d3.rollup(mixedData,
+        const continuousRollup = d3.rollup( mixedData,
             v => v.length,
             d => {
-                return quantizeScale(d.Extraversion)
+                return quantizeScale( d.Extraversion )
             }
         )
 
-        expect( continuousRollup ).toTabulateAs(`\
+        expect( continuousRollup ).toTabulateAs( `\
 ┌───────────────────┬─────┬────────┐
 │ (iteration index) │ Key │ Values │
 ├───────────────────┼─────┼────────┤
@@ -495,16 +496,16 @@ describe ('Treat continuous data', () => {
 │         1         │  1  │   38   │
 │         2         │  0  │   11   │
 │         3         │  2  │   42   │
-└───────────────────┴─────┴────────┘`)
+└───────────────────┴─────┴────────┘` )
 
 
-        const continuousGroup = d3.group(mixedData,
+        const continuousGroup = d3.group( mixedData,
             d => {
-                return quantizeScale(d.Extraversion)
+                return quantizeScale( d.Extraversion )
             }
         )
 
-        expect( continuousGroup ).toTabulateAs(`\
+        expect( continuousGroup ).toTabulateAs( `\
 ┌───────────────────┬─────┬─────────────────────────────────────────────────────┐
 │ (iteration index) │ Key │                       Values                        │
 ├───────────────────┼─────┼─────────────────────────────────────────────────────┤
@@ -512,13 +513,13 @@ describe ('Treat continuous data', () => {
 │         1         │  1  │ [ [Object], [Object], [Object], ... 35 more items ] │
 │         2         │  0  │ [ [Object], [Object], [Object], ... 8 more items ]  │
 │         3         │  2  │ [ [Object], [Object], [Object], ... 39 more items ] │
-└───────────────────┴─────┴─────────────────────────────────────────────────────┘`)
+└───────────────────┴─────┴─────────────────────────────────────────────────────┘` )
 
 
         // Extraversion group 1
-        expect( d3.min( continuousGroup.get(0), d=>d.Extraversion ) ).toBe( '2.52083' )
-        expect( d3.max( continuousGroup.get(0), d=>d.Extraversion ) ).toBe( '2.97917' )
-        expect( continuousGroup.get(0) ).toTabulateAs(`\
+        expect( d3.min( continuousGroup.get( 0 ), d => d.Extraversion ) ).toBe( '2.52083' )
+        expect( d3.max( continuousGroup.get( 0 ), d => d.Extraversion ) ).toBe( '2.97917' )
+        expect( continuousGroup.get( 0 ) ).toTabulateAs( `\
 ┌─────────┬─────────────┬──────────────┬──────────┬───────────────┐
 │ (index) │ Neuroticism │ Extraversion │  Gender  │ MonthMeasured │
 ├─────────┼─────────────┼──────────────┼──────────┼───────────────┤
@@ -533,12 +534,12 @@ describe ('Treat continuous data', () => {
 │    8    │  '3.70833'  │  '2.77083'   │ 'Female' │    'March'    │
 │    9    │  '2.60417'  │  '2.97917'   │ 'Female' │    'July'     │
 │   10    │  '2.85417'  │  '2.83333'   │ 'Female' │  'November'   │
-└─────────┴─────────────┴──────────────┴──────────┴───────────────┘`)
+└─────────┴─────────────┴──────────────┴──────────┴───────────────┘` )
 
         // Extraversion group 2
-        expect( d3.min( continuousGroup.get(1), d=>d.Extraversion ) ).toBe( '3' )
-        expect( d3.max( continuousGroup.get(1), d=>d.Extraversion ) ).toBe( '3.45833' )
-        expect( continuousGroup.get(1) ).toTabulateAs(`\
+        expect( d3.min( continuousGroup.get( 1 ), d => d.Extraversion ) ).toBe( '3' )
+        expect( d3.max( continuousGroup.get( 1 ), d => d.Extraversion ) ).toBe( '3.45833' )
+        expect( continuousGroup.get( 1 ) ).toTabulateAs( `\
 ┌─────────┬─────────────┬──────────────┬──────────┬───────────────┐
 │ (index) │ Neuroticism │ Extraversion │  Gender  │ MonthMeasured │
 ├─────────┼─────────────┼──────────────┼──────────┼───────────────┤
@@ -580,12 +581,12 @@ describe ('Treat continuous data', () => {
 │   35    │  '3.14583'  │  '3.29167'   │ 'Female' │   'October'   │
 │   36    │  '2.83333'  │   '3.3125'   │ 'Female' │  'December'   │
 │   37    │  '2.52083'  │    '3.25'    │ 'Female' │  'February'   │
-└─────────┴─────────────┴──────────────┴──────────┴───────────────┘`)
+└─────────┴─────────────┴──────────────┴──────────┴───────────────┘` )
 
         // Extraversion group 3
-        expect( d3.min( continuousGroup.get(2), d=>d.Extraversion ) ).toBe( '3.47917' )
-        expect( d3.max( continuousGroup.get(2), d=>d.Extraversion ) ).toBe( '3.875' )
-        expect( continuousGroup.get(2) ).toTabulateAs(`\
+        expect( d3.min( continuousGroup.get( 2 ), d => d.Extraversion ) ).toBe( '3.47917' )
+        expect( d3.max( continuousGroup.get( 2 ), d => d.Extraversion ) ).toBe( '3.875' )
+        expect( continuousGroup.get( 2 ) ).toTabulateAs( `\
 ┌─────────┬─────────────┬──────────────┬──────────┬───────────────┐
 │ (index) │ Neuroticism │ Extraversion │  Gender  │ MonthMeasured │
 ├─────────┼─────────────┼──────────────┼──────────┼───────────────┤
@@ -631,12 +632,12 @@ describe ('Treat continuous data', () => {
 │   39    │  '3.14583'  │  '3.77083'   │ 'Female' │   'August'    │
 │   40    │  '3.3125'   │  '3.64583'   │ 'Female' │   'January'   │
 │   41    │  '2.83333'  │   '3.875'    │ 'Female' │    'March'    │
-└─────────┴─────────────┴──────────────┴──────────┴───────────────┘`)
+└─────────┴─────────────┴──────────────┴──────────┴───────────────┘` )
 
         // Extraversion group 4
-        expect( d3.min( continuousGroup.get(3), d=>d.Extraversion ) ).toBe( '3.95833' )
-        expect( d3.max( continuousGroup.get(3), d=>d.Extraversion ) ).toBe( '4.41667' )
-        expect( continuousGroup.get(3) ).toTabulateAs(`\
+        expect( d3.min( continuousGroup.get( 3 ), d => d.Extraversion ) ).toBe( '3.95833' )
+        expect( d3.max( continuousGroup.get( 3 ), d => d.Extraversion ) ).toBe( '4.41667' )
+        expect( continuousGroup.get( 3 ) ).toTabulateAs( `\
 ┌─────────┬─────────────┬──────────────┬──────────┬───────────────┐
 │ (index) │ Neuroticism │ Extraversion │  Gender  │ MonthMeasured │
 ├─────────┼─────────────┼──────────────┼──────────┼───────────────┤
@@ -648,103 +649,103 @@ describe ('Treat continuous data', () => {
 │    5    │  '2.9375'   │  '4.22917'   │ 'Female' │    'March'    │
 │    6    │  '1.64583'  │  '3.95833'   │ 'Female' │    'June'     │
 │    7    │   '1.75'    │  '4.22917'   │ 'Female' │  'December'   │
-└─────────┴─────────────┴──────────────┴──────────┴───────────────┘`)
+└─────────┴─────────────┴──────────────┴──────────┴───────────────┘` )
 
 
-    })
+    } )
 
 
 
-    test ('Quantile vs Quantize scales on simple arrays', () => {
+    test( 'Quantile vs Quantize scales on simple arrays', () => {
 
-        let array1 = [0,1,2,3,4,5,6,7,8,9,10]
-        let array2 = [40,30,20,10,50,60,70,90,80,100,0]
+        let array1 = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
+        let array2 = [ 40, 30, 20, 10, 50, 60, 70, 90, 80, 100, 0 ]
 
 
         const quantizeScale4 = d3.scaleQuantize()
-            .domain( [0, 10] )
-            .range( ['A', 'B', 'C', 'D'] )
+            .domain( [ 0, 10 ] )
+            .range( [ 'A', 'B', 'C', 'D' ] )
 
         const quantizeScale5 = d3.scaleQuantize()
-            .domain( [0, 10] )
-            .range( ['A', 'B', 'C', 'D', 'E'] )
+            .domain( [ 0, 10 ] )
+            .range( [ 'A', 'B', 'C', 'D', 'E' ] )
 
 
         const quantileScale4 = d3.scaleQuantile()
-            .domain( [0, 10] )
-            .range( ['A', 'B', 'C', 'D'] )
+            .domain( [ 0, 10 ] )
+            .range( [ 'A', 'B', 'C', 'D' ] )
 
         const quantileScale5 = d3.scaleQuantile()
-            .domain( [0, 10] )
-            .range( ['A', 'B', 'C', 'D', 'E'] )
+            .domain( [ 0, 10 ] )
+            .range( [ 'A', 'B', 'C', 'D', 'E' ] )
 
 
 
         const array1Quantized4 = []
-        array1.forEach( (e) => {
+        array1.forEach( ( e ) => {
 
-            const quantizedE = quantizeScale4(e)
-            array1Quantized4.push(quantizedE)
+            const quantizedE = quantizeScale4( e )
+            array1Quantized4.push( quantizedE )
 
-        })
+        } )
 
         const array1Quantized5 = []
-        array1.forEach( (e) => {
+        array1.forEach( ( e ) => {
 
-            const quantizedE = quantizeScale5(e)
-            array1Quantized5.push(quantizedE)
+            const quantizedE = quantizeScale5( e )
+            array1Quantized5.push( quantizedE )
 
-        })
+        } )
 
 
         const array1Quantiled4 = []
-        array1.forEach( (e) => {
+        array1.forEach( ( e ) => {
 
-            const quantiledE = quantileScale4(e)
-            array1Quantiled4.push(quantiledE)
+            const quantiledE = quantileScale4( e )
+            array1Quantiled4.push( quantiledE )
 
-        })
+        } )
 
         const array1Quantiled5 = []
 
-        array1.forEach( (e) => {
+        array1.forEach( ( e ) => {
 
-            const quantiledE = quantileScale5(e)
-            array1Quantiled5.push(quantiledE)
+            const quantiledE = quantileScale5( e )
+            array1Quantiled5.push( quantiledE )
 
-        })
+        } )
 
 
         // Calculate quartiles
-        expect ( array1.quantile25() ).toBe( 2.5 )
-        expect ( array1.quantile50() ).toBe( 5 )
-        expect ( array1.quantile75() ).toBe( 7.5 )
+        expect( array1.quantile25() ).toBe( 2.5 )
+        expect( array1.quantile50() ).toBe( 5 )
+        expect( array1.quantile75() ).toBe( 7.5 )
 
 
         // Use d3.quantize and quantile on data (with 4 bins)
-                                           // 0%           25%         50%          75%          100%
-                                           // |             |           |            |            |
-        expect( array1 ).toEqual(           [  0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10]  )
-        expect( array1Quantized4 ).toEqual( [ 'A', 'A', 'A', 'B', 'B', 'C', 'C', 'C', 'D', 'D', 'D'  ] )
+        // 0%           25%         50%          75%          100%
+        // |             |           |            |            |
+        expect( array1 ).toEqual( [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ] )
+        expect( array1Quantized4 ).toEqual( [ 'A', 'A', 'A', 'B', 'B', 'C', 'C', 'C', 'D', 'D', 'D' ] )
         expect( array1Quantiled4 ).toEqual( [ 'A', 'A', 'A', 'B', 'B', 'C', 'C', 'C', 'D', 'D', 'D' ] )
 
 
         // Use d3.quantize and quantile on data (with 5 bins)
-                                           // 0%           25%         50%          75%          100%
-                                           // |             |           |            |            |
-        expect( array1 ).toEqual(           [  0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10]  )
-        expect( array1Quantized5 ).toEqual( [ 'A', 'A', 'B', 'B', 'C', 'C', 'D', 'D', 'E', 'E', 'E'  ] )
+        // 0%           25%         50%          75%          100%
+        // |             |           |            |            |
+        expect( array1 ).toEqual( [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ] )
+        expect( array1Quantized5 ).toEqual( [ 'A', 'A', 'B', 'B', 'C', 'C', 'D', 'D', 'E', 'E', 'E' ] )
         expect( array1Quantiled5 ).toEqual( [ 'A', 'A', 'B', 'B', 'C', 'C', 'D', 'D', 'E', 'E', 'E' ] )
 
 
-    })
+    } )
 
 
-    test ('Quantile vs Quantize scales on dataset', async () => {
+    test( 'Quantile vs Quantize scales on dataset', async () => {
 
         const mixedData = await d3.csv( 'http://localhost:3000/data/SampleMixedData.csv' )
 
-        expect( mixedData ).toTabulateAs(`\
+        expect( mixedData ).toTabulateAs( `\
 ┌─────────┬─────────────┬──────────────┬──────────┬───────────────┐
 │ (index) │ Neuroticism │ Extraversion │  Gender  │ MonthMeasured │
 ├─────────┼─────────────┼──────────────┼──────────┼───────────────┤
@@ -754,31 +755,31 @@ describe ('Treat continuous data', () => {
 │    3    │  '3.29167'  │  '3.29167'   │ 'Female' │    'April'    │
 │    4    │  '3.02083'  │  '3.29167'   │ 'Female' │     'May'     │
 └─────────┴─────────────┴──────────────┴──────────┴───────────────┘
-˅˅˅ 94 more rows`, 0, 5)
+˅˅˅ 94 more rows`, 0, 5 )
 
-        const outputCategories = d3.range(4)
+        const outputCategories = d3.range( 4 )
 
-        const min =d3.min( mixedData, d => d['Extraversion'] )
-        const max =d3.max( mixedData, d => d['Extraversion'] )
+        const min = d3.min( mixedData, d => d[ 'Extraversion' ] )
+        const max = d3.max( mixedData, d => d[ 'Extraversion' ] )
 
 
         const quantizeScale = d3.scaleQuantize()
-            .domain( [min, max] )
+            .domain( [ min, max ] )
             .range( outputCategories )
 
         const quantileScale = d3.scaleQuantile()
-            .domain( [min, max] )
+            .domain( [ min, max ] )
             .range( outputCategories )
 
 
-        const quantileSummary = d3.rollup(mixedData,
+        const quantileSummary = d3.rollup( mixedData,
             v => v.length,
             d => {
-                return quantizeScale(d.Extraversion)
+                return quantizeScale( d.Extraversion )
             }
         )
 
-        expect( quantileSummary ).toTabulateAs(`\
+        expect( quantileSummary ).toTabulateAs( `\
 ┌───────────────────┬─────┬────────┐
 │ (iteration index) │ Key │ Values │
 ├───────────────────┼─────┼────────┤
@@ -786,16 +787,16 @@ describe ('Treat continuous data', () => {
 │         1         │  1  │   38   │
 │         2         │  0  │   11   │
 │         3         │  2  │   42   │
-└───────────────────┴─────┴────────┘`)
+└───────────────────┴─────┴────────┘` )
 
-        const quantizeSummary = d3.rollup(mixedData,
+        const quantizeSummary = d3.rollup( mixedData,
             v => v.length,
             d => {
-                return quantileScale(d.Extraversion)
+                return quantileScale( d.Extraversion )
             }
         )
 
-        expect( quantizeSummary ).toTabulateAs(`\
+        expect( quantizeSummary ).toTabulateAs( `\
 ┌───────────────────┬─────┬────────┐
 │ (iteration index) │ Key │ Values │
 ├───────────────────┼─────┼────────┤
@@ -803,19 +804,19 @@ describe ('Treat continuous data', () => {
 │         1         │  1  │   38   │
 │         2         │  0  │   11   │
 │         3         │  2  │   42   │
-└───────────────────┴─────┴────────┘`)
+└───────────────────┴─────┴────────┘` )
 
 
 
-    })
+    } )
 
 
 
-    test ('Rename group keys: Use custom bin names during d3.group and d3.rollup ', async () => {
+    test( 'Rename group keys: Use custom bin names during d3.group and d3.rollup ', async () => {
 
         const mixedData = await d3.csv( 'http://localhost:3000/data/SampleMixedData.csv' )
 
-        expect( mixedData ).toTabulateAs(`\
+        expect( mixedData ).toTabulateAs( `\
 ┌─────────┬─────────────┬──────────────┬──────────┬───────────────┐
 │ (index) │ Neuroticism │ Extraversion │  Gender  │ MonthMeasured │
 ├─────────┼─────────────┼──────────────┼──────────┼───────────────┤
@@ -825,31 +826,31 @@ describe ('Treat continuous data', () => {
 │    3    │  '3.29167'  │  '3.29167'   │ 'Female' │    'April'    │
 │    4    │  '3.02083'  │  '3.29167'   │ 'Female' │     'May'     │
 └─────────┴─────────────┴──────────────┴──────────┴───────────────┘
-˅˅˅ 94 more rows`, 0, 5)
+˅˅˅ 94 more rows`, 0, 5 )
 
-        const outputCategories = d3.range(4)
+        const outputCategories = d3.range( 4 )
 
-        const min =d3.min( mixedData, d => d['Extraversion'] )
-        const max =d3.max( mixedData, d => d['Extraversion'] )
+        const min = d3.min( mixedData, d => d[ 'Extraversion' ] )
+        const max = d3.max( mixedData, d => d[ 'Extraversion' ] )
 
 
         const quantizeScale = d3.scaleQuantize()
-            .domain( [min, max] )
+            .domain( [ min, max ] )
             .range( outputCategories )
 
 
         // Group and change group names on the go
-        const groupedData = d3.group(mixedData,
-                d=>quantizeScale(d['Extraversion'])
+        const groupedData = d3.group( mixedData,
+            d => quantizeScale( d[ 'Extraversion' ] )
         )
         const groupedDataWithRenamedKeys = new Map(
-            Array.from(groupedData, ([categoryName, categoryData]) => {
+            Array.from( groupedData, ( [ categoryName, categoryData ] ) => {
 
-                    const categoryMin = d3.min(categoryData, d=>d['Extraversion'])
-                    const categoryMax = d3.max(categoryData, d=>d['Extraversion'])
+                    const categoryMin = d3.min( categoryData, d => d[ 'Extraversion' ] )
+                    const categoryMax = d3.max( categoryData, d => d[ 'Extraversion' ] )
 
-                    const categoryMinShortened = Number( categoryMin ).toFixed(2)
-                    const categoryMaxShortened = Number( categoryMax ).toFixed(2)
+                    const categoryMinShortened = Number( categoryMin ).toFixed( 2 )
+                    const categoryMaxShortened = Number( categoryMax ).toFixed( 2 )
 
                     const newName = `${categoryMinShortened}-${categoryMaxShortened}`
                     return [ newName, categoryData ]
@@ -860,16 +861,16 @@ describe ('Treat continuous data', () => {
 
 
         // Reorder groups
-        const sortedGroupedData = new Map( [...groupedDataWithRenamedKeys.entries()].sort().reverse() )
+        const sortedGroupedData = new Map( [ ...groupedDataWithRenamedKeys.entries() ].sort().reverse() )
 
 
         // Do a manual rollup to preserve new group names(i.e., without using d3.rollup)
         const manuallyRolledUpData = new Map()
-        sortedGroupedData.forEach( (categoryData, categoryName) => {
-            manuallyRolledUpData.set(categoryName, categoryData.length)
-        })
+        sortedGroupedData.forEach( ( categoryData, categoryName ) => {
+            manuallyRolledUpData.set( categoryName, categoryData.length )
+        } )
 
-        expect( manuallyRolledUpData ).toTabulateAs(`\
+        expect( manuallyRolledUpData ).toTabulateAs( `\
 ┌───────────────────┬─────────────┬────────┐
 │ (iteration index) │     Key     │ Values │
 ├───────────────────┼─────────────┼────────┤
@@ -877,9 +878,9 @@ describe ('Treat continuous data', () => {
 │         1         │ '3.48-3.88' │   42   │
 │         2         │ '3.00-3.46' │   38   │
 │         3         │ '2.52-2.98' │   11   │
-└───────────────────┴─────────────┴────────┘`)
+└───────────────────┴─────────────┴────────┘` )
 
-        expect( groupedDataWithRenamedKeys ).toTabulateAs(`\
+        expect( groupedDataWithRenamedKeys ).toTabulateAs( `\
 ┌───────────────────┬─────────────┬─────────────────────────────────────────────────────┐
 │ (iteration index) │     Key     │                       Values                        │
 ├───────────────────┼─────────────┼─────────────────────────────────────────────────────┤
@@ -887,9 +888,9 @@ describe ('Treat continuous data', () => {
 │         1         │ '3.00-3.46' │ [ [Object], [Object], [Object], ... 35 more items ] │
 │         2         │ '2.52-2.98' │ [ [Object], [Object], [Object], ... 8 more items ]  │
 │         3         │ '3.48-3.88' │ [ [Object], [Object], [Object], ... 39 more items ] │
-└───────────────────┴─────────────┴─────────────────────────────────────────────────────┘`)
+└───────────────────┴─────────────┴─────────────────────────────────────────────────────┘` )
 
-        expect( sortedGroupedData ).toTabulateAs(`\
+        expect( sortedGroupedData ).toTabulateAs( `\
 ┌───────────────────┬─────────────┬─────────────────────────────────────────────────────┐
 │ (iteration index) │     Key     │                       Values                        │
 ├───────────────────┼─────────────┼─────────────────────────────────────────────────────┤
@@ -897,14 +898,14 @@ describe ('Treat continuous data', () => {
 │         1         │ '3.48-3.88' │ [ [Object], [Object], [Object], ... 39 more items ] │
 │         2         │ '3.00-3.46' │ [ [Object], [Object], [Object], ... 35 more items ] │
 │         3         │ '2.52-2.98' │ [ [Object], [Object], [Object], ... 8 more items ]  │
-└───────────────────┴─────────────┴─────────────────────────────────────────────────────┘`)
+└───────────────────┴─────────────┴─────────────────────────────────────────────────────┘` )
 
 
 
         // Extraversion group 1
-        expect( d3.min( sortedGroupedData.get('3.96-4.42'), d=>d.Extraversion ) ).toBe( '3.95833' )
-        expect( d3.max( sortedGroupedData.get('3.96-4.42'), d=>d.Extraversion ) ).toBe( '4.41667' )
-        expect( sortedGroupedData.get('3.96-4.42') ).toTabulateAs(`\
+        expect( d3.min( sortedGroupedData.get( '3.96-4.42' ), d => d.Extraversion ) ).toBe( '3.95833' )
+        expect( d3.max( sortedGroupedData.get( '3.96-4.42' ), d => d.Extraversion ) ).toBe( '4.41667' )
+        expect( sortedGroupedData.get( '3.96-4.42' ) ).toTabulateAs( `\
 ┌─────────┬─────────────┬──────────────┬──────────┬───────────────┐
 │ (index) │ Neuroticism │ Extraversion │  Gender  │ MonthMeasured │
 ├─────────┼─────────────┼──────────────┼──────────┼───────────────┤
@@ -916,13 +917,13 @@ describe ('Treat continuous data', () => {
 │    5    │  '2.9375'   │  '4.22917'   │ 'Female' │    'March'    │
 │    6    │  '1.64583'  │  '3.95833'   │ 'Female' │    'June'     │
 │    7    │   '1.75'    │  '4.22917'   │ 'Female' │  'December'   │
-└─────────┴─────────────┴──────────────┴──────────┴───────────────┘`)
+└─────────┴─────────────┴──────────────┴──────────┴───────────────┘` )
 
 
         // Extraversion group 2
-        expect( d3.min( sortedGroupedData.get('3.48-3.88'), d=>d.Extraversion ) ).toBe( '3.47917' )
-        expect( d3.max( sortedGroupedData.get('3.48-3.88'), d=>d.Extraversion ) ).toBe( '3.875' )
-        expect( sortedGroupedData.get('3.48-3.88') ).toTabulateAs(`\
+        expect( d3.min( sortedGroupedData.get( '3.48-3.88' ), d => d.Extraversion ) ).toBe( '3.47917' )
+        expect( d3.max( sortedGroupedData.get( '3.48-3.88' ), d => d.Extraversion ) ).toBe( '3.875' )
+        expect( sortedGroupedData.get( '3.48-3.88' ) ).toTabulateAs( `\
 ┌─────────┬─────────────┬──────────────┬──────────┬───────────────┐
 │ (index) │ Neuroticism │ Extraversion │  Gender  │ MonthMeasured │
 ├─────────┼─────────────┼──────────────┼──────────┼───────────────┤
@@ -968,14 +969,14 @@ describe ('Treat continuous data', () => {
 │   39    │  '3.14583'  │  '3.77083'   │ 'Female' │   'August'    │
 │   40    │  '3.3125'   │  '3.64583'   │ 'Female' │   'January'   │
 │   41    │  '2.83333'  │   '3.875'    │ 'Female' │    'March'    │
-└─────────┴─────────────┴──────────────┴──────────┴───────────────┘`)
+└─────────┴─────────────┴──────────────┴──────────┴───────────────┘` )
 
 
 
         // Extraversion group 3
-        expect( d3.min( sortedGroupedData.get('3.00-3.46'), d=>d.Extraversion ) ).toBe( '3' )
-        expect( d3.max( sortedGroupedData.get('3.00-3.46'), d=>d.Extraversion ) ).toBe( '3.45833' )
-        expect( sortedGroupedData.get('3.00-3.46') ).toTabulateAs(`\
+        expect( d3.min( sortedGroupedData.get( '3.00-3.46' ), d => d.Extraversion ) ).toBe( '3' )
+        expect( d3.max( sortedGroupedData.get( '3.00-3.46' ), d => d.Extraversion ) ).toBe( '3.45833' )
+        expect( sortedGroupedData.get( '3.00-3.46' ) ).toTabulateAs( `\
 ┌─────────┬─────────────┬──────────────┬──────────┬───────────────┐
 │ (index) │ Neuroticism │ Extraversion │  Gender  │ MonthMeasured │
 ├─────────┼─────────────┼──────────────┼──────────┼───────────────┤
@@ -1017,12 +1018,12 @@ describe ('Treat continuous data', () => {
 │   35    │  '3.14583'  │  '3.29167'   │ 'Female' │   'October'   │
 │   36    │  '2.83333'  │   '3.3125'   │ 'Female' │  'December'   │
 │   37    │  '2.52083'  │    '3.25'    │ 'Female' │  'February'   │
-└─────────┴─────────────┴──────────────┴──────────┴───────────────┘`)
+└─────────┴─────────────┴──────────────┴──────────┴───────────────┘` )
 
         // Extraversion group 4
-        expect( d3.min( sortedGroupedData.get('2.52-2.98'), d=>d.Extraversion ) ).toBe( '2.52083' )
-        expect( d3.max( sortedGroupedData.get('2.52-2.98'), d=>d.Extraversion ) ).toBe( '2.97917' )
-        expect( sortedGroupedData.get('2.52-2.98') ).toTabulateAs(`\
+        expect( d3.min( sortedGroupedData.get( '2.52-2.98' ), d => d.Extraversion ) ).toBe( '2.52083' )
+        expect( d3.max( sortedGroupedData.get( '2.52-2.98' ), d => d.Extraversion ) ).toBe( '2.97917' )
+        expect( sortedGroupedData.get( '2.52-2.98' ) ).toTabulateAs( `\
 ┌─────────┬─────────────┬──────────────┬──────────┬───────────────┐
 │ (index) │ Neuroticism │ Extraversion │  Gender  │ MonthMeasured │
 ├─────────┼─────────────┼──────────────┼──────────┼───────────────┤
@@ -1037,58 +1038,58 @@ describe ('Treat continuous data', () => {
 │    8    │  '3.70833'  │  '2.77083'   │ 'Female' │    'March'    │
 │    9    │  '2.60417'  │  '2.97917'   │ 'Female' │    'July'     │
 │   10    │  '2.85417'  │  '2.83333'   │ 'Female' │  'November'   │
-└─────────┴─────────────┴──────────────┴──────────┴───────────────┘`)
+└─────────┴─────────────┴──────────────┴──────────┴───────────────┘` )
 
 
-    })
+    } )
 
 
-})
+} )
 
 
 // HELPER FUNCTION(S)
 
-function bin(d3dataset, targetColumnName, numberOfThresholds) {
+function bin( d3dataset, targetColumnName, numberOfThresholds ) {
 
-    const max = d3.max(d3dataset, function(d) { return d[targetColumnName] })
-    const min = d3.min(d3dataset, function(d) { return d[targetColumnName] })
+    const max = d3.max( d3dataset, function ( d ) { return d[ targetColumnName ] } )
+    const min = d3.min( d3dataset, function ( d ) { return d[ targetColumnName ] } )
 
     const binnedVariable =
         d3.histogram()
-            .value( d => d[targetColumnName]  )
-            .thresholds(numberOfThresholds)
-            .domain([min, max])
-            (d3dataset)
+            .value( d => d[ targetColumnName ] )
+            .thresholds( numberOfThresholds )
+            .domain( [ min, max ] )
+            ( d3dataset )
 
     return binnedVariable
 
 }
 
 
-function isContinuousData (arrayToBeEvaluated){
+function isContinuousData( arrayToBeEvaluated ) {
 
     const evaluation = {
         isANumber: 0,
         notANumber: 0
     }
 
-    const dataSample = arrayToBeEvaluated.slice(1,25)
+    const dataSample = arrayToBeEvaluated.slice( 1, 25 )
 
-    dataSample.forEach( (sampleValue) => {
+    dataSample.forEach( ( sampleValue ) => {
 
-        const omittedValues = [true, false]
+        const omittedValues = [ true, false ]
 
         const sampleValueIsNotAmongOmittedValues = sampleValue !== omittedValues
-        const sampleValueIsConvertibleToANumber = Number(sampleValue)
+        const sampleValueIsConvertibleToANumber = Number( sampleValue )
 
-        if (sampleValueIsNotAmongOmittedValues && sampleValueIsConvertibleToANumber){
+        if( sampleValueIsNotAmongOmittedValues && sampleValueIsConvertibleToANumber ) {
             evaluation.isANumber += 1
         }
-        else{
+        else {
             evaluation.notANumber += 1
         }
 
-    })
+    } )
 
     return evaluation
 

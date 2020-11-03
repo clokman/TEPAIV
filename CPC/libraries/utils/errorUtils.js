@@ -1,118 +1,118 @@
-
 //// UMD HEAD ////////////////////////////////////////////////////////////////////////
 // UMD head and foot patterns adapted from d3.js
-(function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-        typeof define === 'function' && define.amd ? define(['exports'], factory) :
-            (factory((global.errorUtils = global.errorUtils || {})));
-}(this, (function (exports) { 'use strict';
+( function ( global, factory ) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory( exports ) :
+        typeof define === 'function' && define.amd ? define( [ 'exports' ], factory ) :
+            ( factory( ( global.errorUtils = global.errorUtils || {} ) ) )
+}( this, ( function ( exports ) {
+    'use strict'
 //////////////////////////////////////////////////////////////////////////////////////
 
 
 
 // Module content goes here.
-const version = "1.0"
+    const version = '1.0'
 
 
 
-Object.prototype.mustBe = function(value, customErrorMessage) {
+    Object.prototype.mustBe = function ( value, customErrorMessage ) {
 
-    // Validate the value
-    let valueIsAMatch = false
+        // Validate the value
+        let valueIsAMatch = false
 
-    if( this === value  ){
-        valueIsAMatch = true
-    }
-
-
-
-    // If value is not a match, throw error
-    if (!valueIsAMatch){
-
-        if(customErrorMessage){
-            throw Error(customErrorMessage)
+        if( this === value ) {
+            valueIsAMatch = true
         }
 
-        // The standard error message
-        else{
-            throw Error(`The value of variable must be "${value}" but is "${this}".`)
-        }
 
+
+        // If value is not a match, throw error
+        if( !valueIsAMatch ) {
+
+            if( customErrorMessage ) {
+                throw Error( customErrorMessage )
+            }
+
+            // The standard error message
+            else {
+                throw Error( `The value of variable must be "${value}" but is "${this}".` )
+            }
+
+        }
     }
-}
 
     /**
      * @param acceptableType {String|Object}
      */
-    Object.prototype.mustBeOfType = function(acceptableType) {
+    Object.prototype.mustBeOfType = function ( acceptableType ) {
 
-    // If user enters the object instance directly as an acceptable type, get the class of the object
-    if (acceptableType.constructor.name !== "String"){
-        acceptableType = acceptableType.name
+        // If user enters the object instance directly as an acceptable type, get the class of the object
+        if( acceptableType.constructor.name !== 'String' ) {
+            acceptableType = acceptableType.name
+        }
+
+        let valueTypeIsOk = false
+
+        // Check if the value is of acceptable type
+        const typeOfValue = this.constructor.name
+        if( typeOfValue === acceptableType ) {valueTypeIsOk = true}
+
+        // Throw error if type is not OK
+        if( !valueTypeIsOk ) {
+            throw Error( `Type error: Expected the type '${acceptableType}' but the value '${this}' has the type '${typeOfValue}'.` )
+        }
     }
 
-    let valueTypeIsOk = false
 
-    // Check if the value is of acceptable type
-    const typeOfValue = this.constructor.name
-    if(typeOfValue === acceptableType){valueTypeIsOk = true}
+    Object.prototype.mustBeAnElementIn = function ( array ) {
 
-    // Throw error if type is not OK
-    if(!valueTypeIsOk){
-        throw Error(`Type error: Expected the type '${acceptableType}' but the value '${this}' has the type '${typeOfValue}'.`)
-    }
-}
+        // Validate the value
+        let valueIsFoundInArray = false
 
+        if( array.includes( this ) ) {
+            valueIsFoundInArray = true
+        }
 
-Object.prototype.mustBeAnElementIn = function(array){
+        // If value is not validated, throw error
+        if( !valueIsFoundInArray ) {
 
-    // Validate the value
-    let valueIsFoundInArray = false
+            let arrayAsString = array.convertToString()
 
-    if( array.includes(this) ){
-        valueIsFoundInArray = true
+            throw Error( `'${this}' is not a valid value. Expected values are: '${arrayAsString}'.` )
+        }
+
     }
 
-    // If value is not validated, throw error
-    if (!valueIsFoundInArray){
 
-        let arrayAsString = array.convertToString()
+    Object.prototype.mustBeAKeyIn = function ( map ) {
 
-        throw Error(`'${this}' is not a valid value. Expected values are: '${arrayAsString}'.`)
+        // Validate the value
+        let valueIsFoundInMapKeys = false
+
+        if( map.has( this ) ) {  // checks map keys
+            valueIsFoundInMapKeys = true
+        }
+
+        // If value is not validated, throw error
+        if( !valueIsFoundInMapKeys ) {
+
+            let mapKeysAsString = map.convertKeysToString()
+
+            throw Error( `'${this}' is not as valid value. Expected values are: '${mapKeysAsString}'.` )
+        }
     }
 
-}
-
-
-Object.prototype.mustBeAKeyIn = function(map){
-
-    // Validate the value
-    let valueIsFoundInMapKeys = false
-
-    if( map.has(this) ){  // checks map keys
-        valueIsFoundInMapKeys = true
-    }
-
-    // If value is not validated, throw error
-    if (!valueIsFoundInMapKeys){
-
-        let mapKeysAsString = map.convertKeysToString()
-
-        throw Error(`'${this}' is not as valid value. Expected values are: '${mapKeysAsString}'.`)
-    }
-}
 
 
 
-                                                
 //// UMD FOOT ////////////////////////////////////////////////////////////////////////
-                             
+
     //// MODULE.EXPORTS ////
-    exports.version = version;
+    exports.version = version
 
 
-	Object.defineProperty(exports, '__esModule', { value: true });
+    Object.defineProperty( exports, '__esModule', { value: true } )
 
-})));
+} ) ) )
 //////////////////////////////////////////////////////////////////////////////////////
 

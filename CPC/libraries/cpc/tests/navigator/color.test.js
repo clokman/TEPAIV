@@ -1,10 +1,8 @@
-
 //// IMPORTS SPECIFIC TO THIS TEST FILE ////////////////////////////////////////////////////////////////////////////////
 
 
 // Navigator class of CPC //
-const navigator = require("../../navigator")
-
+const navigator = require( '../../navigator' )
 
 
 
@@ -13,10 +11,10 @@ const navigator = require("../../navigator")
 
 //// INIITALIZATION ////
 
-test ('LIST: List scheme sets and the schemes they contain', () => {
+test( 'LIST: List scheme sets and the schemes they contain', () => {
 
     expect( navigator.color ).toBeDefined()
-    expect( navigator.color.schemeSets ).toTabulateAs(`\
+    expect( navigator.color.schemeSets ).toTabulateAs( `\
 ┌─────────┬──────────────┬──────────────────────────────────────────────────────┐
 │ (index) │      0       │                          1                           │
 ├─────────┼──────────────┼──────────────────────────────────────────────────────┤
@@ -31,20 +29,19 @@ test ('LIST: List scheme sets and the schemes they contain', () => {
 │    8    │  'Oranges'   │                    [ 'Oranges' ]                     │
 │    9    │  'Purples'   │                    [ 'Purples' ]                     │
 └─────────┴──────────────┴──────────────────────────────────────────────────────┘
-˅˅˅ NaN more rows`, 0, 10)
+˅˅˅ NaN more rows`, 0, 10 )
 
-})
-
+} )
 
 
 
 
 //// CIRCULAR INDEXING ////
 
-test ('CIRCULAR INDEXING: Circular scheme indexing and iteration', () => {
+test( 'CIRCULAR INDEXING: Circular scheme indexing and iteration', () => {
 
     // View color scheme sets
-    expect( navigator.color.schemeSets ).toTabulateAs(`\
+    expect( navigator.color.schemeSets ).toTabulateAs( `\
 ┌───────────────────┬────────────────────┬──────────────────────────────────────────────────────┐
 │ (iteration index) │        Key         │                        Values                        │
 ├───────────────────┼────────────────────┼──────────────────────────────────────────────────────┤
@@ -82,28 +79,29 @@ test ('CIRCULAR INDEXING: Circular scheme indexing and iteration', () => {
 │        31         │     'Rainbow'      │                    [ 'Rainbow' ]                     │
 │        32         │     'Sinebow'      │                    [ 'Sinebow' ]                     │
 │        33         │     'Spectral'     │                    [ 'Spectral' ]                    │
-└───────────────────┴────────────────────┴──────────────────────────────────────────────────────┘`)
+└───────────────────┴────────────────────┴──────────────────────────────────────────────────────┘` )
 
     // Retrieve some color scheme names by index
-    const firstSchemeOfSingleHueTheme = navigator.color.getChartSchemeBySchemeSetNameAndCircularIndex('Single-Hue', 0)
-    expect(firstSchemeOfSingleHueTheme).toBe('Purples')
+    const firstSchemeOfSingleHueTheme = navigator.color.getChartSchemeBySchemeSetNameAndCircularIndex( 'Single-Hue', 0 )
+    expect( firstSchemeOfSingleHueTheme ).toBe( 'Purples' )
 
-    const thirdSchemeOfSingleHueTheme = navigator.color.getChartSchemeBySchemeSetNameAndCircularIndex('Single-Hue', 2)
-    expect(thirdSchemeOfSingleHueTheme).toBe('Greens')
+    const thirdSchemeOfSingleHueTheme = navigator.color.getChartSchemeBySchemeSetNameAndCircularIndex( 'Single-Hue', 2 )
+    expect( thirdSchemeOfSingleHueTheme ).toBe( 'Greens' )
 
 
     // Iterate through the schemes in a scheme set
     const schemeNamesInSingleHueSet = []
 
-    const noOfSchemesInSingleHueSchemeSet = navigator.color.schemeSets.get('Single-Hue').length
-    const limit = noOfSchemesInSingleHueSchemeSet + 5  // addition is to test circular indexing (index should be out of range)
-    d3.range(limit).forEach(i => {
-        const schemeName = navigator.color.getChartSchemeBySchemeSetNameAndCircularIndex('Single-Hue', i)
-        schemeNamesInSingleHueSet.push(schemeName)
+    const noOfSchemesInSingleHueSchemeSet = navigator.color.schemeSets.get( 'Single-Hue' ).length
+    const limit = noOfSchemesInSingleHueSchemeSet + 5  // addition is to test circular indexing (index should be out of
+                                                       // range)
+    d3.range( limit ).forEach( i => {
+        const schemeName = navigator.color.getChartSchemeBySchemeSetNameAndCircularIndex( 'Single-Hue', i )
+        schemeNamesInSingleHueSet.push( schemeName )
 
-    })
+    } )
 
-    expect(schemeNamesInSingleHueSet).toTabulateAs(`\
+    expect( schemeNamesInSingleHueSet ).toTabulateAs( `\
 ┌─────────┬───────────┐
 │ (index) │  Values   │
 ├─────────┼───────────┤
@@ -118,29 +116,30 @@ test ('CIRCULAR INDEXING: Circular scheme indexing and iteration', () => {
 │    8    │ 'Greens'  │
 │    9    │ 'Oranges' │
 │   10    │  'Greys'  │
-└─────────┴───────────┘`)  // repetition is not an error; it shows that circular indexing works
+└─────────┴───────────┘` )  // repetition is not an error; it shows that circular indexing works
 
-})
+} )
 
 
 
 
 //// SCHEME NAME ==> D3 INTERPOLATOR ARGUMENT STRING ////
 
-test ('MAKE D3 ARGUMENT: Convert scheme name to D3 interpolator argument string', () => {
+test( 'MAKE D3 ARGUMENT: Convert scheme name to D3 interpolator argument string', () => {
 
     // Iterate through the schemes in a scheme set
     const schemeNamesInSingleHueSet = []
 
-    const noOfSchemesInSingleHueSchemeSet = navigator.color.schemeSets.get('Single-Hue').length
-    const limit = noOfSchemesInSingleHueSchemeSet + 5  // addition is to test circular indexing (index should be out of range)
-    d3.range(limit).forEach(i => {
-        const schemeName = navigator.color.getChartSchemeBySchemeSetNameAndCircularIndex('Single-Hue', i)
-        schemeNamesInSingleHueSet.push(schemeName)
+    const noOfSchemesInSingleHueSchemeSet = navigator.color.schemeSets.get( 'Single-Hue' ).length
+    const limit = noOfSchemesInSingleHueSchemeSet + 5  // addition is to test circular indexing (index should be out of
+                                                       // range)
+    d3.range( limit ).forEach( i => {
+        const schemeName = navigator.color.getChartSchemeBySchemeSetNameAndCircularIndex( 'Single-Hue', i )
+        schemeNamesInSingleHueSet.push( schemeName )
 
-    })
+    } )
 
-    expect(schemeNamesInSingleHueSet).toTabulateAs(`\
+    expect( schemeNamesInSingleHueSet ).toTabulateAs( `\
 ┌─────────┬───────────┐
 │ (index) │  Values   │
 ├─────────┼───────────┤
@@ -155,17 +154,17 @@ test ('MAKE D3 ARGUMENT: Convert scheme name to D3 interpolator argument string'
 │    8    │ 'Greens'  │
 │    9    │ 'Oranges' │
 │   10    │  'Greys'  │
-└─────────┴───────────┘`)  // repetition is not an error; it shows that circular indexing works
+└─────────┴───────────┘` )  // repetition is not an error; it shows that circular indexing works
 
 
     // Convert scheme names to D3 interpolator arguments
     const interpolatorArgumentsForSingleHueSchemes = []
     schemeNamesInSingleHueSet.forEach( schemeName => {
-        interpolatorArgument = navigator.color.convertColorSchemeNameToD3InterpolatorArgument(schemeName)
-        interpolatorArgumentsForSingleHueSchemes.push(interpolatorArgument)
-    })
+        interpolatorArgument = navigator.color.convertColorSchemeNameToD3InterpolatorArgument( schemeName )
+        interpolatorArgumentsForSingleHueSchemes.push( interpolatorArgument )
+    } )
 
-    expect(interpolatorArgumentsForSingleHueSchemes).toTabulateAs(`\
+    expect( interpolatorArgumentsForSingleHueSchemes ).toTabulateAs( `\
 ┌─────────┬─────────────────────────┐
 │ (index) │         Values          │
 ├─────────┼─────────────────────────┤
@@ -180,29 +179,29 @@ test ('MAKE D3 ARGUMENT: Convert scheme name to D3 interpolator argument string'
 │    8    │ 'd3.interpolateGreens'  │
 │    9    │ 'd3.interpolateOranges' │
 │   10    │  'd3.interpolateGreys'  │
-└─────────┴─────────────────────────┘`)  // repetition is not an error; it is a result of circular indexing
+└─────────┴─────────────────────────┘` )  // repetition is not an error; it is a result of circular indexing
 
     const exampleColorScale = d3.scaleSequential()
-        .domain([1, 10])  // palette size
-        .interpolator(eval(interpolatorArgumentsForSingleHueSchemes[0]))  // palette
+        .domain( [ 1, 10 ] )  // palette size
+        .interpolator( eval( interpolatorArgumentsForSingleHueSchemes[ 0 ] ) )  // palette
 
     // Values inside the domain are hue values that can be referred to in this way:
-    expect(exampleColorScale(1)).toBe('rgb(252, 251, 253)') // full white
-    expect(exampleColorScale(7)).toBe('rgb(121, 110, 178)') // hue step
+    expect( exampleColorScale( 1 ) ).toBe( 'rgb(252, 251, 253)' ) // full white
+    expect( exampleColorScale( 7 ) ).toBe( 'rgb(121, 110, 178)' ) // hue step
 
-})
+} )
 
 
 
 
 //// ERRORS ////
 
-test ('WRONG SCHEME SET REQUESTED: Wrong scheme set name during circular indexing should return error', () => {
+test( 'WRONG SCHEME SET REQUESTED: Wrong scheme set name during circular indexing should return error', () => {
 
     // Initialize
 
     // View color themes
-    expect( navigator.color.schemeSets ).toTabulateAs(`\
+    expect( navigator.color.schemeSets ).toTabulateAs( `\
 ┌─────────┬──────────────┬──────────────────────────────────────────────────────┐
 │ (index) │      0       │                          1                           │
 ├─────────┼──────────────┼──────────────────────────────────────────────────────┤
@@ -215,23 +214,23 @@ test ('WRONG SCHEME SET REQUESTED: Wrong scheme set name during circular indexin
 │    6    │   'Greens'   │                     [ 'Greens' ]                     │
 │    7    │   'Greys'    │                     [ 'Greys' ]                      │
 └─────────┴──────────────┴──────────────────────────────────────────────────────┘
-˅˅˅ NaN more rows`, 0, 8)
+˅˅˅ NaN more rows`, 0, 8 )
 
     // Retrieve some color scheme names by index
-    const firstSchemeOfSingleHueTheme = navigator.color.getChartSchemeBySchemeSetNameAndCircularIndex('Single-Hue', 0)
-    expect(firstSchemeOfSingleHueTheme).toBe('Purples')
+    const firstSchemeOfSingleHueTheme = navigator.color.getChartSchemeBySchemeSetNameAndCircularIndex( 'Single-Hue', 0 )
+    expect( firstSchemeOfSingleHueTheme ).toBe( 'Purples' )
 
     expect( () => {
-        navigator.color.getChartSchemeBySchemeSetNameAndCircularIndex('WRONG-THEME-NAME', 0)
-    }).toThrow("'WRONG-THEME-NAME' is not as valid value. Expected values are: 'Titanic, Titanic-2, Embark, Single-Hue, Multi-Hue, Blues, Greens, Greys, Oranges, Purples, Reds, BuGn, BuPu, GnBu, OrRd, PuBuGn, PuBu, PuRd, RdPu, RdGy, YlGnBu, YlGn, YlOrBr, YlOrRd, Viridis, Inferno, Magma, Warm, Cool, CubehelixDefault, Plasma, Rainbow, Sinebow, Spectral'.")
+        navigator.color.getChartSchemeBySchemeSetNameAndCircularIndex( 'WRONG-THEME-NAME', 0 )
+    } ).toThrow( '\'WRONG-THEME-NAME\' is not as valid value. Expected values are: \'Titanic, Titanic-2, Embark, Single-Hue, Multi-Hue, Blues, Greens, Greys, Oranges, Purples, Reds, BuGn, BuPu, GnBu, OrRd, PuBuGn, PuBu, PuRd, RdPu, RdGy, YlGnBu, YlGn, YlOrBr, YlOrRd, Viridis, Inferno, Magma, Warm, Cool, CubehelixDefault, Plasma, Rainbow, Sinebow, Spectral\'.' )
 
     expect( () => {
-        navigator.color.getChartSchemeBySchemeSetNameAndCircularIndex('Grays', 0)
-    }).toThrow("'Grays' is not as valid value. Expected values are: 'Titanic, Titanic-2, Embark, Single-Hue, Multi-Hue, Blues, Greens, Greys, Oranges, Purples, Reds, BuGn, BuPu, GnBu, OrRd, PuBuGn, PuBu, PuRd, RdPu, RdGy, YlGnBu, YlGn, YlOrBr, YlOrRd, Viridis, Inferno, Magma, Warm, Cool, CubehelixDefault, Plasma, Rainbow, Sinebow, Spectral'.") // Should be 'Greys', not 'Gray'
+        navigator.color.getChartSchemeBySchemeSetNameAndCircularIndex( 'Grays', 0 )
+    } ).toThrow( '\'Grays\' is not as valid value. Expected values are: \'Titanic, Titanic-2, Embark, Single-Hue, Multi-Hue, Blues, Greens, Greys, Oranges, Purples, Reds, BuGn, BuPu, GnBu, OrRd, PuBuGn, PuBu, PuRd, RdPu, RdGy, YlGnBu, YlGn, YlOrBr, YlOrRd, Viridis, Inferno, Magma, Warm, Cool, CubehelixDefault, Plasma, Rainbow, Sinebow, Spectral\'.' ) // Should be 'Greys', not 'Gray'
 
     expect( () => {
-        navigator.color.getChartSchemeBySchemeSetNameAndCircularIndex('greys', 0)
-    }).toThrow("'greys' is not as valid value. Expected values are: 'Titanic, Titanic-2, Embark, Single-Hue, Multi-Hue, Blues, Greens, Greys, Oranges, Purples, Reds, BuGn, BuPu, GnBu, OrRd, PuBuGn, PuBu, PuRd, RdPu, RdGy, YlGnBu, YlGn, YlOrBr, YlOrRd, Viridis, Inferno, Magma, Warm, Cool, CubehelixDefault, Plasma, Rainbow, Sinebow, Spectral'.") // Should be 'Greys', not 'grey'
-})
+        navigator.color.getChartSchemeBySchemeSetNameAndCircularIndex( 'greys', 0 )
+    } ).toThrow( '\'greys\' is not as valid value. Expected values are: \'Titanic, Titanic-2, Embark, Single-Hue, Multi-Hue, Blues, Greens, Greys, Oranges, Purples, Reds, BuGn, BuPu, GnBu, OrRd, PuBuGn, PuBu, PuRd, RdPu, RdGy, YlGnBu, YlGn, YlOrBr, YlOrRd, Viridis, Inferno, Magma, Warm, Cool, CubehelixDefault, Plasma, Rainbow, Sinebow, Spectral\'.' ) // Should be 'Greys', not 'grey'
+} )
 
 

@@ -1,4 +1,3 @@
-
 //// UNIT TESTS //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -139,7 +138,7 @@ describe( 'Ensemble', () => {
 
             // And the ensemble object should have both objects registered in it
             expect( Array.from( leftRectangle.ensembleObject.members().keys() ) ).toEqual(
-                ['left-rectangle', 'right-rectangle']
+                [ 'left-rectangle', 'right-rectangle' ]
             )
 
 
@@ -161,13 +160,13 @@ describe( 'Ensemble', () => {
 
             // And the ensemble obj§ect should have both the additional rectangle registered in it
             expect( Array.from( leftRectangle.ensembleObject.members().keys() ) ).toEqual(
-                ['left-rectangle', 'right-rectangle', 'additional-rectangle']
+                [ 'left-rectangle', 'right-rectangle', 'additional-rectangle' ]
             )
 
         } )
 
     } )
-    
+
 
 
     //// Flood Control ///////////////////////////////////////////////////////////////
@@ -185,51 +184,51 @@ describe( 'Ensemble', () => {
                 'update'
             )
 
-        })
+        } )
 
-        test( "There shouldn't be too many calls to the update method when an ensemble is being formed", () => {
+        test( 'There shouldn\'t be too many calls to the update method when an ensemble is being formed', () => {
 
             // Initialize a rectangle
             const leftRectangle = new shape.LinkableRectangle()
                 .id( 'left-rectangle' )
                 .build()
-            expect(shape.LinkableRectangle.prototype.update).toHaveBeenCalledTimes(1)
+            expect( shape.LinkableRectangle.prototype.update ).toHaveBeenCalledTimes( 1 )
 
             // Initialize another rectangle
             const middleLeftRectangle = new shape.LinkableRectangle()
                 .id( 'middle-left-rectangle' )
                 .build()
-            expect(shape.LinkableRectangle.prototype.update).toHaveBeenCalledTimes(2)
+            expect( shape.LinkableRectangle.prototype.update ).toHaveBeenCalledTimes( 2 )
 
             const middleRightRectangle = new shape.LinkableRectangle()
                 .id( 'middle-right-rectangle' )
                 .build()
-            expect(shape.LinkableRectangle.prototype.update).toHaveBeenCalledTimes(3)
+            expect( shape.LinkableRectangle.prototype.update ).toHaveBeenCalledTimes( 3 )
 
             // Initialize another rectangle
             const rightRectangle = new shape.LinkableRectangle()
                 .id( 'right-rectangle' )
                 .build()
-            expect(shape.LinkableRectangle.prototype.update).toHaveBeenCalledTimes(4)
+            expect( shape.LinkableRectangle.prototype.update ).toHaveBeenCalledTimes( 4 )
 
 
             // Link new rectangle to the other
             leftRectangle.linkRight( middleLeftRectangle ).update()
-            expect(shape.LinkableRectangle.prototype.update).toHaveBeenCalledTimes(5)
+            expect( shape.LinkableRectangle.prototype.update ).toHaveBeenCalledTimes( 5 )
             leftRectangle.linkRight( middleLeftRectangle ).updateAll()
-            expect(shape.LinkableRectangle.prototype.update).toHaveBeenCalledTimes(8)
+            expect( shape.LinkableRectangle.prototype.update ).toHaveBeenCalledTimes( 8 )
 
 
             middleLeftRectangle.linkRight( middleRightRectangle ).update()
-            expect(shape.LinkableRectangle.prototype.update).toHaveBeenCalledTimes(9)
+            expect( shape.LinkableRectangle.prototype.update ).toHaveBeenCalledTimes( 9 )
             leftRectangle.linkRight( middleLeftRectangle ).updateAll()
-            expect(shape.LinkableRectangle.prototype.update).toHaveBeenCalledTimes(13)
+            expect( shape.LinkableRectangle.prototype.update ).toHaveBeenCalledTimes( 13 )
 
 
             middleRightRectangle.linkRight( rightRectangle ).update()
-            expect(shape.LinkableRectangle.prototype.update).toHaveBeenCalledTimes(14)
+            expect( shape.LinkableRectangle.prototype.update ).toHaveBeenCalledTimes( 14 )
             leftRectangle.linkRight( middleLeftRectangle ).updateAll()
-            expect(shape.LinkableRectangle.prototype.update).toHaveBeenCalledTimes(19)
+            expect( shape.LinkableRectangle.prototype.update ).toHaveBeenCalledTimes( 19 )
 
         } )
 
@@ -843,9 +842,9 @@ describe( 'Setting Shared Field Values', () => {
             .build()
 
         leftRectangleDefaults = new Map( [
-            ['fill', leftRectangle.fill()],
-            ['stroke', leftRectangle.stroke()],
-            ['strokeWidth', leftRectangle.strokeWidth()]
+            [ 'fill', leftRectangle.fill() ],
+            [ 'stroke', leftRectangle.stroke() ],
+            [ 'strokeWidth', leftRectangle.strokeWidth() ]
         ] )
 
         expect( leftRectangle.fill() ).not.toBe( 'salmon' )
@@ -1546,16 +1545,16 @@ describe( 'Connector Polygons', () => {
             rectangle0.linkRight( rectangle1 ).update()
 
             const pointsOfConnector = rectangle0.connectorObjects( 'right' ).pointsAsNumbers()
-            expect( pointsOfConnector ).toEqual( [[50, 0], [100, 100], [100, 150], [50, 50]] )
-            const leftEdgeOfConnector = [pointsOfConnector[ 0 ], pointsOfConnector[ 3 ]]
-            const rightEdgeOfConnector = [pointsOfConnector[ 1 ], pointsOfConnector[ 2 ]]
+            expect( pointsOfConnector ).toEqual( [ [ 50, 0 ], [ 100, 100 ], [ 100, 150 ], [ 50, 50 ] ] )
+            const leftEdgeOfConnector = [ pointsOfConnector[ 0 ], pointsOfConnector[ 3 ] ]
+            const rightEdgeOfConnector = [ pointsOfConnector[ 1 ], pointsOfConnector[ 2 ] ]
 
-            const linkedEdgeOfRectangle0 = [rectangle0.topRightCorner(), rectangle0.bottomRightCorner()]
-            const linkedEdgeOfRectangle1 = [rectangle1.topLeftCorner(), rectangle1.bottomLeftCorner()]
+            const linkedEdgeOfRectangle0 = [ rectangle0.topRightCorner(), rectangle0.bottomRightCorner() ]
+            const linkedEdgeOfRectangle1 = [ rectangle1.topLeftCorner(), rectangle1.bottomLeftCorner() ]
 
 
-            expect( linkedEdgeOfRectangle0 ).toEqual( [[50, 0], [50, 50]] )
-            expect( leftEdgeOfConnector ).toEqual( [[50, 0], [50, 50]] )
+            expect( linkedEdgeOfRectangle0 ).toEqual( [ [ 50, 0 ], [ 50, 50 ] ] )
+            expect( leftEdgeOfConnector ).toEqual( [ [ 50, 0 ], [ 50, 50 ] ] )
             expect( linkedEdgeOfRectangle0 ).toEqual( leftEdgeOfConnector )
 
         } )
@@ -1588,7 +1587,7 @@ describe( 'Connector Polygons', () => {
             leftRectangle.linkRight( rightRectangle ).update()
 
             const pointsOfConnector = leftRectangle.connectorObjects( 'right' ).pointsAsNumbers()
-            expect( pointsOfConnector ).toEqual( [[60, 10], [100, 100], [100, 150], [60, 60]] )
+            expect( pointsOfConnector ).toEqual( [ [ 60, 10 ], [ 100, 100 ], [ 100, 150 ], [ 60, 60 ] ] )
 
             const {
                 rightEdgeOfLeftRectangle, leftEdgeOfConnector,
@@ -1623,15 +1622,15 @@ describe( 'Connector Polygons', () => {
 
         // Helper function(s)
 
-        function getRelevantPointsForLRConnection(leftRectangle, rightRectangle) {
+        function getRelevantPointsForLRConnection( leftRectangle, rightRectangle ) {
 
             const pointsOfConnector = leftRectangle.connectorObjects( 'right' ).pointsAsNumbers()
 
-            const rightEdgeOfLeftRectangle = [leftRectangle.topRightCorner(), leftRectangle.bottomRightCorner()]
-            const leftEdgeOfConnector = [pointsOfConnector[ 0 ], pointsOfConnector[ 3 ]]
+            const rightEdgeOfLeftRectangle = [ leftRectangle.topRightCorner(), leftRectangle.bottomRightCorner() ]
+            const leftEdgeOfConnector = [ pointsOfConnector[ 0 ], pointsOfConnector[ 3 ] ]
 
-            const leftEdgeOfRightRectangle = [rightRectangle.topLeftCorner(), rightRectangle.bottomLeftCorner()]
-            const rightEdgeOfConnector = [pointsOfConnector[ 1 ], pointsOfConnector[ 2 ]]
+            const leftEdgeOfRightRectangle = [ rightRectangle.topLeftCorner(), rightRectangle.bottomLeftCorner() ]
+            const rightEdgeOfConnector = [ pointsOfConnector[ 1 ], pointsOfConnector[ 2 ] ]
 
             return { rightEdgeOfLeftRectangle, leftEdgeOfConnector, leftEdgeOfRightRectangle, rightEdgeOfConnector }
         }
@@ -2272,9 +2271,9 @@ describe( 'Connector Polygons', () => {
                 .toBeDefined()
 
             // SETTER of singleton should not throw an exception
-            expect( singletonRectangle.visibilityOfAllConnectorsInEnsemble('visible').update() )
+            expect( singletonRectangle.visibilityOfAllConnectorsInEnsemble( 'visible' ).update() )
                 .toBeDefined()
-            expect( singletonRectangle.visibilityOfAllConnectorsInEnsemble('hidden').update() )
+            expect( singletonRectangle.visibilityOfAllConnectorsInEnsemble( 'hidden' ).update() )
                 .toBeDefined()
 
 
@@ -2309,8 +2308,8 @@ describe( 'Connector Polygons', () => {
                 .x( 400 )
             middleRectangle = new shape.LinkableRectangle()
                 .id( 'middle-rectangle' )
-                .x(200)
-                .y(100)
+                .x( 200 )
+                .y( 100 )
                 .build()
             leftRectangle = new shape.LinkableRectangle()
                 .id( 'left-rectangle' )
@@ -2340,7 +2339,7 @@ describe( 'Connector Polygons', () => {
             // Select the parents of polygons and the names of their parents
             const parents = []
             const parentNames = []
-            Array.from(polygons).forEach( polygonElement => {
+            Array.from( polygons ).forEach( polygonElement => {
 
                 const parent = polygonElement.parentNode
                 const parentName = parent.nodeName
@@ -2348,13 +2347,13 @@ describe( 'Connector Polygons', () => {
                 parents.push( parent )
                 parentNames.push( parentName )
 
-            })
+            } )
 
             // Polygons should have the same parent
-            expect( parents[0] ).toEqual( parents[1] )
+            expect( parents[ 0 ] ).toEqual( parents[ 1 ] )
 
             // Parent elements should be of type 'group'
-            expect( parentNames ).toEqual( ['g', 'g'] )
+            expect( parentNames ).toEqual( [ 'g', 'g' ] )
 
         } )
     } )
@@ -2507,9 +2506,9 @@ describe( 'Connector Polygons', () => {
                 .toBeDefined()
 
             // SETTER of singleton should not throw an exception
-            expect( singletonRectangle.opacityOfAllConnectorsInEnsemble(0.5 ).update() )
+            expect( singletonRectangle.opacityOfAllConnectorsInEnsemble( 0.5 ).update() )
                 .toBeDefined()
-            expect( singletonRectangle.opacityOfAllConnectorsInEnsemble(1.0 ).update() )
+            expect( singletonRectangle.opacityOfAllConnectorsInEnsemble( 1.0 ).update() )
                 .toBeDefined()
 
 

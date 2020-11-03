@@ -1,15 +1,15 @@
 // Polyfills and Other Patches /////////////////////////////////////////////////////////////////////////////
 
-require('jest-canvas-mock')
+require( 'jest-canvas-mock' )
 
 // Import polyfill for fetch() method
-if (typeof fetch !== 'function') {
-    global.fetch =  require('node-fetch-polyfill')
+if( typeof fetch !== 'function' ) {
+    global.fetch = require( 'node-fetch-polyfill' )
 }
 
 // Import polyfill for Object.fromEntries() method
-if (typeof Object.fromEntries !== 'function') {
-    Object.fromEntries = require('object.fromentries')
+if( typeof Object.fromEntries !== 'function' ) {
+    Object.fromEntries = require( 'object.fromentries' )
 }
 
 
@@ -17,16 +17,16 @@ if (typeof Object.fromEntries !== 'function') {
 
 // External ////////////////////////////////////////////////////////////////////////////////////////////////
 
-global.$ = require('./libraries/external/jquery-3.1.1.min') // Also an UMD dependency
-global._ = require("./libraries/external/lodash")
+global.$ = require( './libraries/external/jquery-3.1.1.min' ) // Also an UMD dependency
+global._ = require( './libraries/external/lodash' )
 
 global.d3 = {
-    ...require("./libraries/external/d3/d3"),
-    ...require("./libraries/external/d3/d3-array")
+    ...require( './libraries/external/d3/d3' ),
+    ...require( './libraries/external/d3/d3-array' )
 }
 // Disable d3 transitions
-d3.selection.prototype.duration = jest.fn( function(){return this} )
-d3.selection.prototype.transition = jest.fn( function(){return this} )
+d3.selection.prototype.duration = jest.fn( function () {return this} )
+d3.selection.prototype.transition = jest.fn( function () {return this} )
 
 
 
@@ -34,12 +34,12 @@ d3.selection.prototype.transition = jest.fn( function(){return this} )
 // JestUtils //////////////////////////////////////////////////////////////////////////////////////////////
 
 // These operate only in Node.js
-const jestConsole = require('../JestUtils/jest-console')
+const jestConsole = require( '../JestUtils/jest-console' )
 global.expectTable = jestConsole.expectTable
-global.expectConsoleHistory =  jestConsole.expectConsoleHistory
-global.clearConsoleHistory =  jestConsole.clearConsoleHistory
+global.expectConsoleHistory = jestConsole.expectConsoleHistory
+global.clearConsoleHistory = jestConsole.clearConsoleHistory
 
-const jestDom = require('../JestUtils/jest-dom')
+const jestDom = require( '../JestUtils/jest-dom' )
 global.initializeDomWithSvg = jestDom.initializeDomWithSvg
 global.writeDomToFile = jestDom.writeDomToFile
 
@@ -48,15 +48,15 @@ global.writeDomToFile = jestDom.writeDomToFile
 
 // Utils //////////////////////////////////////////////////////////////////////////////////////////////////
 
-global.classUtils = require("./libraries/utils/classUtils")
-global.functionUtils = require("./libraries/utils/functionUtils")
-global.arrayUtils = require("./libraries/utils/arrayUtils")
-global.stringUtils = require("./libraries/utils/stringUtils")
-global.domUtils = require("./libraries/utils/domUtils")
-require('./libraries/utils/statsUtils')
-require('./libraries/utils/errorUtils')
-require('./libraries/utils/jsUtils')  // does not need to be required into a variable
-require('./libraries/utils/mapUtils')  // does not need to be required into a variable
+global.classUtils = require( './libraries/utils/classUtils' )
+global.functionUtils = require( './libraries/utils/functionUtils' )
+global.arrayUtils = require( './libraries/utils/arrayUtils' )
+global.stringUtils = require( './libraries/utils/stringUtils' )
+global.domUtils = require( './libraries/utils/domUtils' )
+require( './libraries/utils/statsUtils' )
+require( './libraries/utils/errorUtils' )
+require( './libraries/utils/jsUtils' )  // does not need to be required into a variable
+require( './libraries/utils/mapUtils' )  // does not need to be required into a variable
 
 // A possible improvement:
 // global.__ = {
@@ -74,9 +74,9 @@ require('./libraries/utils/mapUtils')  // does not need to be required into a va
 
 // CPC ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-global.cpcDefaults = require("./cpcDefaults")
-global.data = require("./libraries/cpc/data")
-global.dataset = require("./libraries/cpc/dataset")
-global.container = require("./libraries/cpc/container")
-global.shape = require("./libraries/cpc/shape")
+global.cpcDefaults = require( './cpcDefaults' )
+global.data = require( './libraries/cpc/data' )
+global.dataset = require( './libraries/cpc/dataset' )
+global.container = require( './libraries/cpc/container' )
+global.shape = require( './libraries/cpc/shape' )
 

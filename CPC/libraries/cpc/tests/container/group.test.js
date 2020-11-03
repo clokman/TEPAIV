@@ -1,5 +1,4 @@
-
-//// UNIT TESTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//// UNIT TESTS ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //// Initialization /////////////////////////////////////////////////////////////////////////////
 
@@ -113,7 +112,7 @@ describe( 'Select', () => {
         expect( document.getElementsByTagName( 'g' ).length )
             .toBe( 1 )
         expect( document.getElementsByTagName( 'g' )[ 0 ]
-            .getAttribute( ('id') ) )
+            .getAttribute( ( 'id' ) ) )
             .toBe( 'my-group' )
 
         // Select the group's corresponding DOM element
@@ -291,7 +290,7 @@ describe( 'getAnyObject Method', () => {
 
         const myObject = new container.Group()
         myObject
-            .id('my-object')
+            .id( 'my-object' )
             .update()
 
         const result = container.Group.getAnyObject( myObject )
@@ -321,8 +320,8 @@ describe( 'getAnyObject Method', () => {
 describe( 'Retrieving Ancestry Information', () => {
 
     let grandParent
-      , parent
-      , child
+        , parent
+        , child
 
     beforeEach( () => {
 
@@ -340,7 +339,7 @@ describe( 'Retrieving Ancestry Information', () => {
         child = new container.Group( parent )
         child.id( 'child' ).update()
 
-    })
+    } )
 
 
     //// parentObject property /////////////////////////////////////
@@ -348,7 +347,7 @@ describe( 'Retrieving Ancestry Information', () => {
     describe( 'parentObject Property', () => {
 
 
-        test( "If the parent is specified as an object, this should be registered in the Group object's registry",
+        test( 'If the parent is specified as an object, this should be registered in the Group object\'s registry',
             () => {
 
                 // State at initialization:
@@ -365,8 +364,8 @@ describe( 'Retrieving Ancestry Information', () => {
             } )
 
 
-        test( "If the parent is specified as a D3 `Selection`, this should be registered as `undefined` in the Group" +
-            " object's registry", () => {
+        test( 'If the parent is specified as a D3 `Selection`, this should be registered as `undefined` in the Group' +
+            ' object\'s registry', () => {
 
             // State at initialization:
             // grandParent <-- parent <-- child
@@ -403,22 +402,22 @@ describe( 'Retrieving Ancestry Information', () => {
             // Parent should have only one ancestor: the grandparent
             expect( parent._getLineage() ).toBeDefined()
             expect( parent._getLineage().size ).toBe( 1 )
-            expect( parent._getLineage() ).toTabulateAs(`\
+            expect( parent._getLineage() ).toTabulateAs( `\
 ┌───────────────────┬───────────────┬─────────┐
 │ (iteration index) │      Key      │ Values  │
 ├───────────────────┼───────────────┼─────────┤
 │         0         │ 'grandparent' │ [Group] │
-└───────────────────┴───────────────┴─────────┘`)
+└───────────────────┴───────────────┴─────────┘` )
 
             // Child should have two ancestors: parent and grandparent
             expect( child._getLineage().size ).toBe( 2 )
-            expect( child._getLineage() ).toTabulateAs(`\
+            expect( child._getLineage() ).toTabulateAs( `\
 ┌───────────────────┬───────────────┬─────────┐
 │ (iteration index) │      Key      │ Values  │
 ├───────────────────┼───────────────┼─────────┤
 │         0         │   'parent'    │ [Group] │
 │         1         │ 'grandparent' │ [Group] │
-└───────────────────┴───────────────┴─────────┘`)
+└───────────────────┴───────────────┴─────────┘` )
 
         } )
 
@@ -432,7 +431,7 @@ describe( 'Retrieving Ancestry Information', () => {
     describe( 'parentObjects() Method', () => {
 
 
-        test('parentObjects() method should return complete ancestry information if called without parameters' ,
+        test( 'parentObjects() method should return complete ancestry information if called without parameters',
             () => {
 
                 // State at initialization:
@@ -443,26 +442,26 @@ describe( 'Retrieving Ancestry Information', () => {
 
 
                 // Parent should have one ancestor: grandparent
-                expect( parent.parentObjects() ).toTabulateAs(`\
+                expect( parent.parentObjects() ).toTabulateAs( `\
 ┌───────────────────┬───────────────┬─────────┐
 │ (iteration index) │      Key      │ Values  │
 ├───────────────────┼───────────────┼─────────┤
 │         0         │ 'grandparent' │ [Group] │
-└───────────────────┴───────────────┴─────────┘`)
+└───────────────────┴───────────────┴─────────┘` )
 
                 // Child should have two ancestors: parent and grandparent
-                expect( child.parentObjects() ).toTabulateAs(`\
+                expect( child.parentObjects() ).toTabulateAs( `\
 ┌───────────────────┬───────────────┬─────────┐
 │ (iteration index) │      Key      │ Values  │
 ├───────────────────┼───────────────┼─────────┤
 │         0         │   'parent'    │ [Group] │
 │         1         │ 'grandparent' │ [Group] │
-└───────────────────┴───────────────┴─────────┘`)
+└───────────────────┴───────────────┴─────────┘` )
 
             } )
 
 
-        test('parentObjects( "someID" ) should return specified ancestor object',
+        test( 'parentObjects( "someID" ) should return specified ancestor object',
             () => {
 
                 // State at initialization:
@@ -470,31 +469,31 @@ describe( 'Retrieving Ancestry Information', () => {
 
                 // For parent:
                 // Request 'grandparent' by name
-                expect( parent.parentObjects('grandparent') ).toBeDefined()
-                expect( parent.parentObjects('grandparent' ).id() ).toBe( 'grandparent' )
+                expect( parent.parentObjects( 'grandparent' ) ).toBeDefined()
+                expect( parent.parentObjects( 'grandparent' ).id() ).toBe( 'grandparent' )
 
 
                 // For child:
                 // Request 'parent' by name
-                expect( child.parentObjects('parent') ).toBeDefined()
-                expect( child.parentObjects('parent' ).id() ).toBe( 'parent' )
+                expect( child.parentObjects( 'parent' ) ).toBeDefined()
+                expect( child.parentObjects( 'parent' ).id() ).toBe( 'parent' )
                 // Request 'grandparent' by name
-                expect( child.parentObjects('grandparent') ).toBeDefined()
-                expect( child.parentObjects('grandparent' ).id() ).toBe( 'grandparent' )
+                expect( child.parentObjects( 'grandparent' ) ).toBeDefined()
+                expect( child.parentObjects( 'grandparent' ).id() ).toBe( 'grandparent' )
 
             } )
 
 
-        test('parentObjects( "indvalidID" ) should return undefined',
+        test( 'parentObjects( "indvalidID" ) should return undefined',
             () => {
 
                 // State at initialization:
                 // grandParent <-- parent <-- child
 
                 // Request invalid parent objects by name
-                expect( grandParent.parentObjects('someParent') ).toBeUndefined()
-                expect( parent.parentObjects('someParent') ).toBeUndefined()
-                expect( child.parentObjects('someParent') ).toBeUndefined()
+                expect( grandParent.parentObjects( 'someParent' ) ).toBeUndefined()
+                expect( parent.parentObjects( 'someParent' ) ).toBeUndefined()
+                expect( child.parentObjects( 'someParent' ) ).toBeUndefined()
 
 
             } )
@@ -508,54 +507,54 @@ describe( 'Retrieving Ancestry Information', () => {
 
 //// Visibility ///////////////////////////////////////////////////////////////////////////////
 
-describe ('Visibility', () => {
+describe( 'Visibility', () => {
 
-    test ('Get/Set', () => {
+    test( 'Get/Set', () => {
 
         initializeDomWithSvg()
         const myGroup = new container.Group()
 
         // Set to visible
-        myGroup.visibility('visible')
+        myGroup.visibility( 'visible' )
         expect( myGroup.visibility() ).toBe( 'visible' )
 
         // Set to hidden
-        myGroup.visibility('hidden')
+        myGroup.visibility( 'hidden' )
         expect( myGroup.visibility() ).toBe( 'hidden' )
 
-    })
-    
-    test ('HTML element should reflect changes to visibility', () => {
+    } )
+
+    test( 'HTML element should reflect changes to visibility', () => {
 
         initializeDomWithSvg()
         const myGroup = new container.Group()
 
         // Set to visible
-        myGroup.visibility('visible').update()
-        expect( myGroup.select().attr('visibility') ).toBe( 'visible' )
+        myGroup.visibility( 'visible' ).update()
+        expect( myGroup.select().attr( 'visibility' ) ).toBe( 'visible' )
 
         // Set to hidden
-        myGroup.visibility('hidden').update()
-        expect( myGroup.select().attr('visibility') ).toBe( 'hidden' )
+        myGroup.visibility( 'hidden' ).update()
+        expect( myGroup.select().attr( 'visibility' ) ).toBe( 'hidden' )
 
-    })
-    
-    test ('Visibility should be applied to objects within group', () => {
+    } )
+
+    test( 'Visibility should be applied to objects within group', () => {
 
         initializeDomWithSvg()
         const parentGroup = new container.Group()
         const childGroup = new container.Group( parentGroup.select() )
-        parentGroup.objects().set('childGroup', childGroup)
+        parentGroup.objects().set( 'childGroup', childGroup )
 
         // Toggle visibility on
-        parentGroup.visibility('visible').update()
+        parentGroup.visibility( 'visible' ).update()
         expect( childGroup.visibility() ).toBe( 'visible' )
 
         // Toggle visibility off
-        parentGroup.visibility('hidden').update()
+        parentGroup.visibility( 'hidden' ).update()
         expect( childGroup.visibility() ).toBe( 'hidden' )
 
-    })
+    } )
 
-})
+} )
 

@@ -14,7 +14,7 @@ test( 'Different D3 modules should import OK', () => {
     expect( rangeTen ).toHaveLength( 10 )
 
     // A method from d3-array.js
-    const minimum = d3.max( [10, 20] )
+    const minimum = d3.max( [ 10, 20 ] )
     expect( minimum ).toBe( 20 )
 
     // Another method from d3-array.js

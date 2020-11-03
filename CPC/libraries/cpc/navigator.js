@@ -1,16 +1,18 @@
 //// UMD HEAD ////////////////////////////////////////////////////////////////////////
 // UMD head and foot patterns adapted from d3.js
-(function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-        typeof define === 'function' && define.amd ? define(['exports'], factory) :
-            (factory((global.navigator = global.navigator || {})));
-}(this, (function (exports) {
-    'use strict';
+( function ( global, factory ) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory( exports ) :
+        typeof define === 'function' && define.amd ? define( [ 'exports' ], factory ) :
+            ( factory( ( global.navigator = global.navigator || {} ) ) )
+}( this, ( function ( exports ) {
+    'use strict'
 //////////////////////////////////////////////////////////////////////////////////////
 
 
     // Module content goes here.
-    const version = "3.0"
+    const version = '3.0'
+
+
 
 
     /**
@@ -21,11 +23,11 @@
      */
     class Navigator extends container.Group {
 
-        constructor(parentContainerSelectionOrObject) {
+        constructor( parentContainerSelectionOrObject ) {
 
             // Superclass Init //
-            super(parentContainerSelectionOrObject)
-                .class('navigator')
+            super( parentContainerSelectionOrObject )
+                .class( 'navigator' )
 
             // Public Parameters //
             this.initParams = {
@@ -79,7 +81,8 @@
 
             this._lastCreatedPanelName = null
 
-            this._currentDrilldownPathParameter = []  // stores the drilldownTo path that generated whatever is being visualized in the navigator at a point in time
+            this._currentDrilldownPathParameter = []  // stores the drilldownTo path that generated whatever is being
+                                                      // visualized in the navigator at a point in time
 
         }
 
@@ -89,7 +92,7 @@
             super.update()
             this.update()
 
-            if (!!this.initParams.datasetPath ){
+            if( !!this.initParams.datasetPath ) {
                 await this.loadDataset(
                     this.initParams.datasetPath,
                     this.initParams.omitColumns,
@@ -107,36 +110,37 @@
             return this
         }
 
+
         _createPanelZeroBasedOnDataset() {
 
             const levelZeroDatasetSummary = this.datasetObject.summary // returns Map
 
             const summaryStacks = new data.Stacks()
-            summaryStacks.fromNestedMap(levelZeroDatasetSummary)
+            summaryStacks.fromNestedMap( levelZeroDatasetSummary )
 
 
 
-            const panelObject = new NestedPanel(this.select())
-                .x(this.x())
-                .y(this.y())
-                .width(this.width())
-                .height(this.height())
-                .stacks(summaryStacks)
+            const panelObject = new NestedPanel( this.select() )
+                .x( this.x() )
+                .y( this.y() )
+                .width( this.width() )
+                .height( this.height() )
+                .stacks( summaryStacks )
                 .showAbsoluteChartWidths( this.showAbsoluteChartWidths() )
-                .bgText('Dataset')
-                .bgTextFill('rgb(169, 169, 169)')
-                .height(600)   // TODO: Magic number removed
+                .bgText( 'Dataset' )
+                .bgTextFill( 'rgb(169, 169, 169)' )
+                .height( 600 )   // TODO: Magic number removed
                 .build()
 
-            panelObject.yAxisLabels(true) // TODO: Why is this not chainable with the setters above?
+            panelObject.yAxisLabels( true ) // TODO: Why is this not chainable with the setters above?
 
 
-            this.colorSet(this._colorSet)
+            this.colorSet( this._colorSet )
 
             this._addListenerToFirstPanel()
 
             // Update object registry
-            this.objects(panelObject.id(), panelObject)
+            this.objects( panelObject.id(), panelObject )
 
 
             // Update instance registry
@@ -158,20 +162,20 @@
          * @return {Promise<Navigator>}
          */
         async loadDataset(
-            path=this.initParams.datasetPath,
-            omitColumns=this.initParams.omitColumns,
-            forcedCategories=this.initParams.forcedCategoricalColumns,
-            quantiles=this.initParams.quantilesForContinuousColumns,
-            update=true) {
+            path = this.initParams.datasetPath,
+            omitColumns = this.initParams.omitColumns,
+            forcedCategories = this.initParams.forcedCategoricalColumns,
+            quantiles = this.initParams.quantilesForContinuousColumns,
+            update = true ) {
 
             this._awaitingDomUpdateAfterDataChange = true
 
-            this.datasetObject = new dataset.Dataset(path, omitColumns)
+            this.datasetObject = new dataset.Dataset( path, omitColumns )
             this.datasetObject.initParams.quantilesForContinuousColumns = quantiles
             this.datasetObject.initParams.forcedCategoricalColumns = forcedCategories
             await this.datasetObject.build()
 
-            if (update){  // should be set to false only for testing and debugging
+            if( update ) {  // should be set to false only for testing and debugging
                 this.update()
             }
 
@@ -200,114 +204,115 @@
          * @param callback {function}
          * @private
          */
-        _whenACategoryIsClicked(callback) {
+        _whenACategoryIsClicked( callback ) {
 
             this.select() // this first select is not a D3 method
-                .selectAll('.category')
-                .on('click', (d, i, g) => {
+                .selectAll( '.category' )
+                .on( 'click', ( d, i, g ) => {
 
                     // console.log('local listener reporting')
-                    // console.log(`navigator click event records last click with shift: ${document.lastClick.wasWithShiftKey}`)
+                    // console.log(`navigator click event records last click with shift:
+                    // ${document.lastClick.wasWithShiftKey}`)
 
-                    const clickedCategory = g[i]
-                    const clickedChart = g[i].parentNode
-                    const clickedPanelElement = g[i].parentNode.parentNode
+                    const clickedCategory = g[ i ]
+                    const clickedChart = g[ i ].parentNode
+                    const clickedPanelElement = g[ i ].parentNode.parentNode
 
                     // TODO: This if block is a workaround to prevent non-panel .category class objects from being
                     //  processed. When the d3.selection issue is fixed, this block should not be in an if statement.
-                    if (clickedPanelElement.getAttribute('class') === 'panel') {
+                    if( clickedPanelElement.getAttribute( 'class' ) === 'panel' ) {
 
-                        this._lastClickedCategoryName = clickedCategory.getAttribute('id')
-                        this._lastClickedChartName = clickedChart.getAttribute('id')
-                        this._lastClickedPanelName = clickedPanelElement.getAttribute('id')
-                        this._lastClickedPanelDepth = Number(clickedPanelElement.getAttribute('depthIndex'))
+                        this._lastClickedCategoryName = clickedCategory.getAttribute( 'id' )
+                        this._lastClickedChartName = clickedChart.getAttribute( 'id' )
+                        this._lastClickedPanelName = clickedPanelElement.getAttribute( 'id' )
+                        this._lastClickedPanelDepth = Number( clickedPanelElement.getAttribute( 'depthIndex' ) )
 
                         this._lastClickedCategoryObject = this
-                            .objects(this._lastClickedPanelName)
-                            .objects(this._lastClickedChartName)
-                            .objects(this._lastClickedCategoryName)
-                        this._lastClickedPanelObject = this.objects(this._lastClickedPanelName)
+                            .objects( this._lastClickedPanelName )
+                            .objects( this._lastClickedChartName )
+                            .objects( this._lastClickedCategoryName )
+                        this._lastClickedPanelObject = this.objects( this._lastClickedPanelName )
 
 
                         this._registerLastClickedModifierKey()
 
 
-                        callback.call(this)  // execute the callback statement
+                        callback.call( this )  // execute the callback statement
 
                     }
 
-                    this._whenACategoryIsClicked(callback)  // keep listening
+                    this._whenACategoryIsClicked( callback )  // keep listening
 
-                })
+                } )
 
         }
 
 
         _registerLastClickedModifierKey() {
 
-            if (document.lastClick.wasWithShiftKey) {
+            if( document.lastClick.wasWithShiftKey ) {
                 this._modifierKeyPressedWithLastClick = 'shift'
             }
-            if (document.lastClick.wasWithCtrlKey) {
+            if( document.lastClick.wasWithCtrlKey ) {
                 this._modifierKeyPressedWithLastClick = 'ctrl'
             }
-            if (document.lastClick.wasWithAltKey) {
+            if( document.lastClick.wasWithAltKey ) {
                 this._modifierKeyPressedWithLastClick = 'alt'
             }
-            if (document.lastClick.wasWithMetaKey) {
+            if( document.lastClick.wasWithMetaKey ) {
                 this._modifierKeyPressedWithLastClick = 'meta'
             }
-            if (!document.lastClick.wasWithShiftKey
+            if( !document.lastClick.wasWithShiftKey
                 && !document.lastClick.wasWithCtrlKey
                 && !document.lastClick.wasWithAltKey
-                && !document.lastClick.wasWithMetaKey) {
+                && !document.lastClick.wasWithMetaKey ) {
 
                 this._modifierKeyPressedWithLastClick = null
             }
         }
 
 
-        _whenABackgroundIsClicked(callback) {
+        _whenABackgroundIsClicked( callback ) {
 
             this.select() // this first select is not a D3 method
-                .selectAll('.background')
-                .on('click', (d, i, g) => {
+                .selectAll( '.background' )
+                .on( 'click', ( d, i, g ) => {
 
-                    const clickedBackgroundElement = g[i]
-                    const clickedPanelElement = g[i].parentNode
-                    const clickedOnAPanelBackground = clickedPanelElement.getAttribute('class') === 'panel'
+                    const clickedBackgroundElement = g[ i ]
+                    const clickedPanelElement = g[ i ].parentNode
+                    const clickedOnAPanelBackground = clickedPanelElement.getAttribute( 'class' ) === 'panel'
 
                     // TODO: This if block is a workaround to prevent non-panel .category class objects from being
                     //  processed. When the d3.selection issue is fixed, this block should NOT be in an if statement.
-                    if ( clickedOnAPanelBackground ) {
+                    if( clickedOnAPanelBackground ) {
 
                         this._lastClickedCategoryName = null
 
-                        this._lastClickedPanelName = clickedPanelElement.getAttribute('id')
+                        this._lastClickedPanelName = clickedPanelElement.getAttribute( 'id' )
 
-                        this._lastClickedPanelDepth = Number(clickedPanelElement.getAttribute('depthIndex'))
+                        this._lastClickedPanelDepth = Number( clickedPanelElement.getAttribute( 'depthIndex' ) )
 
-                        this._lastClickedPanelObject = this.objects(this._lastClickedPanelName)
+                        this._lastClickedPanelObject = this.objects( this._lastClickedPanelName )
 
-                        callback.call(this)  // execute the callback statement
+                        callback.call( this )  // execute the callback statement
 
                     }
 
-                    this._whenABackgroundIsClicked(callback)  // keep listening
+                    this._whenABackgroundIsClicked( callback )  // keep listening
 
-                })
+                } )
 
         }
 
 
-        update(transitionDuration) {
+        update( transitionDuration ) {
 
             // Keep DOM in line with underlying data
             this._updateDomIfStacksDataHasChanged()
 
             // Update panel zero (which, in turn, will update its children)
-            const panelZero = this.get('panelZero')
-            if (!!panelZero){
+            const panelZero = this.get( 'panelZero' )
+            if( !!panelZero ) {
                 panelZero
                     .x( this.x() )
                     .y( this.y() )
@@ -326,18 +331,18 @@
 
 
 
-            super.update(transitionDuration)
+            super.update( transitionDuration )
 
             return this
 
         }
 
 
-        get( query ){
+        get( query ) {
 
             let result
 
-            if ( query === 'panelZero' ){
+            if( query === 'panelZero' ) {
 
                 const navigatorContainsAtLeastOnePanel = this.objects().size
 
@@ -350,9 +355,10 @@
 
         }
 
+
         _updateDomIfStacksDataHasChanged() {
 
-            if (this._awaitingDomUpdateAfterDataChange) {
+            if( this._awaitingDomUpdateAfterDataChange ) {
 
                 this._createPanelZeroBasedOnDataset()
 
@@ -371,22 +377,22 @@
 
             // Query the data based on the clicked category
             this._updateCurrentDrillDownPathParameterBasedOnLastClickedCategory()
-            let drilldownResult = this.datasetObject.drilldownAndSummarize(this._currentDrilldownPathParameter)
+            let drilldownResult = this.datasetObject.drilldownAndSummarize( this._currentDrilldownPathParameter )
 
             // Sort drilldown results so that categories always appear in the same order as in panel-0
-            drilldownResult.forEach((columnObject, columnName) => {
-                const columnObjectInDatasetSummary = this.datasetObject.summary.get(columnName)
-                const sortedColumnObject = columnObject.sortAccordingTo(columnObjectInDatasetSummary)
-                drilldownResult.set(columnName, sortedColumnObject)
-            })
+            drilldownResult.forEach( ( columnObject, columnName ) => {
+                const columnObjectInDatasetSummary = this.datasetObject.summary.get( columnName )
+                const sortedColumnObject = columnObject.sortAccordingTo( columnObjectInDatasetSummary )
+                drilldownResult.set( columnName, sortedColumnObject )
+            } )
 
             // Convert query results to Stacks
             const drilldownResultStacks = new data.Stacks()
-                .fromNestedMap(drilldownResult)
+                .fromNestedMap( drilldownResult )
 
 
             // Create a new child panel based on query results
-            this._createChildPanelBasedOnStacks(drilldownResultStacks)
+            this._createChildPanelBasedOnStacks( drilldownResultStacks )
 
             this._listenForClicksOnPanelBackgroundsAndTreatClickedBackgroundsAsCollapsePoints()
         }
@@ -398,7 +404,7 @@
 
                     this._removeAnyPanelsDeeperThanTheClickedOne()
 
-                })
+                } )
         }
 
 
@@ -422,38 +428,38 @@
          * @private
          * @see Dataset.drilldownAndSummarize
          */
-        static _generateQueryPathForCategory( categoryObject ){
+        static _generateQueryPathForCategory( categoryObject ) {
 
 
             // Get all parent objects
             const lineage = categoryObject.parentObjects()
 
             // Keep only Panel objects in lineage
-            const clickedParentChartId = Array.from( lineage.keys() ) [0]  // parent chart's ID
-            const lineageWithOnlyPanels = new Map( Array.from ( lineage ) )
+            const clickedParentChartId = Array.from( lineage.keys() ) [ 0 ]  // parent chart's ID
+            const lineageWithOnlyPanels = new Map( Array.from( lineage ) )
             lineageWithOnlyPanels.delete( clickedParentChartId )
 
 
             // Remove panel zero (because it has no spawn object, and that's what is needed)
             const lineageArray = Array.from( lineageWithOnlyPanels )
-            if( lineageArray.length > 0 ){ lineageArray.pop() }
-            const lineageWithOnlyPanelsExceptPanelZero = new Map ( lineageArray )
+            if( lineageArray.length > 0 ) { lineageArray.pop() }
+            const lineageWithOnlyPanelsExceptPanelZero = new Map( lineageArray )
 
             // Construct last step of query
             const clickedCategoryName = categoryObject.id()
             const clickedColumnName = clickedParentChartId
-            const lastStepOfQuery = { [clickedColumnName] : clickedCategoryName  }
+            const lastStepOfQuery = { [ clickedColumnName ]: clickedCategoryName }
 
             // Get previous steps of the query
             const query = []
-            lineageWithOnlyPanelsExceptPanelZero.forEach( (panelObject, panelId) => {
+            lineageWithOnlyPanelsExceptPanelZero.forEach( ( panelObject, panelId ) => {
 
                 const categoryName = panelObject.objectToSpawnFrom.id()
                 const columnName = panelObject.objectToSpawnFrom.parentObject.id()
 
-                query.push( { [columnName] : categoryName } )
+                query.push( { [ columnName ]: categoryName } )
 
-            })
+            } )
 
             // Add the last step to the query
             query.push( lastStepOfQuery )
@@ -463,23 +469,23 @@
         }
 
 
-        _createChildPanelBasedOnStacks(drilldownResultStacks) {
+        _createChildPanelBasedOnStacks( drilldownResultStacks ) {
 
-            const childIsASibling = (this._modifierKeyPressedWithLastClick === 'shift')
+            const childIsASibling = ( this._modifierKeyPressedWithLastClick === 'shift' )
 
             let childPanelObject
 
 
             // Create the new child panel as the child of the last clicked panel
 
-            if (!childIsASibling){
+            if( !childIsASibling ) {
                 childPanelObject = new NestedPanel(
                     this._lastClickedPanelObject,
                     this._lastClickedCategoryObject
                 )
             }
 
-            if (childIsASibling){
+            if( childIsASibling ) {
                 childPanelObject = new NestedPanel(
                     this._lastClickedPanelObject,
                     this._lastClickedCategoryObject,
@@ -488,7 +494,7 @@
             }
 
             childPanelObject
-                .stacks(drilldownResultStacks)
+                .stacks( drilldownResultStacks )
                 .build()
 
             const totalDurationOfChildPanelInitializationAnimations = (
@@ -497,12 +503,13 @@
             )
 
             childPanelObject
-                .bgText(this._lastClickedCategoryName)
-                .bgTextFill('white')
-                .update(totalDurationOfChildPanelInitializationAnimations)  // If too short, update duration cuts off animation times in Panel object.
+                .bgText( this._lastClickedCategoryName )
+                .bgTextFill( 'white' )
+                .update( totalDurationOfChildPanelInitializationAnimations )  // If too short, update duration cuts off
+                                                                              // animation times in Panel object.
 
             // Add the newly related child panel to objects registry
-            this.objects(childPanelObject.id(), childPanelObject)
+            this.objects( childPanelObject.id(), childPanelObject )
 
             // Update instance registry
             this._lastCreatedPanelName = childPanelObject.id()
@@ -511,20 +518,20 @@
 
             // Remove the chart of the child panel that is being drilled down in parent
             // (i.e., if user clicked on 'Male' on parent, 'Gender' category should not be visible in child panel)
-            this._currentDrilldownPathParameter.forEach((step) => {
+            this._currentDrilldownPathParameter.forEach( ( step ) => {
 
-                Object.entries(step).forEach(([columnName, categoryName]) => {
+                Object.entries( step ).forEach( ( [ columnName, categoryName ] ) => {
 
                     // Remove chart element
-                    childPanelObject.objects(columnName).remove()
+                    childPanelObject.objects( columnName ).remove()
 
                     // Remove chart from objects registry
                     // childPanelObject.objects().delete(columnName)  // Warning: Inclusion of this line leads to
-                                                                      //  layout changes
+                    //  layout changes
 
-                })
+                } )
 
-            })
+            } )
 
             return this
 
@@ -535,37 +542,37 @@
 
             const numberOfPanelsThatWillRemainUnchangedAfterClick = this._lastClickedPanelDepth + 1
 
-            if (this.objects().size >= numberOfPanelsThatWillRemainUnchangedAfterClick) {
+            if( this.objects().size >= numberOfPanelsThatWillRemainUnchangedAfterClick ) {
 
                 const numberOfExtraPanels = this.objects().size - numberOfPanelsThatWillRemainUnchangedAfterClick
 
                 // Remove panels
-                this.objects().forEach( (panelObject, panelName) => {
+                this.objects().forEach( ( panelObject, panelName ) => {
 
-                    if ( panelObject.depthIndex() > this._lastClickedPanelDepth ){
+                    if( panelObject.depthIndex() > this._lastClickedPanelDepth ) {
                         panelObject.remove()
                     }
 
-                })
+                } )
 
                 // Clear object registry from the removed panels
-                this.removeLast(numberOfExtraPanels)
+                this.removeLast( numberOfExtraPanels )
 
                 this._lastClickedPanelObject.childrenPanels.clear()
             }
         }
 
 
-        showAbsoluteValues(value) {
+        showAbsoluteValues( value ) {
 
             // Getter
-            if (!arguments.length){
+            if( !arguments.length ) {
                 return this._showAbsoluteValues
             }
 
             // Setter
-            else{
-                value.mustBeOfType('Boolean')
+            else {
+                value.mustBeOfType( 'Boolean' )
                 this._showAbsoluteValues = value
 
                 return this
@@ -574,16 +581,16 @@
         }
 
 
-        showAbsoluteChartWidths(value) {
+        showAbsoluteChartWidths( value ) {
 
             // Getter
-            if (!arguments.length){
+            if( !arguments.length ) {
                 return this._showAbsoluteChartWidths
             }
 
             // Setter
-            else{
-                value.mustBeOfType('Boolean')
+            else {
+                value.mustBeOfType( 'Boolean' )
                 this._showAbsoluteChartWidths = value
 
                 return this
@@ -593,46 +600,46 @@
 
 
 
-        showConnectorPolygons(value) {
-        
+        showConnectorPolygons( value ) {
+
             // Getter
-            if (!arguments.length){
+            if( !arguments.length ) {
                 return this._showConnectorPolygons
             }
-        
+
             // Setter
-            else{
-                value.mustBeOfType('Boolean')
+            else {
+                value.mustBeOfType( 'Boolean' )
                 this._showConnectorPolygons = value
-                
+
                 return this
             }
-            
+
         }
 
 
-        opacityOfConnectorPolygons(value) {
-        
+        opacityOfConnectorPolygons( value ) {
+
             // Getter
-            if (!arguments.length){
+            if( !arguments.length ) {
                 return this._opacityOfConnectorPolygons
             }
-        
+
             // Setter
-            else{
-                value.mustBeOfType('Number')
+            else {
+                value.mustBeOfType( 'Number' )
                 this._opacityOfConnectorPolygons = value
-                
+
                 return this
             }
-            
+
         }
 
 
-        colorSet(value){
+        colorSet( value ) {
 
             // Getter
-            if (!arguments.length) {
+            if( !arguments.length ) {
                 return this._colorSet
             }
 
@@ -645,16 +652,17 @@
             }
         }
 
-        animationDuration(value) {
+
+        animationDuration( value ) {
 
             // Getter
-            if (!arguments.length){
+            if( !arguments.length ) {
                 return this._animationDuration
             }
 
             // Setter
-            else{
-                value.mustBeOfType('Number')
+            else {
+                value.mustBeOfType( 'Number' )
                 this._animationDuration = value
 
                 return this
@@ -662,9 +670,10 @@
 
         }
 
-        strokeWidth(value){
 
-            if (!arguments.length) {
+        strokeWidth( value ) {
+
+            if( !arguments.length ) {
                 return this._strokeWidth
             }
             else {
@@ -673,9 +682,10 @@
             }
         }
 
-        stroke(value){
 
-            if (!arguments.length) {
+        stroke( value ) {
+
+            if( !arguments.length ) {
                 return this._stroke
             }
             else {
@@ -685,16 +695,16 @@
         }
 
 
-        x(value) {
+        x( value ) {
 
             // Getter
-            if (!arguments.length){
+            if( !arguments.length ) {
                 return this._x
             }
 
             // Setter
-            else{
-                value.mustBeOfType('Number')
+            else {
+                value.mustBeOfType( 'Number' )
                 this._x = value
 
                 return this
@@ -706,16 +716,16 @@
 
         // TODO: If multiple panels are open, this moves only the first panel
         //  NestedPanel's .y() method should be changed to accommodate child panels.
-        y(value) {
+        y( value ) {
 
             // Getter
-            if (!arguments.length){
+            if( !arguments.length ) {
                 return this._y
             }
 
             // Setter
-            else{
-                value.mustBeOfType('Number')
+            else {
+                value.mustBeOfType( 'Number' )
                 this._y = value
 
                 return this
@@ -724,16 +734,16 @@
         }
 
 
-        width(value) {
+        width( value ) {
 
             // Getter
-            if (!arguments.length){
+            if( !arguments.length ) {
                 return this._width
             }
 
             // Setter
-            else{
-                value.mustBeOfType('Number')
+            else {
+                value.mustBeOfType( 'Number' )
                 this._width = value
 
                 return this
@@ -744,16 +754,16 @@
 
         // TODO: If multiple panels are open, this moves only the first panel
         //  NestedPanel's .height() method should be changed to accommodate child panels.
-        height(value) {
+        height( value ) {
 
             // Getter
-            if (!arguments.length){
+            if( !arguments.length ) {
                 return this._height
             }
 
             // Setter
-            else{
-                value.mustBeOfType('Number')
+            else {
+                value.mustBeOfType( 'Number' )
                 this._height = value
 
                 return this
@@ -774,12 +784,12 @@
      */
     class Panel extends container.Group {
 
-        constructor(parentContainerSelectionOrObject) {
+        constructor( parentContainerSelectionOrObject ) {
 
             // Superclass Init //
-            super(parentContainerSelectionOrObject)
+            super( parentContainerSelectionOrObject )
 
-            this.class('panel')
+            this.class( 'panel' )
                 .update()
 
             this._backgroundObject = null
@@ -821,7 +831,7 @@
                 bottom: cpcDefaults.panel.innerPaddingBottom,
                 left: cpcDefaults.panel.innerPaddingLeft,
                 right: cpcDefaults.panel.innerPaddingRight,
-                extraPaddingForLeftEdgeOfPanel0Bg: cpcDefaults.panel.innerPaddingExtraForLeftEdgeOfPanel0Bg,
+                extraPaddingForLeftEdgeOfPanel0Bg: cpcDefaults.panel.innerPaddingExtraForLeftEdgeOfPanel0Bg
             }
 
             // Formulas
@@ -853,25 +863,27 @@
          * initialization of the Panel instance from drawing it on DOM. This way, instance parameters
          * can be modified before the panel is drawn on DOM for the first time.
          */
-        build( ) {
+        build() {
 
             // If no data specified, build panel with example data
-            if ( !this.stacks() ) {
+            if( !this.stacks() ) {
                 this._populateWithExampleData()
             }
 
             // Draw the panel //
-            // TODO: Container.objects() implementation SHOULD be changed so that _backgroundObject and _bridgeObject would also be included in objects()
+            // TODO: Container.objects() implementation SHOULD be changed so that _backgroundObject and _bridgeObject
+            // would also be included in objects()
             this._createBackgroundObject()
 
             this._createChartsBasedOnStacksData()
 
-            this.update(0)
+            this.update( 0 )
 
             return this
         }
 
-        remove(){
+
+        remove() {
 
             // Remove self
             super.remove()
@@ -879,20 +891,22 @@
         }
 
 
-        update(transitionDuration) {
+        update( transitionDuration ) {
 
             this._updateDomIfStacksDataHasChanged()
             this._adjustAll()
 
             this._updateYAxisLabels()
-            if (!!this._backgroundObject){
-                this._backgroundObject.update(transitionDuration)
+            if( !!this._backgroundObject ) {
+                this._backgroundObject.update( transitionDuration )
             }
 
-            super.update(transitionDuration)  // triggers chart updates
+            super.update( transitionDuration )  // triggers chart updates
 
             // Post-super update statements
-            this._verticallyAlignYAxisChartLabels()  // must come after super update; otherwise chart labels do not align (for Panel class only they are OK for Navigator class, even though Navigator uses Panel class too).
+            this._verticallyAlignYAxisChartLabels()  // must come after super update; otherwise chart labels do not
+                                                     // align (for Panel class only they are OK for Navigator class,
+                                                     // even though Navigator uses Panel class too).
 
             return this
 
@@ -906,27 +920,27 @@
          * @param {string} path
          * @param {string} omitColumns
          */
-        async summarizeDataset(path, omitColumns){
+        async summarizeDataset( path, omitColumns ) {
 
             // Load data to Dataset object
-            const datasetObject = new dataset.Dataset(path, omitColumns)
+            const datasetObject = new dataset.Dataset( path, omitColumns )
             await datasetObject.build()
 
             // Generate stacks from dataset object
             const datasetSummary = datasetObject.summarize()
             const stacksObject = new data.Stacks()
-            stacksObject.fromNestedMap(datasetSummary)
+            stacksObject.fromNestedMap( datasetSummary )
 
             // Load Stacks object into panel
-            this.stacks(stacksObject)
+            this.stacks( stacksObject )
 
             return this
         }
 
 
-        _adjustAll(){
+        _adjustAll() {
 
-            if ( !!this._backgroundObject ){
+            if( !!this._backgroundObject ) {
                 this._adjustBackgroundProperties()
             }
             this._adjustCategoryCaptions()
@@ -939,13 +953,13 @@
 
             let i = 0
             this.objects().forEach(
-                (chartObject, chartName) => {
+                ( chartObject, chartName ) => {
 
-                    const currentColorScheme = color.getChartSchemeBySchemeSetNameAndCircularIndex(this._colorTheme, i)
+                    const currentColorScheme = color.getChartSchemeBySchemeSetNameAndCircularIndex( this._colorTheme, i )
 
                     chartObject
                         .x( this.innerX() )
-                        .y( this._yScale(i) )
+                        .y( this._yScale( i ) )
                         .width( this.innerWidth() )
                         .height( this._chartHeights() )
                         .colorScheme( currentColorScheme )
@@ -958,12 +972,13 @@
             )
         }
 
+
         // TODO: This method introduces a new pattern: Now, after the data of an object is updated, myObject.update()
         //  method must be called to update DOM. This behavior MUST be implemented also for navigator.Chart() and
         //  other classes that allow updating their data with a setter.
         _updateDomIfStacksDataHasChanged() {
 
-            if (this._awaitingDomUpdateAfterDataChange) {
+            if( this._awaitingDomUpdateAfterDataChange ) {
 
                 this.removeAll()
                 this._createChartsBasedOnStacksData()
@@ -986,8 +1001,8 @@
         _adjustBackgroundProperties() {
 
             this._backgroundObject
-                .textAlignment('top-left')
-                .class('background')
+                .textAlignment( 'top-left' )
+                .class( 'background' )
                 .x( this.x() - this.bgExtensionLeft() )
                 .y( this.y() )
                 .height( this.height() )
@@ -996,7 +1011,7 @@
                 .text( this._bgText )
                 .textFill( this._bgTextFill )
                 .strokeWidth( this.strokeWidth() )
-                .stroke ( this.stroke() )
+                .stroke( this.stroke() )
 
         }
 
@@ -1006,19 +1021,19 @@
             // loop //
             let i = 0
             this.stacks().data().forEach(
-                (eachStackObject, eachStackId) => {
+                ( eachStackObject, eachStackId ) => {
 
-                    const chart = new Chart(this)
-                        .stack(eachStackObject)
-                        .id(eachStackId)
-                        .x(this.innerX())
-                        .y(this._yScale(i))
-                        .height(this._chartHeights())
-                        .width(this.innerWidth())
-                        .colorScheme(color.getChartSchemeBySchemeSetNameAndCircularIndex(this._colorTheme, i))
-                        .update(0)
+                    const chart = new Chart( this )
+                        .stack( eachStackObject )
+                        .id( eachStackId )
+                        .x( this.innerX() )
+                        .y( this._yScale( i ) )
+                        .height( this._chartHeights() )
+                        .width( this.innerWidth() )
+                        .colorScheme( color.getChartSchemeBySchemeSetNameAndCircularIndex( this._colorTheme, i ) )
+                        .update( 0 )
 
-                    this.objects(eachStackId, chart)
+                    this.objects( eachStackId, chart )
 
                     i++
 
@@ -1030,27 +1045,27 @@
         _populateWithExampleData() {
 
             // Generate example Stack x 3
-            const genderStack = new data.Stack().populateWithExampleData('gender')
-                , classStack = new data.Stack().populateWithExampleData('class')
-                , statusStack = new data.Stack().populateWithExampleData('status')
+            const genderStack = new data.Stack().populateWithExampleData( 'gender' )
+                , classStack = new data.Stack().populateWithExampleData( 'class' )
+                , statusStack = new data.Stack().populateWithExampleData( 'status' )
 
             // Combine example stacks in a Stack object
             const exampleStacks = new data.Stacks()
-            exampleStacks.add('gender', genderStack)
-            exampleStacks.add('class', classStack)
-            exampleStacks.add('status', statusStack)
+            exampleStacks.add( 'gender', genderStack )
+            exampleStacks.add( 'class', classStack )
+            exampleStacks.add( 'status', statusStack )
 
-            this.stacks(exampleStacks)
+            this.stacks( exampleStacks )
 
             return this
         }
 
 
-        _resetVerticalInnerPadding(){
+        _resetVerticalInnerPadding() {
 
             // Set padding values to their default values
-            this.innerPaddingTop( cpcDefaults.panel.innerPaddingTop)
-            this.innerPaddingBottom ( cpcDefaults.panel.innerPaddingBottom )
+            this.innerPaddingTop( cpcDefaults.panel.innerPaddingTop )
+            this.innerPaddingBottom( cpcDefaults.panel.innerPaddingBottom )
 
             return this
         }
@@ -1065,34 +1080,34 @@
 
             const totalPaddingBetweenCharts = this.innerHeight() * cpcDefaults.panel.paddingBetweenCharts
 
-            const chartHeights = (this.innerHeight() - totalPaddingBetweenCharts) / this._chartCount()
-            const roundedChartHeights = Math.round(chartHeights)
+            const chartHeights = ( this.innerHeight() - totalPaddingBetweenCharts ) / this._chartCount()
+            const roundedChartHeights = Math.round( chartHeights )
 
             return roundedChartHeights
         }
 
 
-        _yScale(value) {
+        _yScale( value ) {
 
             const rangeStart = this.innerY() + this.innerHeight()
             const rangeEnd = this.innerY()
 
             const yScale = d3.scaleBand()
-                .domain(d3.range(this._chartCount()))
-                .rangeRound([rangeStart, rangeEnd])
-                .paddingInner(cpcDefaults.panel.paddingBetweenCharts )
+                .domain( d3.range( this._chartCount() ) )
+                .rangeRound( [ rangeStart, rangeEnd ] )
+                .paddingInner( cpcDefaults.panel.paddingBetweenCharts )
 
-            return yScale(value)
+            return yScale( value )
         }
 
 
-        yAxisLabels(value) {
+        yAxisLabels( value ) {
 
-            if (value === true) {
+            if( value === true ) {
                 this._yAxisLabelsAreVisible = true
             }
 
-            if (value === false) {
+            if( value === false ) {
                 this._yAxisLabelsAreVisible = false
             }
 
@@ -1101,25 +1116,25 @@
         }
 
 
-        _updateYAxisLabels () {
+        _updateYAxisLabels() {
 
-            if ( this._yAxisLabelsAreVisible ) {
+            if( this._yAxisLabelsAreVisible ) {
 
 
                 let chartLabelFontSize = 0
 
-                this.objects().forEach( (chartObject, chartObjectName) => {
+                this.objects().forEach( ( chartObject, chartObjectName ) => {
 
                     chartObject
-                        .categoryLabels(true)
-                        .chartLabel(true)
-                        .chartLabel(chartObjectName)
+                        .categoryLabels( true )
+                        .chartLabel( true )
+                        .chartLabel( chartObjectName )
                         .update()  // this update must be here or things may break
 
-                        const chartLabelFontSizeAsString = chartObject._chartLabelObject.fontSize()
-                        chartLabelFontSize = parseInt(chartLabelFontSizeAsString.match(/\d+/), 10)
+                    const chartLabelFontSizeAsString = chartObject._chartLabelObject.fontSize()
+                    chartLabelFontSize = parseInt( chartLabelFontSizeAsString.match( /\d+/ ), 10 )
 
-                })
+                } )
 
 
                 const farthestLeftPointOfLabelsArea =
@@ -1128,8 +1143,8 @@
 
                 const leftExtensionValue =
                     Math.abs(
-                         Math.abs( this.x() )
-                          - Math.abs( farthestLeftPointOfLabelsArea )
+                        Math.abs( this.x() )
+                        - Math.abs( farthestLeftPointOfLabelsArea )
                     ) + this._innerPadding.left + this._innerPadding.extraPaddingForLeftEdgeOfPanel0Bg
                 this.bgExtensionLeft( leftExtensionValue )
 
@@ -1137,14 +1152,14 @@
             }
 
 
-            if ( !this._yAxisLabelsAreVisible ) {
+            if( !this._yAxisLabelsAreVisible ) {
 
-                this.objects().forEach((chartObject, chartObjectName) => {
+                this.objects().forEach( ( chartObject, chartObjectName ) => {
                     chartObject
-                        .categoryLabels(false)
-                        .chartLabel(false)
+                        .categoryLabels( false )
+                        .chartLabel( false )
 
-                })
+                } )
 
             }
 
@@ -1153,44 +1168,44 @@
         }
 
 
-        _verticallyAlignYAxisChartLabels () {
+        _verticallyAlignYAxisChartLabels() {
 
             const targetXCoordinateForAllLabels = this._getXCoordinateOfFarthestChartLabel()
 
-            this.objects().forEach( (chartObject, chartName) => {
+            this.objects().forEach( ( chartObject, chartName ) => {
 
-                if ( chartObject._chartLabelObject ){
+                if( chartObject._chartLabelObject ) {
 
                     const xCoordinateOfLabel = chartObject._chartLabelObject.x()
                     const currentPadding = chartObject.chartLabelPaddingRight()
-                    const paddingToBeAdded = Math.abs( Math.abs(targetXCoordinateForAllLabels) - Math.abs(xCoordinateOfLabel) ) // absolute values, because coordinates may be negative
+                    const paddingToBeAdded = Math.abs( Math.abs( targetXCoordinateForAllLabels ) - Math.abs( xCoordinateOfLabel ) ) // absolute values, because coordinates may be negative
                     chartObject
-                        .chartLabelPaddingRight( currentPadding + paddingToBeAdded)
+                        .chartLabelPaddingRight( currentPadding + paddingToBeAdded )
                         .update()
 
                 }
-            })
+            } )
 
         }
 
 
-        _getXCoordinateOfFarthestChartLabel () {  // 'farthest' is not a typo
+        _getXCoordinateOfFarthestChartLabel() {  // 'farthest' is not a typo
 
             // Collect all x coordinates of chart labels
             let xCoordinatesOfAllChartLabels = []
-            this.objects().forEach( (chartObject, chartName) => {
+            this.objects().forEach( ( chartObject, chartName ) => {
 
-                if (chartObject._chartLabelObject){
+                if( chartObject._chartLabelObject ) {
                     const xCoordinate = chartObject._chartLabelObject.x()
-                    xCoordinatesOfAllChartLabels.push(xCoordinate)
+                    xCoordinatesOfAllChartLabels.push( xCoordinate )
                 }
-            })
+            } )
 
             // If any x coordinates are found (i.e., labels are on/initialized),
             // get the leftmost x coordinate in relation to the panel
             let farthestXCoordinate
-            if (xCoordinatesOfAllChartLabels.length){
-                farthestXCoordinate = _.min(xCoordinatesOfAllChartLabels)
+            if( xCoordinatesOfAllChartLabels.length ) {
+                farthestXCoordinate = _.min( xCoordinatesOfAllChartLabels )
             }
 
             return farthestXCoordinate
@@ -1198,7 +1213,7 @@
         }
 
 
-        stacks(value) {
+        stacks( value ) {
 
             // this._data = value
             // this._numberOfCharts = this_data.size
@@ -1211,19 +1226,19 @@
 
 
             // Get data
-            if (parameterIsNull) {
+            if( parameterIsNull ) {
                 return this._stacks
             }
 
 
             // Query data
-            if (parameterIsString) {
-                return this._stacks.data(value)  // returns the requested Stack object
+            if( parameterIsString ) {
+                return this._stacks.data( value )  // returns the requested Stack object
             }
 
 
             // Set new data
-            if (parameterIsObject) {
+            if( parameterIsObject ) {
 
                 this._stacks = value  // value is a Stacks object in this case
 
@@ -1235,10 +1250,10 @@
         }
 
 
-        x(value) {
+        x( value ) {
 
             // Getter
-            if (!arguments.length) {
+            if( !arguments.length ) {
                 return this._x
             }
 
@@ -1255,10 +1270,10 @@
         }
 
 
-        y(value) {
+        y( value ) {
 
             // Getter
-            if (!arguments.length) {
+            if( !arguments.length ) {
                 return this._y
             }
 
@@ -1275,10 +1290,10 @@
         }
 
 
-        width(value) {
+        width( value ) {
 
             // Getter
-            if (!arguments.length) {
+            if( !arguments.length ) {
                 return this._width
             }
 
@@ -1295,10 +1310,10 @@
         }
 
 
-        height(value) {
+        height( value ) {
 
             // Getter
-            if (!arguments.length) {
+            if( !arguments.length ) {
                 return this._height
             }
 
@@ -1314,10 +1329,10 @@
         }
 
 
-        colorSet(value){
+        colorSet( value ) {
 
             // Getter
-            if (!arguments.length) {
+            if( !arguments.length ) {
                 return this._colorTheme
             }
 
@@ -1333,16 +1348,16 @@
 
 
 
-        showAbsoluteValues(value) {
+        showAbsoluteValues( value ) {
 
             // Getter
-            if (!arguments.length){
+            if( !arguments.length ) {
                 return this._showAbsoluteValues
             }
 
             // Setter
-            else{
-                value.mustBeOfType('Boolean')
+            else {
+                value.mustBeOfType( 'Boolean' )
 
                 this._showAbsoluteValues = value
 
@@ -1354,18 +1369,18 @@
 
         _adjustCategoryCaptions() {
 
-            this.objects().forEach( (categoryObject, categoryName) => {
+            this.objects().forEach( ( categoryObject, categoryName ) => {
 
                 categoryObject.showAbsoluteValues( this._showAbsoluteValues )
 
-            })
+            } )
         }
 
 
-        bgText(value) {
+        bgText( value ) {
 
             // Getter
-            if (!arguments.length) {
+            if( !arguments.length ) {
                 return this._bgText
             }
 
@@ -1382,10 +1397,10 @@
         }
 
 
-        bgTextFill(value) {
+        bgTextFill( value ) {
 
             // Getter
-            if (!arguments.length) {
+            if( !arguments.length ) {
                 return this._bgTextFill
             }
 
@@ -1402,10 +1417,10 @@
         }
 
 
-        bgFill(value) {
+        bgFill( value ) {
 
             // Getter
-            if (!arguments.length) {
+            if( !arguments.length ) {
                 return this._bgFill
             }
 
@@ -1426,10 +1441,10 @@
          * @param value
          * @return {number|Panel}
          */
-        bgExtensionRight(value) {
+        bgExtensionRight( value ) {
 
             // Getter
-            if (!arguments.length) {
+            if( !arguments.length ) {
                 return this._bgExtension.right
             }
 
@@ -1450,10 +1465,10 @@
          * @param value
          * @return {number|Panel}
          */
-        bgExtensionLeft(value) {
+        bgExtensionLeft( value ) {
 
             // Getter
-            if (!arguments.length) {
+            if( !arguments.length ) {
                 return this._bgExtension.left
             }
 
@@ -1471,10 +1486,10 @@
         }
 
 
-        innerPaddingTop(value) {   // TODO: NOT TESTED
+        innerPaddingTop( value ) {   // TODO: NOT TESTED
 
             // Getter
-            if (!arguments.length) {
+            if( !arguments.length ) {
                 return this._innerPadding.top
             }
 
@@ -1491,10 +1506,10 @@
         }
 
 
-        innerPaddingBottom(value) {   // TODO: NOT TESTED
+        innerPaddingBottom( value ) {   // TODO: NOT TESTED
 
             // Getter
-            if (!arguments.length) {
+            if( !arguments.length ) {
                 return this._innerPadding.bottom
             }
 
@@ -1510,9 +1525,10 @@
 
         }
 
-        strokeWidth(value){
 
-            if (!arguments.length) {
+        strokeWidth( value ) {
+
+            if( !arguments.length ) {
                 return this._strokeWidth
             }
             else {
@@ -1521,9 +1537,10 @@
             }
         }
 
-        stroke(value){
 
-            if (!arguments.length) {
+        stroke( value ) {
+
+            if( !arguments.length ) {
                 return this._stroke
             }
             else {
@@ -1533,7 +1550,7 @@
         }
 
 
-        largestTotalCount(){
+        largestTotalCount() {
 
             return this.stacks().largestTotalCount()
 
@@ -1545,30 +1562,32 @@
          * @return {number}
          * @private
          */
-        _numberOfVisibleCategories(){
+        _numberOfVisibleCategories() {
             let categoryCount = 0
-            const numberOfCategoriesInPanel = this.objects().forEach((chartObject, chartName) => {
-                chartObject.objects().forEach((categoryObject, categoryName) => {
+            const numberOfCategoriesInPanel = this.objects().forEach( ( chartObject, chartName ) => {
+                chartObject.objects().forEach( ( categoryObject, categoryName ) => {
 
-                    if( categoryObject.visibility() === 'visible' ){
+                    if( categoryObject.visibility() === 'visible' ) {
                         categoryCount++
                     }
 
-                })
-            })
+                } )
+            } )
             return categoryCount
         }
 
     }
 
 
+
+
     class NestedPanel extends Panel {
 
 
-        constructor(parentContainerSelectionOrObject, objectToSpawnFrom, addAs='singleton') {
+        constructor( parentContainerSelectionOrObject, objectToSpawnFrom, addAs = 'singleton' ) {
 
             // Superclass Init //
-            super(...arguments)
+            super( ...arguments )
 
             // Register arguments
             this.arguments = {
@@ -1582,7 +1601,8 @@
 
             this.objectToSpawnFrom = this.arguments.objectToSpawnFrom
 
-            // Do not move this block to _inferParentChildRelationships method. This inference must be done before the _inferParentChildRelationships() inferences.
+            // Do not move this block to _inferParentChildRelationships method. This inference must be done before the
+            // _inferParentChildRelationships() inferences.
             this.parentPanel = (
                 this.arguments.parentContainerSelectionOrObject
                 && this.arguments.parentContainerSelectionOrObject.hasType( this.hasType() )
@@ -1597,9 +1617,9 @@
             this._opacityOfConnectorPolygons = 1.0
 
             // Formulas
-            this.absoluteWidthOfChildPanel = (childPanelObject) => {
-                const width = this._width *  (childPanelObject.largestTotalCount() / this.largestTotalCount() ) + this._innerPadding.left + this._innerPadding.right
-                const roundedWidth = _.round(width, 1)
+            this.absoluteWidthOfChildPanel = ( childPanelObject ) => {
+                const width = this._width * ( childPanelObject.largestTotalCount() / this.largestTotalCount() ) + this._innerPadding.left + this._innerPadding.right
+                const roundedWidth = _.round( width, 1 )
                 return roundedWidth
             }
 
@@ -1608,8 +1628,8 @@
             this._bridgeObject = null
 
 
-            this.class('panel')
-                // .update()   // `update()` commented out during init-build split
+            this.class( 'panel' )
+            // .update()   // `update()` commented out during init-build split
 
 
             this._animation = {
@@ -1618,9 +1638,9 @@
 
                 duration: {  // in milliseconds
 
-                    total: (!!this.parentPanel
-                        ? this.parentPanel.animationDuration()
-                        : 600  // arbitrary value; can be modified
+                    total: ( !!this.parentPanel
+                            ? this.parentPanel.animationDuration()
+                            : 600  // arbitrary value; can be modified
                     ),
 
                     // Stage 1
@@ -1644,7 +1664,8 @@
 
             // TODO: `has` object should report only primitives. All properties in `has` object that returns
             //   objects (e.g., a NestedPanel object) should be moved to a `get`, `grab`, or `retrieve` method.
-            // Inferences (mainly parent-child relationships, which are to be calculated by `_inferParentChildRelationships()` method
+            // Inferences (mainly parent-child relationships, which are to be calculated by
+            // `_inferParentChildRelationships()` method
             this.has = {
                 // childPanel: false, // Not supported. Should be calculated manually, real-time
                 ...this.has,  // inherit items form super's `has` object (`super` keyword does not work here)
@@ -1677,15 +1698,17 @@
             // Therefore, inferences are form a state where this panel is not yet in the picture
             this._inferParentChildRelationships()
 
-            // At this point in code, these are equal (once nestedPanel is fully instantiated, parentWithRightmostChildPanelObject would be inferred as the current panel)
-            // NOTE: Use `this.has.leftSiblingObject` property instead. `this._leftSiblingObject` is here for one-time private storage of `this.has.parentWithRightmostChildPanelObject` at init time.
+            // At this point in code, these are equal (once nestedPanel is fully instantiated,
+            // parentWithRightmostChildPanelObject would be inferred as the current panel) NOTE: Use
+            // `this.has.leftSiblingObject` property instead. `this._leftSiblingObject` is here for one-time private
+            // storage of `this.has.parentWithRightmostChildPanelObject` at init time.
             this._leftSiblingObject = this.has.parentWithRightmostChildPanelObject
 
 
 
             // Throw error if no parent specified
-            if (this.has.parentPanel && !this.objectToSpawnFrom) {
-                throw Error('The panel is specified to be a child of another panel, but no object is specified as spawn source (missing argument).')
+            if( this.has.parentPanel && !this.objectToSpawnFrom ) {
+                throw Error( 'The panel is specified to be a child of another panel, but no object is specified as spawn source (missing argument).' )
             }
 
             this._numberOfAlreadyExistingSiblingsBeforeAddingThisPanel =
@@ -1716,17 +1739,18 @@
             // this.update(0)  // `update()` commented out during init-build split
 
             // Create as a child panel
-             if (this.has.parentPanel) {
-                 this._inferSpawnAnimationType()
-                 this._embedAsChildPanel()
-                 this._adjustAllPanels()
+            if( this.has.parentPanel ) {
+                this._inferSpawnAnimationType()
+                this._embedAsChildPanel()
+                this._adjustAllPanels()
             }
 
 
-            setTimeout(() => {
-                // this.updateAllPanels()  // if an update needs to be added to the end, this could be a harmless way to do it (i.e., without cutting a previous update operation in half)
+            setTimeout( () => {
+                // this.updateAllPanels()  // if an update needs to be added to the end, this could be a harmless way
+                // to do it (i.e., without cutting a previous update operation in half)
                 this.has.beenFullyInstantiated = true
-            }, this.animationDuration())
+            }, this.animationDuration() )
 
             return this
 
@@ -1768,7 +1792,7 @@
 
 
                     this._width = this.showAbsoluteChartWidths() ||
-                    (!!this.parentPanel && this.parentPanel.showAbsoluteChartWidths())
+                    ( !!this.parentPanel && this.parentPanel.showAbsoluteChartWidths() )
                         ? this.parentPanel.absoluteWidthOfChildPanel( this )
                         : this.parentPanel.width()
 
@@ -1817,18 +1841,18 @@
                 !!this.id()       // if an id is provided by user
                     ? this.id()   // use that id
                     : this.has.parentPanel
-                        ? this.has.beenAddedAsSibling
-                            ? `${this.parentPanel.id()}-${this.has.parentWithNumberOfChildren}` // if siblings exist
-                            : `${this.parentPanel.id()}-${0}`  // if siblings don't exist
-                        : 'panel-0'  // if there is no user-assigned id nor parent panel, give this id
+                    ? this.has.beenAddedAsSibling
+                        ? `${this.parentPanel.id()}-${this.has.parentWithNumberOfChildren}` // if siblings exist
+                        : `${this.parentPanel.id()}-${0}`  // if siblings don't exist
+                    : 'panel-0'  // if there is no user-assigned id nor parent panel, give this id
 
             return panelId
         }
 
 
-        updateAllPanels(transitionDuration) {
+        updateAllPanels( transitionDuration ) {
 
-            this.topmostAncestor().update(transitionDuration)
+            this.topmostAncestor().update( transitionDuration )
 
         }
 
@@ -1836,7 +1860,7 @@
         /**
          * Updates the current panel and triggers updates downstream
          */
-        update( transitionDuration, thisPanel=this ) {
+        update( transitionDuration, thisPanel = this ) {
 
             const thereIsAChildPanel = (
                 !!thisPanel.childrenPanels
@@ -1849,24 +1873,24 @@
             thisPanel.select()
                 .attr( 'depthIndex', thisPanel.depthIndex() )
 
-            if (!!thisPanel.objectToSpawnFrom) {
+            if( !!thisPanel.objectToSpawnFrom ) {
                 thisPanel._backgroundObject.update()
             }
 
-            if (!!thisPanel._bridgeObject){
+            if( !!thisPanel._bridgeObject ) {
                 thisPanel._bridgeObject.update( transitionDuration )
             }
 
-            super.update(transitionDuration)
+            super.update( transitionDuration )
 
 
-            if (thereIsAChildPanel){
-                thisPanel.childrenPanels.forEach( (childPanelObject, childPanelName) => {
+            if( thereIsAChildPanel ) {
+                thisPanel.childrenPanels.forEach( ( childPanelObject, childPanelName ) => {
 
                     // Recursion
-                    childPanelObject.update(transitionDuration, childPanelObject)
+                    childPanelObject.update( transitionDuration, childPanelObject )
 
-                })
+                } )
             }
 
             return this
@@ -1879,7 +1903,7 @@
             // The functionality of the _adjustAll method of superclass is covered in _adjust method
 
             // Uppropagate to the topmost ancestor (so it can downpropagate)
-            if ( this._animation ){  // TODO: Why is `this._animation` condition necessary? Don't all panels have an _animation property?
+            if( this._animation ) {  // TODO: Why is `this._animation` condition necessary? Don't all panels have an _animation property?
                 this.topmostAncestor().animationDuration( this.animationDuration() )
             }
 
@@ -1893,12 +1917,12 @@
         /**
          * Adjusts the current panel and triggers adjustments downstream
          */
-        _adjustDownstream(thisPanel=this ){
+        _adjustDownstream( thisPanel = this ) {
 
-            super._adjustAll.call(thisPanel)  // super's `_adjustAll` does not propagate any values to other panels
+            super._adjustAll.call( thisPanel )  // super's `_adjustAll` does not propagate any values to other panels
 
             // Infer parent-child relationships
-            if ( !!thisPanel.parentPanel || (!!thisPanel.childrenPanels && !!thisPanel.childrenPanels.size) ){
+            if( !!thisPanel.parentPanel || ( !!thisPanel.childrenPanels && !!thisPanel.childrenPanels.size ) ) {
                 thisPanel._inferParentChildRelationships()
             }
 
@@ -1908,12 +1932,12 @@
             }
 
             // Adjust bridge
-            if (!!thisPanel._bridgeObject) {
+            if( !!thisPanel._bridgeObject ) {
                 thisPanel._adjustBridgeProperties()
             }
 
             // Adjust background color
-            if (!!thisPanel.objectToSpawnFrom) {
+            if( !!thisPanel.objectToSpawnFrom ) {
                 thisPanel.bgFill( thisPanel.objectToSpawnFrom.fill() )
             }
 
@@ -1923,8 +1947,8 @@
             // level in which two categories are linked to each other. If this functionality is taken  to lower
             // levels of abstraction (e.g., by implementing a `Category.linkRight()` method), things may get
             // unnecessarily complicated at those levels, and the metaphor may be violated.
-            thisPanel.objects().forEach( (chartObject, categoryName) => {
-                chartObject.objects().forEach( (categoryObject, categoryName) => {
+            thisPanel.objects().forEach( ( chartObject, categoryName ) => {
+                chartObject.objects().forEach( ( categoryObject, categoryName ) => {
 
                     // Get linkable rectangle object of each category in thisPanel
                     const linkableRectangle = categoryObject.objects( 'rectangle' )
@@ -1938,15 +1962,15 @@
 
                     linkableRectangle.opacityOfAllConnectorsInEnsemble( this.opacityOfConnectorPolygons() )
 
-                })
-                
-            })
+                } )
+
+            } )
 
 
 
             // If there are child panels
-            if (!!thisPanel.childrenPanels && !!thisPanel.childrenPanels.size){
-                thisPanel.childrenPanels.forEach( (childPanelObject, childPanelId) => {
+            if( !!thisPanel.childrenPanels && !!thisPanel.childrenPanels.size ) {
+                thisPanel.childrenPanels.forEach( ( childPanelObject, childPanelId ) => {
 
                     // Propagate values that need to be passed to child
                     childPanelObject
@@ -1964,15 +1988,15 @@
                     childPanelObject.width( newWidth )
 
 
-                    if (childPanelObject._animation) {
-                        childPanelObject.animationDuration ( this.animationDuration() )
+                    if( childPanelObject._animation ) {
+                        childPanelObject.animationDuration( this.animationDuration() )
                     }
 
 
                     // Recursion
                     this._adjustDownstream( childPanelObject )
 
-                })
+                } )
             }
 
         }
@@ -1983,7 +2007,7 @@
             this.preAnimationProperties.objectToSpawnFrom.y = this.objectToSpawnFrom.y()
             this.preAnimationProperties.objectToSpawnFrom.height = this.objectToSpawnFrom.height()
 
-            if ( this._animation.spawnStyle === 'instant' ){
+            if( this._animation.spawnStyle === 'instant' ) {
                 // console.log('instant')
 
                 this._respawnInPlaceOfExistingSiblingPanel()
@@ -1991,11 +2015,11 @@
                 this._recursivelyAlignChartsInParentPanelsAndInTheirSiblingsWithChartsInThisPanel()
 
 
-                this.updateAllPanels(0)
+                this.updateAllPanels( 0 )
 
             }
 
-            if ( this._animation.spawnStyle === 'extend'  ){
+            if( this._animation.spawnStyle === 'extend' ) {
                 // console.log('extend')
 
                 this._pushAnySiblingsOfParentRightward()
@@ -2007,15 +2031,15 @@
             }
 
 
-            if ( this._animation.spawnStyle === 'lateralSwitch' ||
+            if( this._animation.spawnStyle === 'lateralSwitch' ||
                 this._animation.spawnStyle === 'retract' ||
-                this._animation.spawnStyle === 'retractAndExtend'){
+                this._animation.spawnStyle === 'retractAndExtend' ) {
 
                 this._collapseAllPanelsDownstreamAndSpawnThisPanelLateralToSiblingBeingReplaced()
 
             }
 
-            if ( this._animation.spawnStyle === 'appendSibling' ) {
+            if( this._animation.spawnStyle === 'appendSibling' ) {
 
                 this._pushAnySiblingsOfParentRightward()
                 this._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
@@ -2028,7 +2052,7 @@
 
             // Register the current object as a child of its parent panel
             const nameOfThisPanel = this.id()
-            this.parentPanel.childrenPanels.set(nameOfThisPanel, this)
+            this.parentPanel.childrenPanels.set( nameOfThisPanel, this )
 
             // Set color set to be inherited from parent
             this.colorSet( this.parentPanel.colorSet() )
@@ -2038,16 +2062,16 @@
         }
 
 
-        remove( thisPanel=this ){
+        remove( thisPanel = this ) {
 
             // Recursion for child panels
             // NOTE: Panel removal time increases proportionally to the number of panels being removed.
             // This child recursion was not found to be the reason for this.
             // If a benchmark is required, the recursion can be disabled by commenting out this child recursion block.
-            if( !!thisPanel.childrenPanels ){
-                thisPanel.childrenPanels.forEach( (childPanel, childPanelName) => {
+            if( !!thisPanel.childrenPanels ) {
+                thisPanel.childrenPanels.forEach( ( childPanel, childPanelName ) => {
                     childPanel.remove( childPanel )
-                })
+                } )
             }
 
 
@@ -2056,7 +2080,7 @@
 
 
             // De-register self from any parent's registry
-            if ( thisPanel.has.parentPanel ){
+            if( thisPanel.has.parentPanel ) {
 
                 thisPanel.parentPanel.childrenPanels.delete( thisPanel.id() )
 
@@ -2067,14 +2091,14 @@
 
             // If this is panel zero, then clear its children (in case the panel re-appears in some future, it
             // should have an empty registry)
-            if ( !thisPanel.has.parentPanel ){
+            if( !thisPanel.has.parentPanel ) {
                 thisPanel.childrenPanels.clear()
             }
 
 
             // If this panel is the only child of a panel, then just reset the parent panel's dimensions
-            if ( !thisPanel.has.parentWithAnotherChild
-              && thisPanel.has.parentPanel ){
+            if( !thisPanel.has.parentWithAnotherChild
+                && thisPanel.has.parentPanel ) {
 
                 // Adjust parent panel
                 thisPanel._resetParentPanelAndPropagate()
@@ -2084,22 +2108,22 @@
 
             // If this panel is not the only child, then find the rightmost edge of the remaining children panels
             // of the parent, and set that parent's dimensions accordingly
-            if ( thisPanel.has.parentWithAnotherChild ){
+            if( thisPanel.has.parentWithAnotherChild ) {
 
                 // Select rightmost sibling
                 const rightmostSiblingObject = thisPanel.has.parentWithRightmostChildPanelObject
 
                 // Get the x coordinate of right edge of children area
                 const rightmostEdgeOfRightmostSiblingRemainingInParentPanel =
-                      rightmostSiblingObject.x()
+                    rightmostSiblingObject.x()
                     + rightmostSiblingObject.width()
 
                 const rightmostEdgeOfParentPanelIfThereWereNoBgExtension =
-                      thisPanel.parentPanel.x()
+                    thisPanel.parentPanel.x()
                     + thisPanel.parentPanel.width()
 
                 const newBgExtensionValue =
-                      rightmostEdgeOfRightmostSiblingRemainingInParentPanel
+                    rightmostEdgeOfRightmostSiblingRemainingInParentPanel
                     - rightmostEdgeOfParentPanelIfThereWereNoBgExtension
                     + thisPanel.parentPanel._innerPadding.right
 
@@ -2119,7 +2143,7 @@
 
             // Reset the parameters of parent
             parent._resetVerticalInnerPadding()
-            parent.bgExtensionRight(0)
+            parent.bgExtensionRight( 0 )
 
             // Given the new parameters of parent, tell all ancestors to acknowledge the changes
             parent._recursivelyAlignChartsInParentPanelsAndInTheirSiblingsWithChartsInThisPanel()
@@ -2131,7 +2155,7 @@
         _adjustBridgeProperties() {
 
 
-            if (this.has.parentPanel){
+            if( this.has.parentPanel ) {
 
                 // Formulas
 
@@ -2141,24 +2165,25 @@
                         ? this.x()
                         : this.postCreationAnimationProperties.x
                 )
-                const distanceBetweenThisPanelBackgroundAndParentPanelCharts = leftEdgeOfThisPanel - ( rightEdgeOfChartsInParentPanel)
+                const distanceBetweenThisPanelBackgroundAndParentPanelCharts = leftEdgeOfThisPanel - ( rightEdgeOfChartsInParentPanel )
 
-                const verticalTearPreventionOffset = 1  // for preventing vertical cuts that appear during zoom in some browsers
+                const verticalTearPreventionOffset = 1  // for preventing vertical cuts that appear during zoom in some
+                                                        // browsers
                 const extraDistanceForSiblingPanelIfNecessary = this.has.parentWithAnotherChild
                     ? this._paddingBetweenSiblingPanels
                     : 0
 
-                const bridgeId = `${ this.id() }-bridge`
+                const bridgeId = `${this.id()}-bridge`
                     , className = 'bridge'
                     , fill = this.objectToSpawnFrom.fill()
                     , x = this.objectToSpawnFrom.x() + this.objectToSpawnFrom.width() - verticalTearPreventionOffset
                     , y = this.objectToSpawnFrom.y()
                     , height = this.objectToSpawnFrom.height()
                     , width =
-                        // Difference between this panel's location and parent panel's end point, plus some other values
-                        distanceBetweenThisPanelBackgroundAndParentPanelCharts
-                        + extraDistanceForSiblingPanelIfNecessary
-                        + (verticalTearPreventionOffset * 2) // x2 to add the offset for for each side
+                    // Difference between this panel's location and parent panel's end point, plus some other values
+                    distanceBetweenThisPanelBackgroundAndParentPanelCharts
+                    + extraDistanceForSiblingPanelIfNecessary
+                    + ( verticalTearPreventionOffset * 2 ) // x2 to add the offset for for each side
 
                 // Create a bridge (with 0 width at the right edge of the element to spawn from)
                 this._bridgeObject
@@ -2174,15 +2199,14 @@
         }
 
 
-        topmostAncestor(){
+        topmostAncestor() {
 
-            const selectParentPanel = (panel) => {return panel.parentPanel}
+            const selectParentPanel = ( panel ) => {return panel.parentPanel}
 
             let topmostAncestorSoFar = this
-            while (topmostAncestorSoFar.parentPanel
-            && topmostAncestorSoFar.parentPanel.hasType( this.hasType() ) )
-            {
-                topmostAncestorSoFar = selectParentPanel(topmostAncestorSoFar)
+            while ( topmostAncestorSoFar.parentPanel
+            && topmostAncestorSoFar.parentPanel.hasType( this.hasType() ) ) {
+                topmostAncestorSoFar = selectParentPanel( topmostAncestorSoFar )
             }
 
             return topmostAncestorSoFar
@@ -2203,7 +2227,7 @@
                 .update( 0 )
 
 
-            if ( this._animation.spawnStyle === 'extend' || 'retract' || 'retractAndExtend' || 'instant' ) {
+            if( this._animation.spawnStyle === 'extend' || 'retract' || 'retractAndExtend' || 'instant' ) {
 
                 const parentBgExtensionValue = this.parentPanel.bgExtensionRight()
                 const temporaryMaximumBridgeWidthDuringAnimation =
@@ -2217,7 +2241,7 @@
 
             }
 
-            if ( this._animation.spawnStyle === 'lateralSwitch' ) {
+            if( this._animation.spawnStyle === 'lateralSwitch' ) {
 
                 this._adjustBridgeProperties()
                 this._bridgeObject
@@ -2226,14 +2250,14 @@
             }
 
             if( this._animation.spawnStyle === 'appendSibling'
-                && !!this.has.parentWithAnotherChild){
+                && !!this.has.parentWithAnotherChild ) {
 
                 const siblingPanelObjects = Array.from( this.parentPanel.childrenPanels.values() )
-                const siblingPanelObjectsFromRightToLeft = _.reverse(siblingPanelObjects)
+                const siblingPanelObjectsFromRightToLeft = _.reverse( siblingPanelObjects )
 
-                siblingPanelObjectsFromRightToLeft.forEach( (siblingPanelObject) => {
+                siblingPanelObjectsFromRightToLeft.forEach( ( siblingPanelObject ) => {
                     siblingPanelObject.select().raise()
-                })
+                } )
 
             }
 
@@ -2296,7 +2320,11 @@
                     .height( this.postCreationAnimationProperties.height )
                     .update( 0 )
 
-            }, this._animation.duration.extendBridge + this._animation.duration.maximizePanelCover )  // do after bridge extended and cover is maximized
+            }, this._animation.duration.extendBridge + this._animation.duration.maximizePanelCover )  // do after
+                                                                                                      // bridge
+                                                                                                      // extended and
+                                                                                                      // cover is
+                                                                                                      // maximized
 
 
             // Create connectors
@@ -2304,7 +2332,7 @@
 
                 this._createConnectors()
 
-            }, this._animation.duration.extendBridge + this._animation.duration.maximizePanelCover)
+            }, this._animation.duration.extendBridge + this._animation.duration.maximizePanelCover )
 
 
         }
@@ -2316,14 +2344,15 @@
          * within a `setTimeout` block.  Otherwise, it may interrupt an ongoing animation.
          * @private
          */
-        _createConnectors(){
+        _createConnectors() {
 
             // WARNING/TODO: This method call may be decreasing performance significantly
 
-            this.objects().forEach( (chartObject, chartName) => {
+            this.objects().forEach( ( chartObject, chartName ) => {
 
-                // Note: Do not change to `forEach` loop: A classic `for` loop is necessary here, due to usage of `continue` statement in it.)
-                for( const [categoryName, categoryObject] of chartObject.objects()  ) {
+                // Note: Do not change to `forEach` loop: A classic `for` loop is necessary here, due to usage of
+                // `continue` statement in it.)
+                for ( const [ categoryName, categoryObject ] of chartObject.objects() ) {
 
                     // Get equivalent of category in the panel on the left (if there is a panel on the left)
                     const equivalentCategoryObjectInLeftPanel = this.getEquivalentCategoryObjectInLeftPanel( chartName, categoryName )
@@ -2345,7 +2374,7 @@
                                                                   */
 
                 }
-            })
+            } )
 
         }
 
@@ -2355,51 +2384,51 @@
          * @param value {Boolean}
          * @returns {Boolean|NestedPanel|*}
          */
-        showConnectorPolygons(value) {
+        showConnectorPolygons( value ) {
 
             // Getter
-            if (!arguments.length){
+            if( !arguments.length ) {
                 return this._showConnectorPolygons
             }
 
             // Setter
-            else{
-                value.mustBeOfType('Boolean')
+            else {
+                value.mustBeOfType( 'Boolean' )
                 this._showConnectorPolygons = value
 
                 return this
             }
 
         }
-        
-        
+
+
         /**
          * Adjusts the opacity of all connector polygons
          * @param value {Number}
          * @returns {Number|NestedPanel}
          */
-        opacityOfConnectorPolygons(value) {
-        
+        opacityOfConnectorPolygons( value ) {
+
             // Getter
-            if (!arguments.length){
+            if( !arguments.length ) {
                 return this._opacityOfConnectorPolygons
             }
-        
+
             // Setter
-            else{
-                value.mustBeOfType('Number')
+            else {
+                value.mustBeOfType( 'Number' )
                 this._opacityOfConnectorPolygons = value
-                
+
                 return this
             }
-            
+
         }
 
 
-        _pushAnySiblingsOfParentRightward( thisPanel=this ){
+        _pushAnySiblingsOfParentRightward( thisPanel = this ) {
 
             // Push parent's sibling to right
-            if ( thisPanel.has.parentPanel && thisPanel.parentPanel.has.siblingObjectsOnRightSide ){
+            if( thisPanel.has.parentPanel && thisPanel.parentPanel.has.siblingObjectsOnRightSide ) {
 
                 const rightwardSiblingsOfParent = thisPanel.parentPanel.has.siblingObjectsOnRightSide
 
@@ -2408,14 +2437,14 @@
                     const horizontalSpaceAddedByThisPanel = thisPanel.postCreationAnimationProperties.width + thisPanel.parentPanel._innerPadding.right
                     siblingObjectOfParent.x( siblingObjectOfParent.x() + horizontalSpaceAddedByThisPanel )
 
-                })
+                } )
 
 
             }
 
 
             // Recurse with parent
-            if ( thisPanel.has.parentPanel ){
+            if( thisPanel.has.parentPanel ) {
                 this._pushAnySiblingsOfParentRightward( thisPanel.parentPanel )
             }
 
@@ -2423,31 +2452,31 @@
 
 
         // TODO: Should be tested
-        x(value) {
+        x( value ) {
 
             // Getter
-            if (!arguments.length){
+            if( !arguments.length ) {
                 return super.x()
             }
 
             // Setter
-            else{
+            else {
 
                 const oldValue = this.x()
 
-                super.x(value)
+                super.x( value )
 
-                if ( !!this.childrenPanels.size ){
+                if( !!this.childrenPanels.size ) {
 
                     const difference = value - oldValue
 
-                    this.childrenPanels.forEach( (childPanelObject, childPanelId) => {
+                    this.childrenPanels.forEach( ( childPanelObject, childPanelId ) => {
 
                         const oldLocation = childPanelObject.x()
                         const newLocation = oldLocation + difference
-                        childPanelObject.x(newLocation)
+                        childPanelObject.x( newLocation )
 
-                    })
+                    } )
 
                     // BRIDGE object is not adjusted here because
                     // ... it is managed by _adjustBridgeProperties method.
@@ -2459,39 +2488,41 @@
 
         }
 
-        width(value){
+
+        width( value ) {
 
             // Getter
-            if (!arguments.length){
+            if( !arguments.length ) {
                 return super.width()
             }
 
             // Setter
-            else{
+            else {
 
                 // Save current width
-                const oldValue =  this.width()
+                const oldValue = this.width()
 
                 // Find the x-coordinate difference this change will cause
                 const difference = this.has.beenFullyInstantiated
                     ? value - oldValue
-                    : 0  // report no difference is this panel is just being created (because getting the difference between the default width and initial width is not desirable)
+                    : 0  // report no difference is this panel is just being created (because getting the difference
+                         // between the default width and initial width is not desirable)
 
                 // Change width
-                super.width(value)
+                super.width( value )
 
                 // this._inferParentChildRelationships()
 
                 // Adjust siblings
-                if ( !!this.has.siblingObjectsOnRightSide ){
-                    this.has.siblingObjectsOnRightSide.forEach( (siblingObject) => {
+                if( !!this.has.siblingObjectsOnRightSide ) {
+                    this.has.siblingObjectsOnRightSide.forEach( ( siblingObject ) => {
                         siblingObject.x( siblingObject.x() + difference )
-                    })
+                    } )
                 }
 
                 // Adjust parent panels to accommodate the new width
-                const recursivelyAdjustParentPanelsAndTheirSiblings = (thisPanel=this) => {
-                    if (!!thisPanel.parentPanel){
+                const recursivelyAdjustParentPanelsAndTheirSiblings = ( thisPanel = this ) => {
+                    if( !!thisPanel.parentPanel ) {
                         const parentPanel = thisPanel.parentPanel
 
                         // Adjust background extensions of parent panels to accommodate the new width
@@ -2500,28 +2531,28 @@
 
 
                         // Push parents of siblings rightward to make room for the new width
-                        if (!!parentPanel.has.siblingObjectsOnRightSide){
-                            parentPanel.has.siblingObjectsOnRightSide.forEach( (siblingObject) => {
+                        if( !!parentPanel.has.siblingObjectsOnRightSide ) {
+                            parentPanel.has.siblingObjectsOnRightSide.forEach( ( siblingObject ) => {
                                 siblingObject.x( siblingObject.x() + difference )
-                            })
+                            } )
                         }
-                        recursivelyAdjustParentPanelsAndTheirSiblings(parentPanel)
+                        recursivelyAdjustParentPanelsAndTheirSiblings( parentPanel )
                     }
                 }
                 recursivelyAdjustParentPanelsAndTheirSiblings()
 
 
                 // Adjust child panels
-                if ( !!this.childrenPanels.size ){
+                if( !!this.childrenPanels.size ) {
 
                     // Shift child panels to accommodate the difference
-                    this.childrenPanels.forEach( (childPanelObject, childPanelId) => {
+                    this.childrenPanels.forEach( ( childPanelObject, childPanelId ) => {
 
                         const oldLocation = childPanelObject.x()
                         const newLocation = oldLocation + difference
                         childPanelObject.x( newLocation )
 
-                    })
+                    } )
 
                     // BRIDGE object is not adjusted here because
                     // ... it is managed by _adjustBridgeProperties method.
@@ -2534,16 +2565,16 @@
         }
 
 
-        showAbsoluteChartWidths(value) {
+        showAbsoluteChartWidths( value ) {
 
             // Getter
-            if (!arguments.length){
+            if( !arguments.length ) {
                 return this._showAbsoluteChartWidths
             }
 
             // Setter
-            else{
-                value.mustBeOfType('Boolean')
+            else {
+                value.mustBeOfType( 'Boolean' )
                 this._showAbsoluteChartWidths = value
 
                 return this
@@ -2552,9 +2583,9 @@
         }
 
 
-        _recursivelyAdjustAndUpdateDOWNSTREAM(thisPanel=this, transitionDuration){
+        _recursivelyAdjustAndUpdateDOWNSTREAM( thisPanel = this, transitionDuration ) {
 
-            this.update(thisPanel, transitionDuration)
+            this.update( thisPanel, transitionDuration )
 
         }
 
@@ -2566,16 +2597,16 @@
          *      Using this upstream method will also trigger downstream updates
          *      at each step up. This may result in undesired behavior.
          */
-        _recursivelyTriggerUpdatesUPSTREAM(thisPanel=this, transitionDuration){
+        _recursivelyTriggerUpdatesUPSTREAM( thisPanel = this, transitionDuration ) {
 
-            if( this.has.parentPanel ){
+            if( this.has.parentPanel ) {
 
                 // Update the parent panel
                 thisPanel.parentPanel
                     .update( transitionDuration )
 
                 // Call this function for child panel (so its child is subjected to this method)
-                this._recursivelyTriggerUpdatesUPSTREAM(thisPanel.parentPanel)
+                this._recursivelyTriggerUpdatesUPSTREAM( thisPanel.parentPanel )
 
             }
 
@@ -2583,11 +2614,11 @@
 
 
 
-        _recursivelyAlignChartsInParentPanelsAndInTheirSiblingsWithChartsInThisPanel(thisPanel=this) {
+        _recursivelyAlignChartsInParentPanelsAndInTheirSiblingsWithChartsInThisPanel( thisPanel = this ) {
 
             // Establish conditions
 
-            if ( thisPanel.has.parentPanel ){
+            if( thisPanel.has.parentPanel ) {
 
                 // Infer parent during recursion
                 const parentPanel = arguments.length
@@ -2604,24 +2635,24 @@
                 // Adjust padding values of previous panel(s)
                 parentPanel
                     .innerPaddingTop( selfInnerPaddingTop + selfOuterPaddingTop )
-                    .innerPaddingBottom(selfInnerPaddingBottom + selfOuterPaddingBottom - selfOuterPaddingTop)
+                    .innerPaddingBottom( selfInnerPaddingBottom + selfOuterPaddingBottom - selfOuterPaddingTop )
 
 
                 // Bubble up if parent also has a parent
-                if ( thisPanel.has.grandParentPanel ){
-                    this._recursivelyAlignChartsInParentPanelsAndInTheirSiblingsWithChartsInThisPanel(parentPanel)
+                if( thisPanel.has.grandParentPanel ) {
+                    this._recursivelyAlignChartsInParentPanelsAndInTheirSiblingsWithChartsInThisPanel( parentPanel )
                 }
 
 
                 // Propagate to siblings of parent panel, if there are any
-                if( parentPanel.has.sibling ){
+                if( parentPanel.has.sibling ) {
 
                     // Select siblings of parent panel
                     const allChildrenOfGrandparent = Array.from( parentPanel.parentPanel.childrenPanels.values() )
-                    const siblingsOfParent = allChildrenOfGrandparent.filter( (childOfGrandparent) => childOfGrandparent !== thisPanel.parentPanel  )
+                    const siblingsOfParent = allChildrenOfGrandparent.filter( ( childOfGrandparent ) => childOfGrandparent !== thisPanel.parentPanel )
 
                     // Synchronize top and bottom inner padding values of parent with its siblings
-                    siblingsOfParent.forEach( (siblingOfParent) => {
+                    siblingsOfParent.forEach( ( siblingOfParent ) => {
 
                         // Propagate values from parent to its siblings
                         siblingOfParent.innerPaddingTop( parentPanel.innerPaddingTop() )
@@ -2630,7 +2661,7 @@
                         // Let siblings propagate values to their children
                         siblingOfParent._recursivelyAlignChartsInAnyChildrenPanelsWithChartsInThisPanel()
 
-                    })
+                    } )
 
                 }
 
@@ -2642,11 +2673,11 @@
         }
 
 
-        _recursivelyAlignChartsInAnyChildrenPanelsWithChartsInThisPanel(thisPanel=this) {
+        _recursivelyAlignChartsInAnyChildrenPanelsWithChartsInThisPanel( thisPanel = this ) {
 
             // Establish conditions
 
-            if ( !!thisPanel.childrenPanels.size ){
+            if( !!thisPanel.childrenPanels.size ) {
 
                 // Infer child during recursion
                 const childrenPanels = thisPanel.childrenPanels
@@ -2665,16 +2696,16 @@
 
                     childPanel
                         .innerPaddingTop( selfInnerPaddingTop - childOuterPaddingTop )
-                        .innerPaddingBottom( selfInnerPaddingBottom - childOuterPaddingBottom + childOuterPaddingTop  )
+                        .innerPaddingBottom( selfInnerPaddingBottom - childOuterPaddingBottom + childOuterPaddingTop )
 
 
                     // Propagate to the children of children if there are any
-                    if ( !!childPanel.childrenPanels.size ){
+                    if( !!childPanel.childrenPanels.size ) {
                         this._recursivelyAlignChartsInAnyChildrenPanelsWithChartsInThisPanel( childPanel )
                     }
 
 
-                })
+                } )
 
 
             }
@@ -2686,9 +2717,9 @@
 
 
 
-        _recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel(thisPanel=this) {
+        _recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel( thisPanel = this ) {
 
-            if ( thisPanel.has.parentPanel ) {
+            if( thisPanel.has.parentPanel ) {
 
                 // Establish conditions
                 const recursingForThePanelBeingAdded = (
@@ -2702,7 +2733,8 @@
                 // Calculate variables
 
                 const rightEdgeOfPanelBeingAddedPanel =
-                    + this.postCreationAnimationProperties.x  // because this.x() starts at a default location (e.g., off-screen) for the panel being added
+                    +this.postCreationAnimationProperties.x  // because this.x() starts at a default location (e.g., off-screen) for the
+                                         // panel being added
                     + this.postCreationAnimationProperties.width
 
 
@@ -2719,7 +2751,7 @@
                 )
 
                 const rightmostEdgeOfParentPanelIfThereWereNoBgExtension =
-                    + thisPanel.parentPanel.x()
+                    +thisPanel.parentPanel.x()
                     + thisPanel.parentPanel.width()
 
 
@@ -2727,11 +2759,11 @@
                 // Calculate the new right edge of parent panel //
                 let newRightEdgeOfOfParentPanel
 
-                if( recursingForThePanelBeingAdded ){
+                if( recursingForThePanelBeingAdded ) {
                     newRightEdgeOfOfParentPanel = rightEdgeOfPanelBeingAddedPanel + thisPanel.parentPanel._innerPadding.right
                 }
 
-                if( recursingForAParentOfPanelBeingAdded ){
+                if( recursingForAParentOfPanelBeingAdded ) {
                     // bear in mind that the parent panel's bgExtension is already expanded ...
                     // before this iteration of recursion (while `recursingForThePanelBeingAdded`).
                     // So, there is no need to include `rightEdgeOfPanelBeingAddedPanel` or new panel's width
@@ -2742,7 +2774,7 @@
 
                 // Calculate the rightward bg extension value //
                 const newRightBgExtensionValueOfParent = (
-                      newRightEdgeOfOfParentPanel
+                    newRightEdgeOfOfParentPanel
                     - rightmostEdgeOfParentPanelIfThereWereNoBgExtension
                 )
 
@@ -2752,8 +2784,8 @@
 
 
                 // Bubble up if parent also has a parent //
-                if ( thisPanel.has.parentPanel ){
-                    this._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel(thisPanel.parentPanel)
+                if( thisPanel.has.parentPanel ) {
+                    this._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel( thisPanel.parentPanel )
                 }
 
             }
@@ -2763,7 +2795,7 @@
         }
 
 
-        _inferParentChildRelationships(){
+        _inferParentChildRelationships() {
 
             // TODO: Child panels SHOULD be supported
             // Does this panel has a child panel?
@@ -2781,18 +2813,19 @@
 
             // Does this panel have a grandparent panel?
             this.has.grandParentPanel = (
-                  this.has.parentPanel
-               && !!this.parentPanel.parentPanel
-               && (   this.parentPanel.parentPanel.hasType( 'Panel' )
-                   || this.parentPanel.parentPanel.hasType( 'NestedPanel' )
-               )
+                this.has.parentPanel
+                && !!this.parentPanel.parentPanel
+                && ( this.parentPanel.parentPanel.hasType( 'Panel' )
+                    || this.parentPanel.parentPanel.hasType( 'NestedPanel' )
+                )
             )
 
             // Does parent have a child?
-            // NOTE: This is not an unnecessary condition, even though it sounds like the parent will always have a child---at least the current panel being embedded.
-            // However, if this method is called before this panel is added (e.g, in constructor of this panel), this condition returns useful information.
+            // NOTE: This is not an unnecessary condition, even though it sounds like the parent will always have a
+            // child---at least the current panel being embedded. However, if this method is called before this panel
+            // is added (e.g, in constructor of this panel), this condition returns useful information.
             this.has.parentWithAnyChild = (
-                   this.has.parentPanel
+                this.has.parentPanel
                 && !!this.parentPanel.childrenPanels
                 && !!this.parentPanel.childrenPanels.size
             )
@@ -2800,17 +2833,17 @@
             // Is the existing child of parent identical to the current panel that is being created?
             this.has.parentWithIdenticalChild = (
                 this.has.parentWithAnyChild
-                && Array.from( this.parentPanel.childrenPanels.values() ).some( (childPanelObject) => {
+                && Array.from( this.parentPanel.childrenPanels.values() ).some( ( childPanelObject ) => {
                     return ( childPanelObject.objectToSpawnFrom === this.objectToSpawnFrom )
-                })
+                } )
             )
 
             // Does parent have a child that is different from the current one?
             this.has.parentWithAnotherChild = (
-                   this.has.parentWithAnyChild
-                && Array.from( this.parentPanel.childrenPanels.values() ).some( (childPanelObject) => {
+                this.has.parentWithAnyChild
+                && Array.from( this.parentPanel.childrenPanels.values() ).some( ( childPanelObject ) => {
                     return childPanelObject.objectToSpawnFrom !== this.objectToSpawnFrom
-                })
+                } )
             )
 
             // Does this panel have siblings?
@@ -2837,62 +2870,64 @@
 
             // Does parent have a grandchild?
             this.has.parentWithAnyGrandChild = (
-                   this.has.parentWithAnyChild
-                && Array.from( this.parentPanel.childrenPanels.values() ).some( (childPanelObject) => {
-                    return (!!childPanelObject.childrenPanels
-                         && !!childPanelObject.childrenPanels.size
+                this.has.parentWithAnyChild
+                && Array.from( this.parentPanel.childrenPanels.values() ).some( ( childPanelObject ) => {
+                    return ( !!childPanelObject.childrenPanels
+                        && !!childPanelObject.childrenPanels.size
                     )
-                })
+                } )
             )
 
             // Does parent have a child but no grandchildren?
             this.has.parentWithAnyChildButNoGrandchildren = (
-                   this.has.parentWithAnyChild
+                this.has.parentWithAnyChild
                 && !this.has.parentWithAnyGrandChild
             )
 
             // What panel object is the last added/rightmost one?
             this.has.parentWithRightmostChildPanelObject = (
-                   this.has.parentPanel
+                this.has.parentPanel
                 && this.has.parentWithNumberOfChildren > 0
-                    ? Array.from( this.parentPanel.childrenPanels.values() ).slice(-1)[0] // Get the last child of parent
+                    ? Array.from( this.parentPanel.childrenPanels.values() ).slice( -1 )[ 0 ] // Get the last child of
+                                                                                              // parent
                     : null
             )
 
             // What sibling panel object is at the immediate left side?
             this.has.leftSiblingObject = ( () => {
                 return !!this._leftSiblingObject
-                    ? this._leftSiblingObject  // This has to be stored in the external variable `this._leftSiblingObject`,
-                                               // because after `build()` is completed, this.has.leftSiblingObject should
-                                               // not be updated. This is because at the time of init, this._leftSiblingObject
-                                               // stores the result from `this.has.parentWithRightmostChildPanelObject`,
-                                               // which points to the left sibling at init time. However, after the build is
-                                               // completed, `this.has.parentWithRightmostChildPanelObject` points to self.
+                    ? this._leftSiblingObject  // This has to be stored in the external variable
+                                               // `this._leftSiblingObject`, because after `build()` is completed,
+                                               // this.has.leftSiblingObject should not be updated. This is because at
+                                               // the time of init, this._leftSiblingObject stores the result from
+                                               // `this.has.parentWithRightmostChildPanelObject`, which points to the
+                                               // left sibling at init time. However, after the build is completed,
+                                               // `this.has.parentWithRightmostChildPanelObject` points to self.
                     : null
-            })()
+            } )()
 
             // What are the sibling panels on the right side?
             this.has.siblingObjectsOnRightSide = (
-                   this.has.parentWithAnotherChild
+                this.has.parentWithAnotherChild
                 && this.has.beenFullyInstantiated // only calculate this if this panel is fully instantiated
-                       // The `.has` method above is different; it is the `has` method of Map class.
+                    // The `.has` method above is different; it is the `has` method of Map class.
                     ? ( () => {
-                       // Find this panel's index in parent's registry
-                       const childrenIdsInParentPanelRegistry = Array.from( this.parentPanel.childrenPanels.keys() )
-                       const indexOfThisPanel = childrenIdsInParentPanelRegistry.findIndex( (id) => { return id === this.id() } )
-                       const inclusiveStartIndexOfSlice = indexOfThisPanel + 1
+                        // Find this panel's index in parent's registry
+                        const childrenIdsInParentPanelRegistry = Array.from( this.parentPanel.childrenPanels.keys() )
+                        const indexOfThisPanel = childrenIdsInParentPanelRegistry.findIndex( ( id ) => { return id === this.id() } )
+                        const inclusiveStartIndexOfSlice = indexOfThisPanel + 1
 
-                       // Get all objects that are on the right side of this index
+                        // Get all objects that are on the right side of this index
                         const allObjectsInParentPanelRegistry = Array.from( this.parentPanel.childrenPanels )
                         const objectsOnTheRightSideOfThisPanel_asArray = allObjectsInParentPanelRegistry.slice( inclusiveStartIndexOfSlice )
                         const objectsOnTheRightSideOfThisPanel = (
                             objectsOnTheRightSideOfThisPanel_asArray.length
-                                ? new Map(objectsOnTheRightSideOfThisPanel_asArray)
+                                ? new Map( objectsOnTheRightSideOfThisPanel_asArray )
                                 : null
                         )
 
                         return objectsOnTheRightSideOfThisPanel
-                    }) ()
+                    } )()
 
                     : null
 
@@ -2902,7 +2937,8 @@
 
         }
 
-        _inferSpawnAnimationType(){
+
+        _inferSpawnAnimationType() {
 
             // Infer animation type from parent-child relationships //
             const append =
@@ -2936,26 +2972,26 @@
 
 
             // Register animation type for panel //
-            if (append) {this._animation.spawnStyle = 'appendSibling'}
-            if (instant) {this._animation.spawnStyle = 'instant'}
-            if (lateralSwitch) {this._animation.spawnStyle = 'lateralSwitch'}
-            if (extend) {this._animation.spawnStyle = 'extend'}
-            if (retractAndExtend) {this._animation.spawnStyle = 'retractAndExtend'}
-            if (retract) {this._animation.spawnStyle = 'retract'}
+            if( append ) {this._animation.spawnStyle = 'appendSibling'}
+            if( instant ) {this._animation.spawnStyle = 'instant'}
+            if( lateralSwitch ) {this._animation.spawnStyle = 'lateralSwitch'}
+            if( extend ) {this._animation.spawnStyle = 'extend'}
+            if( retractAndExtend ) {this._animation.spawnStyle = 'retractAndExtend'}
+            if( retract ) {this._animation.spawnStyle = 'retract'}
 
         }
 
 
-        animationDuration(value) {
+        animationDuration( value ) {
 
             // Getter
-            if (!arguments.length){
+            if( !arguments.length ) {
                 return this._animation.duration.total
             }
 
             // Setter
-            else{
-                value.mustBeOfType('Number')
+            else {
+                value.mustBeOfType( 'Number' )
                 this._animation.duration.total = value
                 this._inferAnimationDurations()
 
@@ -2965,11 +3001,11 @@
         }
 
 
-        _inferAnimationDurations(){
+        _inferAnimationDurations() {
 
             const total = this._animation.duration.total
-            const durationOfOneStage = _.round( total/2 )
-            const oneThirdOfStageDuration = _.round( (durationOfOneStage/3) * 2 )
+            const durationOfOneStage = _.round( total / 2 )
+            const oneThirdOfStageDuration = _.round( ( durationOfOneStage / 3 ) * 2 )
 
             // Stage 1 animations
             this._animation.duration.extendBridge = durationOfOneStage
@@ -2980,7 +3016,8 @@
 
             // Stage 2 animations
             this._animation.duration.maximizePanelCover = durationOfOneStage
-            this._animation.duration.backgroundAdjustment = durationOfOneStage  // longer than 300 are cut off, probably by animations that follow
+            this._animation.duration.backgroundAdjustment = durationOfOneStage  // longer than 300 are cut off,
+                                                                                // probably by animations that follow
             this._animation.duration.collapseBackground = durationOfOneStage
         }
 
@@ -2999,49 +3036,51 @@
             this._verticallyMaximizeFromBridgeAsChildPanel()
         }
 
+
         _collapseAllPanelsDownstreamAndSpawnThisPanelLateralToSiblingBeingReplaced() {
 
             let duration
-            if( this._animation.spawnStyle === 'lateralSwitch' ){ duration = this._animation.duration.lateralSwitch }
-            if( this._animation.spawnStyle === 'retractAndExtend' ){ duration = this._animation.duration.retractAndExtend }
-            if( this._animation.spawnStyle === 'retract' ){ duration = this._animation.duration.retract }
+            if( this._animation.spawnStyle === 'lateralSwitch' ) { duration = this._animation.duration.lateralSwitch }
+            if( this._animation.spawnStyle === 'retractAndExtend' ) { duration = this._animation.duration.retractAndExtend }
+            if( this._animation.spawnStyle === 'retract' ) { duration = this._animation.duration.retract }
 
 
-            const firstAlreadyExistingSibling = Array.from(this.parentPanel.childrenPanels)[0][1]
+            const firstAlreadyExistingSibling = Array.from( this.parentPanel.childrenPanels )[ 0 ][ 1 ]
 
             // Create a copy of the existing bridge, immediately
             const bridgeObjectOfFirstSibling = firstAlreadyExistingSibling._bridgeObject
 
             const siblingBridgeCover = new shape.Rectangle()
             siblingBridgeCover
-                .x(bridgeObjectOfFirstSibling.x())
-                .y(bridgeObjectOfFirstSibling.y())
-                .width(bridgeObjectOfFirstSibling.width())
-                .height(bridgeObjectOfFirstSibling.height())
-                .fill(bridgeObjectOfFirstSibling.fill())
-                .update(0)
+                .x( bridgeObjectOfFirstSibling.x() )
+                .y( bridgeObjectOfFirstSibling.y() )
+                .width( bridgeObjectOfFirstSibling.width() )
+                .height( bridgeObjectOfFirstSibling.height() )
+                .fill( bridgeObjectOfFirstSibling.fill() )
+                .update( 0 )
 
             // Create a copy of the existing sibling background, immediately
             const siblingBackgroundObject = firstAlreadyExistingSibling._backgroundObject
 
             const siblingBackgroundCover = new shape.Rectangle()
             siblingBackgroundCover
-                .x(siblingBackgroundObject.x())
-                .y(siblingBackgroundObject.y())
-                .width(siblingBackgroundObject.width())
-                .height(siblingBackgroundObject.height())
-                .fill(siblingBackgroundObject.fill())
-                .update(0)
+                .x( siblingBackgroundObject.x() )
+                .y( siblingBackgroundObject.y() )
+                .width( siblingBackgroundObject.width() )
+                .height( siblingBackgroundObject.height() )
+                .fill( siblingBackgroundObject.fill() )
+                .update( 0 )
 
 
             // Retract the bridge copy
             const initialBridgeCoverWidth = this._animation.spawnStyle === 'retract'
-                ? bridgeObjectOfFirstSibling.width()  // if retracting, start the bridge at full width (no extension animation)
+                ? bridgeObjectOfFirstSibling.width()  // if retracting, start the bridge at full width (no extension
+                                                      // animation)
                 : 0
 
             siblingBridgeCover
-                .width(initialBridgeCoverWidth)
-                .update(duration)
+                .width( initialBridgeCoverWidth )
+                .update( duration )
 
 
             // Remove the existing sibling
@@ -3059,9 +3098,9 @@
 
             // Change the color of the copy background
             siblingBackgroundCover
-                .width(this.postCreationAnimationProperties.width)
-                .fill(this.objectToSpawnFrom.fill())
-                .update(duration)
+                .width( this.postCreationAnimationProperties.width )
+                .fill( this.objectToSpawnFrom.fill() )
+                .update( duration )
 
 
             // Save default animation durations to be restored later
@@ -3081,10 +3120,10 @@
             this._verticallyMaximizeFromBridgeAsChildPanel()
             this.updateAllPanels( this._animation.duration.collapseBackground )
 
-            setTimeout(() => {
+            setTimeout( () => {
                 siblingBackgroundCover.remove()
                 siblingBridgeCover.remove()
-            }, duration)
+            }, duration )
 
 
             // Reset the animation durations that were temporarily changed
@@ -3093,38 +3132,39 @@
 
         }
 
+
         _removeExistingSiblingPanels() {
 
-            this.parentPanel.childrenPanels.forEach( (childPanelObject, childPanelName) => {
+            this.parentPanel.childrenPanels.forEach( ( childPanelObject, childPanelName ) => {
                 childPanelObject.remove()
-            })
+            } )
 
             this.parentPanel.childrenPanels.clear()
         }
 
 
         // TODO: NOT TESTED
-        innerPaddingTop(value) {
+        innerPaddingTop( value ) {
 
             // Getter
-            if (!arguments.length) {
+            if( !arguments.length ) {
                 return super.innerPaddingTop()
             }
 
             // Setter
             else {
 
-                super.innerPaddingTop(value)
+                super.innerPaddingTop( value )
 
                 // Adjust bridge position
-                if ( !!this.childrenPanels.size ){
+                if( !!this.childrenPanels.size ) {
 
-                    this.childrenPanels.forEach( (childObject, childName) => {
+                    this.childrenPanels.forEach( ( childObject, childName ) => {
 
                         childObject._bridgeObject
-                            .y(childObject.objectToSpawnFrom.y())
-                            .height(childObject.objectToSpawnFrom.height())
-                    })
+                            .y( childObject.objectToSpawnFrom.y() )
+                            .height( childObject.objectToSpawnFrom.height() )
+                    } )
 
                 }
 
@@ -3135,27 +3175,27 @@
 
 
         // TODO: NOT TESTED
-        innerPaddingBottom(value) {
+        innerPaddingBottom( value ) {
 
             // Getter
-            if (!arguments.length) {
+            if( !arguments.length ) {
                 return super.innerPaddingBottom()
             }
 
             // Setter
             else {
 
-                super.innerPaddingBottom(value)
+                super.innerPaddingBottom( value )
 
                 // Adjust bridge position
-                if ( !!this.childrenPanels.size ) {
+                if( !!this.childrenPanels.size ) {
 
-                    this.childrenPanels.forEach( (childObject, childName) => {
+                    this.childrenPanels.forEach( ( childObject, childName ) => {
 
                         childObject._bridgeObject
-                            .y(childObject.objectToSpawnFrom.y())
-                            .height(childObject.objectToSpawnFrom.height())
-                    })
+                            .y( childObject.objectToSpawnFrom.y() )
+                            .height( childObject.objectToSpawnFrom.height() )
+                    } )
 
                 }
 
@@ -3165,24 +3205,24 @@
         }
 
 
-        colorSet(value){
+        colorSet( value ) {
 
             // Getter
-            if (!arguments.length) {
+            if( !arguments.length ) {
                 return super.colorSet()
             }
 
             // Setter
             else {
 
-                super.colorSet(value)
+                super.colorSet( value )
 
                 // Set color of background and bridge
-                if ( !!this.objectToSpawnFrom ){
+                if( !!this.objectToSpawnFrom ) {
 
                     const spawnSourceColor = this.objectToSpawnFrom.fill()
 
-                    this._bridgeObject.fill( spawnSourceColor  )
+                    this._bridgeObject.fill( spawnSourceColor )
 
                 }
 
@@ -3192,16 +3232,16 @@
         }
 
 
-        depthIndex(value) {
+        depthIndex( value ) {
 
             // Getter
-            if( !arguments.length ){
+            if( !arguments.length ) {
                 return this._depthIndexValue
             }
             // Setter
             else {
 
-                value.mustBeOfType('Number')
+                value.mustBeOfType( 'Number' )
 
                 this._depthIndexValue = value
 
@@ -3213,36 +3253,37 @@
         }
 
 
-        getEquivalentCategoryObjectInLeftPanel(chartId, categoryId ){
+        getEquivalentCategoryObjectInLeftPanel( chartId, categoryId ) {
 
             let equivalentObjectOnLeftPanel
 
             // In case of panelZero
-            if (!this.has.parentPanel){
+            if( !this.has.parentPanel ) {
                 equivalentObjectOnLeftPanel = null
             }
 
             // In case of singleton
-            if (this.has.parentPanel){
+            if( this.has.parentPanel ) {
 
-                const parentPanelHasTheSameChart = !!this.parentPanel.objects(chartId)
-                const parentPanelHasTheSameChartAndCategory = parentPanelHasTheSameChart && !!this.parentPanel.objects(chartId).objects(categoryId)
+                const parentPanelHasTheSameChart = !!this.parentPanel.objects( chartId )
+                const parentPanelHasTheSameChartAndCategory = parentPanelHasTheSameChart && !!this.parentPanel.objects( chartId ).objects( categoryId )
 
                 equivalentObjectOnLeftPanel = parentPanelHasTheSameChartAndCategory
-                    ? this.parentPanel.objects(chartId).objects(categoryId)
+                    ? this.parentPanel.objects( chartId ).objects( categoryId )
                     : null  // if no matching chart and category is found in parentPanel
             }
 
 
             // In case of siblings
-            if (this.has.beenAddedAsSibling && this.has.parentPanel){
-                // Note: The first siblings in a panel are NOT added as a sibling. So if this method is ran on a first sibling, then the parent of the first sibling will be queried.
+            if( this.has.beenAddedAsSibling && this.has.parentPanel ) {
+                // Note: The first siblings in a panel are NOT added as a sibling. So if this method is ran on a first
+                // sibling, then the parent of the first sibling will be queried.
 
-                const panelOnLeftHasTheSameChart = !!this.has.leftSiblingObject.objects(chartId)
-                const panelOnLeftHasTheSameChartAndCategory = panelOnLeftHasTheSameChart && !!this.has.leftSiblingObject.objects(chartId).objects(categoryId)
+                const panelOnLeftHasTheSameChart = !!this.has.leftSiblingObject.objects( chartId )
+                const panelOnLeftHasTheSameChartAndCategory = panelOnLeftHasTheSameChart && !!this.has.leftSiblingObject.objects( chartId ).objects( categoryId )
 
                 equivalentObjectOnLeftPanel = panelOnLeftHasTheSameChartAndCategory
-                    ? this.has.leftSiblingObject.objects(chartId).objects(categoryId)
+                    ? this.has.leftSiblingObject.objects( chartId ).objects( categoryId )
                     : null  // if no matching chart and category is found in panel on the left
             }
 
@@ -3256,18 +3297,19 @@
 
 
 
+
     /**
      * NOTE: For this class to be instantiated, there must be <b>at least</b> a SVG element existing in DOM.
      * This is true even if the class is initiated with default parameters.
      */
     class Chart extends container.Group {
 
-        constructor(parentContainerSelection) {
+        constructor( parentContainerSelection ) {
 
             // Superclass init //
-            super(parentContainerSelection)  // Creates a container that is a child of parent container
+            super( parentContainerSelection )  // Creates a container that is a child of parent container
 
-            super.class('chart')
+            super.class( 'chart' )
                 .update()
 
 
@@ -3295,13 +3337,15 @@
                 width: null,
                 leftEdgeXCoordinate: null
             }
-            // category label objects are part of navigator.Category class, and not included at this level of the navigator hierarchy
+            // category label objects are part of navigator.Category class, and not included at this level of the
+            // navigator hierarchy
 
             this._x = 25
             this._y = 25
             this._height = 300
             this._width = 100
-            this._colorScheme = 'Greys'  // TODO: Should be replaced with dynamic statement (e.g., this.colorScheme('Greys'))
+            this._colorScheme = 'Greys'  // TODO: Should be replaced with dynamic statement (e.g.,
+                                         // this.colorScheme('Greys'))
             this._colorScale = null  // Dynamically populated by .colorScheme()
             this._showAbsoluteValues = false
             this._stroke = 'rgba(255, 255, 255, 1.0)'
@@ -3312,7 +3356,8 @@
 
             // Range
             this._rangeStack = null
-            this._rangeStart = this._y + this._height  // bottom edge of chart; always has greater value than rangeEnd (e.g., 400)
+            this._rangeStart = this._y + this._height  // bottom edge of chart; always has greater value than rangeEnd
+                                                       // (e.g., 400)
             this._rangeEnd = this._y                   // top edge of chart (e.g., 0)
 
             // Domain
@@ -3352,24 +3397,24 @@
 
             // LOOP //
             this._rangeStack.data().forEach(
-                (eachCategoryData, eachCategoryId) => {
+                ( eachCategoryData, eachCategoryId ) => {
 
                     // Instantiate a Category object for each category in Stack
-                    const categoryObject = new Category(this)
+                    const categoryObject = new Category( this )
 
                     // Add the created objects to container registry
-                    this.objects(eachCategoryId, categoryObject)
+                    this.objects( eachCategoryId, categoryObject )
                 }
             )
         }
 
 
-        update(transitionDuration){
+        update( transitionDuration ) {
 
-            this._updateChartLabel(transitionDuration)
+            this._updateChartLabel( transitionDuration )
             this._adjustPropertiesOfCategoryObjects()
 
-            super.update(transitionDuration)
+            super.update( transitionDuration )
             return this
 
         }
@@ -3380,7 +3425,7 @@
          * @param value
          * @return {Chart|*|Map<any, any>|Map}
          */
-        stack(value) {
+        stack( value ) {
 
             // Establish conditions for parameter
             const parameterIsNull = !arguments.length
@@ -3389,19 +3434,19 @@
 
 
             // Get data
-            if (parameterIsNull) {
+            if( parameterIsNull ) {
                 return this._domainStack
             }
 
 
             // Query data
-            if (parameterIsString) {
-                return this._domainStack.data(value)
+            if( parameterIsString ) {
+                return this._domainStack.data( value )
             }
 
 
             // Set new data
-            if (parameterIsObject) {
+            if( parameterIsObject ) {
 
                 this._domainStack = value  // value is a Stack object in this case
 
@@ -3413,6 +3458,7 @@
             }
 
         }
+
 
         _updateData() {
 
@@ -3449,12 +3495,12 @@
 
             // Update scale function
             this._scaleFunction
-                .domain([this._domainMin, this._domainMax])
-                .rangeRound([this._rangeStart, this._rangeEnd])
+                .domain( [ this._domainMin, this._domainMax ] )
+                .rangeRound( [ this._rangeStart, this._rangeEnd ] )
 
             // Update range stack
             this._rangeStack = this._domainStack.copy()
-            this._rangeStack.scale(this._scaleFunction)
+            this._rangeStack.scale( this._scaleFunction )
 
             return this
         }
@@ -3462,7 +3508,8 @@
 
         _replaceOldCategoriesWithNewOnes() {
 
-            // TODO: This can be achieved more gracefully by using Group.removeLast(), etc. The current method simply removes the old categories and creates new ones without transitions.
+            // TODO: This can be achieved more gracefully by using Group.removeLast(), etc. The current method simply
+            // removes the old categories and creates new ones without transitions.
 
             // Remove old category objects in chart
             this.removeAll()
@@ -3476,58 +3523,56 @@
 
             // LOOP //
             this.objects().forEach(
-                (eachCategoryObject, eachCategoryId) => {
+                ( eachCategoryObject, eachCategoryId ) => {
 
-                    const start = this._rangeStack.data(eachCategoryId).get('start')
-                    const end = this._rangeStack.data(eachCategoryId).get('end')
-                    const percentage = this._rangeStack.data(eachCategoryId).get('percentage')
-                    const count = this._rangeStack.data(eachCategoryId).get('count')
-                        ? this._rangeStack.data(eachCategoryId).get('count')
+                    const start = this._rangeStack.data( eachCategoryId ).get( 'start' )
+                    const end = this._rangeStack.data( eachCategoryId ).get( 'end' )
+                    const percentage = this._rangeStack.data( eachCategoryId ).get( 'percentage' )
+                    const count = this._rangeStack.data( eachCategoryId ).get( 'count' )
+                        ? this._rangeStack.data( eachCategoryId ).get( 'count' )
                         : 'N/A'
 
                     eachCategoryObject
-                        .x(this._x)
-                        .y(end)
-                        .height(start - end)
-                        .width(this._width)
-                        .stroke(this._stroke)
-                        .strokeWidth(this._strokeWidth)
-                        .id(eachCategoryId)
+                        .x( this._x )
+                        .y( end )
+                        .height( start - end )
+                        .width( this._width )
+                        .stroke( this._stroke )
+                        .strokeWidth( this._strokeWidth )
+                        .id( eachCategoryId )
 
-                    if ( this._showAbsoluteValues ) {
-                        eachCategoryObject.text(count)
+                    if( this._showAbsoluteValues ) {
+                        eachCategoryObject.text( count )
                     }
-                    if ( !this._showAbsoluteValues ) {
-                        eachCategoryObject.percentage(percentage)
+                    if( !this._showAbsoluteValues ) {
+                        eachCategoryObject.percentage( percentage )
                     }
 
                 }
-
-
             )
 
         }
 
 
-        chartLabel(value) {
+        chartLabel( value ) {
 
             // Establish conditions
             const querying = !arguments.length
-            const settingNewLabel = ( arguments.length && value.hasType('String') )
-            const togglingOn = ( arguments.length && value.hasType('Boolean') && value === true )
-            const togglingOff = ( arguments.length && value.hasType('Boolean') && value === false )
+            const settingNewLabel = ( arguments.length && value.hasType( 'String' ) )
+            const togglingOn = ( arguments.length && value.hasType( 'Boolean' ) && value === true )
+            const togglingOff = ( arguments.length && value.hasType( 'Boolean' ) && value === false )
 
 
             // Getter
-            if (querying) {
+            if( querying ) {
                 return this._chartLabel.text
             }
 
             // Setter: Set label
-            if (settingNewLabel)  {// TODO: Must play well with category labels. (Ensure they are on, etc.)
+            if( settingNewLabel ) {// TODO: Must play well with category labels. (Ensure they are on, etc.)
 
                 // Transform case and convert characters such as `-` and `.` to spaces
-                const uppercaseAndSpaceSeparatedValue = _.upperCase(value)
+                const uppercaseAndSpaceSeparatedValue = _.upperCase( value )
 
                 this._chartLabel.text = uppercaseAndSpaceSeparatedValue
 
@@ -3537,11 +3582,11 @@
 
 
             // Setter: Toggle on
-            if (togglingOn) {
+            if( togglingOn ) {
 
-                this._chartLabel.text.mustBeOfType(String)
+                this._chartLabel.text.mustBeOfType( String )
 
-                if (!this._chartLabelObject) {
+                if( !this._chartLabelObject ) {
                     this._chartLabelObject = new shape.Text( this.select() )
                 }
 
@@ -3550,9 +3595,9 @@
             }
 
             // Setter: Toggle off and remove label
-            if (togglingOff) {
+            if( togglingOff ) {
 
-                if (this._chartLabelObject){
+                if( this._chartLabelObject ) {
                     this._chartLabelObject.remove()
                     this._chartLabelObject = null
                 }
@@ -3565,24 +3610,23 @@
 
 
 
+        _updateChartLabel( transitionDuration ) {
 
-        _updateChartLabel(transitionDuration) {
-
-            if (this._chartLabelObject) {
+            if( this._chartLabelObject ) {
 
                 this._adjustChartLabelPosition()
 
                 this._chartLabelObject
-                    .text(this._chartLabel.text)
-                    .fontSize(this._chartLabel.fontSize)
-                    .x(this._chartLabel.x)
-                    .y(this._chartLabel.y)
-                    .fill(this._chartLabel.fill)
-                    .class('chart-label')
-                    .textAnchor('middle')
-                    .dominantBaseline('auto')
-                    .rotate(270)
-                    .update(transitionDuration)
+                    .text( this._chartLabel.text )
+                    .fontSize( this._chartLabel.fontSize )
+                    .x( this._chartLabel.x )
+                    .y( this._chartLabel.y )
+                    .fill( this._chartLabel.fill )
+                    .class( 'chart-label' )
+                    .textAnchor( 'middle' )
+                    .dominantBaseline( 'auto' )
+                    .rotate( 270 )
+                    .update( transitionDuration )
 
             }
         }
@@ -3594,23 +3638,23 @@
             this._adjustCategoryLabelsAndPropertiesOfCategoryLabelsArea()
 
             // Update chart label position
-            const {x, y} = this._calculateChartLabelPosition()
+            const { x, y } = this._calculateChartLabelPosition()
             this._chartLabel.x = x
             this._chartLabel.y = y
 
         }
 
 
-        chartLabelPaddingRight(value){
+        chartLabelPaddingRight( value ) {
 
             // Getter
-            if (!arguments.length){
+            if( !arguments.length ) {
                 return this._chartLabel.paddingRight
             }
             // Setter
             else {
 
-                value.mustBeOfType('Number')
+                value.mustBeOfType( 'Number' )
 
                 this._chartLabel.paddingRight = value
 
@@ -3625,32 +3669,33 @@
          * @param value {boolean}
          * @return {Chart|[]}
          */
-        categoryLabels(value) {
+        categoryLabels( value ) {
 
             // Establish conditions
-            const gettingCurrentLabels = (!arguments.length)
+            const gettingCurrentLabels = ( !arguments.length )
             const togglingOn = ( value === true )
             const togglingOff = ( value === false )
 
 
             // Getter (calculates)
-            if (gettingCurrentLabels) {
+            if( gettingCurrentLabels ) {
 
                 const categoryLabels = []
 
-                this.objects().forEach( (categoryObject, categoryName) => {
+                this.objects().forEach( ( categoryObject, categoryName ) => {
                     const categoryLabel = categoryObject.label()
-                    categoryLabels.push(categoryLabel)
-                })
+                    categoryLabels.push( categoryLabel )
+                } )
 
                 return categoryLabels
             }
 
 
             // Setter: Toggle on from off state
-            if (togglingOn){
+            if( togglingOn ) {
 
-                // Register status and update the properties of the CATEGORY labels area (necessary for positioning CHART label)
+                // Register status and update the properties of the CATEGORY labels area (necessary for positioning
+                // CHART label)
                 this._categoryLabelsArea.isVisible = true
                 this._adjustCategoryLabelsAndPropertiesOfCategoryLabelsArea()
 
@@ -3659,7 +3704,7 @@
 
 
             // Setter: Toggle off
-            if (togglingOff) {
+            if( togglingOff ) {
 
                 // Register status and update related variables
                 this._categoryLabelsArea.isVisible = false
@@ -3674,16 +3719,16 @@
         _adjustCategoryLabelsAndPropertiesOfCategoryLabelsArea() {
 
             // If category labels area has been turned off
-            if( !this._categoryLabelsArea.isVisible ){
+            if( !this._categoryLabelsArea.isVisible ) {
 
-                this.objects().forEach( (categoryObject, categoryName) => {
+                this.objects().forEach( ( categoryObject, categoryName ) => {
 
                     // If any category has a label, turn it off
-                    if (categoryObject.label()) {
+                    if( categoryObject.label() ) {
                         categoryObject
-                            .label(false)
+                            .label( false )
                     }
-                })
+                } )
 
                 // Clear variables related to category labels area
                 this._categoryLabelsArea.width = null
@@ -3693,45 +3738,50 @@
 
 
             // If category labels area is on, make sure that labels are toggled on
-            if( this._categoryLabelsArea.isVisible ){
+            if( this._categoryLabelsArea.isVisible ) {
 
-                this.objects().forEach( (categoryObject, categoryName) => {
+                this.objects().forEach( ( categoryObject, categoryName ) => {
 
                     // If any category object does not have a label, turn it on
-                    if (!categoryObject.label()){
+                    if( !categoryObject.label() ) {
                         categoryObject
-                            .label(categoryName)
+                            .label( categoryName )
                     }
 
-                })
+                } )
 
                 // Measure values of the category labels area and record them to relevant instance variables
                 const widestCategoryLabelWidth = this._getWidestCategoryLabelWidth()
 
-                // Get the category label object that has the largest width, and register its properties as instance properties
-                this.objects().forEach( (categoryObject, categoryName) => {
+                // Get the category label object that has the largest width, and register its properties as instance
+                // properties
+                this.objects().forEach( ( categoryObject, categoryName ) => {
 
-                    const categoryLabelObject = categoryObject.objects('label')
+                    const categoryLabelObject = categoryObject.objects( 'label' )
                     const categoryLabelWidth = categoryLabelObject.width()
 
-                    if ( categoryLabelWidth === widestCategoryLabelWidth ){
+                    if( categoryLabelWidth === widestCategoryLabelWidth ) {
 
-                        const firstWidestCategoryLabelObject = categoryLabelObject   // 'first' because there can multiple labels that has the same length. We need only one.
+                        const firstWidestCategoryLabelObject = categoryLabelObject   // 'first' because there can
+                                                                                     // multiple labels that has the
+                                                                                     // same length. We need only one.
 
                         this._categoryLabelsArea.width = firstWidestCategoryLabelObject.width()
                         this._categoryLabelsArea.leftEdgeXCoordinate = firstWidestCategoryLabelObject.x() - firstWidestCategoryLabelObject.width()  // because text is right-anchored, .x() would return the coordinate of the right edge
 
-                        // WARNING: y coordinate of the object should not be requested, as it can be unstable if there are
-                        // more than one 'widest' object (e.g., two label objects with the width of 50px). In such cases,
-                        // both objects would have the same width and x coordinate, but not the same y coordinate.
+                        // WARNING: y coordinate of the object should not be requested, as it can be unstable if there
+                        // are more than one 'widest' object (e.g., two label objects with the width of 50px). In such
+                        // cases, both objects would have the same width and x coordinate, but not the same y
+                        // coordinate.
 
                     }
-                })
+                } )
             }
 
             return this
 
         }
+
 
         /**
          *
@@ -3749,11 +3799,11 @@
             const y = this.y() + this.height() / 2
             let x
 
-            if (chartLabelOnly) {
+            if( chartLabelOnly ) {
                 x = this.x() - padding
             }
 
-            if ( chartLabelTogetherWithCategoryLabels ) {
+            if( chartLabelTogetherWithCategoryLabels ) {
 
                 const leftEdgeOfChartLabelsArea = this._categoryLabelsArea.leftEdgeXCoordinate
 
@@ -3761,7 +3811,7 @@
             }
 
 
-            return {x, y}
+            return { x, y }
         }
 
 
@@ -3770,21 +3820,21 @@
             // Don't continue if category labels are not toggled on
             this._categoryLabelsArea.isVisible.mustBe(
                 true,
-                `Cannot measure the widths of the category labels because the category labels are NOT toggled on.`)
+                `Cannot measure the widths of the category labels because the category labels are NOT toggled on.` )
 
             // Get width of every category label
             const categoryWidths = []
-            this.objects().forEach( (categoryObject, categoryName) => {
+            this.objects().forEach( ( categoryObject, categoryName ) => {
 
-                const categoryLabelObject = categoryObject.objects('label')
+                const categoryLabelObject = categoryObject.objects( 'label' )
                 const categoryLabelWidth = categoryLabelObject.width()
 
-                categoryWidths.push(categoryLabelWidth)
+                categoryWidths.push( categoryLabelWidth )
 
-            })
+            } )
 
             // Get the largest category label width
-            const widestCategoryLabelWidth = Math.max(...categoryWidths)
+            const widestCategoryLabelWidth = Math.max( ...categoryWidths )
             return widestCategoryLabelWidth
 
         }
@@ -3802,63 +3852,65 @@
          * @example <caption>If the user enters order of items in the wrong order the method correct this instead of
          *     raising an error. </caption> myChart.range([0,400])
          */
-        range(value) {
+        range( value ) {
 
-            if (!arguments.length) {
-                return [this._rangeStart, this._rangeEnd]
-            } else {
+            if( !arguments.length ) {
+                return [ this._rangeStart, this._rangeEnd ]
+            }
+            else {
 
-                // If necessary, reverse the coordinates so that the start is always at the bottom of the graph (i.e., start is greater than the end in the y coordinate). If the user specified the range in reverse (e.g., [0,400] instead of [400,0]), this corrects the issue.
-                if (value[0] < value[1]) {
-                    _.reverse(value)
+                // If necessary, reverse the coordinates so that the start is always at the bottom of the graph (i.e.,
+                // start is greater than the end in the y coordinate). If the user specified the range in reverse
+                // (e.g., [0,400] instead of [400,0]), this corrects the issue.
+                if( value[ 0 ] < value[ 1 ] ) {
+                    _.reverse( value )
                 }
 
                 // Set new range properties for the instance
-                let [start, end] = value
+                let [ start, end ] = value
 
                 // Update instance variables for range
                 this._rangeStart = start
                 this._rangeEnd = end
 
                 // Update chart y coordinate (top left edge)
-                if (this._rangeEnd !== this._y) {
-                    this.y(this._rangeEnd)
+                if( this._rangeEnd !== this._y ) {
+                    this.y( this._rangeEnd )
                 }
 
                 // Update chart height
                 const newChartHeight = this._rangeStart - this._rangeEnd  // e.g., 400-0
-                if (newChartHeight !== this.height()) {  // if height is not already updated to this new value by another method before...
-                    // WARNING: This if statement prevents .height() and .range() methods from calling each other infinitely
-                    // What this if statement effectively means is:
-                    // - If this._height is already the same with the calculated value, this means that the .range() is
-                    //      being called by another function that has already updated the height of the chart.
-                    //      If this is the case, then don't do anything.
-                    // - If this._height is not already the same with the calculated value, then .range() is not being
-                    //      called by a method that has already dealt with the height value (e.g., height()).
-                    //      In this case, call height() to update the chart height. (The height() would also call back .range()
-                    //      but this would not lead to an infinite call stack, because this if block would prevent the second
-                    //      chart height update attempt).
-                    this.height(newChartHeight)
+                if( newChartHeight !== this.height() ) {  // if height is not already updated to this new value by another method before...
+                    // WARNING: This if statement prevents .height() and .range() methods from calling each other
+                    // infinitely What this if statement effectively means is: - If this._height is already the same
+                    // with the calculated value, this means that the .range() is being called by another function that
+                    // has already updated the height of the chart. If this is the case, then don't do anything. - If
+                    // this._height is not already the same with the calculated value, then .range() is not being
+                    // called by a method that has already dealt with the height value (e.g., height()). In this case,
+                    // call height() to update the chart height. (The height() would also call back .range() but this
+                    // would not lead to an infinite call stack, because this if block would prevent the second chart
+                    // height update attempt).
+                    this.height( newChartHeight )
                 }
 
                 // Update scale function
-                this._scaleFunction.rangeRound([this._rangeStart, this._rangeEnd])
+                this._scaleFunction.rangeRound( [ this._rangeStart, this._rangeEnd ] )
 
                 // Rescale stack data
                 this._rangeStack = this._domainStack.copy()
-                this._rangeStack.scale(this._scaleFunction)
+                this._rangeStack.scale( this._scaleFunction )
 
                 // Update width and y coordinates of each category
                 // LOOP //
                 this.objects().forEach(
-                    (eachCategoryObject, eachCategoryId) => {
+                    ( eachCategoryObject, eachCategoryId ) => {
 
-                        const newStart = this._rangeStack.data().get(eachCategoryId).get('start')
-                            , newEnd = this._rangeStack.data().get(eachCategoryId).get('end')
+                        const newStart = this._rangeStack.data().get( eachCategoryId ).get( 'start' )
+                            , newEnd = this._rangeStack.data().get( eachCategoryId ).get( 'end' )
 
                         eachCategoryObject
-                            .y(newEnd)
-                            .height(newStart - newEnd)
+                            .y( newEnd )
+                            .height( newStart - newEnd )
                     }
                 )
 
@@ -3868,27 +3920,28 @@
         }
 
 
-        y(value) {
+        y( value ) {
 
-            if (!arguments.length) {
+            if( !arguments.length ) {
                 return this._y
-            } else {
+            }
+            else {
 
                 this._y = value
 
-                // Height is calculated on the spot here instead of using this._height, in order to prevent dependency to this._height.
-                // Such a dependency is problematic, because range method modifies both y and height by calling related setter methods
-                // (which, in turn, also calls range()). The issue is the this._y or this._height may not have been updated by their
-                // setter methods at the time the y() method needs the new values.
-                // Because this._rangeStart and this._rangeEnd are updated with new values the first thing
-                // when the range() is called, referring to this._rangeStart and this._rangeEnd variables is used as the standard method
-                // to calculate height and y throughout this class.
+                // Height is calculated on the spot here instead of using this._height, in order to prevent dependency
+                // to this._height. Such a dependency is problematic, because range method modifies both y and height
+                // by calling related setter methods (which, in turn, also calls range()). The issue is the this._y or
+                // this._height may not have been updated by their setter methods at the time the y() method needs the
+                // new values. Because this._rangeStart and this._rangeEnd are updated with new values the first thing
+                // when the range() is called, referring to this._rangeStart and this._rangeEnd variables is used as
+                // the standard method to calculate height and y throughout this class.
                 const currentChartHeight = this._rangeStart - this._rangeEnd  // e.g., 400-0
 
                 const newRangeStart = this._y + currentChartHeight
                 const newRangeEnd = this._y
 
-                this.range([newRangeStart, newRangeEnd])
+                this.range( [ newRangeStart, newRangeEnd ] )
 
                 return this
             }
@@ -3896,19 +3949,21 @@
         }
 
 
-        height(value) {
+        height( value ) {
 
-            if (!arguments.length) {
+            if( !arguments.length ) {
                 return this._height
-            } else {
+            }
+            else {
 
                 this._height = value
 
                 // Add height on it to calculate the new end point
                 const currentRangeEnd = this._rangeEnd  // e.g., 0, which is the coordinate of left upper corner of the chart
-                    , newRangeStart = currentRangeEnd + this._height  // e.g., rangeEnd+height=rangeStart could be equivalent to 0+400=400
+                    , newRangeStart = currentRangeEnd + this._height  // e.g., rangeEnd+height=rangeStart could be
+                                                                      // equivalent to 0+400=400
 
-                this.range([newRangeStart, currentRangeEnd])
+                this.range( [ newRangeStart, currentRangeEnd ] )
 
                 return this
             }
@@ -3919,10 +3974,10 @@
         /**
          * @param value: A D3 color scheme name. A list can be found at 'https://observablehq.com/@d3/color-schemes'.
          */
-        colorScheme(value) {
+        colorScheme( value ) {
 
             // Getter
-            if (!arguments.length) {
+            if( !arguments.length ) {
                 return this._colorScheme
             }
             // Setter
@@ -3932,20 +3987,25 @@
                 this._colorScheme = value
 
                 // Generate color scale
-                const interpolatorArgumentString = color.convertColorSchemeNameToD3InterpolatorArgument(value)
+                const interpolatorArgumentString = color.convertColorSchemeNameToD3InterpolatorArgument( value )
                 const numberOfCategoriesInChart = this.objects().size
 
                 this._colorScale = d3.scaleSequential()
-                    .domain([-1, numberOfCategoriesInChart + 1])  // this domain is two items larger than the number of categories in chart, because '-1'th shade (very bright) and noOfCategories+1'th shade (very dark) will be ignored.
-                    .interpolator(eval(interpolatorArgumentString))
+                    .domain( [ -1, numberOfCategoriesInChart + 1 ] )  // this domain is two items larger than the
+                                                                      // number of categories in chart, because '-1'th
+                                                                      // shade (very bright) and noOfCategories+1'th
+                                                                      // shade (very dark) will be ignored.
+                    .interpolator( eval( interpolatorArgumentString ) )
 
 
                 // Color the categories
                 let i = 0
-                this.objects().forEach(category => {
-                    category.fill(this._colorScale(numberOfCategoriesInChart - i))  // reversed indexing, so that darker colors appear at bottom of the charts
+                this.objects().forEach( category => {
+                    category.fill( this._colorScale( numberOfCategoriesInChart - i ) )  // reversed indexing, so that
+                                                                                        // darker colors appear at
+                                                                                        // bottom of the charts
                     i++
-                })
+                } )
 
                 return this
             }
@@ -3961,42 +4021,42 @@
 
             const fillColors = []
 
-            this.objects().forEach(category => {
+            this.objects().forEach( category => {
 
-                const rectangle = category.objects('rectangle')
+                const rectangle = category.objects( 'rectangle' )
                 const rectangleD3Selection = rectangle.select()
-                const rectangleElement = rectangleD3Selection.nodes()[0]
+                const rectangleElement = rectangleD3Selection.nodes()[ 0 ]
 
-                const rectangleFill = rectangleElement.getAttribute('fill')
+                const rectangleFill = rectangleElement.getAttribute( 'fill' )
 
-                fillColors.push(rectangleFill)
-            })
+                fillColors.push( rectangleFill )
+            } )
 
             return fillColors
         }
 
 
-        showAbsoluteValues(value) {
+        showAbsoluteValues( value ) {
 
-             // Getter
-             if (!arguments.length){
-                 return this._showAbsoluteValues
-             }
+            // Getter
+            if( !arguments.length ) {
+                return this._showAbsoluteValues
+            }
 
-             // Setter
-             else{
+            // Setter
+            else {
 
-                 value.mustBeOfType('Boolean')
-                 this._showAbsoluteValues = value
+                value.mustBeOfType( 'Boolean' )
+                this._showAbsoluteValues = value
 
-                 return this
-             }
+                return this
+            }
 
         }
 
 
-        stroke(value){
-            if (!arguments.length) {
+        stroke( value ) {
+            if( !arguments.length ) {
                 return this._stroke
             }
             else {
@@ -4005,8 +4065,9 @@
             }
         }
 
-        strokeWidth(value){
-            if (!arguments.length) {
+
+        strokeWidth( value ) {
+            if( !arguments.length ) {
                 return this._strokeWidth
             }
             else {
@@ -4015,12 +4076,15 @@
             }
         }
 
-        totalCount(){
+
+        totalCount() {
 
             return this.stack().totalCount()
 
         }
     }
+
+
 
 
     /**
@@ -4030,38 +4094,39 @@
     class Category extends shape.CaptionedRectangle {
 
 
-        constructor(parentContainerSelectionOrObject = d3.select('body').select('svg')) {
+        constructor( parentContainerSelectionOrObject = d3.select( 'body' ).select( 'svg' ) ) {
 
-            super(parentContainerSelectionOrObject)
+            super( parentContainerSelectionOrObject )
 
             // Private Parameters //
             this._percentage = 10
-            this.percentage(this._percentage)  // format and set percentageText object's inner text
+            this.percentage( this._percentage )  // format and set percentageText object's inner text
 
             this._label = null
             this._labelDistance = 20
             this._labelFill = 'gray'
 
-            this.class('category')
+            this.class( 'category' )
                 .update()
 
         }
 
-        x(value) {
+
+        x( value ) {
 
             // Getter
-            if (!arguments.length) {
+            if( !arguments.length ) {
                 return super.x()
             }
             // Setter
             else {
 
-                super.x(value)
+                super.x( value )
 
                 // Update label position too, if a label exists
-                if (this.objects('label')) {
+                if( this.objects( 'label' ) ) {
                     const newXCoordinateOfLabel = this._calculateXCoordinateOfLabel()
-                    this.objects('label').x(newXCoordinateOfLabel)
+                    this.objects( 'label' ).x( newXCoordinateOfLabel )
                 }
 
                 return this
@@ -4069,22 +4134,22 @@
         }
 
 
-        y(value) {
+        y( value ) {
 
             // Getter
-            if (!arguments.length) {
+            if( !arguments.length ) {
                 return super.y()
             }
             // Setter
             else {
 
-                super.y(value)
+                super.y( value )
 
-                const percentageObject = this.objects('text')
+                const percentageObject = this.objects( 'text' )
 
                 // Update label position too, if a label exists
-                if (this.objects('label')) {
-                    this.objects('label').y(percentageObject.y())  // mirrors the y coord. of percentage
+                if( this.objects( 'label' ) ) {
+                    this.objects( 'label' ).y( percentageObject.y() )  // mirrors the y coord. of percentage
                 }
 
                 return this
@@ -4092,22 +4157,22 @@
         }
 
 
-        height(value) {
+        height( value ) {
 
             // Getter
-            if (!arguments.length) {
+            if( !arguments.length ) {
                 return super.height()
             }
             // Setter
             else {
 
-                super.height(value)
+                super.height( value )
 
-                const percentageObject = this.objects('text')
+                const percentageObject = this.objects( 'text' )
 
                 // Update label position, if a label exists
-                if (this.objects('label')) {
-                    this.objects('label').y(percentageObject.y())  // mirrors the y coord. of percentage
+                if( this.objects( 'label' ) ) {
+                    this.objects( 'label' ).y( percentageObject.y() )  // mirrors the y coord. of percentage
                 }
 
                 return this
@@ -4116,10 +4181,10 @@
         }
 
 
-        percentage(value) {
+        percentage( value ) {
 
             // Getter
-            if (!arguments.length) {
+            if( !arguments.length ) {
                 return this._percentage
             }
             // Setter
@@ -4127,30 +4192,30 @@
 
                 this._percentage = value
 
-                const formattedPercentageString = stringUtils.formatNumberAsPercentage(this._percentage)
-                this.text(formattedPercentageString)
+                const formattedPercentageString = stringUtils.formatNumberAsPercentage( this._percentage )
+                this.text( formattedPercentageString )
 
                 return this
             }
         }
 
 
-        text(value) {
+        text( value ) {
 
             // Getter
-            if (!arguments.length){
+            if( !arguments.length ) {
                 return super.text()
             }
             // Setter
-            else{
-                super.text(value)
+            else {
+                super.text( value )
                 return this
             }
 
         }
 
 
-        label(value) {
+        label( value ) {
 
             // Determine what type of argument is given (if given)
             let valueType = arguments.length
@@ -4158,19 +4223,19 @@
                 : null
 
             // Getter
-            if (valueType === null) {
+            if( valueType === null ) {
                 return this._label
             }
 
             // Setter
-            if (valueType === 'String') {
+            if( valueType === 'String' ) {
                 this._label = value
                 this._createLabel()
                 return this
             }
 
             // Toggle off
-            if (valueType === 'Boolean' && value === false) {
+            if( valueType === 'Boolean' && value === false ) {
                 this._deleteLabel()
                 return this
 
@@ -4182,8 +4247,8 @@
 
         _createLabel() {
 
-            const labelObject = new shape.Text(this.select())
-            this.objects().set('label', labelObject)
+            const labelObject = new shape.Text( this.select() )
+            this.objects().set( 'label', labelObject )
 
             this._updateLabel()
 
@@ -4193,19 +4258,19 @@
 
         _updateLabel() {
 
-            const labelObject = this.objects('label')
-            const percentageObject = this.objects('text')
+            const labelObject = this.objects( 'label' )
+            const percentageObject = this.objects( 'text' )
 
             const xCoordinateOfLabel = this._calculateXCoordinateOfLabel()
 
             labelObject
-                .text(this.label())
-                .class('category-label')
-                .y(percentageObject.y())
-                .x(xCoordinateOfLabel)
-                .fill(this._labelFill)
-                .textAnchor('end')
-                .dominantBaseline(percentageObject.dominantBaseline())
+                .text( this.label() )
+                .class( 'category-label' )
+                .y( percentageObject.y() )
+                .x( xCoordinateOfLabel )
+                .fill( this._labelFill )
+                .textAnchor( 'end' )
+                .dominantBaseline( percentageObject.dominantBaseline() )
 
         }
 
@@ -4217,38 +4282,39 @@
 
         _deleteLabel() {
             this._label = null
-            this.objects('label').remove()
-            this.objects().delete('label')
+            this.objects( 'label' ).remove()
+            this.objects().delete( 'label' )
         }
 
 
-        labelDistance(value) {
+        labelDistance( value ) {
 
             // Getter
-            if (!arguments.length) {
+            if( !arguments.length ) {
                 return this._labelDistance
             }
             // Setter
             else {
                 this._labelDistance = value
                 const newXCoordinateOfLabel = this._calculateXCoordinateOfLabel()
-                this.objects('label').x(newXCoordinateOfLabel)
+                this.objects( 'label' ).x( newXCoordinateOfLabel )
                 return this
             }
 
         }
 
-        labelFill(value) {
+
+        labelFill( value ) {
 
             // Getter
-            if (!arguments.length) {
+            if( !arguments.length ) {
                 return this._labelFill
             }
             // Setter
             else {
 
                 this._labelFill = value
-                this.objects('label').fill(value)
+                this.objects( 'label' ).fill( value )
 
                 return this
             }
@@ -4257,59 +4323,62 @@
     }
 
 
+
+
     const color = {
 
         schemeSets: new Map()
-            .set('Titanic', ['Purples', 'Inferno', 'PuBuGn', 'Oranges', 'Greys', 'Blues'])
-            .set('Titanic-2', ['Greys', 'Purples', 'Plasma', 'PuBu', 'Greens', 'Reds'])
-            .set('Embark', ['Greys', 'Inferno', 'Purples', 'PuBu', 'Greens', 'Reds'])
-            .set('Single-Hue', ['Purples', 'Blues', 'Greens', 'Oranges', 'Greys', 'Reds'])
-            .set('Multi-Hue', ['RdPu', 'BuPu', 'PuBu', 'YlGn', 'OrRd', 'PuBuGn', 'PuRd', 'PuRd', 'BuGn', 'YlGnBu', 'YlOrBr', 'YlOrRd'])
-            .set('Blues', ['Blues'])
-            .set('Greens', ['Greens'])
-            .set('Greys', ['Greys'])
-            .set('Oranges', ['Oranges'])
-            .set('Purples', ['Purples'])
-            .set('Reds', ['Reds'])
-            .set('BuGn', ['BuGn'])
-            .set('BuPu', ['BuPu'])
-            .set('GnBu', ['GnBu'])
-            .set('OrRd', ['OrRd'])
-            .set('PuBuGn', ['PuBuGn'])
-            .set('PuBu', ['PuBu'])
-            .set('PuRd', ['PuRd'])
-            .set('RdPu', ['RdPu'])
-            .set('RdGy', ['RdGy'])
-            .set('YlGnBu', ['YlGnBu'])
-            .set('YlGn', ['YlGn'])
-            .set('YlOrBr', ['YlOrBr'])
-            .set('YlOrRd', ['YlOrRd'])
-            .set('Viridis', ['Viridis'])
-            .set('Inferno', ['Inferno'])
-            .set('Magma', ['Magma'])
-            .set('Warm', ['Warm'])
-            .set('Cool', ['Cool'])
-            .set('CubehelixDefault', ['CubehelixDefault'])
-            .set('Plasma', ['Plasma'])
-            .set('Rainbow', ['Rainbow'])
-            .set('Sinebow', ['Sinebow'])
-            .set('Spectral', ['Spectral'])
+            .set( 'Titanic', [ 'Purples', 'Inferno', 'PuBuGn', 'Oranges', 'Greys', 'Blues' ] )
+            .set( 'Titanic-2', [ 'Greys', 'Purples', 'Plasma', 'PuBu', 'Greens', 'Reds' ] )
+            .set( 'Embark', [ 'Greys', 'Inferno', 'Purples', 'PuBu', 'Greens', 'Reds' ] )
+            .set( 'Single-Hue', [ 'Purples', 'Blues', 'Greens', 'Oranges', 'Greys', 'Reds' ] )
+            .set( 'Multi-Hue', [ 'RdPu', 'BuPu', 'PuBu', 'YlGn', 'OrRd', 'PuBuGn', 'PuRd', 'PuRd', 'BuGn', 'YlGnBu', 'YlOrBr', 'YlOrRd' ] )
+            .set( 'Blues', [ 'Blues' ] )
+            .set( 'Greens', [ 'Greens' ] )
+            .set( 'Greys', [ 'Greys' ] )
+            .set( 'Oranges', [ 'Oranges' ] )
+            .set( 'Purples', [ 'Purples' ] )
+            .set( 'Reds', [ 'Reds' ] )
+            .set( 'BuGn', [ 'BuGn' ] )
+            .set( 'BuPu', [ 'BuPu' ] )
+            .set( 'GnBu', [ 'GnBu' ] )
+            .set( 'OrRd', [ 'OrRd' ] )
+            .set( 'PuBuGn', [ 'PuBuGn' ] )
+            .set( 'PuBu', [ 'PuBu' ] )
+            .set( 'PuRd', [ 'PuRd' ] )
+            .set( 'RdPu', [ 'RdPu' ] )
+            .set( 'RdGy', [ 'RdGy' ] )
+            .set( 'YlGnBu', [ 'YlGnBu' ] )
+            .set( 'YlGn', [ 'YlGn' ] )
+            .set( 'YlOrBr', [ 'YlOrBr' ] )
+            .set( 'YlOrRd', [ 'YlOrRd' ] )
+            .set( 'Viridis', [ 'Viridis' ] )
+            .set( 'Inferno', [ 'Inferno' ] )
+            .set( 'Magma', [ 'Magma' ] )
+            .set( 'Warm', [ 'Warm' ] )
+            .set( 'Cool', [ 'Cool' ] )
+            .set( 'CubehelixDefault', [ 'CubehelixDefault' ] )
+            .set( 'Plasma', [ 'Plasma' ] )
+            .set( 'Rainbow', [ 'Rainbow' ] )
+            .set( 'Sinebow', [ 'Sinebow' ] )
+            .set( 'Spectral', [ 'Spectral' ] )
 
 
-        , getChartSchemeBySchemeSetNameAndCircularIndex: function (schemeSet, i) {
+        , getChartSchemeBySchemeSetNameAndCircularIndex: function ( schemeSet, i ) {
 
-            schemeSet.mustBeAKeyIn(color.schemeSets)
+            schemeSet.mustBeAKeyIn( color.schemeSets )
 
-            const specifiedTheme = color.schemeSets.get(schemeSet)
+            const specifiedTheme = color.schemeSets.get( schemeSet )
             const numberOfSchemesInSpecifiedTheme = specifiedTheme.length
 
-            const rotatingIndex = i % numberOfSchemesInSpecifiedTheme  // ensures that i is never out of range (so that i rotates if out range).
+            const rotatingIndex = i % numberOfSchemesInSpecifiedTheme  // ensures that i is never out of range (so that
+                                                                       // i rotates if out range).
 
-            return specifiedTheme[rotatingIndex]
+            return specifiedTheme[ rotatingIndex ]
         },
 
 
-        convertColorSchemeNameToD3InterpolatorArgument: function(value){
+        convertColorSchemeNameToD3InterpolatorArgument: function ( value ) {
 
             return `d3.interpolate${value}`
 
@@ -4321,17 +4390,17 @@
 //// UMD FOOT ////////////////////////////////////////////////////////////////////////
 
     //// MODULE.EXPORTS ////
-    exports.version = version;
-    exports.Navigator = Navigator;
-    exports.Panel = Panel;
-    exports.NestedPanel = NestedPanel;
-    exports.Chart = Chart;
-    exports.Category = Category;
-    exports.color = color;
+    exports.version = version
+    exports.Navigator = Navigator
+    exports.Panel = Panel
+    exports.NestedPanel = NestedPanel
+    exports.Chart = Chart
+    exports.Category = Category
+    exports.color = color
 
 
-    Object.defineProperty(exports, '__esModule', {value: true});
+    Object.defineProperty( exports, '__esModule', { value: true } )
 
-})));
+} ) ) )
 //////////////////////////////////////////////////////////////////////////////////////
 

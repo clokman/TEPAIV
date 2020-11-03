@@ -1,10 +1,9 @@
-
 // Import navigator
-const navigator = require("../../CPC/libraries/cpc/navigator")
+const navigator = require( '../../CPC/libraries/cpc/navigator' )
 
 //// TESTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-test ('Event delegation with D3 selectAll (listen all, filter later)', async () => {
+test( 'Event delegation with D3 selectAll (listen all, filter later)', async () => {
 
     // Clear JEST's DOM to prevent leftovers from previous tests
     document.body.innerHTML = ''
@@ -15,38 +14,38 @@ test ('Event delegation with D3 selectAll (listen all, filter later)', async () 
     // Load a dataset into the navigator
     await myNavigator.loadDataset(
         'http://localhost:3000/libraries/cpc/tests/dataset/titanicSmall.csv',
-        ['Name']
+        [ 'Name' ]
     )
     myNavigator.update()
 
 
-    d3.selectAll("*").on('click', (d, i, g) => {
+    d3.selectAll( '*' ).on( 'click', ( d, i, g ) => {
 
-        const clickedElement = g[i]
-        const clickedElementClass = g[i].getAttribute('class')
+        const clickedElement = g[ i ]
+        const clickedElementClass = g[ i ].getAttribute( 'class' )
 
-        if (clickedElementClass === 'background'){
-            console.log('Clicked on a background')
+        if( clickedElementClass === 'background' ) {
+            console.log( 'Clicked on a background' )
         }
 
-        if (clickedElementClass === 'category'){
-            console.log('Clicked on a category')
+        if( clickedElementClass === 'category' ) {
+            console.log( 'Clicked on a category' )
         }
 
-    })
+    } )
 
     // writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/Learning Tests/d3/jest-dom-1.html')
 
     // Click on a background
     clearConsoleHistory()
-    domUtils.simulateClickOn( '.background'  )
-    expectConsoleHistory("Clicked on a background")
+    domUtils.simulateClickOn( '.background' )
+    expectConsoleHistory( 'Clicked on a background' )
 
     // Click on a category
     clearConsoleHistory()
-    domUtils.simulateClickOn( '.category'  )
-    expectConsoleHistory("Clicked on a category")
+    domUtils.simulateClickOn( '.category' )
+    expectConsoleHistory( 'Clicked on a category' )
 
 
 
-})
+} )

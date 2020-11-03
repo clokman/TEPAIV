@@ -1,20 +1,18 @@
-
 //// UMD HEAD ////////////////////////////////////////////////////////////////////////
 // UMD head and foot patterns adapted from d3.js
-(function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-        typeof define === 'function' && define.amd ? define(['exports'], factory) :
-            (factory((global.functionUtils = global.functionUtils || {})));
-}(this, (function (exports) { 'use strict';
+( function ( global, factory ) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory( exports ) :
+        typeof define === 'function' && define.amd ? define( [ 'exports' ], factory ) :
+            ( factory( ( global.functionUtils = global.functionUtils || {} ) ) )
+}( this, ( function ( exports ) {
+    'use strict'
 //////////////////////////////////////////////////////////////////////////////////////
 
 
 
 
-
-               
-// Module content goes here. 
-const version = "1.0"
+// Module content goes here.
+    const version = '1.0'
 
 
     /**
@@ -24,35 +22,36 @@ const version = "1.0"
      * @param callback {Function}
      * @returns {function(...[*]=): *}
      */
-    const injectIntoFunction = function(targetFunction, callback ){
+    const injectIntoFunction = function ( targetFunction, callback ) {
 
-    const cachedFunction = Object.assign( targetFunction )
+        const cachedFunction = Object.assign( targetFunction )
 
-    return function(...args) {
-        callback.apply(this, args)
-        return cachedFunction.apply(this, args)  // `apply(this, ...args)` preserves the value of this in the original method
+        return function ( ...args ) {
+            callback.apply( this, args )
+            return cachedFunction.apply( this, args )  // `apply(this, ...args)` preserves the value of this in the
+                                                       // original method
+        }
+
     }
-
-}
 
 
 
 
 // Alias
-const injectIntoMethod = injectIntoFunction
+    const injectIntoMethod = injectIntoFunction
 
 
 
 //// UMD FOOT ////////////////////////////////////////////////////////////////////////
-                             
+
     //// MODULE.EXPORTS ////
-    exports.version = version;
+    exports.version = version
     exports.injectIntoFunction = injectIntoFunction
     exports.injectIntoMethod = injectIntoMethod
 
 
-	Object.defineProperty(exports, '__esModule', { value: true });
+    Object.defineProperty( exports, '__esModule', { value: true } )
 
-})));
+} ) ) )
 //////////////////////////////////////////////////////////////////////////////////////
 

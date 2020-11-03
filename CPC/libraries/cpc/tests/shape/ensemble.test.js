@@ -1,4 +1,3 @@
-
 //// UNIT TESTS /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -151,7 +150,7 @@ describe( 'Ensemble registry operations', () => {
 // │         1         │ 'linkable-rectangle-1' │ [LinkableRectangle] │
 // └───────────────────┴────────────────────────┴─────────────────────┘`)
             // As long as the below assertions are true, the table should be true
-            expect( Array.from( myEnsemble.members().keys() ) ).toEqual( ['linkable-rectangle-0', 'linkable-rectangle-1'] )
+            expect( Array.from( myEnsemble.members().keys() ) ).toEqual( [ 'linkable-rectangle-0', 'linkable-rectangle-1' ] )
             expect( myEnsemble.members().size ).toBe( 2 )
 
         } )

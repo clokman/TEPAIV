@@ -1,7 +1,6 @@
-
 //// IMPORTS SPECIFIC TO THIS TEST FILE ////////////////////////////////////////////////////////////////////////////////
 
-const jestConsole = require('../jest-console')
+const jestConsole = require( '../jest-console' )
 const expectTable = jestConsole.expectTable
 const expectLog = jestConsole.expectLog
 const clearConsoleHistory = jestConsole.clearConsoleHistory
@@ -15,17 +14,17 @@ const destroyWarnings = jestConsole.destroyWarnings
 
 //// EXPECT-TABLE() ////
 
-test ('Tabulate variable and compare with expected output using a function', () => {
+test( 'Tabulate variable and compare with expected output using a function', () => {
 
     const titanicDataset = [
-        {name: "John",   status: "Survived",   gender: "Male", ticket: '1st class'},
-        {name: "Carla",  status: "Survived", gender: "Female", ticket: '2nd class'},
-        {name: "Jane", status: "Survived",  gender: "Female", ticket: '1st class'},
-        {name: "Gertrude", status: "Survived",  gender: "Female", ticket: '1st class'},
-        {name: "Bobby", status: "Survived",  gender: "Male", ticket: '2nd class'}
+        { name: 'John', status: 'Survived', gender: 'Male', ticket: '1st class' },
+        { name: 'Carla', status: 'Survived', gender: 'Female', ticket: '2nd class' },
+        { name: 'Jane', status: 'Survived', gender: 'Female', ticket: '1st class' },
+        { name: 'Gertrude', status: 'Survived', gender: 'Female', ticket: '1st class' },
+        { name: 'Bobby', status: 'Survived', gender: 'Male', ticket: '2nd class' }
     ]
 
-    expectTable(titanicDataset,`\
+    expectTable( titanicDataset, `\
 ┌─────────┬────────────┬────────────┬──────────┬─────────────┐
 │ (index) │    name    │   status   │  gender  │   ticket    │
 ├─────────┼────────────┼────────────┼──────────┼─────────────┤
@@ -34,22 +33,22 @@ test ('Tabulate variable and compare with expected output using a function', () 
 │    2    │   'Jane'   │ 'Survived' │ 'Female' │ '1st class' │
 │    3    │ 'Gertrude' │ 'Survived' │ 'Female' │ '1st class' │
 │    4    │  'Bobby'   │ 'Survived' │  'Male'  │ '2nd class' │
-└─────────┴────────────┴────────────┴──────────┴─────────────┘`)
+└─────────┴────────────┴────────────┴──────────┴─────────────┘` )
 
-})
+} )
 
 
-test ('Truncate table output', () => {
+test( 'Truncate table output', () => {
 
     const titanicDataset = [
-        {name: "John",   status: "Survived",   gender: "Male", ticket: '1st class'},
-        {name: "Carla",  status: "Survived", gender: "Female", ticket: '2nd class'},
-        {name: "Jane", status: "Survived",  gender: "Female", ticket: '1st class'},
-        {name: "Gertrude", status: "Survived",  gender: "Female", ticket: '1st class'},
-        {name: "Bobby", status: "Survived",  gender: "Male", ticket: '2nd class'}
+        { name: 'John', status: 'Survived', gender: 'Male', ticket: '1st class' },
+        { name: 'Carla', status: 'Survived', gender: 'Female', ticket: '2nd class' },
+        { name: 'Jane', status: 'Survived', gender: 'Female', ticket: '1st class' },
+        { name: 'Gertrude', status: 'Survived', gender: 'Female', ticket: '1st class' },
+        { name: 'Bobby', status: 'Survived', gender: 'Male', ticket: '2nd class' }
     ]
 
-    expectTable(titanicDataset,`\
+    expectTable( titanicDataset, `\
 ┌─────────┬────────────┬────────────┬──────────┬─────────────┐
 │ (index) │    name    │   status   │  gender  │   ticket    │
 ├─────────┼────────────┼────────────┼──────────┼─────────────┤
@@ -58,136 +57,136 @@ test ('Truncate table output', () => {
 │    2    │   'Jane'   │ 'Survived' │ 'Female' │ '1st class' │
 │    3    │ 'Gertrude' │ 'Survived' │ 'Female' │ '1st class' │
 │    4    │  'Bobby'   │ 'Survived' │  'Male'  │ '2nd class' │
-└─────────┴────────────┴────────────┴──────────┴─────────────┘`)
+└─────────┴────────────┴────────────┴──────────┴─────────────┘` )
 
-    expectTable(titanicDataset,`\
+    expectTable( titanicDataset, `\
 ┌─────────┬─────────┬────────────┬──────────┬─────────────┐
 │ (index) │  name   │   status   │  gender  │   ticket    │
 ├─────────┼─────────┼────────────┼──────────┼─────────────┤
 │    0    │ 'John'  │ 'Survived' │  'Male'  │ '1st class' │
 │    1    │ 'Carla' │ 'Survived' │ 'Female' │ '2nd class' │
 └─────────┴─────────┴────────────┴──────────┴─────────────┘
-˅˅˅ 3 more rows`, 0, 2)
+˅˅˅ 3 more rows`, 0, 2 )
 
-})
+} )
 
 
 
 //// TO-TABULATE-AS() ////
 
-test('Tabulate and compare using JEST matcher', () => {
+test( 'Tabulate and compare using JEST matcher', () => {
 
     // Tabulate array
-    expect([1,2,3]).toTabulateAs(`\
+    expect( [ 1, 2, 3 ] ).toTabulateAs( `\
 ┌─────────┬────────┐
 │ (index) │ Values │
 ├─────────┼────────┤
 │    0    │   1    │
 │    1    │   2    │
 │    2    │   3    │
-└─────────┴────────┘`)
+└─────────┴────────┘` )
 
     // Tabulate object
-    expect({'a':'first', 'b':'second'}).toTabulateAs(`\
+    expect( { 'a': 'first', 'b': 'second' } ).toTabulateAs( `\
 ┌─────────┬──────────┐
 │ (index) │  Values  │
 ├─────────┼──────────┤
 │    a    │ 'first'  │
 │    b    │ 'second' │
-└─────────┴──────────┘`)
+└─────────┴──────────┘` )
 
-})
+} )
 
 
 //// TO-LOG-AS() ////
 
-test('Log and compare using JEST matcher', () => {
+test( 'Log and compare using JEST matcher', () => {
 
     // Single-line log
-    expect([1,2,3]).toLogAs(`[1,2,3]`)
+    expect( [ 1, 2, 3 ] ).toLogAs( `[1,2,3]` )
 
 
     // Pretty log
-    expect([1,2,3]).toLogAs(`\
+    expect( [ 1, 2, 3 ] ).toLogAs( `\
 [
   1,
   2,
   3
-]`, 'pretty')
-})
+]`, 'pretty' )
+} )
 
 
-test ('expectLog()', () => {
+test( 'expectLog()', () => {
 
     const titanicDataset = [
-        {name: "John",   status: "Survived",   gender: "Male", ticket: '1st class'},
-        {name: "Carla",  status: "Survived", gender: "Female", ticket: '2nd class'},
-        {name: "Jane", status: "Survived",  gender: "Female", ticket: '1st class'},
-        {name: "Gertrude", status: "Survived",  gender: "Female", ticket: '1st class'},
-        {name: "Bobby", status: "Survived",  gender: "Male", ticket: '2nd class'}
+        { name: 'John', status: 'Survived', gender: 'Male', ticket: '1st class' },
+        { name: 'Carla', status: 'Survived', gender: 'Female', ticket: '2nd class' },
+        { name: 'Jane', status: 'Survived', gender: 'Female', ticket: '1st class' },
+        { name: 'Gertrude', status: 'Survived', gender: 'Female', ticket: '1st class' },
+        { name: 'Bobby', status: 'Survived', gender: 'Male', ticket: '2nd class' }
     ]
 
-    expectLog(titanicDataset[0], `\
+    expectLog( titanicDataset[ 0 ], `\
 {
   "name": "John",
   "status": "Survived",
   "gender": "Male",
   "ticket": "1st class"
-}`, 'pretty')
+}`, 'pretty' )
 
-})
+} )
 
 
-test ('clearConsoleHistory()', () => {
+test( 'clearConsoleHistory()', () => {
 
-    console.log('a')
+    console.log( 'a' )
     expect( jestConsole.getConsoleHistory() ).toBe( 'a' )
 
     clearConsoleHistory()
     expect( jestConsole.getConsoleHistory() ).toBe( '' )
 
-    console.log('b')
+    console.log( 'b' )
     expect( jestConsole.getConsoleHistory() ).toBe( 'b' )
 
-})
+} )
 
 
-test ('expectConsoleHistory()', () => {
+test( 'expectConsoleHistory()', () => {
 
     clearConsoleHistory()
 
 
     // Log an item with console.log() and check it in history
-    console.log('first log')
-    expectConsoleHistory('first log')
+    console.log( 'first log' )
+    expectConsoleHistory( 'first log' )
 
     // Log another item and check it in history
-    console.log('second log')
-    expectConsoleHistory(`\
+    console.log( 'second log' )
+    expectConsoleHistory( `\
 first log\
 second log\
-`)
+` )
 
     // Clear console history and see if comparison is OK afterward
     clearConsoleHistory()
-    expectConsoleHistory(``)
+    expectConsoleHistory( `` )
 
     // Add a third item and check if comparison is OK
-    console.log('third log')
-    expectConsoleHistory(`third log`)
+    console.log( 'third log' )
+    expectConsoleHistory( `third log` )
 
-})
+} )
 
 
 
-test ('Mocking warnings', () => {
+test( 'Mocking warnings', () => {
 
-    expectConsoleHistory('')
+    expectConsoleHistory( '' )
 
-    console.warn('Warning: This is a warning!')
+    console.warn( 'Warning: This is a warning!' )
 
-    expectConsoleHistory('Warning: This is a warning!')
+    expectConsoleHistory( 'Warning: This is a warning!' )
 
     destroyWarnings()
 
-})
+} )

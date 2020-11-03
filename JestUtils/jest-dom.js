@@ -1,14 +1,14 @@
-const writeDomToFile = function (path){
+const writeDomToFile = function ( path ) {
 
-    fs = require('fs')
-    $ = require('./external/jquery-3.1.1.min')
+    fs = require( 'fs' )
+    $ = require( './external/jquery-3.1.1.min' )
 
-    const html = $('html').html()
-    fs.writeFileSync(path, html)
+    const html = $( 'html' ).html()
+    fs.writeFileSync( path, html )
 
 }
 
-const initializeDomWithSvg = function (){
+const initializeDomWithSvg = function () {
 
     jest.useFakeTimers()
 
@@ -16,7 +16,7 @@ const initializeDomWithSvg = function (){
     document.body.innerHTML = ''
 
     // Create a svg object as the topmost container
-    new container.Svg(1280, 800)
+    new container.Svg( 1280, 800 )
 
     jest.runAllTimers()
 
