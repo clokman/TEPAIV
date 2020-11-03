@@ -12,7 +12,7 @@ describe( 'Treat continuous data', () => {
         let agreeableness = []
         let conscientiousness = []
 
-        const data = await d3.csv( 'http://localhost:3000/data/BigFivePersonalityTraits.csv', ( d ) => {
+        const data = await d3.csv( 'http://localhost:3000/TEPAIV/CPC/data/BigFivePersonalityTraits.csv', ( d ) => {
 
             neuroticism.push( d.Neuroticism )
             extraversion.push( d.Extraversion )
@@ -90,7 +90,7 @@ describe( 'Treat continuous data', () => {
         let gender = []
         let monthMeasured = []
 
-        const data = await d3.csv( 'http://localhost:3000/data/SampleMixedData-WithMissingValues.csv', ( d ) => {
+        const data = await d3.csv( 'http://localhost:3000/TEPAIV/CPC/data/SampleMixedData-WithMissingValues.csv', ( d ) => {
 
             neuroticism.push( d.Neuroticism )
             extraversion.push( d.Extraversion )
@@ -166,7 +166,7 @@ describe( 'Treat continuous data', () => {
         let agreeableness = []
         let conscientiousness = []
 
-        const data = await d3.csv( 'http://localhost:3000/data/BigFivePersonalityTraits.csv', ( d ) => {
+        const data = await d3.csv( 'http://localhost:3000/TEPAIV/CPC/data/BigFivePersonalityTraits.csv', ( d ) => {
 
             neuroticism.push( d.Neuroticism )
             extraversion.push( d.Extraversion )
@@ -262,7 +262,7 @@ describe( 'Treat continuous data', () => {
 
     test( 'Bin (SPLIT): Bin continuous data without assigning columns to variables', async () => {
 
-        const mixedData = await d3.csv( 'http://localhost:3000/data/SampleMixedData.csv' ) // when testing this
+        const mixedData = await d3.csv( 'http://localhost:3000/TEPAIV/CPC/data/SampleMixedData.csv' ) // when testing this
                                                                                            // functionality use an
                                                                                            // async test
 
@@ -336,7 +336,7 @@ describe( 'Treat continuous data', () => {
 
     test( 'Bin (SPLIT): Via custom `Bin` function  ', async () => {
 
-        const mixedData = await d3.csv( 'http://localhost:3000/data/SampleMixedData.csv' )
+        const mixedData = await d3.csv( 'http://localhost:3000/TEPAIV/CPC/data/SampleMixedData.csv' )
 
         const mixedDataBinnedByExtraversion = bin( mixedData, 'Extraversion', 3 )
 
@@ -427,7 +427,7 @@ describe( 'Treat continuous data', () => {
 
     test( 'Bin and Summarize: Via custom `Bin` function  ', async () => {
 
-        const mixedData = await d3.csv( 'http://localhost:3000/data/SampleMixedData.csv' )
+        const mixedData = await d3.csv( 'http://localhost:3000/TEPAIV/CPC/data/SampleMixedData.csv' )
 
         const mixedDataBinnedByExtraversion = bin( mixedData, 'Extraversion', 3 )
 
@@ -457,7 +457,7 @@ describe( 'Treat continuous data', () => {
 
     test( 'Quantile Scale + Rollup: Use quantile scale during rollup to bin in the most efficient way', async () => {
 
-        const mixedData = await d3.csv( 'http://localhost:3000/data/SampleMixedData.csv' )
+        const mixedData = await d3.csv( 'http://localhost:3000/TEPAIV/CPC/data/SampleMixedData.csv' )
 
         expect( mixedData ).toTabulateAs( `\
 ┌─────────┬─────────────┬──────────────┬──────────┬───────────────┐
@@ -743,7 +743,7 @@ describe( 'Treat continuous data', () => {
 
     test( 'Quantile vs Quantize scales on dataset', async () => {
 
-        const mixedData = await d3.csv( 'http://localhost:3000/data/SampleMixedData.csv' )
+        const mixedData = await d3.csv( 'http://localhost:3000/TEPAIV/CPC/data/SampleMixedData.csv' )
 
         expect( mixedData ).toTabulateAs( `\
 ┌─────────┬─────────────┬──────────────┬──────────┬───────────────┐
@@ -814,7 +814,7 @@ describe( 'Treat continuous data', () => {
 
     test( 'Rename group keys: Use custom bin names during d3.group and d3.rollup ', async () => {
 
-        const mixedData = await d3.csv( 'http://localhost:3000/data/SampleMixedData.csv' )
+        const mixedData = await d3.csv( 'http://localhost:3000/TEPAIV/CPC/data/SampleMixedData.csv' )
 
         expect( mixedData ).toTabulateAs( `\
 ┌─────────┬─────────────┬──────────────┬──────────┬───────────────┐

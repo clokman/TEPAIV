@@ -13,7 +13,7 @@ test( 'Event delegation with D3 selectAll (listen all, filter later)', async () 
     const myNavigator = new navigator.Navigator()
     // Load a dataset into the navigator
     await myNavigator.loadDataset(
-        'http://localhost:3000/libraries/cpc/tests/dataset/titanicSmall.csv',
+        'http://localhost:3000/TEPAIV/CPC/libraries/cpc/tests/dataset/titanicSmall.csv',
         [ 'Name' ]
     )
     myNavigator.update()
