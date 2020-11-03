@@ -1,0 +1,1 @@
+Tests in this directory should not be ran with jest's `--watch` parameter.  
