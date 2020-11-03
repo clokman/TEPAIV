@@ -326,9 +326,76 @@ describe ('Loading Data', () => {
 
 
 
+//// Querying Data ///////////////////////////////////////////////////////////////
+
+describe( 'Querying Data', () => {
+
+
+    //// Infer new query path based on clicked category ///////////////////////////////////////////////////////////////
+
+    describe( '_generateQueryPathForCategory(): Infer new query path from clicked category', () => {
+
+
+        test( 'Infer new query paths from clicks in a deep display with 2 siblings and their children', async () => {
+
+            // Initialize a navigator state
+            const { myNavigator, panelZero, leftSiblingPanel, rightSiblingPanel, leftGrandChildPanel, rightGrandchildPanel }
+                = await initializeDomWithTitanicEmbarkTinyNavigator.and.twoSiblingChildren.and.theirOwnChildren()
+            myNavigator.showConnectorPolygons(false).update()  // for ease of viewing if DOM is visually inspected
+            jest.runOnlyPendingTimers()
+
+            // The state of the navigator at this point:
+            // ````````````````````````````````````````````````````
+            // ```````````````.--------------:--:++++++++++++++++``
+            // ```````````````.-------///////:--:+++++++/////////``
+            // ```````````````.-------///////:--:+++++++/////////``
+            // ```````````````.-------///////:--:+++++++/////////``
+            // ```````````````.-------///////:--:+++++++/////////``
+            // ```````````````.-------///////:--:+++++++/////////``
+            // ```````````````.-------///////:--:+++++++/////////``
+            // ```````````````.--------------:--:++++++++++++++++``
+            // ````````````````````````````````````````````````````
+
+
+            // Pick a category object
+            const category_survivedMalesFromSouthampton = leftGrandChildPanel.objects('STATUS').objects('Survived')
+
+            // Generate the path for the picked object
+            const generatedPath = navigator.Navigator._generateQueryPathForCategory( category_survivedMalesFromSouthampton )
+
+            // The generated path should be correct
+            expect( generatedPath ).toBeDefined()
+            expect( generatedPath.constructor.name ).toBe( 'Array' )
+            expect( generatedPath ).toEqual( [
+                {"SEX": "Male"},
+                {"EMBARKED": "Southampton"},
+                {"STATUS": "Survived"}
+            ] )
+
+
+            // The generated path should work with data
+            expect( myNavigator.datasetObject.drilldownAndSummarize( generatedPath ) ).toTabulateAs(`\
+┌───────────────────┬────────────┬─────────────────────────────────────────────────────────────────┐
+│ (iteration index) │    Key     │                             Values                              │
+├───────────────────┼────────────┼─────────────────────────────────────────────────────────────────┤
+│         0         │  'STATUS'  │                   Map(1) { 'Survived' => 15 }                   │
+│         1         │  'CLASS'   │ Map(3) { '1st-class' => 5, '2nd-class' => 5, '3rd-class' => 5 } │
+│         2         │   'SEX'    │                     Map(1) { 'Male' => 15 }                     │
+│         3         │ 'EMBARKED' │                 Map(1) { 'Southampton' => 15 }                  │
+└───────────────────┴────────────┴─────────────────────────────────────────────────────────────────┘`)
+            
+        } )
+
+    } )
+
+} )
+
+
+
 //// Position and Dimensions ///////////////////////////////////////////////////////////////
 
 describe ('Position and Dimensions', () => {
+
 
     test ('Get/Set X, Y, width, and height at INIT time', async () => {
 
@@ -513,8 +580,6 @@ describe ('Visualizing Queries', () => {
 
 
     })
-
-
 
 
     test ('When taking a step back from a deep query, there should not be any leftover polygons ' +

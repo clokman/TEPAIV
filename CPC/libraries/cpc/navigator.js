@@ -417,6 +417,55 @@
         }
 
 
+        /**
+         * Infers and returns a query path compatible with Dataset.drilldownAndSummarize() method. The returned
+         * query path can be entered directly as a parameter drilldownAndSummarize().
+         * @param categoryObject{Category}
+         * @returns {*[]}
+         * @private
+         * @see Dataset.drilldownAndSummarize
+         */
+        static _generateQueryPathForCategory( categoryObject ){
+
+
+            // Get all parent objects
+            const lineage = categoryObject.parentObjects()
+
+            // Keep only Panel objects in lineage
+            const clickedParentChartId = Array.from( lineage.keys() ) [0]  // parent chart's ID
+            const lineageWithOnlyPanels = new Map( Array.from ( lineage ) )
+            lineageWithOnlyPanels.delete( clickedParentChartId )
+
+
+            // Remove panel zero (because it has no spawn object, and that's what is needed)
+            const lineageArray = Array.from( lineageWithOnlyPanels )
+            if( lineageArray.length > 0 ){ lineageArray.pop() }
+            const lineageWithOnlyPanelsExceptPanelZero = new Map ( lineageArray )
+
+            // Construct last step of query
+            const clickedCategoryName = categoryObject.id()
+            const clickedColumnName = clickedParentChartId
+            const lastStepOfQuery = { [clickedColumnName] : clickedCategoryName  }
+
+            // Get previous steps of the query
+            const query = []
+            lineageWithOnlyPanelsExceptPanelZero.forEach( (panelObject, panelId) => {
+
+                const categoryName = panelObject.objectToSpawnFrom.id()
+                const columnName = panelObject.objectToSpawnFrom.parentObject.id()
+
+                query.push( { [columnName] : categoryName } )
+
+            })
+
+            // Add the last step to the query
+            query.push( lastStepOfQuery )
+
+            return query
+
+        }
+
+
         _createChildPanelBasedOnStacks(drilldownResultStacks) {
 
             const childIsASibling = (this._modifierKeyPressedWithLastClick === 'shift')
