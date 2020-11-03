@@ -22,7 +22,7 @@ const version = "1.0"
  * @param selector {String} - A CSS selector string
  * @param modifierKey{String} - 'shift' | 'ctrl' | 'alt' | 'meta'
  * @example
- *  simulateClickOn('#panel-0 ')
+ *  simulateClickOn('#panel-0')
  *  simulateClickOn('#panel-0 #first-class')
  */
 function simulateClickOn(selector, modifierKey){

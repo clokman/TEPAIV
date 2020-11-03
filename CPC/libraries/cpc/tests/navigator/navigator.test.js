@@ -843,7 +843,8 @@ describe ('Absolute Values: Toggle absolute values in category captions', () => 
 //// Absolute Panel Sizes ///////////////////////////////////////////////////////////////
 
 describe ('Absolute Chart Widths', () => {
-   
+
+
         test ('Get/set', async() => {
 
             jest.useFakeTimers()
@@ -1660,6 +1661,19 @@ initializeDomWithTitanicEmbarkTinyNavigator.and = {
 initializeDomWithTitanicEmbarkTinyNavigator.and.twoSiblingChildren.and = {
 
     theirOwnChildren: async (build=true) => {
+
+        // This method creates this state of the navigator:
+        // ````````````````````````````````````````````````````
+        // ```````````````.--------------:--:++++++++++++++++``
+        // ```````````````.-------///////:--:+++++++/////////``
+        // ```````````````.-------///////:--:+++++++/////////``
+        // ```````````````.-------///////:--:+++++++/////////``
+        // ```````````````.-------///////:--:+++++++/////////``
+        // ```````````````.-------///////:--:+++++++/////////``
+        // ```````````````.-------///////:--:+++++++/////////``
+        // ```````````````.--------------:--:++++++++++++++++``
+        // ````````````````````````````````````````````````````
+
 
         const { myNavigator, panelZero, leftSiblingPanel, rightSiblingPanel } =
             await initializeDomWithTitanicEmbarkTinyNavigator.and.twoSiblingChildren( build )

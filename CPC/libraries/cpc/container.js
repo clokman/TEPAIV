@@ -13,7 +13,7 @@
 
 
 
-// Module content goes here. 
+// Module content goes here.
 const version = "1.0"
 
 
@@ -76,6 +76,7 @@ class Svg {
             return this
         }
     }
+
 
     height(value){
 
@@ -259,9 +260,6 @@ class Group {
     }
 
 
-
-
-
     width(value){
 
         if (!arguments.length){
@@ -285,8 +283,6 @@ class Group {
     }
 
 
-
-
     /**
      *
      * @param id {string}
@@ -306,7 +302,6 @@ class Group {
         }
 
     }
-
 
 
     /**
@@ -492,7 +487,6 @@ class Group {
         }
 
 
-
         /**
          * Removes a member from Ensemble registry.
          * @param memberId{String} - Key to delete in Ensemble registry
@@ -614,7 +608,7 @@ class Group {
             }
 
             else{
-                throw('This method cannot be used to set unique ids. Use `Ensemble.uniqueIdNumber()` instead.')
+                throw 'This method cannot be used to set unique ids. Use `Ensemble.uniqueIdNumber()` instead.'
             }
 
         }
@@ -622,9 +616,9 @@ class Group {
     }
 
 
-                                                
+
 //// UMD FOOT ////////////////////////////////////////////////////////////////////////
-                             
+
     //// MODULE.EXPORTS ////
     exports.version = version;
 

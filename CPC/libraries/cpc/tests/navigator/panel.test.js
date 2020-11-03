@@ -483,7 +483,7 @@ describe ('Instantiation', () => {
 
 //// Preferences ///////////////////////////////////////////////////////////////
 
-describe ('Custom initialization)', () => {
+describe ('Custom initialization', () => {
 
     
     test ('Initialize panel with custom DATA (i.e., Stacks)', () => {
