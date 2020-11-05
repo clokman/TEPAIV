@@ -206,7 +206,7 @@
          */
         _whenACategoryIsClicked( callback ) {
 
-            this.select() // this first select is not a D3 method
+            this.select() // this first 'select' returns a D3 Selection object
                 .selectAll( '.category' )
                 .on( 'click', ( d, i, g ) => {
 
@@ -2733,8 +2733,9 @@
                 // Calculate variables
 
                 const rightEdgeOfPanelBeingAddedPanel =
-                    +this.postCreationAnimationProperties.x  // because this.x() starts at a default location (e.g., off-screen) for the
-                                         // panel being added
+                    +this.postCreationAnimationProperties.x  /* because this.x() starts at a default location (e.g.,
+                                                                off-screen) for the panel being added */
+
                     + this.postCreationAnimationProperties.width
 
 
@@ -2986,11 +2987,11 @@
             if( retract ) {this._animation.spawnStyle = 'retract'}
 
             // For testing the case where a spawn type cannot be inferred
-            if( testMode ){this._animation.spawnStyle = undefined}
+            if( testMode ) {this._animation.spawnStyle = undefined}
 
             // A spawn type must be inferred, as its lack makes creation of the current panel impossible
-            if( !this._animation.spawnStyle ){
-                throw new Error( 'No spawn animation type could be inferred for panel being created.')
+            if( !this._animation.spawnStyle ) {
+                throw new Error( 'No spawn animation type could be inferred for panel being created.' )
             }
 
         }
@@ -4005,19 +4006,19 @@
                 const numberOfCategoriesInChart = this.objects().size
 
                 this._colorScale = d3.scaleSequential()
-                    .domain( [ -1, numberOfCategoriesInChart + 1 ] )  // this domain is two items larger than the
-                                                                      // number of categories in chart, because '-1'th
-                                                                      // shade (very bright) and noOfCategories+1'th
-                                                                      // shade (very dark) will be ignored.
+                    .domain( [ -1, numberOfCategoriesInChart + 1 ] )  /* this domain is two items larger than the
+                                                                         number of categories in chart, because '-1'th
+                                                                         shade (very bright) and noOfCategories+1'th
+                                                                         shade (very dark) will be ignored. */
                     .interpolator( eval( interpolatorArgumentString ) )
 
 
                 // Color the categories
                 let i = 0
                 this.objects().forEach( category => {
-                    category.fill( this._colorScale( numberOfCategoriesInChart - i ) )  // reversed indexing, so that
-                                                                                        // darker colors appear at
-                                                                                        // bottom of the charts
+                    category.fill( this._colorScale( numberOfCategoriesInChart - i ) )  /* reversed indexing, so that
+                                                                                           darker colors appear at
+                                                                                           bottom of the charts */
                     i++
                 } )
 
