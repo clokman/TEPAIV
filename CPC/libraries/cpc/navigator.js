@@ -2938,7 +2938,13 @@
         }
 
 
-        _inferSpawnAnimationType() {
+        /**
+         * Infers the situation this panel is being created in and assigns an animation type accordingly
+         * @param testMode{boolean} - If `true`, causes the method to infer no spawn animation type, which causes an
+         * exception.
+         * @private
+         */
+        _inferSpawnAnimationType( testMode = false ) {
 
             // Infer animation type from parent-child relationships //
             const append =
@@ -2978,6 +2984,14 @@
             if( extend ) {this._animation.spawnStyle = 'extend'}
             if( retractAndExtend ) {this._animation.spawnStyle = 'retractAndExtend'}
             if( retract ) {this._animation.spawnStyle = 'retract'}
+
+            // For testing the case where a spawn type cannot be inferred
+            if( testMode ){this._animation.spawnStyle = undefined}
+
+            // A spawn type must be inferred, as its lack makes creation of the current panel impossible
+            if( !this._animation.spawnStyle ){
+                throw new Error( 'No spawn animation type could be inferred for panel being created.')
+            }
 
         }
 

@@ -1153,6 +1153,25 @@ describe( 'Inferences', () => {
 
     } )
 
+
+    //// Spawn Animation Type ///////////////////////////////////////////////////////////////
+
+    describe( 'Spawn Animation Type', () => {
+
+
+        test( 'The method should throw an exception if it cannot successfully infer a spawn animation type', () => {
+
+            const panelZero = initializeDomWith.panelZero()
+
+            expect( () => {
+                panelZero._inferSpawnAnimationType( true )
+            }).toThrow( 'No spawn animation type could be inferred for panel being created.' )
+
+        } )
+
+
+    } )
+
 } )
 
 
