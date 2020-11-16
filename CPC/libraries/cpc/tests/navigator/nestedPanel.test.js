@@ -1165,7 +1165,7 @@ describe( 'Inferences', () => {
 
             expect( () => {
                 panelZero._inferSpawnAnimationType( true )
-            }).toThrow( 'No spawn animation type could be inferred for panel being created.' )
+            } ).toThrow( 'No spawn animation type could be inferred for panel being created.' )
 
         } )
 
@@ -2329,6 +2329,36 @@ describe( 'Remove: Remove child panels and panel zero', () => {
 
 
 } )
+
+
+
+
+//// ADD SIBLING PANELS ///////////////////////////////////////////////////////////////
+
+describe( 'Add Sibling Panels', () => {
+
+
+    test( 'It should be possible to add a sibling to panel that has a child', () => {
+
+        // Initialize
+        const { panelZero, childPanel, grandChildPanel } = initializeDomWith.panelZero.and.childAndGrandchild()
+        panelZero.showConnectorPolygons( false ).update()  // for ease of visual testing with writeDomToFile()
+
+        // Add sibling panel
+        const spawnObjectForSibling = panelZero.objects( 'gender' ).objects( 'male' )
+        const siblingPanel = new navigator.NestedPanel( panelZero, spawnObjectForSibling, 'sibling' ).build()
+        jest.runAllTimers()
+
+        writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/squla.html')
+
+        // The new sibling should be on the right side of the old existing child panel
+        expect( childPanel.rightEdge() < siblingPanel.leftEdge() ).toBeTruthy()
+
+    } )
+
+
+} )
+
 
 
 

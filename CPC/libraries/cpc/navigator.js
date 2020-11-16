@@ -1814,6 +1814,7 @@
 
                             ? siblingPanelOnLeftSide.x()
                             + siblingPanelOnLeftSide.width()
+                            + siblingPanelOnLeftSide.bgExtensionRight()
                             + this._paddingBetweenSiblingPanels
 
                             : this.parentPanel.x() + this.parentPanel.width(),
@@ -2045,6 +2046,19 @@
                 this._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
                 this._createBridgeFromSpawnRoot()
                 this._verticallyMaximizeFromBridgeAsChildPanel()
+                this.updateAllPanels( this._animation.duration.appendSibling )
+
+            }
+
+
+            if( this._animation.spawnStyle === 'appendSiblingAfterChild' ) {
+
+                this._pushAnySiblingsOfParentRightward()
+                this._recursivelyAdjustBackgroundExtensionsOfParentPanelsToFitThisPanel()
+                this._createBridgeFromSpawnRoot()
+                this._verticallyMaximizeFromBridgeAsChildPanel()
+                this._raiseSiblingsOnLeft()
+
                 this.updateAllPanels( this._animation.duration.appendSibling )
 
             }
@@ -2376,6 +2390,31 @@
                 }
             } )
 
+        }
+
+
+        /**
+         * Raises the position of any sibling panels on the left side of the current panel so that the current panel
+         * has the lowest 'z-order' and the leftmost sibling has the highest.
+         * @private
+         */
+        _raiseSiblingsOnLeft() {
+
+            // Select sibling panels
+            const siblingPanels = this.parentPanel.childrenPanels  /* Parent registry does not yet contain this
+                                                                          panel as a child */
+            // Reverse order of sibling panels
+            // (so that when .raise() method is called on them, the leftmost child ends up having the top z order)
+            const siblingPanelsInReverseOrder = Array.from( siblingPanels.values() ).reverse()
+            siblingPanelsInReverseOrder.forEach( ( panelObject ) => {
+
+                // Get D3 selection
+                const panelSelection = panelObject.select()
+
+                // Raise (i.e., increase 'z-order')
+                panelSelection.raise()
+
+            } )
         }
 
 
@@ -2948,9 +2987,14 @@
         _inferSpawnAnimationType( testMode = false ) {
 
             // Infer animation type from parent-child relationships //
-            const append =
+            const append =  // for siblings being added to a panel that has NO child
                 this.has.beenAddedAsSibling
                 && this.has.parentWithAnyChildButNoGrandchildren
+                && !this.has.parentWithIdenticalChild
+
+            const appendAfterChild =  // for siblings being added to a panel that HAS a child
+                this.has.beenAddedAsSibling
+                && !this.has.parentWithAnyChildButNoGrandchildren
                 && !this.has.parentWithIdenticalChild
 
             const instant =
@@ -2980,6 +3024,7 @@
 
             // Register animation type for panel //
             if( append ) {this._animation.spawnStyle = 'appendSibling'}
+            if( appendAfterChild ) {this._animation.spawnStyle = 'appendSiblingAfterChild'}
             if( instant ) {this._animation.spawnStyle = 'instant'}
             if( lateralSwitch ) {this._animation.spawnStyle = 'lateralSwitch'}
             if( extend ) {this._animation.spawnStyle = 'extend'}
