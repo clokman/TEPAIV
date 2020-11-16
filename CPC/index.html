@@ -29,7 +29,6 @@
     <!--    <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.4/dist/semantic.min.js"></script>-->
 
 
-
     <!--     VUE     -->
     <!-- Vue development version, includes helpful console warnings -->
     <!--    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>-->
@@ -63,7 +62,6 @@
     <script type="text/javascript" src="/TEPAIV/CPC/libraries/cpc/controls.js"></script>
 
 
-
 </head>
 
 <body>
@@ -81,13 +79,13 @@ Faceted Frequency Browser
 <defs>
 
     <filter id="drop-shadow-filter" x="0" y="0" width="200%" height="200%">
-        <feOffset result="offOut" in="SourceAlpha" dx="5" dy="5" />
-<!--        <feGaussianBlur result="blurOut" in="offOut" stdDeviation="10" />-->
-        <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
+        <feOffset result="offOut" in="SourceAlpha" dx="5" dy="5"/>
+        <!--        <feGaussianBlur result="blurOut" in="offOut" stdDeviation="10" />-->
+        <feBlend in="SourceGraphic" in2="blurOut" mode="normal"/>
     </filter>
 
     <filter id="blur-filter">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="2" />
+        <feGaussianBlur in="SourceGraphic" stdDeviation="2"/>
     </filter>
 
 </defs>
@@ -147,7 +145,6 @@ Faceted Frequency Browser
         </span>
 
 
-
         <h3>Data</h3>
 
         <!--Dataset Dropdown-->
@@ -188,11 +185,11 @@ Faceted Frequency Browser
 
 
                     // Switch dataset based on the value of the dropdown menu
-                    const switchDataset = (name) => ({
+                    const switchDataset = ( name ) => ( {
 
                         'Titanic': {
                             path: '/TEPAIV/CPC/data/TitanicR.hl.csv',
-                            columnsToOmit: [ ],
+                            columnsToOmit: [],
                             height: 750,
                             bgTitle: 'TITANIC PASSENGERS'
                         },
@@ -207,7 +204,7 @@ Faceted Frequency Browser
 
                         'Titanic - Enriched': {
                             path: '/TEPAIV/CPC/data/TitanicResearch.csv',
-                            columnsToOmit: [ 'name', 'sibsp', 'parch', 'boat'],
+                            columnsToOmit: [ 'name', 'sibsp', 'parch', 'boat' ],
                             columnsToForceAsCategorical: [ 'sex', 'class', 'status' ],
                             height: 750,
                             bgTitle: 'TITANIC PASSENGERS'
@@ -215,7 +212,7 @@ Faceted Frequency Browser
 
                         'Titanic - Prediction Sample': {
                             path: '/TEPAIV/CPC/data/titanicTinyWithMockPredictions.csv',
-                            columnsToOmit: ['Name', 'Ticket'],
+                            columnsToOmit: [ 'Name', 'Ticket' ],
                             columnsToForceAsCategorical: [],
                             height: 750,
                             bgTitle: 'TITANIC PREDICTIONS'
@@ -223,8 +220,8 @@ Faceted Frequency Browser
 
                         'COVID-19': {
                             path: '/TEPAIV/CPC/data/covid19/Covid19Cases-7Countries.hl.csv',
-                            columnsToOmit: ['day', 'year', 'caseId'],
-                            columnsToForceAsCategorical: ['month'],
+                            columnsToOmit: [ 'day', 'year', 'caseId' ],
+                            columnsToForceAsCategorical: [ 'month' ],
                             height: 750,
                             bgTitle: 'COVID-19 DATASET (APR 11)'
                         },
@@ -261,9 +258,9 @@ Faceted Frequency Browser
                             bgTitle: 'MUSHROOM DATASET'
                         },
 
-                        'US Census-Income 1994':{
+                        'US Census-Income 1994': {
                             path: '/TEPAIV/CPC/data/census/USCensus1994-AdultIncome.csv',
-                            columnsToOmit: ['relationship', 'race', 'hours-per-week', 'age', 'occupation', 'education', 'work-class', 'fnlwgt', 'capital-gain', 'capital-loss', 'native-country'],
+                            columnsToOmit: [ 'relationship', 'race', 'hours-per-week', 'age', 'occupation', 'education', 'work-class', 'fnlwgt', 'capital-gain', 'capital-loss', 'native-country' ],
                             columnsToForceAsCategorical: [],
                             x: 300,
                             height: 900,
@@ -291,7 +288,7 @@ Faceted Frequency Browser
                         'Father-Son Occupation': {
                             path: '/TEPAIV/CPC/data/father-son-occupation/FatherSonOccupation.hl.csv',
                             height: 750,
-                            columnsToForceAsCategorical: ['father', 'son'],
+                            columnsToForceAsCategorical: [ 'father', 'son' ],
                             bgTitle: 'FATHER-SON OCCUPATION'
                         },
 
@@ -299,9 +296,9 @@ Faceted Frequency Browser
                             path: '/TEPAIV/CPC/data/ovary-cancer/OvaryCancer.hl.csv',
                             height: 750,
                             bgTitle: 'OVARY CANCER'
-                        },
+                        }
 
-                    })[ name ]
+                    } )[ name ]
 
                     const datasetPath = switchDataset( selectedValue ).path
 
@@ -364,7 +361,7 @@ Faceted Frequency Browser
                             .width( panelWidthSliderValue )
                             .opacityOfConnectorPolygons( +$( '#connector-opacity-slider' ).val() )  // slider values should be retrieved with jquery's val() method
                             .stroke( document.getElementById( 'stroke-color-dropdown' ).value )
-                            .strokeWidth(`${ strokeWidthSliderValue }px`)
+                            .strokeWidth( `${strokeWidthSliderValue}px` )
                             .showAbsoluteChartWidths( isAbsoluteChartWidthsCheckboxChecked )
                             .showAbsoluteValues( isAbsoluteValuesCheckboxChecked )
                             .showConnectorPolygons( isCategoryConnectorsCheckboxChecked )
@@ -372,9 +369,9 @@ Faceted Frequency Browser
                             .build()
 
 
-                        that.objects('panel-0').bgText( bgTitle ).update()
+                        that.objects( 'panel-0' ).bgText( bgTitle ).update()
 
-                        allNavigators[0] = that
+                        allNavigators[ 0 ] = that
 
                     } )
 
@@ -399,9 +396,9 @@ Faceted Frequency Browser
                 Panel Colors:
             </label>
             <select
-                class="ui dropdown"
-                id="color-scheme-dropdown"
-                onchange="setColorScheme()"
+                    class="ui dropdown"
+                    id="color-scheme-dropdown"
+                    onchange="setColorScheme()"
             >
 
                 <option value=Embark>Embark</option>
@@ -449,7 +446,7 @@ Faceted Frequency Browser
                     const selectedValue = dropdown.value
                     // const selectedValue = dropdown.options[dropdown.selectedIndex]
 
-                    allNavigators.forEach( (navigator) => {
+                    allNavigators.forEach( ( navigator ) => {
                         navigator
                             .colorSet( selectedValue )
                             .update()
@@ -465,7 +462,7 @@ Faceted Frequency Browser
         <!-- Panel Width Slider -->
         <div id="panel-width-control" class="preference-control">
 
-            <label for=panel-width-slider  class="preference-control-label">
+            <label for=panel-width-slider class="preference-control-label">
                 Panel Width: <span id="panel-width-text">200</span>px
             </label>
             <input type="range"
@@ -491,7 +488,7 @@ Faceted Frequency Browser
                     text.innerText = Number( slider.value )
 
                     // Change the value
-                    allNavigators.forEach( (navigatorObject) => {
+                    allNavigators.forEach( ( navigatorObject ) => {
 
                         navigatorObject
                             .width( Number( slider.value ) )
@@ -532,7 +529,7 @@ Faceted Frequency Browser
                     // const selectedValue = dropdown.options[dropdown.selectedIndex]
 
                     // Change the value
-                    allNavigators.forEach( (navigatorObject, navigatorName) => {
+                    allNavigators.forEach( ( navigatorObject, navigatorName ) => {
 
                         navigatorObject
                             .stroke( `${selectedValue}` )
@@ -575,7 +572,7 @@ Faceted Frequency Browser
                     text.innerText = Number( slider.value )
 
                     // Change the value
-                    allNavigators.forEach( (navigatorObject, navigatorName) => {
+                    allNavigators.forEach( ( navigatorObject, navigatorName ) => {
 
                         navigatorObject
                             .strokeWidth( `${Number( slider.value )}px` )
@@ -612,7 +609,7 @@ Faceted Frequency Browser
                     const visibilityCheckbox = document.getElementById( 'category-connectors-checkbox' )
 
                     // Toggle labels based on checkbox status
-                    allNavigators.forEach( (navigator) => {
+                    allNavigators.forEach( ( navigator ) => {
 
                         if( !!visibilityCheckbox.checked ) {
                             navigator.showConnectorPolygons( true )
@@ -628,8 +625,8 @@ Faceted Frequency Browser
 
                     // Do not allow opacity to remain 0
                     const connectorOpacitySlider = $( '#connector-opacity-slider' )
-                    if( connectorOpacitySlider.val() === '0' ){
-                        connectorOpacitySlider.val(1)
+                    if( connectorOpacitySlider.val() === '0' ) {
+                        connectorOpacitySlider.val( 1 )
                         setConnectorOpacity()
                     }
 
@@ -643,7 +640,7 @@ Faceted Frequency Browser
         <!-- Connector opacity -->
         <div id="connector-opacity-control" class="preference-control">
 
-            <label for=connector-opacity-slider  class="preference-control-label">
+            <label for=connector-opacity-slider class="preference-control-label">
                 Connector Opacity: <span id="connector-opacity-text">0.95</span>
             </label>
             <input
@@ -670,7 +667,7 @@ Faceted Frequency Browser
                     text.innerText = Number( slider.value )
 
                     // Change the value
-                    allNavigators.forEach( (navigatorObject) => {
+                    allNavigators.forEach( ( navigatorObject ) => {
 
                         navigatorObject
                             .opacityOfConnectorPolygons( Number( slider.value ) )
@@ -678,16 +675,15 @@ Faceted Frequency Browser
 
 
                         // Toggle (show/hide) category connectors checkbox if value is (not) 0
-                        if (slider.value === '0')
-                            document.getElementById('category-connectors-checkbox').checked = false
+                        if( slider.value === '0' )
+                            document.getElementById( 'category-connectors-checkbox' ).checked = false
 
-                        if (slider.value > '0')
-                            document.getElementById('category-connectors-checkbox').checked = true
+                        if( slider.value > '0' )
+                            document.getElementById( 'category-connectors-checkbox' ).checked = true
 
 
 
                     } )
-
 
 
 
@@ -699,10 +695,7 @@ Faceted Frequency Browser
         </div>
 
 
-
         <h4>Absolute Values</h4>
-
-
 
 
         <!--Absolute Chart Widths Checkbox-->
@@ -727,7 +720,7 @@ Faceted Frequency Browser
                     // Toggle labels based on checkbox status
                     allNavigators.forEach( navigator => {
 
-                        if( !!checkBox1.checked) {
+                        if( !!checkBox1.checked ) {
                             navigator.showAbsoluteChartWidths( true )
                         }
                         else {
@@ -745,9 +738,9 @@ Faceted Frequency Browser
         <!--Absolute Values Checkbox-->
         <div class="preference-control ui toggle checkbox">
             <input
-                type="checkbox"
-                id="absolute-values-checkbox"
-                onclick="toggleAbsoluteValues()"
+                    type="checkbox"
+                    id="absolute-values-checkbox"
+                    onclick="toggleAbsoluteValues()"
             >
             <label for="absolute-values-checkbox" class="preference-control-label">
                 Absolute Labels
@@ -762,9 +755,9 @@ Faceted Frequency Browser
                     const checkBox1 = document.getElementById( 'absolute-values-checkbox' )
 
                     // Toggle labels based on checkbox status
-                    allNavigators.forEach( (navigator) => {
+                    allNavigators.forEach( ( navigator ) => {
 
-                        if( !!checkBox1.checked) {
+                        if( !!checkBox1.checked ) {
                             navigator.showAbsoluteValues( true )
                         }
                         else {
@@ -811,7 +804,7 @@ Faceted Frequency Browser
                     animationDurationText.innerText = Number( animationDurationSlider.value )
 
                     // Change animation duration
-                    allNavigators.forEach( (navigator) => {
+                    allNavigators.forEach( ( navigator ) => {
 
                         navigator
                             .animationDuration( Number( animationDurationSlider.value ) )
@@ -837,7 +830,7 @@ Faceted Frequency Browser
 <script>
 
 
-    if ( !navigator.userAgent.includes('Chrome') && !navigator.userAgent.includes('Safari') ) {
+    if( !navigator.userAgent.includes( 'Chrome' ) && !navigator.userAgent.includes( 'Safari' ) ) {
         alert( 'It seems like you are viewing this page with a web browser that uses an engine other than Chrome. ' +
             'Therefore, you may experience issues concerning the sizes of elements (e.g., control panel not fitting ' +
             'the page, and the charts being too large). To fix this, please either zoom out to about 70 percent, or ' +
@@ -852,7 +845,7 @@ Faceted Frequency Browser
     const parentD3Element = d3.select( '.navigator-area' )
 
     // Create SVG
-    let mySvg = new container.Svg(15000, 15000, parentD3Element)
+    let mySvg = new container.Svg( 15000, 15000, parentD3Element )
 
     // Get properties according to the selected (in this case, the first) dataset in the dataset selector dropdown
     const { datasetPath, columnNamesToIgnore, columnsToForceAsCategoricalData, x, height, bgTitle } = parseDatasetDropdown()
@@ -878,7 +871,7 @@ Faceted Frequency Browser
             .y( 60 )
             .opacityOfConnectorPolygons( +$( '#connector-opacity-slider' ).val() )  // slider values should be retrieved with jquery's val() method
             .stroke( document.getElementById( 'stroke-color-dropdown' ).value )
-            .strokeWidth(`${ strokeWidthSliderValue }px`)
+            .strokeWidth( `${strokeWidthSliderValue}px` )
             .showAbsoluteChartWidths( isAbsoluteChartWidthsCheckboxChecked )
             .showAbsoluteValues( isAbsoluteValuesCheckboxChecked )
             .showConnectorPolygons( isCategoryConnectorsCheckboxChecked )
@@ -888,7 +881,7 @@ Faceted Frequency Browser
 
 
 
-        that.objects('panel-0').bgText( bgTitle ).update()
+        that.objects( 'panel-0' ).bgText( bgTitle ).update()
 
 
     } )
@@ -923,11 +916,9 @@ Faceted Frequency Browser
     }
 
 
-
 </script>
 
 <!--==================== GENERAL INTERFACE LOGIC =====================-->
-
 
 
 </body>
