@@ -614,7 +614,7 @@ Faceted Frequency Browser
                     // Toggle labels based on checkbox status
                     allNavigators.forEach( (navigator) => {
 
-                        if( visibilityCheckbox.checked === true ) {
+                        if( !!visibilityCheckbox.checked ) {
                             navigator.showConnectorPolygons( true )
                         }
                         else {
@@ -727,7 +727,7 @@ Faceted Frequency Browser
                     // Toggle labels based on checkbox status
                     allNavigators.forEach( navigator => {
 
-                        if( checkBox1.checked === true ) {
+                        if( !!checkBox1.checked) {
                             navigator.showAbsoluteChartWidths( true )
                         }
                         else {
@@ -764,7 +764,7 @@ Faceted Frequency Browser
                     // Toggle labels based on checkbox status
                     allNavigators.forEach( (navigator) => {
 
-                        if( checkBox1.checked === true ) {
+                        if( !!checkBox1.checked) {
                             navigator.showAbsoluteValues( true )
                         }
                         else {
