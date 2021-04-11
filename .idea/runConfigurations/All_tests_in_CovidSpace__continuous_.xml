@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="All tests in CovidSpace (continuous)" type="JavaScriptTestRunnerJest">
+    <config-file value="$PROJECT_DIR$/CovidSpace/jest.config.js" />
+    <node-interpreter value="project" />
+    <node-options value="" />
+    <jest-package value="$PROJECT_DIR$/CovidSpace/node_modules/jest" />
+    <working-dir value="$PROJECT_DIR$/CovidSpace" />
+    <jest-options value="--watch" />
+    <envs />
+    <scope-kind value="ALL" />
+    <method v="2" />
+  </configuration>
+</component>
