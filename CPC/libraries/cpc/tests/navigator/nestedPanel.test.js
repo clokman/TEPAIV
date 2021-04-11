@@ -2348,8 +2348,6 @@ describe( 'Add Sibling Panels', () => {
         const siblingPanel = new navigator.NestedPanel( panelZero, spawnObjectForSibling, 'sibling' ).build()
         jest.runAllTimers()
 
-        writeDomToFile('/Users/jlokman/Projects/Code/TEPAIV/CPC/libraries/cpc/tests/dom-out/squla.html')
-
         // The new sibling should be on the right side of the old existing child panel
         expect( childPanel.rightEdge() < siblingPanel.leftEdge() ).toBeTruthy()
 
