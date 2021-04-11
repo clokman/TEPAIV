@@ -2332,7 +2332,6 @@ describe( 'Remove: Remove child panels and panel zero', () => {
 
 
 
-
 //// ADD SIBLING PANELS ///////////////////////////////////////////////////////////////
 
 describe( 'Add Sibling Panels', () => {
