@@ -4388,11 +4388,13 @@
     const color = {
 
         schemeSets: new Map()
+            .set( 'EuroMulti', [ 'Greys', 'RdPu', 'BuPu', 'PuBu', 'YlGn', 'OrRd', 'PuBuGn', 'PuRd', 'PuRd', 'BuGn', 'YlGnBu', 'YlOrBr', 'YlOrRd' ] )
+            .set( 'EuroSingle', [ 'Greys', 'Greens', 'Oranges', 'Reds', 'Purples', 'Blues' ] )
+            .set( 'Multi-Hue', [ 'RdPu', 'BuPu', 'PuBu', 'YlGn', 'OrRd', 'PuBuGn', 'PuRd', 'PuRd', 'BuGn', 'YlGnBu', 'YlOrBr', 'YlOrRd' ] )
+            .set( 'Single-Hue', [ 'Purples', 'Blues', 'Greens', 'Oranges', 'Greys', 'Reds' ] )
             .set( 'Titanic', [ 'Purples', 'Inferno', 'PuBuGn', 'Oranges', 'Greys', 'Blues' ] )
             .set( 'Titanic-2', [ 'Greys', 'Purples', 'Plasma', 'PuBu', 'Greens', 'Reds' ] )
             .set( 'Embark', [ 'Greys', 'Inferno', 'Purples', 'PuBu', 'Greens', 'Reds' ] )
-            .set( 'Single-Hue', [ 'Purples', 'Blues', 'Greens', 'Oranges', 'Greys', 'Reds' ] )
-            .set( 'Multi-Hue', [ 'RdPu', 'BuPu', 'PuBu', 'YlGn', 'OrRd', 'PuBuGn', 'PuRd', 'PuRd', 'BuGn', 'YlGnBu', 'YlOrBr', 'YlOrRd' ] )
             .set( 'Blues', [ 'Blues' ] )
             .set( 'Greens', [ 'Greens' ] )
             .set( 'Greys', [ 'Greys' ] )
