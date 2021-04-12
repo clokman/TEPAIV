@@ -93,7 +93,7 @@ agentsRegistry.get(1).object.fill('FireBrick').update()
 timeStep.next(() => {
     agentsRegistry.get(0).moveBy( { x: 0, y: -100, duration: 2000 } )
     agentsRegistry.get(1).moveBy( { x: -50, y: -100, duration: 2000 } )
-}, 2000 )
+}, 1000)
 
 timeStep.next(() => {
     agentsRegistry.get(0).moveBy( { x: 50, y: 0, duration: 2000 } )
@@ -115,11 +115,6 @@ timeStep.next(() => {
 }, 5000 )
 
 timeStep.next(() => {
+    agentsRegistry.get(0).moveBy( { x: 500, y: 0, duration: 4000 } )
     agentsRegistry.get(1).moveBy( { x: 0, y: -70, duration: 2000 } )
 }, 2000 )
-
-
-
-// timeStep.next( () => {
-    agent2.moveBy( { x: 0, y: -100, duration: 4000 } )
-// } )
