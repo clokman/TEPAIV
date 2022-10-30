@@ -9,7 +9,7 @@
   "author": "John C. Lokman",
   "license": "ISC",
   "devDependencies": {
-    "browser-sync": "^2.26.7",
+    "browser-sync": "^2.27.10",
     "jest": "^24.8.0",
     "node-fetch-polyfill": "^2.0.6",
     "object.fromentries": "^2.0.0"
